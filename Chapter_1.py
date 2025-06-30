@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import math
 import pandas as pd
+import numpy as np
 import numpy_financial as npf
 import matplotlib.pyplot as plt
 import matplotlib.style as mplstyle
