@@ -35,56 +35,64 @@ plot_future_value(D0, r, periods)
 
 
 def plot_investment_growth(D0, r, g, n=0, g_S=None):
-    years = np.arange(1, n + 1) if n > 0 else np.array([1])
+    """
+    Plot investment dividend growth and cumulative investment value.
+    If n>0 and g_S given: two-stage growth (g_S for n years, then g).
+    If n=0: constant growth at rate g.
+    """
+    max_years = 20  # max years to plot for illustration
+    years = np.arange(1, max_years + 1)
     dividends = []
     investment_value = []
 
-    if n == 0:  # Constant Growth Model
-        for t in years:
-            dividend = D0 * (1 + g) ** t
-            dividends.append(dividend)
-            investment_value.append(investment_value[-1] + dividend if investment_value else dividend)
-    else:  # Changing Growth Model (Two-Stage)
-        for t in years:
-            dividend = D0 * (1 + g_S) ** t
-            dividends.append(dividend)
-            investment_value.append(investment_value[-1] + dividend if investment_value else dividend)
+    for t in years:
+        if n > 0 and g_S is not None:
+            # Two-stage growth: g_S for first n years, then g
+            if t <= n:
+                div_growth = g_S
+                year_idx = t - 1
+                dividend = D0 * (1 + div_growth) ** year_idx
+            else:
+                # growth at g after stage n
+                # dividend at year n * (1 + g)^(t - n)
+                dividend_n = D0 * (1 + g_S) ** n
+                dividend = dividend_n * (1 + g) ** (t - n - 1)
+        else:
+            # Constant growth
+            dividend = D0 * (1 + g) ** (t - 1)
+
+        dividends.append(dividend)
+        cumulative = investment_value[-1] + dividend if investment_value else dividend
+        investment_value.append(cumulative)
 
     # Plotting
-    fig, ax1 = plt.subplots(figsize=(10, 6))
+    plt.figure(figsize=(12, 7))
 
-    # Plot initial investment as a negative bar
-    ax1.bar(0, -D0, width=0.4, label='Initial Investment', color='lightcoral', align='center')
+    plt.bar(years, dividends, alpha=0.6, label='Dividends')
+    plt.plot(years, investment_value, marker='o', color='darkblue', label='Cumulative Investment Value')
 
-    # Plot dividends
-    ax1.bar(years, dividends, width=0.4, label='Dividends', color='lightgreen', align='center')
-
-    # Create a second y-axis to plot investment value
-    ax2 = ax1.twinx()
-    ax2.plot(years, investment_value, label='Investment Value', color='darkblue', marker='o')
-    ax2.set_ylabel("Investment Value ($)", color='darkblue')
-    ax2.tick_params(axis='y', labelcolor='darkblue')
-
-    # Title and layout
+    plt.title("Investment Dividend Growth and Cumulative Value")
     plt.xlabel("Year")
-    plt.ylabel("Dividends ($)", color='lightgreen')
-    ax1.tick_params(axis='y', labelcolor='lightgreen')
-    plt.title("Investment Growth and Dividends Over Time")
-    fig.tight_layout()
+    plt.ylabel("Amount ($)")
     plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
     plt.show()
 
+
 # Parameters
-D0 = 1000  # Initial investment
-r = 0.05  # Annual interest rate (5%)
-g = 0.04  # Dividend growth rate
-n = 5  # Number of years
-g_S = 0.10  # Short-term dividend growth rate
+D0 = 1000    # initial dividend
+r = 0.05     # interest rate (not directly used here but could be)
+g = 0.04     # long-term dividend growth rate
+n = 5        # years of short-term growth
+g_S = 0.10   # short-term dividend growth rate
 
-# Plot investment growth and dividends for Constant Growth Model
-plot_investment_growth(D0, r, g)
+# Plot constant growth
+print("Constant Growth Model:")
+plot_investment_growth(D0, r, g, n=0)
 
-# Plot investment growth and dividends for Changing Dividend Growth Model
+# Plot two-stage changing growth
+print("Two-Stage Changing Growth Model:")
 plot_investment_growth(D0, r, g, n, g_S)
 
 
