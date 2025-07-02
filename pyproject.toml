@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pyfian-dev"
+name = "pyfian"
 version = "0.1.0"
 description = "Package for Python Financial Analyst"
 authors = ["Pablo Orazi <pabloorazi@gmail.com>", "Pante #INCLUIR AQUÍ TU NOMBRE Y CORREO>"]
