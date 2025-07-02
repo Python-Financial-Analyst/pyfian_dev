@@ -4,13 +4,18 @@ version = "0.1.0"
 description = "Package for Python Financial Analyst"
 authors = ["Pablo Orazi <pabloorazi@gmail.com>", "Pante #INCLUIR AQUÍ TU NOMBRE Y CORREO>"]
 readme = "README.md"
-packages = [{include = "pyfian_dev"}]
+packages = [{include = "pyfian", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+numpy = "^2.3.1"
+pandas = "^2.3.0"
+numpy-financial = "^1.0.0"
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0"
