@@ -1,16 +1,16 @@
-[project]
+[tool.poetry]
 name = "pyfian-dev"
 version = "0.1.0"
 description = "Package for Python Financial Analyst"
-authors = [
-    {name = "Pablo Orazi",email = "pabloorazi@gmail.com"}
-]
+authors = ["Pablo Orazi <pabloorazi@gmail.com>", "Pante #INCLUIR AQUÍ TU NOMBRE Y CORREO>"]
 readme = "README.md"
-requires-python = ">=3.11"
-dependencies = [
-]
+packages = [{include = "pyfian_dev"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
