@@ -5,6 +5,7 @@ Module for computing the Internal Rate of Return (IRR) from a series of cash flo
 """
 
 import numpy as np
+import numpy_financial as npf
 
 
 def npv(rate: float, cash_flows: list[float]) -> float:
@@ -76,7 +77,7 @@ def irr(cash_flows: list[float], guess: float = 0.1, tol: float = 1e-6, max_iter
 
 def np_irr(cash_flows: list[float]) -> float:
     """
-    Compute the Internal Rate of Return using NumPy's built-in IRR function.
+    Compute the Internal Rate of Return using numpy-financial's IRR function.
 
     Parameters
     ----------
@@ -93,7 +94,7 @@ def np_irr(cash_flows: list[float]) -> float:
     >>> np_irr([-1000, 300, 400, 500, 600])
     0.14074161017023878
     """
-    return np.irr(cash_flows)
+    return npf.irr(cash_flows)  # <-- Use numpy_financial's irr
 
 
 if __name__ == "__main__":
