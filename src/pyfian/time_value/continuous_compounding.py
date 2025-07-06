@@ -5,60 +5,101 @@ Module for calculations using continuous compounding.
 """
 
 import math
+from typing import Union
 
 
 def future_value_continuous(pv: float, rate: float, time: float) -> float:
     """
-    Computes the future value with continuous compounding.
+    Compute the future value with continuous compounding.
 
-    Parameters:
-        pv (float): Present value
-        rate (float): Annual interest rate (as decimal)
-        time (float): Time in years
+    Parameters
+    ----------
+    pv : float
+        Present value.
+    rate : float
+        Annual interest rate (as decimal).
+    time : float
+        Time in years.
 
-    Returns:
-        float: Future value
+    Returns
+    -------
+    float
+        Future value.
+
+    Examples
+    --------
+    >>> future_value_continuous(1000, 0.05, 3)
+    1157.625
     """
     return pv * math.exp(rate * time)
 
 
 def present_value_continuous(fv: float, rate: float, time: float) -> float:
     """
-    Computes the present value with continuous compounding.
+    Compute the present value with continuous compounding.
 
-    Parameters:
-        fv (float): Future value
-        rate (float): Annual interest rate (as decimal)
-        time (float): Time in years
+    Parameters
+    ----------
+    fv : float
+        Future value.
+    rate : float
+        Annual interest rate (as decimal).
+    time : float
+        Time in years.
 
-    Returns:
-        float: Present value
+    Returns
+    -------
+    float
+        Present value.
+
+    Examples
+    --------
+    >>> present_value_continuous(1157.625, 0.05, 3)
+    1000.0
     """
     return fv * math.exp(-rate * time)
 
 
 def effective_annual_rate_continuous(rate: float) -> float:
     """
-    Converts a continuously compounded rate to an effective annual rate.
+    Convert a continuously compounded rate to an effective annual rate.
 
-    Parameters:
-        rate (float): Continuously compounded rate (as decimal)
+    Parameters
+    ----------
+    rate : float
+        Continuously compounded rate (as decimal).
 
-    Returns:
-        float: Effective annual rate (as decimal)
+    Returns
+    -------
+    float
+        Effective annual rate (as decimal).
+
+    Examples
+    --------
+    >>> effective_annual_rate_continuous(0.05)
+    0.05127109637602411
     """
     return math.exp(rate) - 1
 
 
 def continuous_rate_from_effective(effective_rate: float) -> float:
     """
-    Converts an effective annual rate to a continuously compounded rate.
+    Convert an effective annual rate to a continuously compounded rate.
 
-    Parameters:
-        effective_rate (float): Effective annual rate (as decimal)
+    Parameters
+    ----------
+    effective_rate : float
+        Effective annual rate (as decimal).
 
-    Returns:
-        float: Continuously compounded rate (as decimal)
+    Returns
+    -------
+    float
+        Continuously compounded rate (as decimal).
+
+    Examples
+    --------
+    >>> continuous_rate_from_effective(0.05127109637602411)
+    0.05
     """
     return math.log(1 + effective_rate)
 
@@ -73,4 +114,4 @@ if __name__ == "__main__":
     print("Future Value (continuous):", fv)
     print("Present Value (continuous):", present_value_continuous(fv, r, t))
     print("Effective Annual Rate:", effective_annual_rate_continuous(r))
-    print("Continuous Rate from EAR:", continuous_rate_from_effective(0.05127))
+    print("Continuous Rate from EAR:", continuous_rate_from_effective(0.05127109637602411))
