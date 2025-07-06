@@ -9,33 +9,57 @@ import numpy as np
 
 def npv(rate: float, cash_flows: list[float]) -> float:
     """
-    Computes the Net Present Value (NPV) for a series of cash flows.
+    Compute the Net Present Value (NPV) for a series of cash flows.
 
-    Parameters:
-        rate (float): Discount rate as a decimal
-        cash_flows (list of float): Cash flow values, where index represents time
+    Parameters
+    ----------
+    rate : float
+        Discount rate as a decimal (e.g., 0.1 for 10%).
+    cash_flows : list of float
+        Cash flow values, where the index represents the time period.
 
-    Returns:
-        float: Net present value
+    Returns
+    -------
+    float
+        Net present value of the cash flows.
+
+    Examples
+    --------
+    >>> npv(0.1, [-100, 50, 60])
+    -0.2479338842975223
     """
     return sum(cf / (1 + rate) ** t for t, cf in enumerate(cash_flows))
 
 
 def irr(cash_flows: list[float], guess: float = 0.1, tol: float = 1e-6, max_iter: int = 1000) -> float:
     """
-    Estimates the Internal Rate of Return (IRR) using Newton-Raphson method.
+    Estimate the Internal Rate of Return (IRR) using the Newton-Raphson method.
 
-    Parameters:
-        cash_flows (list of float): Cash flow values, where index represents time
-        guess (float): Initial guess for IRR
-        tol (float): Tolerance for convergence
-        max_iter (int): Maximum number of iterations
+    Parameters
+    ----------
+    cash_flows : list of float
+        Cash flow values, where the index represents the time period.
+    guess : float, optional
+        Initial guess for the IRR (default is 0.1, i.e. 10%).
+    tol : float, optional
+        Tolerance for convergence (default is 1e-6).
+    max_iter : int, optional
+        Maximum number of iterations (default is 1000).
 
-    Returns:
-        float: Estimated IRR as a decimal
+    Returns
+    -------
+    float
+        Estimated internal rate of return as a decimal.
 
-    Raises:
-        ValueError: If IRR does not converge
+    Raises
+    ------
+    ValueError
+        If the IRR calculation does not converge.
+
+    Examples
+    --------
+    >>> irr([-1000, 300, 400, 500, 600])
+    0.14074161017023856
     """
     rate = guess
     for _ in range(max_iter):
@@ -52,13 +76,22 @@ def irr(cash_flows: list[float], guess: float = 0.1, tol: float = 1e-6, max_iter
 
 def np_irr(cash_flows: list[float]) -> float:
     """
-    Computes IRR using NumPy's built-in IRR function.
+    Compute the Internal Rate of Return using NumPy's built-in IRR function.
 
-    Parameters:
-        cash_flows (list of float): Cash flow values
+    Parameters
+    ----------
+    cash_flows : list of float
+        Cash flow values, where the index represents the time period.
 
-    Returns:
-        float: Internal Rate of Return as a decimal
+    Returns
+    -------
+    float
+        Internal Rate of Return as a decimal.
+
+    Examples
+    --------
+    >>> np_irr([-1000, 300, 400, 500, 600])
+    0.14074161017023878
     """
     return np.irr(cash_flows)
 
@@ -66,6 +99,6 @@ def np_irr(cash_flows: list[float]) -> float:
 if __name__ == "__main__":
     # Example usage
     example_cash_flows = [-1000, 300, 400, 500, 600]
-    
+
     print("Custom IRR:", irr(example_cash_flows))
     print("NumPy IRR:", np_irr(example_cash_flows))
