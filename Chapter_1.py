@@ -44,7 +44,7 @@ def compute_cash_metrics(df):
     return geo_nom, geo_real, harm_nom, harm_real
 
 def compute_irr(cash_flows):
-    try:
+    try:                                        
         return npf.irr(cash_flows)
     except ValueError:
         return None
