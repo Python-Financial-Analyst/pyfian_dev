@@ -2,7 +2,7 @@
 name = "pyfian"
 version = "0.1.0"
 description = "Package for Python Financial Analyst"
-authors = ["Pablo Orazi <pabloorazi@gmail.com>", "Pante #INCLUIR AQUÍ TU NOMBRE Y CORREO>"]
+authors = ["Pablo Orazi <pabloorazi@gmail.com>", "Panteleymon Semka <pante0321@gmail.com>"]
 readme = "README.md"
 packages = [{include = "pyfian", from = "src"}]
 
