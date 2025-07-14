@@ -21,3 +21,4 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0"
 ipykernel = "^6.29.5"
+nbconvert = "^7.16.6"

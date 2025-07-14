@@ -94,7 +94,7 @@ def np_irr(cash_flows: list[float]) -> float:
     >>> np_irr([-1000, 300, 400, 500, 600])
     0.14074161017023878
     """
-    return npf.irr(cash_flows)
+    return npf.irr(cash_flows)  # <-- Use numpy_financial's irr
 
 
 if __name__ == "__main__":
