@@ -68,3 +68,55 @@ def geometric_mean(returns, axis=0):
         log_returns = np.log(gross_returns)
         mean_log = np.nanmean(log_returns, axis=axis)
         return np.exp(mean_log) - 1
+
+
+
+
+def arithmetic_mean(returns, axis=0):
+    """
+    Calculate the arithmetic mean of percent returns.
+
+    The arithmetic mean is a simple average of returns, useful for understanding
+    the average return over a period without considering compounding effects.
+    This function accepts percent returns (e.g., 0.05 for +5%), handles NaNs,
+    and works with NumPy arrays and pandas Series/DataFrames.
+
+    Parameters
+    ----------
+    returns : array-like, pandas.Series, or pandas.DataFrame
+        Input percent returns. For example, a 5% return should be passed as 0.05.
+    axis : int, optional
+        Axis along which the arithmetic mean is computed. Default is 0.
+        Ignored for 1D inputs (Series or 1D arrays).
+
+    Returns
+    -------
+    float or pandas.Series
+        Arithmetic mean of the percent returns. Returns a float for 1D input and
+        a Series for DataFrames.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> arithmetic_mean([0.05, 0.10, -0.02])
+    0.0433...
+
+    >>> import pandas as pd
+    >>> df = pd.DataFrame({
+    ...     'Fund A': [0.05, 0.02, np.nan],
+    ...     'Fund B': [0.01, -0.03, 0.04]
+    ... })
+    >>> arithmetic_mean(df)
+    Fund A    0.0350...
+    Fund B   -0.0033...
+    dtype: float64
+
+    Notes
+    -----
+    This function assumes returns are in decimal form (e.g., 0.10 = 10%).
+    NaN values are ignored.
+    """
+    
+    returns = pd.DataFrame(returns) if isinstance(returns, (pd.Series, pd.DataFrame)) else np.asarray(returns)
+    
+    return returns.mean(axis=axis, skipna=True)
