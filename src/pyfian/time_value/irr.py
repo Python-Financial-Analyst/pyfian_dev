@@ -97,9 +97,3 @@ def np_irr(cash_flows: list[float]) -> float:
     return npf.irr(cash_flows)
 
 
-if __name__ == "__main__":
-    # Example usage
-    example_cash_flows = [-1000, 300, 400, 500, 600]
-
-    print("Custom IRR:", irr(example_cash_flows))
-    print("NumPy IRR:", np_irr(example_cash_flows))

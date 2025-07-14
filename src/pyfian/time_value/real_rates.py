@@ -52,10 +52,3 @@ def fisher_exact_real_rate(nominal_rate: float, inflation_rate: float) -> float:
     return (1 + nominal_rate) / (1 + inflation_rate) - 1
 
 
-if __name__ == "__main__":
-    nominal = 0.05  # 5%
-    inflation = 0.02  # 2%
-
-    print("Approximate Real Rate:", fisher_real_rate(nominal, inflation))
-    print("Exact Real Rate:", fisher_exact_real_rate(nominal, inflation))
-

@@ -103,6 +103,3 @@ def continuous_rate_from_effective(effective_rate: float) -> float:
     """
     return math.log(1 + effective_rate)
 
-
-if __name__ == "__main__":
-   pass
