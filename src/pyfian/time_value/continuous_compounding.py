@@ -105,13 +105,4 @@ def continuous_rate_from_effective(effective_rate: float) -> float:
 
 
 if __name__ == "__main__":
-    # Example usage
-    pv = 1000
-    r = 0.05
-    t = 3
-
-    fv = future_value_continuous(pv, r, t)
-    print("Future Value (continuous):", fv)
-    print("Present Value (continuous):", present_value_continuous(fv, r, t))
-    print("Effective Annual Rate:", effective_annual_rate_continuous(r))
-    print("Continuous Rate from EAR:", continuous_rate_from_effective(0.05127109637602411))
+   pass
