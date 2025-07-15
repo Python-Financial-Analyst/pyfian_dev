@@ -119,7 +119,7 @@ def mortgage_cash_flows(
     principal_balance: float,
     annual_rate: float,
     term_months: int,
-    payment_interval_months: int,
+    payment_interval_months: int = 1,
 ) -> pd.DataFrame:
     """
     Calculate mortgage cash flows (amortization schedule).
@@ -132,8 +132,8 @@ def mortgage_cash_flows(
         Annual nominal interest rate (decimal).
     term_months : int
         Loan term in months.
-    payment_interval_months : int
-        Months between payments (e.g., 1 = monthly, 3 = quarterly).
+    payment_interval_months : int, optional
+        Months between payments (default is 1 = monthly, 3 = quarterly).
 
     Returns
     -------
@@ -147,12 +147,14 @@ def mortgage_cash_flows(
 
     Examples
     --------
-    >>> df = mortgage_cash_flows(200000, 0.04, 11, 1)
+    >>> df = mortgage_cash_flows(200000, 0.04, 11)
     >>> print(df)
        Period  Payment  Interest  Principal  Remaining Balance
     0       1   18182.95   666.67   17516.28           182483.72
     ...
     """
+    if payment_interval_months is None:
+        payment_interval_months = 1
     if principal_balance <= 0:
         raise ValueError("Principal balance must be greater than zero.")
     if term_months <= 0:
