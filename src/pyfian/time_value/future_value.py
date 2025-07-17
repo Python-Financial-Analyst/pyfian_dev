@@ -2,11 +2,8 @@
 Module for calculating future values with different growth assumptions.
 """
 
-def future_value_annuity(
-    payment: float,
-    rate: float,
-    periods: int
-) -> float:
+
+def future_value_annuity(payment: float, rate: float, periods: int) -> float:
     """
     Calculates the future value of a series of equal payments with discrete compounding.
 
@@ -34,10 +31,7 @@ def future_value_annuity(
 
 
 def future_value_growing_annuity(
-    payment: float,
-    rate: float,
-    growth: float,
-    periods: int
+    payment: float, rate: float, growth: float, periods: int
 ) -> float:
     """
     Calculates the future value of a growing annuity (constant growth in payments).
@@ -76,14 +70,8 @@ def future_value_growing_annuity(
     return fv
 
 
-
 def future_value_two_stage_growth(
-    D0: float,
-    r: float,
-    g1: float,
-    n1: int,
-    g2: float,
-    n2: int
+    D0: float, r: float, g1: float, n1: int, g2: float, n2: int
 ) -> float:
     """
     Calculates the future value of a two-stage growing investment.
@@ -127,5 +115,3 @@ def future_value_two_stage_growth(
         total_fv += fv
 
     return total_fv
-
-

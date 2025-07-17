@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+
 def geometric_mean(returns, axis=0):
     """
     Calculate the geometric mean of percent returns.
@@ -51,7 +52,11 @@ def geometric_mean(returns, axis=0):
     This function assumes returns are in decimal form (e.g., 0.10 = 10%).
     NaN values are ignored.
     """
-    returns = pd.DataFrame(returns) if isinstance(returns, (pd.Series, pd.DataFrame)) else np.asarray(returns)
+    returns = (
+        pd.DataFrame(returns)
+        if isinstance(returns, (pd.Series, pd.DataFrame))
+        else np.asarray(returns)
+    )
 
     gross_returns = 1 + returns
 
@@ -68,8 +73,6 @@ def geometric_mean(returns, axis=0):
         log_returns = np.log(gross_returns)
         mean_log = np.nanmean(log_returns, axis=axis)
         return np.exp(mean_log) - 1
-
-
 
 
 def arithmetic_mean(returns, axis=0):
@@ -116,9 +119,13 @@ def arithmetic_mean(returns, axis=0):
     This function assumes returns are in decimal form (e.g., 0.10 = 10%).
     NaN values are ignored.
     """
-    
-    returns = pd.DataFrame(returns) if isinstance(returns, (pd.Series, pd.DataFrame)) else np.asarray(returns)
-    
+
+    returns = (
+        pd.DataFrame(returns)
+        if isinstance(returns, (pd.Series, pd.DataFrame))
+        else np.asarray(returns)
+    )
+
     return returns.mean(axis=axis, skipna=True)
 
 
@@ -165,12 +172,22 @@ def harmonic_mean(returns, axis=0):
     NaN values are ignored. Returns less than or equal to zero will raise a warning
     or error since harmonic mean requires positive values.
     """
-    returns = pd.DataFrame(returns) if isinstance(returns, (pd.Series, pd.DataFrame)) else np.asarray(returns)
+    returns = (
+        pd.DataFrame(returns)
+        if isinstance(returns, (pd.Series, pd.DataFrame))
+        else np.asarray(returns)
+    )
 
     growth_factors = returns + 1
 
-    if (growth_factors <= 0).any().any() if isinstance(growth_factors, pd.DataFrame) else (growth_factors <= 0).any():
-        raise ValueError("All returns must be > -1 (growth factors > 0) for harmonic mean calculation.")
+    if (
+        (growth_factors <= 0).any().any()
+        if isinstance(growth_factors, pd.DataFrame)
+        else (growth_factors <= 0).any()
+    ):
+        raise ValueError(
+            "All returns must be > -1 (growth factors > 0) for harmonic mean calculation."
+        )
 
     if isinstance(growth_factors, pd.DataFrame):
         n = growth_factors.count(axis=axis)

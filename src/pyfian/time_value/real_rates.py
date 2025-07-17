@@ -4,6 +4,7 @@ real_rates.py
 Module for computing real interest rates using the Fisher equation and related methods.
 """
 
+
 def fisher_real_rate(nominal_rate: float, inflation_rate: float) -> float:
     """
     Compute the real interest rate using the approximate Fisher equation.
@@ -50,5 +51,3 @@ def fisher_exact_real_rate(nominal_rate: float, inflation_rate: float) -> float:
     0.029412
     """
     return (1 + nominal_rate) / (1 + inflation_rate) - 1
-
-

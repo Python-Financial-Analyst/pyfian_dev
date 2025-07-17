@@ -1,7 +1,4 @@
-def present_value_annuity(
-        payment: float,
-        rate: float,
-        periods: int) -> float:
+def present_value_annuity(payment: float, rate: float, periods: int) -> float:
     """
     Calculate the present value of a fixed annuity.
 
@@ -24,10 +21,8 @@ def present_value_annuity(
 
 
 def present_value_growing_annuity(
-        payment: float,
-        rate: float,
-        growth: float,
-        periods: int) -> float:
+    payment: float, rate: float, growth: float, periods: int
+) -> float:
     """
     Calculate the present value of a growing annuity.
 
@@ -54,11 +49,8 @@ def present_value_growing_annuity(
 
 
 def present_value_two_stage_annuity(
-        payment: float,
-        rate1: float,
-        rate2: float,
-        periods1: int,
-        periods2: int) -> float:
+    payment: float, rate1: float, rate2: float, periods1: int, periods2: int
+) -> float:
     """
     Calculate the present value of a two-stage annuity.
 
@@ -81,5 +73,7 @@ def present_value_two_stage_annuity(
         Present value of the two-stage annuity.
     """
     pv_stage1 = present_value_annuity(payment, rate1, periods1)
-    pv_stage2 = present_value_annuity(payment, rate2, periods2) / (1 + rate1) ** periods1
+    pv_stage2 = (
+        present_value_annuity(payment, rate2, periods2) / (1 + rate1) ** periods1
+    )
     return pv_stage1 + pv_stage2

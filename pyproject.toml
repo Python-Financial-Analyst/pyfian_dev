@@ -2,7 +2,10 @@
 name = "pyfian"
 version = "0.1.0"
 description = "Package for Python Financial Analyst"
-authors = ["Pablo Orazi <pabloorazi@gmail.com>", "Panteleymon Semka <pante0321@gmail.com>"]
+authors = [
+    "Pablo Orazi <pabloorazi@gmail.com>", "Panteleymon Semka <pante0321@gmail.com>"
+]
+
 readme = "README.md"
 packages = [{include = "pyfian", from = "src"}]
 
@@ -22,3 +25,4 @@ build-backend = "poetry.core.masonry.api"
 pytest = "^8.0"
 ipykernel = "^6.29.5"
 nbconvert = "^7.16.6"
+ruff = "^0.12.3"

@@ -5,7 +5,6 @@ Module for calculations using continuous compounding.
 """
 
 import math
-from typing import Union
 
 
 def future_value_continuous(pv: float, rate: float, time: float) -> float:
@@ -102,4 +101,3 @@ def continuous_rate_from_effective(effective_rate: float) -> float:
     0.05
     """
     return math.log(1 + effective_rate)
-

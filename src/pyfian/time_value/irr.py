@@ -4,7 +4,6 @@ irr.py
 Module for computing the Internal Rate of Return (IRR) from a series of cash flows.
 """
 
-import numpy as np
 import numpy_financial as npf
 
 
@@ -32,7 +31,9 @@ def npv(rate: float, cash_flows: list[float]) -> float:
     return sum(cf / (1 + rate) ** t for t, cf in enumerate(cash_flows))
 
 
-def irr(cash_flows: list[float], guess: float = 0.1, tol: float = 1e-6, max_iter: int = 1000) -> float:
+def irr(
+    cash_flows: list[float], guess: float = 0.1, tol: float = 1e-6, max_iter: int = 1000
+) -> float:
     """
     Estimate the Internal Rate of Return (IRR) using the Newton-Raphson method.
 
@@ -65,7 +66,9 @@ def irr(cash_flows: list[float], guess: float = 0.1, tol: float = 1e-6, max_iter
     rate = guess
     for _ in range(max_iter):
         f = npv(rate, cash_flows)
-        f_prime = sum(-t * cf / (1 + rate) ** (t + 1) for t, cf in enumerate(cash_flows))
+        f_prime = sum(
+            -t * cf / (1 + rate) ** (t + 1) for t, cf in enumerate(cash_flows)
+        )
         if abs(f_prime) < 1e-10:
             break
         new_rate = rate - f / f_prime
@@ -95,5 +98,3 @@ def np_irr(cash_flows: list[float]) -> float:
     0.14074161017023878
     """
     return npf.irr(cash_flows)
-
-

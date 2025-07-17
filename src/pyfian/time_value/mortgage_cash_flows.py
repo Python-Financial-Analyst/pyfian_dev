@@ -10,8 +10,8 @@ def calculate_payment(
     """
     Calculate the fixed payment per payment period for a mortgage.
 
-    This function computes the payment amount due each payment period given 
-    the principal, annual interest rate, total loan term in months, and the 
+    This function computes the payment amount due each payment period given
+    the principal, annual interest rate, total loan term in months, and the
     interval between payments in months.
 
     Parameters
@@ -92,7 +92,9 @@ def generate_amortization_schedule(
     payments_per_year = 12 / payment_interval_months
     total_payments = term_months // payment_interval_months
     periodic_rate = annual_rate / payments_per_year
-    payment = calculate_payment(principal, annual_rate, term_months, payment_interval_months)
+    payment = calculate_payment(
+        principal, annual_rate, term_months, payment_interval_months
+    )
 
     schedule = []
     remaining_balance = principal
@@ -173,7 +175,7 @@ if __name__ == "__main__":
     df = mortgage_cash_flows(
         principal_balance=200000,
         annual_rate=0.04,
-        term_months=10, 
-        payment_interval_months=1, 
+        term_months=10,
+        payment_interval_months=1,
     )
     print(df.to_string(index=False))

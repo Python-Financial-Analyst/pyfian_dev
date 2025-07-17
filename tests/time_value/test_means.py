@@ -11,33 +11,28 @@ class TestGeometricMean:
         expected = np.exp(np.nanmean(np.log(1 + data))) - 1
         assert np.isclose(result, expected)
 
-
     def test_geometric_mean_pandas_series(self):
         series = pd.Series([0.03, 0.04, np.nan, 0.02])
         result = geometric_mean(series)
         expected = np.exp(np.nanmean(np.log(1 + series))) - 1
         assert np.isclose(result, expected)
 
-
     def test_geometric_mean_pandas_dataframe_axis0(self):
-        df = pd.DataFrame({
-            'A': [0.01, 0.02, 0.03],
-            'B': [0.04, -0.01, 0.00]
-        })
+        df = pd.DataFrame({"A": [0.01, 0.02, 0.03], "B": [0.04, -0.01, 0.00]})
         result = geometric_mean(df)
-        expected = pd.Series({
-            'A': np.exp(np.mean(np.log(1 + df['A']))) - 1,
-            'B': np.exp(np.mean(np.log(1 + df['B']))) - 1
-        })
+        expected = pd.Series(
+            {
+                "A": np.exp(np.mean(np.log(1 + df["A"]))) - 1,
+                "B": np.exp(np.mean(np.log(1 + df["B"]))) - 1,
+            }
+        )
         pd.testing.assert_series_equal(result, expected)
-
 
     def test_geometric_mean_with_nan(self):
         data = np.array([0.02, np.nan, 0.03])
         result = geometric_mean(data)
         expected = np.exp(np.nanmean(np.log(1 + data))) - 1
         assert np.isclose(result, expected)
-
 
     def test_geometric_mean_invalid_input():
         with pytest.raises(ValueError):
@@ -50,20 +45,20 @@ def test_arithmetic_mean_basic():
     result = arithmetic_mean(data)
     assert pytest.approx(result, rel=1e-9) == expected
 
+
 def test_arithmetic_mean_with_nan():
     data = pd.Series([0.05, np.nan, 0.10])
     expected = np.nanmean(data)
     result = arithmetic_mean(data)
     assert pytest.approx(result, rel=1e-9) == expected
 
+
 def test_arithmetic_mean_dataframe():
-    df = pd.DataFrame({
-        'A': [0.05, 0.02, np.nan],
-        'B': [0.01, -0.03, 0.04]
-    })
+    df = pd.DataFrame({"A": [0.05, 0.02, np.nan], "B": [0.01, -0.03, 0.04]})
     expected = df.mean(skipna=True)
     result = arithmetic_mean(df)
     pd.testing.assert_series_equal(result, expected)
+
 
 def test_harmonic_mean_basic():
     data = [0.05, 0.10, 0.02]
@@ -72,11 +67,9 @@ def test_harmonic_mean_basic():
     result = harmonic_mean(data)
     assert pytest.approx(result, rel=1e-9) == expected
 
+
 def test_harmonic_mean_with_nan():
-    df = pd.DataFrame({
-        'Fund A': [0.05, 0.02, np.nan],
-        'Fund B': [0.01, 0.03, 0.04]
-    })
+    df = pd.DataFrame({"Fund A": [0.05, 0.02, np.nan], "Fund B": [0.01, 0.03, 0.04]})
     growth_factors = df + 1
     n = growth_factors.count()
     denom = (1 / growth_factors).sum()
@@ -84,10 +77,12 @@ def test_harmonic_mean_with_nan():
     result = harmonic_mean(df)
     pd.testing.assert_series_equal(result, expected)
 
+
 def test_harmonic_mean_invalid_input():
     invalid_data = [0.05, -1.0, 0.02]
     with pytest.raises(ValueError):
         harmonic_mean(invalid_data)
+
 
 def test_harmonic_mean_zero_growth_factor():
     invalid_data = [-1.0, 0.0, 0.02]
