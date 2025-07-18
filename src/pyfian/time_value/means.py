@@ -125,8 +125,10 @@ def arithmetic_mean(returns, axis=0):
         if isinstance(returns, (pd.Series, pd.DataFrame))
         else np.asarray(returns)
     )
-
-    return returns.mean(axis=axis, skipna=True)
+    if isinstance(returns, pd.DataFrame) or isinstance(returns, pd.Series):
+        return returns.mean(axis=axis)
+    else:
+        return np.nanmean(returns, axis=axis)
 
 
 def harmonic_mean(returns, axis=0):
