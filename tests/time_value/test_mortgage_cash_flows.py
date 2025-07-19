@@ -3,15 +3,16 @@ from pyfian.time_value.mortgage_cash_flows import mortgage_cash_flows
 
 
 def test_mortgage_cash_flows_basic():
-    principal = 100000
+    principal_balance = 100000
     annual_rate = 0.05
     term_years = 1
-    payment_frequency = 12
+    payment_interval_months = 12
+    term_months = term_years * 12
 
-    df = mortgage_cash_flows(principal, annual_rate, term_years, payment_frequency)
+    df = mortgage_cash_flows(principal_balance, annual_rate, term_months, payment_interval_months)
 
     assert isinstance(df, pd.DataFrame), "Output should be a pandas DataFrame."
-    assert len(df) == term_years * payment_frequency, (
+    assert len(df) == term_years * payment_interval_months, (
         "Number of payments should match term * frequency."
     )
 
@@ -39,3 +40,7 @@ def test_mortgage_cash_flows_zero_interest():
     assert round(total_principal_paid, 2) == round(principal, 2), (
         "Total principal payments should equal the original principal."
     )
+
+if __name__ == "__main__":
+    test_mortgage_cash_flows_basic()
+    
