@@ -1,9 +1,8 @@
 import pytest
-from pyfian.time_value.present_value import (
-    present_value_annuity,
-    present_value_growing_annuity,
-    present_value_two_stage_annuity,
-)
+
+from pyfian.time_value.present_value import (present_value_annuity,
+                                             present_value_growing_annuity,
+                                             present_value_two_stage_annuity)
 
 
 def test_present_value_annuity():

@@ -53,18 +53,11 @@ result = portfolio.calculate_return()
 print(result)
 ```
 
-## Running Tests
-To run the tests:
-
-```bash
-python -m unittest discover tests
-```
-
 ## Notebooks
 Example notebooks are available in the `notebooks/` directory for interactive exploration.
 
 ## License
-[MIT License](LICENSE)
+[GNU License](https://github.com/Python-Financial-Analyst/pyfian_dev/blob/main/LICENSE)
 
 ## Contributing
 Contributions are welcome! Please open issues or submit pull requests.

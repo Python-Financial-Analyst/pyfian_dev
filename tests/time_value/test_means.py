@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
 import pytest
-from pyfian.time_value.means import geometric_mean, arithmetic_mean, harmonic_mean
+
+from pyfian.time_value.means import arithmetic_mean, geometric_mean
 
 
 class TestGeometricMean:
@@ -38,6 +39,7 @@ class TestGeometricMean:
         with pytest.raises(ValueError):
             geometric_mean([0.05, -1.0, 0.02])
 
+
 class TestArithmeticMean:
     def test_arithmetic_mean_basic(self):
         data = [0.05, 0.10, -0.02]
@@ -51,20 +53,17 @@ class TestArithmeticMean:
         result = arithmetic_mean(data)
         assert pytest.approx(result, rel=1e-9) == expected
 
-
     def test_arithmetic_mean_with_nan_in_series(self):
         data = pd.Series([0.05, np.nan, 0.10])
         expected = np.nanmean(data)
         result = arithmetic_mean(data)
         assert pytest.approx(result, rel=1e-9) == expected
 
-
     def test_arithmetic_mean_dataframe(self):
         df = pd.DataFrame({"A": [0.05, 0.02, np.nan], "B": [0.01, -0.03, 0.04]})
         expected = df.mean(skipna=True)
         result = arithmetic_mean(df)
         pd.testing.assert_series_equal(result, expected)
-
 
 
 """
