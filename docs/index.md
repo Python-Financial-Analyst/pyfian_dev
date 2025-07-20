@@ -6,7 +6,6 @@ Welcome to the Python Financial Analyst documentation.
 :maxdepth: 2
 :caption: Contents
 
-api/index
 ```
 
 ## Introduction

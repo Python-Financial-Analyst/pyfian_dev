@@ -16,7 +16,6 @@ release = '0.1.0'
 
 extensions = ['sphinx.ext.autodoc', 
               'myst_parser',
-            #   "myst_nb",
               "autoapi.extension",
               "sphinx.ext.napoleon",
               "sphinx.ext.viewcode",
@@ -30,5 +29,5 @@ autoapi_dirs = ['../src/pyfian']
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
 html_static_path = ['_static']
+html_theme = "sphinx_rtd_theme"
