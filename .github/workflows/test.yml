@@ -46,8 +46,27 @@ jobs:
         poetry run pytest
     - name: Build package
       run: poetry build
+    - name: Build Sphinx docs
+      run: poetry run sphinx-build docs docs/_build
     - name: Publish to TestPyPI
       uses: pypa/gh-action-pypi-publish@v1.12.4
       with:
         repository_url: https://test.pypi.org/legacy/
         password: ${{ secrets.TESTPYPI_API_TOKEN }}
+
+  deploy-docs:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download built docs
+        uses: actions/download-artifact@v4
+        with:
+          name: docs
+          path: docs/_build
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/_build
