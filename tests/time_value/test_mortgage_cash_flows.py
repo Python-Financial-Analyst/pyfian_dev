@@ -29,9 +29,10 @@ def test_mortgage_cash_flows_zero_interest():
     principal = 120000
     annual_rate = 0.0
     term_years = 10
-    payment_frequency = 12
+    payment_interval_months = 1  # Monthly payments
+    term_months = term_years * 12  # 120 months
 
-    df = mortgage_cash_flows(principal, annual_rate, term_years, payment_frequency)
+    df = mortgage_cash_flows(principal, annual_rate, term_months, payment_interval_months)
 
     assert all(df["Interest"] == 0), (
         "With 0% interest, all interest payments should be zero."
