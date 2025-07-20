@@ -6,14 +6,14 @@ def test_mortgage_cash_flows_basic():
     principal_balance = 100000
     annual_rate = 0.05
     term_years = 1
-    payment_interval_months = 12
+    payment_interval_months = 1  # Monthly payments (1 month between payments)
     term_months = term_years * 12
 
     df = mortgage_cash_flows(principal_balance, annual_rate, term_months, payment_interval_months)
 
     assert isinstance(df, pd.DataFrame), "Output should be a pandas DataFrame."
-    assert len(df) == term_years * payment_interval_months, (
-        "Number of payments should match term * frequency."
+    assert len(df) == term_months // payment_interval_months, (
+        "Number of payments should match term_months // payment_interval_months."
     )
 
     payments = df["Payment"].unique()
