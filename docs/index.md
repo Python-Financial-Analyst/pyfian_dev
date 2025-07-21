@@ -12,11 +12,3 @@ Welcome to the Python Financial Analyst documentation.
 contributing.md
 autoapi/index
 ```
-
-## Introduction
-
-Describe your project here.
-
-## Getting Started
-
-Instructions for installation and usage.
