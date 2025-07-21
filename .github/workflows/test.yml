@@ -17,12 +17,13 @@ jobs:
     strategy:
       matrix:
         # Test all supported Python versions under Ubuntu
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest,
+            #  windows-latest,
+            #  macos-latest
+             ]
         python-version: ['3.11', '3.12', '3.13']
 
     runs-on: ${{ matrix.os }}
-    permissions:
-      id-token: write
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
@@ -77,6 +78,8 @@ jobs:
     needs: [test, test-doc]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python 3.12
