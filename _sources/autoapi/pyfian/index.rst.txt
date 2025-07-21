@@ -1,0 +1,23 @@
+pyfian
+======
+
+.. py:module:: pyfian
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/pyfian/corporate_finance/index
+   /autoapi/pyfian/data/index
+   /autoapi/pyfian/derivatives/index
+   /autoapi/pyfian/financial_statements/index
+   /autoapi/pyfian/portfolio/index
+   /autoapi/pyfian/risk_management/index
+   /autoapi/pyfian/statistics/index
+   /autoapi/pyfian/time_value/index
+   /autoapi/pyfian/utils/index
+
+

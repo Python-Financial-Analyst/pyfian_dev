@@ -1,0 +1,70 @@
+pyfian.time_value.present_value
+===============================
+
+.. py:module:: pyfian.time_value.present_value
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   pyfian.time_value.present_value.present_value_annuity
+   pyfian.time_value.present_value.present_value_growing_annuity
+   pyfian.time_value.present_value.present_value_two_stage_annuity
+
+
+Module Contents
+---------------
+
+.. py:function:: present_value_annuity(payment: float, rate: float, periods: int) -> float
+
+   Calculate the present value of a fixed annuity.
+
+   :param payment: The fixed payment amount per period.
+   :type payment: float
+   :param rate: The interest rate per period (as a decimal).
+   :type rate: float
+   :param periods: The total number of periods.
+   :type periods: int
+
+   :returns: Present value of the fixed annuity.
+   :rtype: float
+
+
+.. py:function:: present_value_growing_annuity(payment: float, rate: float, growth: float, periods: int) -> float
+
+   Calculate the present value of a growing annuity.
+
+   :param payment: The initial payment amount per period.
+   :type payment: float
+   :param rate: The interest rate per period (as a decimal).
+   :type rate: float
+   :param growth: The growth rate of the payments (as a decimal).
+   :type growth: float
+   :param periods: The total number of periods.
+   :type periods: int
+
+   :returns: Present value of the growing annuity.
+   :rtype: float
+
+
+.. py:function:: present_value_two_stage_annuity(payment: float, rate1: float, rate2: float, periods1: int, periods2: int) -> float
+
+   Calculate the present value of a two-stage annuity.
+
+   :param payment: The fixed payment amount per period.
+   :type payment: float
+   :param rate1: Interest rate for the first stage (as a decimal).
+   :type rate1: float
+   :param rate2: Interest rate for the second stage (as a decimal).
+   :type rate2: float
+   :param periods1: Number of periods in the first stage.
+   :type periods1: int
+   :param periods2: Number of periods in the second stage.
+   :type periods2: int
+
+   :returns: Present value of the two-stage annuity.
+   :rtype: float
+
+

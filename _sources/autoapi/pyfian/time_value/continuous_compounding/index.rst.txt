@@ -1,0 +1,99 @@
+pyfian.time_value.continuous_compounding
+========================================
+
+.. py:module:: pyfian.time_value.continuous_compounding
+
+.. autoapi-nested-parse::
+
+   continuous_compounding.py
+
+   Module for calculations using continuous compounding.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   pyfian.time_value.continuous_compounding.future_value_continuous
+   pyfian.time_value.continuous_compounding.present_value_continuous
+   pyfian.time_value.continuous_compounding.effective_annual_rate_continuous
+   pyfian.time_value.continuous_compounding.continuous_rate_from_effective
+
+
+Module Contents
+---------------
+
+.. py:function:: future_value_continuous(pv: float, rate: float, time: float) -> float
+
+   Compute the future value with continuous compounding.
+
+   :param pv: Present value.
+   :type pv: float
+   :param rate: Annual interest rate (as decimal).
+   :type rate: float
+   :param time: Time in years.
+   :type time: float
+
+   :returns: Future value.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> future_value_continuous(1000, 0.05, 3)
+   1157.625
+
+
+.. py:function:: present_value_continuous(fv: float, rate: float, time: float) -> float
+
+   Compute the present value with continuous compounding.
+
+   :param fv: Future value.
+   :type fv: float
+   :param rate: Annual interest rate (as decimal).
+   :type rate: float
+   :param time: Time in years.
+   :type time: float
+
+   :returns: Present value.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> present_value_continuous(1157.625, 0.05, 3)
+   1000.0
+
+
+.. py:function:: effective_annual_rate_continuous(rate: float) -> float
+
+   Convert a continuously compounded rate to an effective annual rate.
+
+   :param rate: Continuously compounded rate (as decimal).
+   :type rate: float
+
+   :returns: Effective annual rate (as decimal).
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> effective_annual_rate_continuous(0.05)
+   0.05127109637602411
+
+
+.. py:function:: continuous_rate_from_effective(effective_rate: float) -> float
+
+   Convert an effective annual rate to a continuously compounded rate.
+
+   :param effective_rate: Effective annual rate (as decimal).
+   :type effective_rate: float
+
+   :returns: Continuously compounded rate (as decimal).
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> continuous_rate_from_effective(0.05127109637602411)
+   0.05
+
+

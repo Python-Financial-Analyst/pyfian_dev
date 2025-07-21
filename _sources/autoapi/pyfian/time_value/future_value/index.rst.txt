@@ -1,0 +1,97 @@
+pyfian.time_value.future_value
+==============================
+
+.. py:module:: pyfian.time_value.future_value
+
+.. autoapi-nested-parse::
+
+   Module for calculating future values with different growth assumptions.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   pyfian.time_value.future_value.future_value_annuity
+   pyfian.time_value.future_value.future_value_growing_annuity
+   pyfian.time_value.future_value.future_value_two_stage_growth
+
+
+Module Contents
+---------------
+
+.. py:function:: future_value_annuity(payment: float, rate: float, periods: int) -> float
+
+   Calculates the future value of a series of equal payments with discrete compounding.
+
+   :param payment: Amount invested each period (e.g., annually).
+   :type payment: float
+   :param rate: Interest rate per period (as decimal).
+   :type rate: float
+   :param periods: Number of periods (e.g., years).
+   :type periods: int
+
+   :returns: Future value of the investment.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> future_value_annuity(1000, 0.05, 10)
+   12577.89  # example value
+
+
+.. py:function:: future_value_growing_annuity(payment: float, rate: float, growth: float, periods: int) -> float
+
+   Calculates the future value of a growing annuity (constant growth in payments).
+
+   :param payment: Initial payment.
+   :type payment: float
+   :param rate: Interest rate per period (as decimal).
+   :type rate: float
+   :param growth: Growth rate of payment per period (as decimal).
+   :type growth: float
+   :param periods: Number of periods.
+   :type periods: int
+
+   :returns: Future value of the growing annuity.
+   :rtype: float
+
+   .. rubric:: Notes
+
+   If the interest rate equals the growth rate, a simplified formula is used
+   to avoid division by zero.
+
+   .. rubric:: Examples
+
+   >>> future_value_growing_annuity(1000, 0.05, 0.03, 10)
+   13268.75  # example value
+
+
+.. py:function:: future_value_two_stage_growth(D0: float, r: float, g1: float, n1: int, g2: float, n2: int) -> float
+
+   Calculates the future value of a two-stage growing investment.
+
+   :param D0: Initial investment per period.
+   :type D0: float
+   :param r: Interest rate per period (as decimal).
+   :type r: float
+   :param g1: Growth rate during first stage.
+   :type g1: float
+   :param n1: Number of periods in first stage.
+   :type n1: int
+   :param g2: Growth rate during second stage.
+   :type g2: float
+   :param n2: Number of periods in second stage.
+   :type n2: int
+
+   :returns: Future value at the end of (n1 + n2) periods.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> future_value_two_stage_growth(100, 0.05, 0.02, 5, 0.03, 10)
+   1766.55  # example value
+
+

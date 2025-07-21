@@ -1,0 +1,61 @@
+pyfian.time_value.real_rates
+============================
+
+.. py:module:: pyfian.time_value.real_rates
+
+.. autoapi-nested-parse::
+
+   real_rates.py
+
+   Module for computing real interest rates using the Fisher equation and related methods.
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   pyfian.time_value.real_rates.fisher_real_rate
+   pyfian.time_value.real_rates.fisher_exact_real_rate
+
+
+Module Contents
+---------------
+
+.. py:function:: fisher_real_rate(nominal_rate: float, inflation_rate: float) -> float
+
+   Compute the real interest rate using the approximate Fisher equation.
+
+   :param nominal_rate: Nominal interest rate as a decimal (e.g., 0.05 for 5%).
+   :type nominal_rate: float
+   :param inflation_rate: Expected inflation rate as a decimal (e.g., 0.02 for 2%).
+   :type inflation_rate: float
+
+   :returns: Approximate real interest rate as a decimal.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> fisher_real_rate(0.05, 0.02)
+   0.03
+
+
+.. py:function:: fisher_exact_real_rate(nominal_rate: float, inflation_rate: float) -> float
+
+   Compute the real interest rate using the exact Fisher equation.
+
+   :param nominal_rate: Nominal interest rate as a decimal.
+   :type nominal_rate: float
+   :param inflation_rate: Expected inflation rate as a decimal.
+   :type inflation_rate: float
+
+   :returns: Exact real interest rate as a decimal.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> round(fisher_exact_real_rate(0.05, 0.02), 6)
+   0.029412
+
+
