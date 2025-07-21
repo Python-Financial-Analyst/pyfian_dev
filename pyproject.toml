@@ -14,7 +14,6 @@ python = "^3.11"
 numpy = "^2.3.1"
 pandas = "^2.3.0"
 numpy-financial = "^1.0.0"
-pandas-datareader = {git = "https://github.com/pydata/pandas-datareader.git"}
 matplotlib = "^3.10.3"
 
 
