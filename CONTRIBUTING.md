@@ -106,5 +106,3 @@ poetry run pytest
 
 Your contribution makes Python Financial Analyst better for everyone.
 Feel free to open an issue or discussion if you have questions or ideas!
-
----

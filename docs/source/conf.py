@@ -20,15 +20,21 @@ extensions = [
     "autoapi.extension",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
+    "sphinx.ext.mathjax",
 ]
 
-templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
-autoapi_dirs = ["../src/pyfian"]
 
+autoapi_dirs = ["../../src/pyfian"]
+
+templates_path = ["_templates"]
+exclude_patterns = []
+
+
+nb_execution_mode = "cache"
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_static_path = ["_static"]
 html_theme = "sphinx_rtd_theme"
+html_static_path = ["_static"]
