@@ -1,0 +1,11 @@
+[bumpver]
+current_version = "0.1.0"
+version_pattern = "MAJOR.MINOR.PATCH"
+
+[bumpver.file_patterns]
+"src/pyfian/__init__.py" = [
+    '__version__ = "{version}"'
+]
+"pyproject.toml" = [
+    'version = "{version}"'
+]

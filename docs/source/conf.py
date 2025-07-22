@@ -6,10 +6,12 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+import pyfian
+
 project = "Python Financial Analyst"
 copyright = "2025, Pablo Orazi/Panteleymon Semka"
 author = "Pablo Orazi/Panteleymon Semka"
-release = "0.1.0"
+release = pyfian.__version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
