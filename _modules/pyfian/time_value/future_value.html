@@ -104,10 +104,16 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; future_value_annuity(1000, 0.05, 10)</span>
-<span class="sd">    12577.89  # example value</span>
+<span class="sd">    12577.8925355488  # example value</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">fv</span> <span class="o">=</span> <span class="n">payment</span> <span class="o">*</span> <span class="p">(((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="n">periods</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">rate</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">fv</span></div>
+    <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">payment</span> <span class="o">*</span> <span class="n">periods</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Future value of an annuity formula</span>
+        <span class="c1"># FV = P * (((1 + r)^n - 1) / r)</span>
+        <span class="c1"># where P is the payment, r is the rate, and n is the number of periods</span>
+        <span class="n">fv</span> <span class="o">=</span> <span class="n">payment</span> <span class="o">*</span> <span class="p">(((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="n">periods</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">rate</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fv</span></div>
 
 
 

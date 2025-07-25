@@ -39,7 +39,7 @@ Module Contents
    .. rubric:: Examples
 
    >>> future_value_annuity(1000, 0.05, 10)
-   12577.89  # example value
+   12577.8925355488  # example value
 
 
 .. py:function:: future_value_growing_annuity(payment: float, rate: float, growth: float, periods: int) -> float

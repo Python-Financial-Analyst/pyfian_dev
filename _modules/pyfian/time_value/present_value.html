@@ -79,8 +79,19 @@
 <div class="viewcode-block" id="present_value_annuity">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/present_value/index.html#pyfian.time_value.present_value.present_value_annuity">[docs]</a>
 <span></span><span class="k">def</span><span class="w"> </span><span class="nf">present_value_annuity</span><span class="p">(</span><span class="n">payment</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">periods</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the present value of a fixed annuity.</span>
+
+<span class="sd">    The present value of a fixed annuity is given by:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        PV = P \times \frac{1 - (1 + r)^{-n}}{r}</span>
+
+<span class="sd">    where:</span>
+<span class="sd">        - :math:`PV` is the present value</span>
+<span class="sd">        - :math:`P` is the payment per period</span>
+<span class="sd">        - :math:`r` is the interest rate per period</span>
+<span class="sd">        - :math:`n` is the total number of periods</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -95,6 +106,11 @@
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 <span class="sd">        Present value of the fixed annuity.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; present_value_annuity(100, 0.05, 10)</span>
+<span class="sd">    772.1734929184818</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pv</span> <span class="o">=</span> <span class="n">payment</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="o">-</span><span class="n">periods</span><span class="p">)</span> <span class="o">/</span> <span class="n">rate</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">pv</span></div>
@@ -124,6 +140,13 @@
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 <span class="sd">        Present value of the growing annuity.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; present_value_growing_annuity(100, 0.05, 0.02, 10)</span>
+<span class="sd">    838.8105652432927</span>
+<span class="sd">    &gt;&gt;&gt; present_value_growing_annuity(100, 0.05, 0.05, 10)</span>
+<span class="sd">    1628.894626777442</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="n">growth</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">payment</span> <span class="o">*</span> <span class="n">periods</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="n">periods</span>
@@ -157,6 +180,11 @@
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 <span class="sd">        Present value of the two-stage annuity.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; present_value_two_stage_annuity(100, 0.05, 0.06, 5, 5)</span>
+<span class="sd">    762.9973919305694</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pv_stage1</span> <span class="o">=</span> <span class="n">present_value_annuity</span><span class="p">(</span><span class="n">payment</span><span class="p">,</span> <span class="n">rate1</span><span class="p">,</span> <span class="n">periods1</span><span class="p">)</span>
     <span class="n">pv_stage2</span> <span class="o">=</span> <span class="p">(</span>
