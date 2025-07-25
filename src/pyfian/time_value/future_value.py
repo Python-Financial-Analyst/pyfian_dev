@@ -24,10 +24,16 @@ def future_value_annuity(payment: float, rate: float, periods: int) -> float:
     Examples
     --------
     >>> future_value_annuity(1000, 0.05, 10)
-    12577.89  # example value
+    12577.8925355488  # example value
     """
-    fv = payment * (((1 + rate) ** periods - 1) / rate)
-    return fv
+    if rate == 0:
+        return payment * periods
+    else:
+        # Future value of an annuity formula
+        # FV = P * (((1 + r)^n - 1) / r)
+        # where P is the payment, r is the rate, and n is the number of periods
+        fv = payment * (((1 + rate) ** periods - 1) / rate)
+        return fv
 
 
 def future_value_growing_annuity(

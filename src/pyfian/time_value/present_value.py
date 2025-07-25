@@ -1,6 +1,17 @@
 def present_value_annuity(payment: float, rate: float, periods: int) -> float:
-    """
+    r"""
     Calculate the present value of a fixed annuity.
+
+    The present value of a fixed annuity is given by:
+
+    .. math::
+        PV = P \times \frac{1 - (1 + r)^{-n}}{r}
+
+    where:
+        - :math:`PV` is the present value
+        - :math:`P` is the payment per period
+        - :math:`r` is the interest rate per period
+        - :math:`n` is the total number of periods
 
     Parameters
     ----------
@@ -15,6 +26,11 @@ def present_value_annuity(payment: float, rate: float, periods: int) -> float:
     -------
     float
         Present value of the fixed annuity.
+
+    Examples
+    --------
+    >>> present_value_annuity(100, 0.05, 10)
+    772.1734929184818
     """
     pv = payment * ((1 - (1 + rate) ** -periods) / rate)
     return pv
@@ -41,6 +57,13 @@ def present_value_growing_annuity(
     -------
     float
         Present value of the growing annuity.
+
+    Examples
+    --------
+    >>> present_value_growing_annuity(100, 0.05, 0.02, 10)
+    838.8105652432927
+    >>> present_value_growing_annuity(100, 0.05, 0.05, 10)
+    1628.894626777442
     """
     if rate == growth:
         return payment * periods * (1 + rate) ** periods
@@ -71,6 +94,11 @@ def present_value_two_stage_annuity(
     -------
     float
         Present value of the two-stage annuity.
+
+    Examples
+    --------
+    >>> present_value_two_stage_annuity(100, 0.05, 0.06, 5, 5)
+    762.9973919305694
     """
     pv_stage1 = present_value_annuity(payment, rate1, periods1)
     pv_stage2 = (
