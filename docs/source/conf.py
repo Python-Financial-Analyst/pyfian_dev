@@ -25,6 +25,18 @@ extensions = [
     "sphinx.ext.mathjax",
 ]
 
+mathjax_config = {
+    "tex2jax": {
+        "inlineMath": [["$", "$"], ["\\(", "\\)"]],
+        "displayMath": [["$$", "$$"], ["\\[", "\\]"]],
+        "processEscapes": True,
+    }
+}
+myst_enable_extensions = [
+    "dollarmath",
+    "amsmath",
+]
+
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 autoapi_dirs = ["../../src/pyfian"]
@@ -34,7 +46,7 @@ exclude_patterns = []
 
 
 nb_execution_mode = "cache"
-
+jupyter_execute_notebooks = "auto"
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
