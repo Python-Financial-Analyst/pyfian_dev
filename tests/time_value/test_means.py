@@ -2,7 +2,13 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from pyfian.time_value.means import arithmetic_mean, geometric_mean
+from pyfian.time_value.means import (
+    arithmetic_mean,
+    geometric_mean,
+    harmonic_mean,
+    weighted_geometric_mean,
+    weighted_harmonic_mean,
+)
 
 
 class TestGeometricMean:
@@ -39,6 +45,10 @@ class TestGeometricMean:
         with pytest.raises(ValueError):
             geometric_mean([0.05, -1.0, 0.02])
 
+    def test_geometric_mean_invalid_input_df(self):
+        with pytest.raises(ValueError):
+            geometric_mean(pd.DataFrame([0.05, -1.0, 0.02]))
+
 
 class TestArithmeticMean:
     def test_arithmetic_mean_basic(self):
@@ -66,34 +76,82 @@ class TestArithmeticMean:
         pd.testing.assert_series_equal(result, expected)
 
 
-"""
+class TestWeightedGeometricMean:
+    def test_weighted_geometric_mean_basic(self):
+        returns = np.array([0.05, 0.10, 0.02])
+        weights = np.array([1, 2, 1])
+        expected = np.exp(np.sum((weights / weights.sum()) * np.log(1 + returns))) - 1
+        result = weighted_geometric_mean(returns, weights)
+        assert np.isclose(result, expected)
+
+    def test_weighted_geometric_mean_with_nan(self):
+        returns = np.array([0.05, np.nan, 0.02])
+        weights = np.array([1, 2, 1])
+        mask = ~np.isnan(returns) & ~np.isnan(weights)
+        expected = (
+            np.exp(
+                np.sum(
+                    (weights[mask] / weights[mask].sum()) * np.log(1 + returns[mask])
+                )
+            )
+            - 1
+        )
+        result = weighted_geometric_mean(returns, weights)
+        assert np.isclose(result, expected)
+
+    def test_weighted_geometric_mean_invalid(self):
+        returns = np.array([0.05, -1.0, 0.02])
+        weights = np.array([1, 2, 1])
+        with pytest.raises(ValueError):
+            weighted_geometric_mean(returns, weights)
+
+
+class TestWeightedHarmonicMean:
+    def test_weighted_harmonic_mean_basic(self):
+        values = np.array([15, 20, 25])
+        weights = np.array([100, 200, 700])
+        expected = weights.sum() / np.sum(weights / values)
+        result = weighted_harmonic_mean(values, weights)
+        assert np.isclose(result, expected)
+
+    def test_weighted_harmonic_mean_with_nan(self):
+        values = np.array([15, np.nan, 25])
+        weights = np.array([100, 200, 700])
+        mask = ~np.isnan(values)
+        expected = weights[mask].sum() / np.sum(weights[mask] / values[mask])
+        result = weighted_harmonic_mean(values, weights)
+        assert np.isclose(result, expected)
+
+    def test_weighted_harmonic_mean_with_zero(self):
+        values = np.array([15, 0, 25])
+        weights = np.array([100, 200, 700])
+        with pytest.raises(ValueError):
+            weighted_harmonic_mean(values, weights)
+
+
 class TestHarmonicMean:
     def test_harmonic_mean_basic(self):
-        data = [0.05, 0.10, 0.02]
-        growth_factors = np.array(data) + 1
-        expected = len(growth_factors) / np.sum(1 / growth_factors) - 1
+        data = np.array([15, 20, 25])
+        expected = len(data) / np.sum(1 / data)
         result = harmonic_mean(data)
-        assert pytest.approx(result, rel=1e-9) == expected
-
+        assert np.isclose(result, expected)
 
     def test_harmonic_mean_with_nan(self):
-        df = pd.DataFrame({"Fund A": [0.05, 0.02, np.nan], "Fund B": [0.01, 0.03, 0.04]})
-        growth_factors = df + 1
-        n = growth_factors.count()
-        denom = (1 / growth_factors).sum()
-        expected = n / denom - 1
+        data = np.array([15, np.nan, 25])
+        mask = ~np.isnan(data)
+        expected = mask.sum() / np.sum(1 / data[mask])
+        result = harmonic_mean(data)
+        assert np.isclose(result, expected)
+
+    def test_harmonic_mean_invalid(self):
+        data = np.array([15, 0, 25])
+        with pytest.raises(ValueError):
+            harmonic_mean(data)
+
+    def test_harmonic_mean_dataframe(self):
+        df = pd.DataFrame({"A": [10, 20, 30], "B": [5, 10, 15]})
+        expected = pd.Series(
+            {"A": 3 / np.sum(1 / df["A"]), "B": 3 / np.sum(1 / df["B"])}
+        )
         result = harmonic_mean(df)
         pd.testing.assert_series_equal(result, expected)
-
-
-    def test_harmonic_mean_invalid_input(self):
-        invalid_data = [0.05, -1.0, 0.02]
-        with pytest.raises(ValueError):
-            harmonic_mean(invalid_data)
-
-
-    def test_harmonic_mean_zero_growth_factor(self):
-        invalid_data = [-1.0, 0.0, 0.02]
-        with pytest.raises(ValueError):
-            harmonic_mean(invalid_data)
-"""

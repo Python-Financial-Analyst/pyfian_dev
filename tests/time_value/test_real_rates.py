@@ -1,7 +1,6 @@
 import pytest
 
-from pyfian.time_value.real_rates import (fisher_exact_real_rate,
-                                          fisher_real_rate)
+from pyfian.time_value.real_rates import fisher_exact_real_rate, fisher_real_rate
 
 
 class TestFischerRate:
