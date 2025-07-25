@@ -26,7 +26,7 @@ def npv(rate: float, cash_flows: list[float]) -> float:
     Examples
     --------
     >>> npv(0.1, [-100, 50, 60])
-    -0.2479338842975223
+    -4.95867768595
     """
     return sum(cf / (1 + rate) ** t for t, cf in enumerate(cash_flows))
 
@@ -61,7 +61,7 @@ def irr(
     Examples
     --------
     >>> irr([-1000, 300, 400, 500, 600])
-    0.14074161017023856
+    0.2488833566240709
     """
     rate = guess
     for _ in range(max_iter):
@@ -95,6 +95,6 @@ def np_irr(cash_flows: list[float]) -> float:
     Examples
     --------
     >>> np_irr([-1000, 300, 400, 500, 600])
-    0.14074161017023878
+    0.2488833566240709
     """
     return npf.irr(cash_flows)

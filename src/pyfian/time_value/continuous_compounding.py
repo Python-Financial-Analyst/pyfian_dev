@@ -59,7 +59,7 @@ def present_value_continuous(fv: float, rate: float, time: float) -> float:
     return fv * math.exp(-rate * time)
 
 
-def effective_annual_rate_continuous(rate: float) -> float:
+def continuous_to_effective_annual_rate(rate: float) -> float:
     """
     Convert a continuously compounded rate to an effective annual rate.
 
@@ -81,7 +81,7 @@ def effective_annual_rate_continuous(rate: float) -> float:
     return math.exp(rate) - 1
 
 
-def continuous_rate_from_effective(effective_rate: float) -> float:
+def effective_to_continuous_rate(effective_rate: float) -> float:
     """
     Convert an effective annual rate to a continuously compounded rate.
 
