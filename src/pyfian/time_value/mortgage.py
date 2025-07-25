@@ -5,7 +5,7 @@ def calculate_payment(
     principal: float,
     annual_rate: float,
     term_months: int,
-    payment_interval_months: int,
+    payment_interval_months: int = 1,
 ) -> float:
     """
     Calculate the fixed payment per payment period for a mortgage.
@@ -22,8 +22,9 @@ def calculate_payment(
         The annual nominal interest rate as a decimal (e.g., 0.04 for 4%).
     term_months : int
         The total loan term expressed in months.
-    payment_interval_months : int
-        The number of months between each payment (e.g., 1 for monthly).
+    payment_interval_months : int, optional
+        The number of months between payments (default is 1 for monthly payments).
+        If None, defaults to 1 (monthly payments).
 
     Returns
     -------
@@ -125,7 +126,7 @@ def generate_amortization_schedule(
 
 
 def mortgage_cash_flows(
-    principal_balance: float,
+    principal: float,
     annual_rate: float,
     term_months: int,
     payment_interval_months: int = 1,
@@ -135,7 +136,7 @@ def mortgage_cash_flows(
 
     Parameters
     ----------
-    principal_balance : float
+    principal : float
         The loan principal amount.
     annual_rate : float
         Annual nominal interest rate (decimal).
@@ -163,27 +164,23 @@ def mortgage_cash_flows(
     0       1   18182.95   666.67   17516.28           182483.72
     ...
     """
-    if payment_interval_months is None:
-        payment_interval_months = 1
-    if principal_balance <= 0:
-        raise ValueError("Principal balance must be greater than zero.")
+    if principal <= 0:
+        raise ValueError("Principal must be greater than zero.")
     if term_months <= 0:
         raise ValueError("Loan term must be greater than zero months.")
-    if annual_rate < 0:
-        raise ValueError("Annual interest rate cannot be negative.")
     if payment_interval_months <= 0:
         raise ValueError("Payment interval (months) must be greater than zero.")
 
     return generate_amortization_schedule(
-        principal_balance, annual_rate, term_months, payment_interval_months
+        principal, annual_rate, term_months, payment_interval_months
     )
 
 
-if __name__ == "__main__":
-    df = mortgage_cash_flows(
-        principal_balance=200000,
-        annual_rate=0.04,
-        term_months=10,
-        payment_interval_months=1,
-    )
-    print(df.to_string(index=False))
+# if __name__ == "__main__":
+#     df = mortgage_cash_flows(
+#         principal_balance=200000,
+#         annual_rate=0.04,
+#         term_months=10,
+#         payment_interval_months=1,
+#     )
+#     print(df.to_string(index=False))
