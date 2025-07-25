@@ -1,5 +1,6 @@
 import pandas as pd
-from pyfian.time_value.mortgage_cash_flows import mortgage_cash_flows
+
+from pyfian.time_value.mortgage import mortgage_cash_flows
 
 
 def test_mortgage_cash_flows_basic():
@@ -9,20 +10,22 @@ def test_mortgage_cash_flows_basic():
     payment_interval_months = 1  # Monthly payments (1 month between payments)
     term_months = term_years * 12
 
-    df = mortgage_cash_flows(principal_balance, annual_rate, term_months, payment_interval_months)
+    df = mortgage_cash_flows(
+        principal_balance, annual_rate, term_months, payment_interval_months
+    )
 
     assert isinstance(df, pd.DataFrame), "Output should be a pandas DataFrame."
-    assert len(df) == term_months // payment_interval_months, (
-        "Number of payments should match term_months // payment_interval_months."
-    )
+    assert (
+        len(df) == term_months // payment_interval_months
+    ), "Number of payments should match term_months // payment_interval_months."
 
     payments = df["Payment"].unique()
     assert len(payments) == 1, "Payment amount should be constant over all periods."
 
     final_balance = df["Remaining Balance"].iloc[-1]
-    assert abs(final_balance) < 1.0, (
-        f"Final remaining balance should be near zero, got {final_balance}"
-    )
+    assert (
+        abs(final_balance) < 1.0
+    ), f"Final remaining balance should be near zero, got {final_balance}"
 
 
 def test_mortgage_cash_flows_zero_interest():
@@ -32,16 +35,18 @@ def test_mortgage_cash_flows_zero_interest():
     payment_interval_months = 1  # Monthly payments
     term_months = term_years * 12  # 120 months
 
-    df = mortgage_cash_flows(principal, annual_rate, term_months, payment_interval_months)
+    df = mortgage_cash_flows(
+        principal, annual_rate, term_months, payment_interval_months
+    )
 
-    assert all(df["Interest"] == 0), (
-        "With 0% interest, all interest payments should be zero."
-    )
+    assert all(
+        df["Interest"] == 0
+    ), "With 0% interest, all interest payments should be zero."
     total_principal_paid = df["Principal"].sum()
-    assert round(total_principal_paid, 2) == round(principal, 2), (
-        "Total principal payments should equal the original principal."
-    )
+    assert round(total_principal_paid, 2) == round(
+        principal, 2
+    ), "Total principal payments should equal the original principal."
+
 
 if __name__ == "__main__":
     test_mortgage_cash_flows_basic()
-    

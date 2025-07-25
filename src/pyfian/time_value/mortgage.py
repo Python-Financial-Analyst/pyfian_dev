@@ -9,11 +9,11 @@ def calculate_payment(
 ) -> float:
     """
     Calculate the fixed payment per payment period for a mortgage.
-    
+
     This function computes the payment amount due each payment period given
     the principal, annual interest rate, total loan term in months, and the
     interval between payments in months.
-    
+
     Parameters
     ----------
     principal : float
@@ -24,38 +24,41 @@ def calculate_payment(
         The total loan term expressed in months.
     payment_interval_months : int
         The number of months between each payment (e.g., 1 for monthly).
-    
+
     Returns
     -------
     float
         The fixed payment amount due each payment period.
-    
+
     Raises
     ------
     ValueError
         If payment_interval_months is zero or negative, or if total_payments is zero.
-    
+
     Examples
     --------
     >>> calculate_payment(200000, 0.04, 360, 1)
     954.83
-    
+
     >>> calculate_payment(100000, 0.05, 180, 3)
     7213.87
     """
     if payment_interval_months <= 0:
         raise ValueError("Payment interval (months) must be greater than zero.")
-    
+
     payments_per_year = 12 / payment_interval_months
     total_payments = term_months // payment_interval_months
     if total_payments <= 0:
-        raise ValueError("Total payments must be greater than zero. Ensure term_months is greater than or equal to payment_interval_months.")
-    
+        raise ValueError(
+            "Total payments must be greater than zero. Ensure term_months "
+            "is greater than or equal to payment_interval_months."
+        )
+
     periodic_rate = annual_rate / payments_per_year
-    
+
     if periodic_rate == 0:
         return principal / total_payments
-    
+
     return principal * periodic_rate / (1 - (1 + periodic_rate) ** -total_payments)
 
 
@@ -82,7 +85,8 @@ def generate_amortization_schedule(
     Returns
     -------
     pd.DataFrame
-        A DataFrame containing columns: Period, Payment, Interest, Principal, Remaining Balance.
+        A DataFrame containing columns: Period, Payment, Interest,
+        Principal, Remaining Balance.
 
     Examples
     --------
@@ -143,7 +147,8 @@ def mortgage_cash_flows(
     Returns
     -------
     pd.DataFrame
-        Amortization schedule with Period, Payment, Interest, Principal, and Remaining Balance.
+        Amortization schedule with Period, Payment, Interest,
+        Principal, and Remaining Balance.
 
     Raises
     ------

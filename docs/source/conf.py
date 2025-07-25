@@ -46,7 +46,6 @@ exclude_patterns = []
 
 
 nb_execution_mode = "cache"
-jupyter_execute_notebooks = "auto"
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 

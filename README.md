@@ -45,19 +45,23 @@ pip install -e .
 
 ## Usage Example
 ```python
-from pyfian.portfolio import Portfolio
+from pyfian.time_value.mortgage import mortgage_cash_flows
 
 # Example usage
-portfolio = Portfolio([...])
-result = portfolio.calculate_return()
-print(result)
+df = mortgage_cash_flows(
+        principal_balance=200000,
+        annual_rate=0.04,
+        term_months=10,
+        payment_interval_months=1,
+    )
+print(df.to_string(index=False))
 ```
 
 ## Notebooks
 Example notebooks are available in the `notebooks/` directory for interactive exploration.
 
 ## License
-[GNU License](https://github.com/Python-Financial-Analyst/pyfian_dev/blob/main/LICENSE)
+[GNU License](https://github.com/Python-Financial-Analyst/pyfian/blob/main/LICENSE)
 
 ## Contributing
 Contributions are welcome! Please open issues or submit pull requests.
