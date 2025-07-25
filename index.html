@@ -77,11 +77,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="python-financial-analyst-documentation">
+  <section class="tex2jax_ignore mathjax_ignore" id="python-financial-analyst-documentation">
 <h1>Python Financial Analyst documentation<a class="headerlink" href="#python-financial-analyst-documentation" title="Link to this heading"></a></h1>
 <p>Welcome to the Python Financial Analyst documentation.</p>
 </section>
-<section id="pyfian">
+<section class="tex2jax_ignore mathjax_ignore" id="pyfian">
 <h1>PyFiAn<a class="headerlink" href="#pyfian" title="Link to this heading"></a></h1>
 <p>PyFiAn is a Python library for financial analysis, modeling, and computations. It provides modules for corporate finance, derivatives, financial statements, portfolio management, risk management, statistics, time value of money, yield curves, and utility functions.</p>
 <section id="features">
@@ -129,12 +129,16 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </section>
 <section id="usage-example">
 <h2>Usage Example<a class="headerlink" href="#usage-example" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.portfolio</span><span class="w"> </span><span class="kn">import</span> <span class="n">Portfolio</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.mortgage</span><span class="w"> </span><span class="kn">import</span> <span class="n">mortgage_cash_flows</span>
 
 <span class="c1"># Example usage</span>
-<span class="n">portfolio</span> <span class="o">=</span> <span class="n">Portfolio</span><span class="p">([</span><span class="o">...</span><span class="p">])</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">portfolio</span><span class="o">.</span><span class="n">calculate_return</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">mortgage_cash_flows</span><span class="p">(</span>
+        <span class="n">principal_balance</span><span class="o">=</span><span class="mi">200000</span><span class="p">,</span>
+        <span class="n">annual_rate</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span>
+        <span class="n">term_months</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">payment_interval_months</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
 </pre></div>
 </div>
 </section>
@@ -144,7 +148,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </section>
 <section id="license">
 <h2>License<a class="headerlink" href="#license" title="Link to this heading"></a></h2>
-<p><a class="reference external" href="https://github.com/Python-Financial-Analyst/pyfian_dev/blob/main/LICENSE">GNU License</a></p>
+<p><a class="reference external" href="https://github.com/Python-Financial-Analyst/pyfian/blob/main/LICENSE">GNU License</a></p>
 </section>
 <section id="contributing">
 <h2>Contributing<a class="headerlink" href="#contributing" title="Link to this heading"></a></h2>

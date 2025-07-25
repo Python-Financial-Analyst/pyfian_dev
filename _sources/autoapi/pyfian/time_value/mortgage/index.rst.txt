@@ -1,7 +1,7 @@
-pyfian.time_value.mortgage_cash_flows
-=====================================
+pyfian.time_value.mortgage
+==========================
 
-.. py:module:: pyfian.time_value.mortgage_cash_flows
+.. py:module:: pyfian.time_value.mortgage
 
 
 Attributes
@@ -9,7 +9,7 @@ Attributes
 
 .. autoapisummary::
 
-   pyfian.time_value.mortgage_cash_flows.df
+   pyfian.time_value.mortgage.df
 
 
 Functions
@@ -17,9 +17,9 @@ Functions
 
 .. autoapisummary::
 
-   pyfian.time_value.mortgage_cash_flows.calculate_payment
-   pyfian.time_value.mortgage_cash_flows.generate_amortization_schedule
-   pyfian.time_value.mortgage_cash_flows.mortgage_cash_flows
+   pyfian.time_value.mortgage.calculate_payment
+   pyfian.time_value.mortgage.generate_amortization_schedule
+   pyfian.time_value.mortgage.mortgage_cash_flows
 
 
 Module Contents
@@ -69,7 +69,8 @@ Module Contents
    :param payment_interval_months: The number of months between payments.
    :type payment_interval_months: int
 
-   :returns: A DataFrame containing columns: Period, Payment, Interest, Principal, Remaining Balance.
+   :returns: A DataFrame containing columns: Period, Payment, Interest,
+             Principal, Remaining Balance.
    :rtype: pd.DataFrame
 
    .. rubric:: Examples
@@ -94,7 +95,8 @@ Module Contents
    :param payment_interval_months: Months between payments (default is 1 = monthly, 3 = quarterly).
    :type payment_interval_months: int, optional
 
-   :returns: Amortization schedule with Period, Payment, Interest, Principal, and Remaining Balance.
+   :returns: Amortization schedule with Period, Payment, Interest,
+             Principal, and Remaining Balance.
    :rtype: pd.DataFrame
 
    :raises ValueError: For invalid inputs such as negative principal, term, or payment interval.

@@ -3,6 +3,11 @@ pyfian
 
 .. py:module:: pyfian
 
+.. autoapi-nested-parse::
+
+   pyfian: Tools for financial analysis and data processing.
+
+
 
 Submodules
 ----------
@@ -19,5 +24,20 @@ Submodules
    /autoapi/pyfian/statistics/index
    /autoapi/pyfian/time_value/index
    /autoapi/pyfian/utils/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   pyfian.__version__
+
+
+Package Contents
+----------------
+
+.. py:data:: __version__
+   :value: '0.1.0'
 
 

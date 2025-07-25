@@ -18,6 +18,9 @@
       <script src="../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -90,12 +93,17 @@
            <div itemprop="articleBody">
              
   <p><a class="reference external" href="https://colab.research.google.com/github/Python-Financial-Analyst/pyfian_dev/blob/main/notebooks/fixed_income/00_economics_of_interest_rates.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
-<section id="economics-of-interest-rates">
+<section class="tex2jax_ignore mathjax_ignore" id="economics-of-interest-rates">
 <h1>Economics of Interest Rates<a class="headerlink" href="#economics-of-interest-rates" title="Link to this heading"></a></h1>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <p>The following cell will install the <code class="docutils literal notranslate"><span class="pre">pyfian</span></code> package, which provides tools for financial analysis in Python. This step ensures that all necessary modules are available for the calculations and examples in this notebook.</p>
-<div class="cell docutils container">
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
@@ -115,15 +123,16 @@
 </pre></div>
 </div>
 </div>
+</details>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Installing pandas_datareader...
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting git+https://github.com/pydata/pandas-datareader.git
-  Cloning https://github.com/pydata/pandas-datareader.git to /tmp/pip-req-build-lr5k6bxx
+  Cloning https://github.com/pydata/pandas-datareader.git to /tmp/pip-req-build-aw9gg7o_
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Running command git clone --filter=blob:none --quiet https://github.com/pydata/pandas-datareader.git /tmp/pip-req-build-lr5k6bxx
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Running command git clone --filter=blob:none --quiet https://github.com/pydata/pandas-datareader.git /tmp/pip-req-build-aw9gg7o_
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Resolved https://github.com/pydata/pandas-datareader.git to commit 4ff62149bb24f72d62874477b6688ddb0fd1f97c
@@ -156,16 +165,14 @@ Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /home/runner/.cache/p
 Requirement already satisfied: certifi&gt;=2017.4.17 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2025.7.14)
 Downloading lxml-6.0.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (5.3 MB)
 ?25l   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">0.0/5.3 MB</span> <span class=" -Color -Color-Red">?</span> eta <span class=" -Color -Color-Cyan">-:--:--</span>
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">5.3/5.3 MB</span> <span class=" -Color -Color-Red">31.3 MB/s</span> eta <span class=" -Color -Color-Cyan">0:00:00</span>
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">5.3/5.3 MB</span> <span class=" -Color -Color-Red">147.1 MB/s</span> eta <span class=" -Color -Color-Cyan">0:00:00</span>
 ?25hBuilding wheels for collected packages: pandas-datareader
   Building wheel for pandas-datareader (pyproject.toml): started
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Building wheel for pandas-datareader (pyproject.toml): finished with status &#39;done&#39;
-  Created wheel for pandas-datareader: filename=pandas_datareader-0.11.0.dev76+g4ff6214-py3-none-any.whl size=114770 sha256=d91f372cb52baba401e98c19baf03e2b2a8f791ef9fed0f9c268165655841f8c
-  Stored in directory: /tmp/pip-ephem-wheel-cache-1ozgz8ek/wheels/68/09/2b/66ff2e878a27988531be41d35ba4495de3d8f800ebb5de1c07
+  Created wheel for pandas-datareader: filename=pandas_datareader-0.11.0.dev76+g4ff6214-py3-none-any.whl size=114770 sha256=dbd50af9b810876b1d9987e1227181f696be30540da2f473d62f2f2cdac4fdb6
+  Stored in directory: /tmp/pip-ephem-wheel-cache-mdu7nhan/wheels/68/09/2b/66ff2e878a27988531be41d35ba4495de3d8f800ebb5de1c07
 Successfully built pandas-datareader
 Installing collected packages: lxml, pandas-datareader
 ?25l
@@ -195,18 +202,19 @@ Successfully installed lxml-6.0.0 pandas-datareader-0.11.0.dev76+g4ff6214
 </section>
 <section id="formula-for-nominal-interest-rates">
 <h2>Formula for Nominal Interest Rates<a class="headerlink" href="#formula-for-nominal-interest-rates" title="Link to this heading"></a></h2>
-<p>The nominal interest rate ($ r_{nom} $) is calculated as the sum of its key components:</p>
-<p>$$
+<p>The nominal interest rate (<span class="math notranslate nohighlight">\(r_{nom}\)</span>) is calculated as the sum of its key components:</p>
+<div class="math notranslate nohighlight">
+\[
 r_{\text{nom}} = r^\star + \pi + \text{Default} + \text{Liq} + \text{Mat} + \text{Tax}
-$$</p>
+\]</div>
 <p>Where:</p>
 <ul class="simple">
-<li><p>$ r^\star $: Real risk-free rate</p></li>
-<li><p>$ \pi $: Inflation premium</p></li>
-<li><p>$ \text{Default} $: Default risk premium</p></li>
-<li><p>$ \text{Liq} $: Liquidity premium</p></li>
-<li><p>$ \text{Mat} $: Maturity (term) premium</p></li>
-<li><p>$ \text{Tax} $: Tax premium</p></li>
+<li><p><span class="math notranslate nohighlight">\( r^\star \)</span>: Real risk-free rate</p></li>
+<li><p><span class="math notranslate nohighlight">\( \pi \)</span>: Inflation premium</p></li>
+<li><p><span class="math notranslate nohighlight">\( \text{Default} \)</span>: Default risk premium</p></li>
+<li><p><span class="math notranslate nohighlight">\( \text{Liq} \)</span>: Liquidity premium</p></li>
+<li><p><span class="math notranslate nohighlight">\( \text{Mat} \)</span>: Maturity (term) premium</p></li>
+<li><p><span class="math notranslate nohighlight">\( \text{Tax} \)</span>: Tax premium</p></li>
 </ul>
 <p>Each term represents compensation for specific risks or factors that affect the overall interest rate.</p>
 <div class="cell tag_hide-input docutils container">
@@ -265,27 +273,6 @@ $$</p>
 </section>
 <section id="real-vs-nominal-rates">
 <h2>Real vs Nominal Rates<a class="headerlink" href="#real-vs-nominal-rates" title="Link to this heading"></a></h2>
-<p>The nominal interest rate represents the stated or face value return that investors receive on their investments, typically quoted without any adjustment for inflation. It reflects the total percentage return promised or paid to investors over a period of time. However, this nominal rate does not reveal the <em>true</em> purchasing power of the returns, since inflation erodes the value of money over time.</p>
-<p>To evaluate the actual or real return on an investment, that is, the increase in purchasing power an investor gains, one must account for inflation. This is where the concept of breakeven inflation becomes relevant. Breakeven inflation represents the market’s expected average inflation rate over the life of a bond. It essentially reflects the inflation rate that would equalize returns between a traditional nominal bond and an inflation-protected bond.</p>
-<p>Subtracting expected inflation from the nominal return gives the real rate of return, which shows the inflation-adjusted return investors are actually earning.</p>
-<p>In financial markets, particularly when dealing with Treasury Inflation-Protected Securities (TIPS), this relationship is formalized in the formula:</p>
-<p>$$
-\text{Nominal Rate} = \text{Real Rate} + \text{Breakeven Inflation}
-$$</p>
-<p>TIPS are designed to help investors protect their purchasing power. They pay a real rate of return, while the principal and interest payments are adjusted periodically based on actual inflation rates. In contrast, nominal Treasury securities pay a fixed return that doesn’t adjust for inflation.</p>
-<p>In practice, breakeven inflation can be interpreted as the difference between the yield on a nominal Treasury bond and the yield on a TIPS of the same maturity. If actual inflation turns out to be higher than the breakeven inflation rate, TIPS will outperform nominal Treasuries, since their payments adjust upwards with realized inflation.</p>
-<p>Looking at historical data, nominal rates and real rates have fluctuated significantly over time. In recent years, both have trended upwards. A key contributing factor to this rise has been persistently large government deficits, which can exert upward pressure on yields due to increased supply of government debt and potential concerns about inflation. This dynamic has led investors to demand higher compensation, both in nominal terms and increasingly in real terms, to hold government securities.</p>
-<p>In summary, while the nominal rate is the headline figure often cited, understanding the real rate and breakeven inflation is essential for evaluating the true economic return on investments, especially in inflationary environments.</p>
-</section>
-<section id="credit-spread">
-<h2>Credit Spread<a class="headerlink" href="#credit-spread" title="Link to this heading"></a></h2>
-<p>The credit spread refers to the difference in yield between a corporate bond (or any non-government security) and a comparable maturity risk-free government bond, such as a U.S. Treasury. This spread compensates investors for taking on credit risk, which is the possibility that the issuer might default on its payments. The yield on a corporate bond is therefore composed of two main parts:</p>
-<p>$$
-\text{Nominal Yield on Corporate Bond} = \text{Risk-Free Nominal Rate} + \text{Credit Spread}
-$$</p>
-<p>In this relationship, the risk-free nominal rate reflects the return on government bonds, while the credit spread represents the additional compensation investors require for bearing the risk of default. As credit conditions deteriorate or investors become more risk-averse, credit spreads tend to widen. Conversely, when economic conditions improve or investor appetite for risk increases, credit spreads typically narrow.</p>
-<p>Real rates, in contrast, refer to yields adjusted for inflation and are commonly derived from instruments like Treasury Inflation-Protected Securities (TIPS). Credit spreads are not usually quoted on a real basis because most corporate bonds are nominal instruments; their cash flows are fixed in nominal terms and do not adjust for inflation. However, inflation expectations can indirectly influence credit spreads. For example, if investors expect high inflation to pressure corporate profits or tighten financial conditions, credit spreads may widen to compensate for the increased risk.</p>
-<p>In summary, credit spreads are an important component of nominal yields, reflecting credit risk, while real rates provide insight into inflation-adjusted returns. All three—nominal rates, real rates, and credit spreads—interact to reflect broader financial conditions, inflation expectations, and risk perceptions in the bond market.</p>
 <div class="cell tag_hide-input docutils container">
 <details class="admonition hide above-input">
 <summary aria-label="Toggle hidden content">
@@ -298,27 +285,27 @@ $$</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pandas_datareader</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span> <span class="k">as</span> <span class="n">web</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">download_and_prepare</span><span class="p">(</span><span class="n">start_date</span><span class="o">=</span><span class="s1">&#39;2010-01-01&#39;</span><span class="p">):</span>
-    <span class="c1"># Descargar datos</span>
+    <span class="c1"># Download data from FRED</span>
     <span class="n">rates</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;DGS10&#39;</span><span class="p">,</span> <span class="s1">&#39;fred&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start_date</span><span class="p">)</span>
-    <span class="n">breakeven</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;DFII10&#39;</span><span class="p">,</span> <span class="s1">&#39;fred&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start_date</span><span class="p">)</span>
+    <span class="n">real_rate</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;DFII10&#39;</span><span class="p">,</span> <span class="s1">&#39;fred&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start_date</span><span class="p">)</span>
     <span class="n">credit_spread</span> <span class="o">=</span> <span class="n">web</span><span class="o">.</span><span class="n">DataReader</span><span class="p">(</span><span class="s1">&#39;BAA10Y&#39;</span><span class="p">,</span> <span class="s1">&#39;fred&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="n">start_date</span><span class="p">)</span>
 
-    <span class="c1"># Renombrar columnas</span>
-    <span class="n">rates</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;DGS10&#39;</span><span class="p">:</span> <span class="s1">&#39;Nominal_Rate&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">breakeven</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;DFII10&#39;</span><span class="p">:</span> <span class="s1">&#39;Breakeven_Inflation&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">credit_spread</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;BAA10Y&#39;</span><span class="p">:</span> <span class="s1">&#39;Credit_Spread&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Rename columns for clarity</span>
+    <span class="n">rates</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;DGS10&#39;</span><span class="p">:</span> <span class="s1">&#39;Nominal Rate&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">real_rate</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;DFII10&#39;</span><span class="p">:</span> <span class="s1">&#39;Real Rate&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">credit_spread</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;BAA10Y&#39;</span><span class="p">:</span> <span class="s1">&#39;Credit Spread&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="c1"># Concatenar y crear Real Rate</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">rates</span><span class="p">,</span> <span class="n">breakeven</span><span class="p">,</span> <span class="n">credit_spread</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Real_Rate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Nominal_Rate&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Breakeven_Inflation&#39;</span><span class="p">]</span>
+    <span class="c1"># Concatenate data into a single DataFrame and calculate Breakeven Inflation</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">rates</span><span class="p">,</span> <span class="n">real_rate</span><span class="p">,</span> <span class="n">credit_spread</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Breakeven Inflation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Nominal Rate&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Real Rate&#39;</span><span class="p">]</span>
     <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_rates</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Nominal_Rate&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;10Y Treasury Nominal Rate&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Breakeven_Inflation&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;10Y Breakeven Inflation Rate&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Real_Rate&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;10Y Real Rate&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Nominal Rate&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;10Y Treasury Nominal Rate&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Breakeven Inflation&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;10Y Breakeven Inflation Rate&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Real Rate&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;10Y Real Rate&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;10-Year Treasury Rates and Breakeven Inflation&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Rate (%)&#39;</span><span class="p">)</span>
@@ -331,13 +318,13 @@ $$</p>
     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">stackplot</span><span class="p">(</span>
         <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
-        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Breakeven_Inflation&#39;</span><span class="p">],</span>
-        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Real_Rate&#39;</span><span class="p">],</span>
-        <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Breakeven Inflation&#39;</span><span class="p">,</span> <span class="s1">&#39;Real Rate&#39;</span><span class="p">],</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Real Rate&#39;</span><span class="p">],</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Breakeven Inflation&#39;</span><span class="p">],</span>
+        <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Real Rate&#39;</span><span class="p">,</span> <span class="s1">&#39;Breakeven Inflation&#39;</span><span class="p">],</span>
         <span class="n">colors</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">],</span>
         <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span>
     <span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Nominal_Rate&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Nominal Rate (Line)&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Nominal Rate&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Nominal Rate (Line)&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Nominal Rate as Sum of Breakeven Inflation and Real Rate&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Rate (%)&#39;</span><span class="p">)</span>
@@ -353,9 +340,9 @@ $$</p>
     <span class="n">custom_dotted</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 
     <span class="c1"># Left y-axis: Nominal, Breakeven, Real</span>
-    <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Nominal_Rate&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Nominal Rate&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">custom_dotted</span><span class="p">)</span>
-    <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Breakeven_Inflation&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Breakeven Inflation&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">custom_dotted</span><span class="p">)</span>
-    <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Real_Rate&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Real Rate&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">custom_dotted</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Nominal Rate&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Nominal Rate&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">custom_dotted</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Breakeven Inflation&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Breakeven Inflation&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">custom_dotted</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Real Rate&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Real Rate&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">custom_dotted</span><span class="p">)</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Rate (%)&#39;</span><span class="p">)</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
     <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">)</span>
@@ -363,7 +350,7 @@ $$</p>
 
     <span class="c1"># Right y-axis: Credit Spread</span>
     <span class="n">ax2</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
-    <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Credit_Spread&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Moody&#39;s Baa Credit Spread&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;purple&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Credit Spread&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Moody&#39;s Baa Credit Spread&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;purple&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
     <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Credit Spread (%)&#39;</span><span class="p">)</span>
     <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">)</span>
 
@@ -371,27 +358,77 @@ $$</p>
     <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
 <span class="c1"># Ejecutar</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">download_and_prepare</span><span class="p">()</span>
-
-<span class="n">plot_rates</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="n">plot_stacked_area</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="n">plot_combined_subplots</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<p>The nominal interest rate represents the stated or face value return that investors receive on their investments, typically quoted without any adjustment for inflation. It reflects the total percentage return promised or paid to investors over a period of time. However, this nominal rate does not reveal the <em>true</em> purchasing power of the returns, since inflation erodes the value of money over time.</p>
+<p>An instrument that represent the Real Risk Free Rate is the Treasury Inflation-Protected Securities (TIPS). TIPS are designed to help investors protect their purchasing power. They pay a real rate of return, since the principal and interest payments are adjusted periodically based on actual inflation rates. In contrast, nominal Treasury securities pay a fixed return that doesn’t adjust for inflation.</p>
+<p>While inflation expectations are not observable, what we can calculate the inflation premium. The inflation premium is the difference between nominal and real rates: how much more investors demand from a debtor when interest rates aren’t inflation protected vs. when they are. This inflation premium is mostly the result of inflation expectations (but also captures the inflation risk premium, that is, the uncertainty about this expectation).</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_rates</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/0a9a4901eeb708c1887c99f0d7de465019b2a6c3eee1ef9a143b395f1df22c54.png" src="../../_images/0a9a4901eeb708c1887c99f0d7de465019b2a6c3eee1ef9a143b395f1df22c54.png" />
-<img alt="../../_images/2334111fe4adba88ea383a1712bd2a4e87ee54cbf914a14fd6494775fc044a5a.png" src="../../_images/2334111fe4adba88ea383a1712bd2a4e87ee54cbf914a14fd6494775fc044a5a.png" />
-<img alt="../../_images/8ee180bb1bdb795907c1377e226f630abcbad0cac2eef3fd12dea9813441619d.png" src="../../_images/8ee180bb1bdb795907c1377e226f630abcbad0cac2eef3fd12dea9813441619d.png" />
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Figure size 640x480 with 0 Axes&gt;
+<img alt="../../_images/81cd1c72033a7778936cb2aa89b07656473139f502861ccfaf7434f354058b99.png" src="../../_images/81cd1c72033a7778936cb2aa89b07656473139f502861ccfaf7434f354058b99.png" />
+</div>
+</div>
+<p>This difference, called Breakeven inflation, is also the inflation rate that would equalize returns between a traditional nominal bond and an inflation-protected bond.</p>
+<div class="math notranslate nohighlight">
+\[\text{Breakeven Inflation} = \text{Nominal Rate} - \text{Real Rate}\]</div>
+<p>In practice, we calculate breakeven inflation as the difference between the yield on a nominal Treasury bond and the yield on a TIPS of the same maturity. If actual inflation turns out to be higher than the breakeven inflation rate, TIPS will outperform nominal Treasuries, since their payments adjust upwards with realized inflation.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_stacked_area</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="../../_images/7592bda7cc05381da9af36376f5dc02d10e5930012d98a7734135a330c08de3b.png" src="../../_images/7592bda7cc05381da9af36376f5dc02d10e5930012d98a7734135a330c08de3b.png" />
+</div>
+</div>
+<p>Looking at historical data, nominal rates and real rates have fluctuated significantly over time. In recent years, both have trended upwards. A key contributing factor to this rise has been persistently large government deficits, which can exert upward pressure on yields due to increased supply of government debt and potential concerns about inflation. This dynamic has led investors to demand higher compensation, both in nominal terms and increasingly in real terms, to hold government securities.</p>
+<p>In summary, while the nominal rate is the headline figure often cited, understanding the real rate and breakeven inflation is essential for evaluating the true economic return on investments, especially in inflationary environments.</p>
+</section>
+<section id="credit-spread">
+<h2>Credit Spread<a class="headerlink" href="#credit-spread" title="Link to this heading"></a></h2>
+<p>The credit spread refers to the difference in yield between a corporate bond (or any non-government security) and a comparable maturity risk-free government bond, such as a U.S. Treasury. This spread compensates investors for taking on credit risk, which is the possibility that the issuer might default on its payments. The yield on a corporate bond is therefore composed of two main parts:</p>
+<div class="math notranslate nohighlight">
+\[\text{Nominal Yield on Corporate Bond} = \text{Risk-Free Nominal Rate} + \text{Credit Spread}\]</div>
+<p>In this relationship, the risk-free nominal rate reflects the return on government bonds, while the credit spread represents the additional compensation investors require for bearing the risk of default. As credit conditions deteriorate or investors become more risk-averse, credit spreads tend to widen. Conversely, when economic conditions improve or investor appetite for risk increases, credit spreads typically narrow.</p>
+<p>The Yield on Corporate Bond are nominal: their cash flows are fixed in nominal terms and do not adjust for inflation. However, inflation expectations can indirectly influence credit spreads. For example, if investors expect high inflation to pressure corporate profits or tighten financial conditions, credit spreads may widen to compensate for the increased risk.</p>
+<p>In summary, credit spreads are an important component of nominal yields, reflecting credit risk, while real rates provide insight into inflation-adjusted returns. All three—nominal rates, real rates, and credit spreads—interact to reflect broader financial conditions, inflation expectations, and risk perceptions in the bond market.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span> <span class="o">=</span> <span class="n">plot_combined_subplots</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="../../_images/d0e48f7b899871cd017a18e296dff77b5562b761cbb188885d30c9a1d24c0274.png" src="../../_images/d0e48f7b899871cd017a18e296dff77b5562b761cbb188885d30c9a1d24c0274.png" />
 </div>
 </div>
 </section>
