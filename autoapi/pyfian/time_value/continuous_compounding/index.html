@@ -114,10 +114,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.continuous_compounding.present_value_continuous" title="pyfian.time_value.continuous_compounding.present_value_continuous"><code class="xref py py-obj docutils literal notranslate"><span class="pre">present_value_continuous</span></code></a>(→ float)</p></td>
 <td><p>Compute the present value with continuous compounding.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.continuous_compounding.effective_annual_rate_continuous" title="pyfian.time_value.continuous_compounding.effective_annual_rate_continuous"><code class="xref py py-obj docutils literal notranslate"><span class="pre">effective_annual_rate_continuous</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.continuous_compounding.continuous_to_effective_annual_rate" title="pyfian.time_value.continuous_compounding.continuous_to_effective_annual_rate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">continuous_to_effective_annual_rate</span></code></a>(→ float)</p></td>
 <td><p>Convert a continuously compounded rate to an effective annual rate.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.continuous_compounding.continuous_rate_from_effective" title="pyfian.time_value.continuous_compounding.continuous_rate_from_effective"><code class="xref py py-obj docutils literal notranslate"><span class="pre">continuous_rate_from_effective</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.continuous_compounding.effective_to_continuous_rate" title="pyfian.time_value.continuous_compounding.effective_to_continuous_rate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">effective_to_continuous_rate</span></code></a>(→ float)</p></td>
 <td><p>Convert an effective annual rate to a continuously compounded rate.</p></td>
 </tr>
 </tbody>
@@ -178,8 +178,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyfian.time_value.continuous_compounding.effective_annual_rate_continuous">
-<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.continuous_compounding.</span></span><span class="sig-name descname"><span class="pre">effective_annual_rate_continuous</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/continuous_compounding.html#effective_annual_rate_continuous"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.continuous_compounding.effective_annual_rate_continuous" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pyfian.time_value.continuous_compounding.continuous_to_effective_annual_rate">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.continuous_compounding.</span></span><span class="sig-name descname"><span class="pre">continuous_to_effective_annual_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/continuous_compounding.html#continuous_to_effective_annual_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.continuous_compounding.continuous_to_effective_annual_rate" title="Link to this definition"></a></dt>
 <dd><p>Convert a continuously compounded rate to an effective annual rate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -200,8 +200,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pyfian.time_value.continuous_compounding.continuous_rate_from_effective">
-<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.continuous_compounding.</span></span><span class="sig-name descname"><span class="pre">continuous_rate_from_effective</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">effective_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/continuous_compounding.html#continuous_rate_from_effective"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.continuous_compounding.continuous_rate_from_effective" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="pyfian.time_value.continuous_compounding.effective_to_continuous_rate">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.continuous_compounding.</span></span><span class="sig-name descname"><span class="pre">effective_to_continuous_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">effective_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/continuous_compounding.html#effective_to_continuous_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.continuous_compounding.effective_to_continuous_rate" title="Link to this definition"></a></dt>
 <dd><p>Convert an effective annual rate to a continuously compounded rate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

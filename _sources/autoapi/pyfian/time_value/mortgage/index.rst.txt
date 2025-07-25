@@ -4,14 +4,6 @@ pyfian.time_value.mortgage
 .. py:module:: pyfian.time_value.mortgage
 
 
-Attributes
-----------
-
-.. autoapisummary::
-
-   pyfian.time_value.mortgage.df
-
-
 Functions
 ---------
 
@@ -25,7 +17,7 @@ Functions
 Module Contents
 ---------------
 
-.. py:function:: calculate_payment(principal: float, annual_rate: float, term_months: int, payment_interval_months: int) -> float
+.. py:function:: calculate_payment(principal: float, annual_rate: float, term_months: int, payment_interval_months: int = 1) -> float
 
    Calculate the fixed payment per payment period for a mortgage.
 
@@ -39,8 +31,9 @@ Module Contents
    :type annual_rate: float
    :param term_months: The total loan term expressed in months.
    :type term_months: int
-   :param payment_interval_months: The number of months between each payment (e.g., 1 for monthly).
-   :type payment_interval_months: int
+   :param payment_interval_months: The number of months between payments (default is 1 for monthly payments).
+                                   If None, defaults to 1 (monthly payments).
+   :type payment_interval_months: int, optional
 
    :returns: The fixed payment amount due each payment period.
    :rtype: float
@@ -82,12 +75,12 @@ Module Contents
    1       2   954.83   665.71     289.12          199422.72
 
 
-.. py:function:: mortgage_cash_flows(principal_balance: float, annual_rate: float, term_months: int, payment_interval_months: int = 1) -> pandas.DataFrame
+.. py:function:: mortgage_cash_flows(principal: float, annual_rate: float, term_months: int, payment_interval_months: int = 1) -> pandas.DataFrame
 
    Calculate mortgage cash flows (amortization schedule).
 
-   :param principal_balance: The loan principal amount.
-   :type principal_balance: float
+   :param principal: The loan principal amount.
+   :type principal: float
    :param annual_rate: Annual nominal interest rate (decimal).
    :type annual_rate: float
    :param term_months: Loan term in months.
@@ -109,6 +102,4 @@ Module Contents
    0       1   18182.95   666.67   17516.28           182483.72
    ...
 
-
-.. py:data:: df
 

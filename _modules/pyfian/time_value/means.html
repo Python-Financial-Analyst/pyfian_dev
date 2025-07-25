@@ -217,19 +217,23 @@
 
 <div class="viewcode-block" id="harmonic_mean">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/means/index.html#pyfian.time_value.means.harmonic_mean">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">harmonic_mean</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">harmonic_mean</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the harmonic mean of percent returns.</span>
+<span class="sd">    Calculate the harmonic mean of values.</span>
 
 <span class="sd">    The harmonic mean is the reciprocal of the arithmetic mean of the reciprocals.</span>
-<span class="sd">    It is useful for averaging ratios or rates and is less sensitive to large outliers.</span>
+<span class="sd">    In finance, the harmonic mean is especially useful for averaging ratios or rates</span>
+<span class="sd">    such as price/earnings (P/E) ratios, average cost per share in dollar-cost averaging.</span>
+<span class="sd">    It is less sensitive to large outliers and is appropriate when the data are defined</span>
+<span class="sd">    in relation to some unit (e.g., per share, per year).</span>
+
 <span class="sd">    This function accepts percent returns (e.g., 0.05 for +5%), handles NaNs,</span>
 <span class="sd">    and works with NumPy arrays and pandas Series/DataFrames.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    returns : array-like, pandas.Series, or pandas.DataFrame</span>
-<span class="sd">        Input percent returns. For example, a 5% return should be passed as 0.05.</span>
+<span class="sd">    values : array-like, pandas.Series, or pandas.DataFrame</span>
+<span class="sd">        Input values to calculate the harmonic mean.</span>
 <span class="sd">    axis : int, optional</span>
 <span class="sd">        Axis along which the harmonic mean is computed. Default is 0.</span>
 <span class="sd">        Ignored for 1D inputs (Series or 1D arrays).</span>
@@ -242,52 +246,141 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; harmonic_mean([0.05, 0.10, 0.02])</span>
-<span class="sd">    0.0491...</span>
+<span class="sd">    Averaging P/E ratios for three companies:</span>
+<span class="sd">    &gt;&gt;&gt; pe_ratios = [15, 20, 25]</span>
+<span class="sd">    &gt;&gt;&gt; harmonic_mean(pe_ratios)</span>
+<span class="sd">    18.4615...</span>
 
+<span class="sd">    Averaging P/E ratios in a DataFrame:</span>
 <span class="sd">    &gt;&gt;&gt; df = pd.DataFrame({</span>
-<span class="sd">    ...     &#39;Fund A&#39;: [0.05, 0.02, np.nan],</span>
-<span class="sd">    ...     &#39;Fund B&#39;: [0.01, 0.03, 0.04]</span>
+<span class="sd">    ...     &#39;Tech&#39;: [30, 25, 35],</span>
+<span class="sd">    ...     &#39;Finance&#39;: [12, 15, 18]</span>
 <span class="sd">    ... })</span>
 <span class="sd">    &gt;&gt;&gt; harmonic_mean(df)</span>
-<span class="sd">    Fund A    0.0290...</span>
-<span class="sd">    Fund B    0.0222...</span>
+<span class="sd">    Tech       29.5139...</span>
+<span class="sd">    Finance    14.7826...</span>
 <span class="sd">    dtype: float64</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    This function assumes returns are in decimal form (e.g., 0.10 = 10%).</span>
-<span class="sd">    NaN values are ignored. Returns less than or equal to zero will raise a warning</span>
-<span class="sd">    or error since harmonic mean requires positive values.</span>
+<span class="sd">    - The harmonic mean is appropriate for averaging rates or multiples, such as P/E ratios,</span>
+<span class="sd">      or for calculating the average cost per share in dollar-cost averaging strategies.</span>
+<span class="sd">    - It is not appropriate for values that can be zero or negative; all returns must be &gt; -1.</span>
+<span class="sd">    - This function assumes returns are in decimal form (e.g., 0.10 = 10%).</span>
+<span class="sd">    - NaN values are ignored. Returns less than or equal to zero will raise a ValueError.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">returns</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">))</span>
-        <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">))</span>
+        <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
     <span class="p">)</span>
 
-    <span class="n">growth_factors</span> <span class="o">=</span> <span class="n">returns</span> <span class="o">+</span> <span class="mi">1</span>
-
     <span class="k">if</span> <span class="p">(</span>
-        <span class="p">(</span><span class="n">growth_factors</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">growth_factors</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
-        <span class="k">else</span> <span class="p">(</span><span class="n">growth_factors</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+        <span class="p">(</span><span class="n">values</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
+        <span class="k">else</span> <span class="p">(</span><span class="n">values</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
     <span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;All returns must be &gt; -1 (growth factors &gt; 0) for harmonic mean calculation.&quot;</span>
-        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All values must be &gt; 0 for harmonic mean calculation.&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">growth_factors</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="n">growth_factors</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
-        <span class="n">denom</span> <span class="o">=</span> <span class="n">growth_factors</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">rpow</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="n">invert_values</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">values</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">denom</span> <span class="o">=</span> <span class="n">invert_values</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">invert_values</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
         <span class="n">hmean</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="n">denom</span>
-        <span class="k">return</span> <span class="n">hmean</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">hmean</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">growth_factors</span> <span class="o">=</span> <span class="n">growth_factors</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-        <span class="n">growth_factors</span> <span class="o">=</span> <span class="n">growth_factors</span><span class="p">[</span><span class="n">growth_factors</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">growth_factors</span><span class="p">)</span>
-        <span class="n">hmean</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">growth_factors</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">hmean</span> <span class="o">-</span> <span class="mi">1</span></div>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">values</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="n">hmean</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">values</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hmean</span></div>
+
+
+
+<div class="viewcode-block" id="weighted_geometric_mean">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/means/index.html#pyfian.time_value.means.weighted_geometric_mean">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">weighted_geometric_mean</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the weighted geometric mean of percent returns.</span>
+
+<span class="sd">    Useful for time-weighted returns, where each return is associated</span>
+<span class="sd">    with a weight (e.g., time period length).</span>
+<span class="sd">    Returns and weights must be broadcastable to the same shape.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    returns : array-like, pandas.Series, or pandas.DataFrame</span>
+<span class="sd">        Input percent returns (e.g., 0.05 for +5%).</span>
+<span class="sd">    weights : array-like, pandas.Series, or pandas.DataFrame</span>
+<span class="sd">        Weights for each return (e.g., time in years or months).</span>
+<span class="sd">    axis : int, optional</span>
+<span class="sd">        Axis along which the weighted geometric mean is computed. Default is 0.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or pandas.Series</span>
+<span class="sd">        Weighted geometric mean of the percent returns.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; weighted_geometric_mean([0.05, 0.10, 0.02], [1, 2, 1])</span>
+<span class="sd">    0.0669491...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">returns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+    <span class="n">gross_returns</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">returns</span>
+    <span class="n">filter_values</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">gross_returns</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">gross_returns</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All (1 + return) values must be positive.&quot;</span><span class="p">)</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="n">filter_values</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span>
+        <span class="n">weights</span><span class="p">[</span><span class="n">filter_values</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">log_returns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">gross_returns</span><span class="p">)[</span><span class="n">filter_values</span><span class="p">]</span>
+    <span class="n">weighted_log</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">log_returns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">weighted_log</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="weighted_harmonic_mean">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/means/index.html#pyfian.time_value.means.weighted_harmonic_mean">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">weighted_harmonic_mean</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the weighted harmonic mean of values.</span>
+
+<span class="sd">    In finance, this is useful for averaging ratios (e.g., P/E ratios) where each value is weighted</span>
+<span class="sd">    by a relevant factor such as market capitalization.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    values : array-like, pandas.Series, or pandas.DataFrame</span>
+<span class="sd">        Input values to calculate the weighted harmonic mean (e.g., P/E ratios).</span>
+<span class="sd">    weights : array-like, pandas.Series, or pandas.DataFrame</span>
+<span class="sd">        Weights for each value (e.g., market capitalization).</span>
+<span class="sd">    axis : int, optional</span>
+<span class="sd">        Axis along which the weighted harmonic mean is computed. Default is 0.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or pandas.Series</span>
+<span class="sd">        Weighted harmonic mean of the values.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; pe = [15, 20, 25]</span>
+<span class="sd">    &gt;&gt;&gt; caps = [100, 200, 700]</span>
+<span class="sd">    &gt;&gt;&gt; weighted_harmonic_mean(pe, caps)</span>
+<span class="sd">    22.3880597</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">filter_values</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">filter_values</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All values must be &gt; 0 for harmonic mean calculation.&quot;</span><span class="p">)</span>
+    <span class="n">weighted_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">filter_values</span><span class="p">])</span>
+    <span class="n">weighted_reciprocal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span>
+        <span class="n">weights</span><span class="p">[</span><span class="n">filter_values</span><span class="p">]</span> <span class="o">/</span> <span class="n">values</span><span class="p">[</span><span class="n">filter_values</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">weighted_sum</span> <span class="o">/</span> <span class="n">weighted_reciprocal</span></div>
 
 </pre></div>
 

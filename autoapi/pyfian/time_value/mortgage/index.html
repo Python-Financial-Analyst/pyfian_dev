@@ -102,16 +102,6 @@
              
   <section id="module-pyfian.time_value.mortgage">
 <span id="pyfian-time-value-mortgage"></span><h1>pyfian.time_value.mortgage<a class="headerlink" href="#module-pyfian.time_value.mortgage" title="Link to this heading"></a></h1>
-<section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.mortgage.df" title="pyfian.time_value.mortgage.df"><code class="xref py py-obj docutils literal notranslate"><span class="pre">df</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
@@ -132,7 +122,7 @@
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyfian.time_value.mortgage.calculate_payment">
-<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.mortgage.</span></span><span class="sig-name descname"><span class="pre">calculate_payment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">principal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annual_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">term_months</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payment_interval_months</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/mortgage.html#calculate_payment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.mortgage.calculate_payment" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.mortgage.</span></span><span class="sig-name descname"><span class="pre">calculate_payment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">principal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annual_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">term_months</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payment_interval_months</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/mortgage.html#calculate_payment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.mortgage.calculate_payment" title="Link to this definition"></a></dt>
 <dd><p>Calculate the fixed payment per payment period for a mortgage.</p>
 <p>This function computes the payment amount due each payment period given
 the principal, annual interest rate, total loan term in months, and the
@@ -143,7 +133,8 @@ interval between payments in months.</p>
 <li><p><strong>principal</strong> (<em>float</em>) – The original loan amount.</p></li>
 <li><p><strong>annual_rate</strong> (<em>float</em>) – The annual nominal interest rate as a decimal (e.g., 0.04 for 4%).</p></li>
 <li><p><strong>term_months</strong> (<em>int</em>) – The total loan term expressed in months.</p></li>
-<li><p><strong>payment_interval_months</strong> (<em>int</em>) – The number of months between each payment (e.g., 1 for monthly).</p></li>
+<li><p><strong>payment_interval_months</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of months between payments (default is 1 for monthly payments).
+If None, defaults to 1 (monthly payments).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -200,12 +191,12 @@ Principal, Remaining Balance.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyfian.time_value.mortgage.mortgage_cash_flows">
-<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.mortgage.</span></span><span class="sig-name descname"><span class="pre">mortgage_cash_flows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">principal_balance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annual_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">term_months</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payment_interval_months</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.DataFrame</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/mortgage.html#mortgage_cash_flows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.mortgage.mortgage_cash_flows" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.mortgage.</span></span><span class="sig-name descname"><span class="pre">mortgage_cash_flows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">principal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annual_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">term_months</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payment_interval_months</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.DataFrame</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/mortgage.html#mortgage_cash_flows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.mortgage.mortgage_cash_flows" title="Link to this definition"></a></dt>
 <dd><p>Calculate mortgage cash flows (amortization schedule).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>principal_balance</strong> (<em>float</em>) – The loan principal amount.</p></li>
+<li><p><strong>principal</strong> (<em>float</em>) – The loan principal amount.</p></li>
 <li><p><strong>annual_rate</strong> (<em>float</em>) – Annual nominal interest rate (decimal).</p></li>
 <li><p><strong>term_months</strong> (<em>int</em>) – Loan term in months.</p></li>
 <li><p><strong>payment_interval_months</strong> (<em>int</em><em>, </em><em>optional</em>) – Months between payments (default is 1 = monthly, 3 = quarterly).</p></li>
@@ -231,11 +222,6 @@ Principal, and Remaining Balance.</p>
 </pre></div>
 </div>
 </dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="pyfian.time_value.mortgage.df">
-<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.mortgage.</span></span><span class="sig-name descname"><span class="pre">df</span></span><a class="headerlink" href="#pyfian.time_value.mortgage.df" title="Link to this definition"></a></dt>
-<dd></dd></dl>
 
 </section>
 </section>

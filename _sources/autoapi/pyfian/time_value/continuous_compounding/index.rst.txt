@@ -18,8 +18,8 @@ Functions
 
    pyfian.time_value.continuous_compounding.future_value_continuous
    pyfian.time_value.continuous_compounding.present_value_continuous
-   pyfian.time_value.continuous_compounding.effective_annual_rate_continuous
-   pyfian.time_value.continuous_compounding.continuous_rate_from_effective
+   pyfian.time_value.continuous_compounding.continuous_to_effective_annual_rate
+   pyfian.time_value.continuous_compounding.effective_to_continuous_rate
 
 
 Module Contents
@@ -65,7 +65,7 @@ Module Contents
    1000.0
 
 
-.. py:function:: effective_annual_rate_continuous(rate: float) -> float
+.. py:function:: continuous_to_effective_annual_rate(rate: float) -> float
 
    Convert a continuously compounded rate to an effective annual rate.
 
@@ -81,7 +81,7 @@ Module Contents
    0.05127109637602411
 
 
-.. py:function:: continuous_rate_from_effective(effective_rate: float) -> float
+.. py:function:: effective_to_continuous_rate(effective_rate: float) -> float
 
    Convert an effective annual rate to a continuously compounded rate.
 

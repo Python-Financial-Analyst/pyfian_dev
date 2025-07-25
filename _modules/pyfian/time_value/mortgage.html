@@ -85,7 +85,7 @@
     <span class="n">principal</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">annual_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">term_months</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">payment_interval_months</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">payment_interval_months</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the fixed payment per payment period for a mortgage.</span>
@@ -102,8 +102,9 @@
 <span class="sd">        The annual nominal interest rate as a decimal (e.g., 0.04 for 4%).</span>
 <span class="sd">    term_months : int</span>
 <span class="sd">        The total loan term expressed in months.</span>
-<span class="sd">    payment_interval_months : int</span>
-<span class="sd">        The number of months between each payment (e.g., 1 for monthly).</span>
+<span class="sd">    payment_interval_months : int, optional</span>
+<span class="sd">        The number of months between payments (default is 1 for monthly payments).</span>
+<span class="sd">        If None, defaults to 1 (monthly payments).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -211,7 +212,7 @@
 <div class="viewcode-block" id="mortgage_cash_flows">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/mortgage/index.html#pyfian.time_value.mortgage.mortgage_cash_flows">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mortgage_cash_flows</span><span class="p">(</span>
-    <span class="n">principal_balance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">principal</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">annual_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">term_months</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">payment_interval_months</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -221,7 +222,7 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    principal_balance : float</span>
+<span class="sd">    principal : float</span>
 <span class="sd">        The loan principal amount.</span>
 <span class="sd">    annual_rate : float</span>
 <span class="sd">        Annual nominal interest rate (decimal).</span>
@@ -249,31 +250,27 @@
 <span class="sd">    0       1   18182.95   666.67   17516.28           182483.72</span>
 <span class="sd">    ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">payment_interval_months</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">payment_interval_months</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">if</span> <span class="n">principal_balance</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Principal balance must be greater than zero.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">principal</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Principal must be greater than zero.&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">term_months</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Loan term must be greater than zero months.&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">annual_rate</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Annual interest rate cannot be negative.&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">payment_interval_months</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Payment interval (months) must be greater than zero.&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">generate_amortization_schedule</span><span class="p">(</span>
-        <span class="n">principal_balance</span><span class="p">,</span> <span class="n">annual_rate</span><span class="p">,</span> <span class="n">term_months</span><span class="p">,</span> <span class="n">payment_interval_months</span>
+        <span class="n">principal</span><span class="p">,</span> <span class="n">annual_rate</span><span class="p">,</span> <span class="n">term_months</span><span class="p">,</span> <span class="n">payment_interval_months</span>
     <span class="p">)</span></div>
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">mortgage_cash_flows</span><span class="p">(</span>
-        <span class="n">principal_balance</span><span class="o">=</span><span class="mi">200000</span><span class="p">,</span>
-        <span class="n">annual_rate</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span>
-        <span class="n">term_months</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-        <span class="n">payment_interval_months</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="c1"># if __name__ == &quot;__main__&quot;:</span>
+<span class="c1">#     df = mortgage_cash_flows(</span>
+<span class="c1">#         principal_balance=200000,</span>
+<span class="c1">#         annual_rate=0.04,</span>
+<span class="c1">#         term_months=10,</span>
+<span class="c1">#         payment_interval_months=1,</span>
+<span class="c1">#     )</span>
+<span class="c1">#     print(df.to_string(index=False))</span>
 </pre></div>
 
            </div>
