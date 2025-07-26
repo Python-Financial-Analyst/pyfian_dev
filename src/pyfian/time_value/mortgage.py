@@ -39,10 +39,10 @@ def calculate_payment(
     Examples
     --------
     >>> calculate_payment(200000, 0.04, 360, 1)
-    954.83
+    954.8305909309076
 
     >>> calculate_payment(100000, 0.05, 180, 3)
-    7213.87
+    2378.9930086358786
     """
     if payment_interval_months <= 0:
         raise ValueError("Payment interval (months) must be greater than zero.")
