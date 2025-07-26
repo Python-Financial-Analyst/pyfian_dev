@@ -98,13 +98,13 @@
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <p>The following cell will install the <code class="docutils literal notranslate"><span class="pre">pyfian</span></code> package, which provides tools for financial analysis in Python. This step ensures that all necessary modules are available for the calculations and examples in this notebook.</p>
-<div class="cell tag_hide-input docutils container">
+<div class="cell tag_hide-input tag_hide-output docutils container">
 <details class="admonition hide above-input">
 <summary aria-label="Toggle hidden content">
 <p class="collapsed admonition-title">Show code cell source</p>
 <p class="expanded admonition-title">Hide code cell source</p>
 </summary>
-<div class="cell_input docutils container">
+<div class="cell_input above-output-prompt docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
@@ -124,15 +124,20 @@
 </div>
 </div>
 </details>
+<details class="admonition hide below-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell output</p>
+<p class="expanded admonition-title">Hide code cell output</p>
+</summary>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Installing pandas_datareader...
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting git+https://github.com/pydata/pandas-datareader.git
-  Cloning https://github.com/pydata/pandas-datareader.git to /tmp/pip-req-build-351424vv
+  Cloning https://github.com/pydata/pandas-datareader.git to /tmp/pip-req-build-oqjih383
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Running command git clone --filter=blob:none --quiet https://github.com/pydata/pandas-datareader.git /tmp/pip-req-build-351424vv
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Running command git clone --filter=blob:none --quiet https://github.com/pydata/pandas-datareader.git /tmp/pip-req-build-oqjih383
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Resolved https://github.com/pydata/pandas-datareader.git to commit 4ff62149bb24f72d62874477b6688ddb0fd1f97c
@@ -165,14 +170,16 @@ Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /home/runner/.cache/p
 Requirement already satisfied: certifi&gt;=2017.4.17 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2025.7.14)
 Downloading lxml-6.0.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (5.3 MB)
 ?25l   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">0.0/5.3 MB</span> <span class=" -Color -Color-Red">?</span> eta <span class=" -Color -Color-Cyan">-:--:--</span>
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">5.3/5.3 MB</span> <span class=" -Color -Color-Red">179.8 MB/s</span> eta <span class=" -Color -Color-Cyan">0:00:00</span>
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">5.3/5.3 MB</span> <span class=" -Color -Color-Red">73.8 MB/s</span> eta <span class=" -Color -Color-Cyan">0:00:00</span>
 ?25hBuilding wheels for collected packages: pandas-datareader
   Building wheel for pandas-datareader (pyproject.toml): started
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Building wheel for pandas-datareader (pyproject.toml): finished with status &#39;done&#39;
-  Created wheel for pandas-datareader: filename=pandas_datareader-0.11.0.dev76+g4ff6214-py3-none-any.whl size=114770 sha256=14a5c42a2e09c2c5b5f07fd4cb77016a4b6e6931d2b35319cee16d089553fcb0
-  Stored in directory: /tmp/pip-ephem-wheel-cache-r2pfcb_a/wheels/68/09/2b/66ff2e878a27988531be41d35ba4495de3d8f800ebb5de1c07
+  Created wheel for pandas-datareader: filename=pandas_datareader-0.11.0.dev76+g4ff6214-py3-none-any.whl size=114770 sha256=c454b16cd9ea72945f3bb88ade7198cb366bdcd6408ab55b4c1e0a274b34297b
+  Stored in directory: /tmp/pip-ephem-wheel-cache-vv3d200a/wheels/68/09/2b/66ff2e878a27988531be41d35ba4495de3d8f800ebb5de1c07
 Successfully built pandas-datareader
 Installing collected packages: lxml, pandas-datareader
 ?25l
@@ -185,6 +192,7 @@ Successfully installed lxml-6.0.0 pandas-datareader-0.11.0.dev76+g4ff6214
 </pre></div>
 </div>
 </div>
+</details>
 </div>
 </section>
 <section id="determinants-of-interest-rates">
@@ -381,7 +389,7 @@ r_{\text{nom}} = r^\star + \pi + \text{Default} + \text{Liq} + \text{Mat} + \tex
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/81cd1c72033a7778936cb2aa89b07656473139f502861ccfaf7434f354058b99.png" src="../../_images/81cd1c72033a7778936cb2aa89b07656473139f502861ccfaf7434f354058b99.png" />
+<img alt="../../_images/a8ad50851c8d644a03757ee343d96d2e4777299eb80d03c4bf6a3efdd140443e.png" src="../../_images/a8ad50851c8d644a03757ee343d96d2e4777299eb80d03c4bf6a3efdd140443e.png" />
 </div>
 </div>
 <p>This difference, called Breakeven inflation, is also the inflation rate that would equalize returns between a traditional nominal bond and an inflation-protected bond.</p>
@@ -401,7 +409,7 @@ r_{\text{nom}} = r^\star + \pi + \text{Default} + \text{Liq} + \text{Mat} + \tex
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/7592bda7cc05381da9af36376f5dc02d10e5930012d98a7734135a330c08de3b.png" src="../../_images/7592bda7cc05381da9af36376f5dc02d10e5930012d98a7734135a330c08de3b.png" />
+<img alt="../../_images/1301e5064377420c97fa879406209e566b4f8c287a1fa19c88bcd2cce97263fe.png" src="../../_images/1301e5064377420c97fa879406209e566b4f8c287a1fa19c88bcd2cce97263fe.png" />
 </div>
 </div>
 <p>Looking at historical data, nominal rates and real rates have fluctuated significantly over time. In recent years, both have trended upwards. A key contributing factor to this rise has been persistently large government deficits, which can exert upward pressure on yields due to increased supply of government debt and potential concerns about inflation. This dynamic has led investors to demand higher compensation, both in nominal terms and increasingly in real terms, to hold government securities.</p>
@@ -428,7 +436,7 @@ r_{\text{nom}} = r^\star + \pi + \text{Default} + \text{Liq} + \text{Mat} + \tex
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/d0e48f7b899871cd017a18e296dff77b5562b761cbb188885d30c9a1d24c0274.png" src="../../_images/d0e48f7b899871cd017a18e296dff77b5562b761cbb188885d30c9a1d24c0274.png" />
+<img alt="../../_images/19d617bc9e19f6cb97e02599e4f0aeca9048a937fff6f9aac044b55f62e9b694.png" src="../../_images/19d617bc9e19f6cb97e02599e4f0aeca9048a937fff6f9aac044b55f62e9b694.png" />
 </div>
 </div>
 </section>
