@@ -177,14 +177,14 @@
 and a specified number of payments per year.</p>
 <p>The present value is calculated as:</p>
 <div class="math notranslate nohighlight">
-\[# noqa: E501
-PV = P \times \frac{1 - (1 + r)^{-N}}{r}  # noqa: E501\]</div>
-<dl class="simple">
+\[PV = P \times \frac{1 - (1 + r)^{-N}}{r}\]</div>
+<dl>
 <dt>where:</dt><dd><ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(P\)</span> is the payment per period</p></li>
 <li><p><span class="math notranslate nohighlight">\(r\)</span> is the periodic interest rate (annual_rate / payments_per_year)</p></li>
-<li><p><span class="math notranslate nohighlight">\(N\)</span> is the total number of periods, with <span class="math notranslate nohighlight">\(N = \text{years} \times \text{payments\_per\_year}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(N\)</span> is the total number of periods,</p></li>
 </ul>
+<p>with <span class="math notranslate nohighlight">\(N = \text{years} \times \text{payments_per_year}\)</span></p>
 </dd>
 </dl>
 <p>This function adjusts the interest rate and number of periods
@@ -218,8 +218,8 @@ for non-annual payment frequencies.</p>
 <dd><p>Calculate the present value of a growing annuity.</p>
 <p>The present value is calculated as:</p>
 <div class="math notranslate nohighlight">
-\[# noqa: E501
-PV = P \times \frac{1 - \left(\frac{1 + r}{1 + g}\right)^{-n}}{\left(\frac{1 + r}{1 + g}\right) - 1}  # noqa: E501\]</div>
+\[PV = P \times \frac{1 - \left(\frac{1 + r}{1 + g}\right)^{-n}}
+{\left(\frac{1 + r}{1 + g}\right) - 1}\]</div>
 <dl class="simple">
 <dt>where:</dt><dd><ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(P\)</span> is the payment at time t=0</p></li>

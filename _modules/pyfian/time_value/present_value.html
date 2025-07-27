@@ -132,13 +132,14 @@
 
 
 
-<span class="sd">    .. math::  # noqa: E501</span>
-<span class="sd">        PV = P \times \frac{1 - (1 + r)^{-N}}{r}  # noqa: E501</span>
+<span class="sd">    .. math::</span>
+<span class="sd">        PV = P \times \frac{1 - (1 + r)^{-N}}{r}</span>
 
 <span class="sd">    where:</span>
 <span class="sd">        - :math:`P` is the payment per period</span>
 <span class="sd">        - :math:`r` is the periodic interest rate (annual_rate / payments_per_year)</span>
-<span class="sd">        - :math:`N` is the total number of periods, with :math:`N = \text{years} \times \text{payments\_per\_year}`</span>
+<span class="sd">        - :math:`N` is the total number of periods,</span>
+<span class="sd">        with :math:`N = \text{years} \times \text{payments_per_year}`</span>
 
 <span class="sd">    This function adjusts the interest rate and number of periods</span>
 <span class="sd">    for non-annual payment frequencies.</span>
@@ -181,8 +182,9 @@
 <span class="sd">    The present value is calculated as:</span>
 
 
-<span class="sd">    .. math::  # noqa: E501</span>
-<span class="sd">        PV = P \times \frac{1 - \left(\frac{1 + r}{1 + g}\right)^{-n}}{\left(\frac{1 + r}{1 + g}\right) - 1}  # noqa: E501</span>
+<span class="sd">    .. math::</span>
+<span class="sd">        PV = P \times \frac{1 - \left(\frac{1 + r}{1 + g}\right)^{-n}}</span>
+<span class="sd">        {\left(\frac{1 + r}{1 + g}\right) - 1}</span>
 
 <span class="sd">    where:</span>
 <span class="sd">        - :math:`P` is the payment at time t=0</span>
