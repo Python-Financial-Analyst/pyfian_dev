@@ -11,6 +11,7 @@ def fisher_real_rate(nominal_rate: float, inflation_rate: float) -> float:
 
     Formula
     -------
+
     .. math::
         r_{real} \approx r_{nominal} - r_{inflation}
 
@@ -40,6 +41,7 @@ def fisher_exact_real_rate(nominal_rate: float, inflation_rate: float) -> float:
 
     Formula
     -------
+
     .. math::
         r_{real} = \frac{1 + r_{nominal}}{1 + r_{inflation}} - 1
 

@@ -15,6 +15,7 @@ def calculate_payment(
     interval between payments in months.
 
     The formula used is:
+
     .. math::
         PMT = \frac{P \cdot r}{1 - (1 + r)^{-n}}
     where:

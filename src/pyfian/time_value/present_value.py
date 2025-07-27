@@ -47,8 +47,6 @@ def present_value_annuity_annual(
 
     The present value is calculated as:
 
-
-
     .. math::
         PV = P \times \frac{1 - (1 + r)^{-N}}{r}
 
@@ -94,7 +92,6 @@ def present_value_growing_annuity(
     Calculate the present value of a growing annuity.
 
     The present value is calculated as:
-
 
     .. math::
         PV = P \times \frac{1 - \left(\frac{1 + r}{1 + g}\right)^{-n}}
@@ -202,6 +199,7 @@ def present_value_two_stage_annuity(
     Calculate the present value of a two-stage annuity.
 
     The present value is calculated as:
+
     .. math::
         PV = PV_{\text{stage1}} + PV_{\text{stage2}}
     where:

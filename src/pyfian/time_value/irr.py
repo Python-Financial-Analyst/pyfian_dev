@@ -18,6 +18,7 @@ def npv(rate: float, cash_flows: list[float]) -> float:
 
     The NPV is calculated as the sum of the present values of each cash flow,
     discounted at the specified rate. The formula is:
+
     .. math::
         NPV = \sum_{t=0}^{n} \frac{CF_t}{(1 + r)^t}
     where:
@@ -54,6 +55,7 @@ def irr(
     Estimate the Internal Rate of Return (IRR) using the Newton-Raphson method.
 
     The IRR is the rate that makes the NPV of cash flows equal to zero. The formula is:
+
     .. math::
         0 = \sum_{t=0}^{n} \frac{CF_t}{(1 + IRR)^t}
     where:
@@ -114,6 +116,7 @@ def np_irr(cash_flows: list[float]) -> float:
 
     Formula
     -------
+
     .. math::
         0 = \sum_{t=0}^{n} \frac{CF_t}{(1 + IRR)^t}
     where:
@@ -156,6 +159,7 @@ def xirr_base(
     of the cash flows equal to zero.
 
     The formula is:
+
     .. math::
         0 = \sum_{i=0}^{n} \frac{CF_i}{(1 + IRR)^{\frac{d_i - d_0}{365}}}
     where:
@@ -234,6 +238,7 @@ def xirr(
     of the cash flows equal to zero.
 
     The formula is:
+
     .. math::
         0 = \sum_{i=0}^{n} \frac{CF_i}{(1 + IRR)^{\frac{d_i - d_0}{365}}}
     where:
