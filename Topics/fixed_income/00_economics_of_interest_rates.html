@@ -24,7 +24,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="🧑‍💻 Contributing to Python Financial Analyst" href="../../contributing.html" />
+    <link rel="next" title="Fixed Income Instruments" href="01_fixed_income_instruments.html" />
     <link rel="prev" title="Fixed Income" href="index.html" /> 
 </head>
 
@@ -51,6 +51,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Fixed Income</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Economics of Interest Rates</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#learning-objectives">Learning Objectives</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#determinants-of-interest-rates">Determinants of Interest Rates</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#formula-for-nominal-interest-rates">Formula for Nominal Interest Rates</a></li>
@@ -58,6 +59,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#credit-spread">Credit Spread</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html">Fixed Income Instruments</a></li>
 </ul>
 </li>
 </ul>
@@ -95,6 +97,17 @@
   <p><a class="reference external" href="https://colab.research.google.com/github/Python-Financial-Analyst/pyfian_dev/blob/main/notebooks/fixed_income/00_economics_of_interest_rates.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
 <section class="tex2jax_ignore mathjax_ignore" id="economics-of-interest-rates">
 <h1>Economics of Interest Rates<a class="headerlink" href="#economics-of-interest-rates" title="Link to this heading"></a></h1>
+<section id="learning-objectives">
+<h2>Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading"></a></h2>
+<p>By the end of this notebook, you will be able to:</p>
+<ul class="simple">
+<li><p>Identify and explain the key determinants of interest rates, including real risk-free rate, inflation premium, default risk premium, liquidity premium, maturity premium, and tax premium.</p></li>
+<li><p>Understand and apply the formula for calculating nominal interest rates as the sum of its components.</p></li>
+<li><p>Distinguish between nominal and real interest rates, and explain the significance of breakeven inflation.</p></li>
+<li><p>Retrieve and visualize historical data for nominal rates, real rates, breakeven inflation, and credit spreads using Python.</p></li>
+<li><p>Interpret the relationship between government bond yields, inflation expectations, and credit spreads in the context of financial markets.</p></li>
+</ul>
+</section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <p>The following cell will install the <code class="docutils literal notranslate"><span class="pre">pyfian</span></code> package, which provides tools for financial analysis in Python. This step ensures that all necessary modules are available for the calculations and examples in this notebook.</p>
@@ -113,7 +126,7 @@
     <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;pyfian&quot;</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Installing </span><span class="si">{</span><span class="s2">&quot;pyfian&quot;</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
-    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="s2">&quot;git+https://github.com/Python-Financial-Analyst/pyfian_dev.git&quot;</span><span class="p">])</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="s2">&quot;pyfian&quot;</span><span class="p">])</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;pandas_datareader&quot;</span><span class="p">)</span>
@@ -134,10 +147,10 @@
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting git+https://github.com/pydata/pandas-datareader.git
-  Cloning https://github.com/pydata/pandas-datareader.git to /tmp/pip-req-build-r8bj0xie
+  Cloning https://github.com/pydata/pandas-datareader.git to /tmp/pip-req-build-4y0mybgj
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Running command git clone --filter=blob:none --quiet https://github.com/pydata/pandas-datareader.git /tmp/pip-req-build-r8bj0xie
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Running command git clone --filter=blob:none --quiet https://github.com/pydata/pandas-datareader.git /tmp/pip-req-build-4y0mybgj
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Resolved https://github.com/pydata/pandas-datareader.git to commit 4ff62149bb24f72d62874477b6688ddb0fd1f97c
@@ -170,14 +183,14 @@ Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /home/runner/.cache/p
 Requirement already satisfied: certifi&gt;=2017.4.17 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2025.7.14)
 Downloading lxml-6.0.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (5.3 MB)
 ?25l   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">0.0/5.3 MB</span> <span class=" -Color -Color-Red">?</span> eta <span class=" -Color -Color-Cyan">-:--:--</span>
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">5.3/5.3 MB</span> <span class=" -Color -Color-Red">150.9 MB/s</span> eta <span class=" -Color -Color-Cyan">0:00:00</span>
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">5.3/5.3 MB</span> <span class=" -Color -Color-Red">128.7 MB/s</span> eta <span class=" -Color -Color-Cyan">0:00:00</span>
 ?25hBuilding wheels for collected packages: pandas-datareader
   Building wheel for pandas-datareader (pyproject.toml): started
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Building wheel for pandas-datareader (pyproject.toml): finished with status &#39;done&#39;
-  Created wheel for pandas-datareader: filename=pandas_datareader-0.11.0.dev76+g4ff6214-py3-none-any.whl size=114770 sha256=bb65ea855919efff460cd0d4bf4c8b1b553616461a556ea03a83626bdf92d7d3
-  Stored in directory: /tmp/pip-ephem-wheel-cache-h6jm_okg/wheels/68/09/2b/66ff2e878a27988531be41d35ba4495de3d8f800ebb5de1c07
+  Created wheel for pandas-datareader: filename=pandas_datareader-0.11.0.dev76+g4ff6214-py3-none-any.whl size=114770 sha256=04aa05cca48c415180c78388d19ffee7d1d2868863928ae608ee088a82c14ddd
+  Stored in directory: /tmp/pip-ephem-wheel-cache-lvt6gh4h/wheels/68/09/2b/66ff2e878a27988531be41d35ba4495de3d8f800ebb5de1c07
 Successfully built pandas-datareader
 Installing collected packages: lxml, pandas-datareader
 ?25l
@@ -445,7 +458,7 @@ r_{\text{nom}} = r^\star + \pi + \text{Default} + \text{Liq} + \text{Mat} + \tex
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Fixed Income" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../../contributing.html" class="btn btn-neutral float-right" title="🧑‍💻 Contributing to Python Financial Analyst" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="01_fixed_income_instruments.html" class="btn btn-neutral float-right" title="Fixed Income Instruments" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

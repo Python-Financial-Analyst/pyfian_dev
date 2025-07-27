@@ -1,0 +1,237 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fixed Income Instruments &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="🧑‍💻 Contributing to Python Financial Analyst" href="../../contributing.html" />
+    <link rel="prev" title="Economics of Interest Rates" href="00_economics_of_interest_rates.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Fixed Income</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00_economics_of_interest_rates.html">Economics of Interest Rates</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Fixed Income Instruments</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#learning-objectives">Learning Objectives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bond-terminology-and-structure">Bond Terminology and Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#types-of-bonds">Types of Bonds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cash-flow-patterns">Cash Flow Patterns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#price-conventions">Price Conventions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#introduction-to-yield-concepts-preview">Introduction to Yield Concepts (Preview)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Fixed Income</a></li>
+      <li class="breadcrumb-item active">Fixed Income Instruments</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Topics/fixed_income/01_fixed_income_instruments.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <p><a class="reference external" href="https://colab.research.google.com/github/Python-Financial-Analyst/pyfian_dev/blob/main/notebooks/fixed_income/01_fixed_income_instruments.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+<section class="tex2jax_ignore mathjax_ignore" id="fixed-income-instruments">
+<h1>Fixed Income Instruments<a class="headerlink" href="#fixed-income-instruments" title="Link to this heading"></a></h1>
+<section id="learning-objectives">
+<h2>Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Understand the core structure of a bond</p></li>
+<li><p>Learn different types of fixed income instruments</p></li>
+<li><p>Become familiar with bond terminology and cash flow characteristics</p></li>
+<li><p>Be prepared to advance into bond pricing and valuation</p></li>
+</ul>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>The following cell will install the <code class="docutils literal notranslate"><span class="pre">pyfian</span></code> package, which provides tools for financial analysis in Python. This step ensures that all necessary modules are available for the calculations and examples in this notebook.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;pyfian&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Installing </span><span class="si">{</span><span class="s2">&quot;pyfian&quot;</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="s2">&quot;pyfian&quot;</span><span class="p">])</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;pandas_datareader&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Installing </span><span class="si">{</span><span class="s2">&quot;pandas_datareader&quot;</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="s2">&quot;git+https://github.com/pydata/pandas-datareader.git&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="bond-terminology-and-structure">
+<h2>Bond Terminology and Structure<a class="headerlink" href="#bond-terminology-and-structure" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Face/Par Value</strong>: The amount paid to the holder at maturity.</p></li>
+<li><p><strong>Coupon Rate</strong>: The interest rate paid by the bond (can be fixed or floating).</p></li>
+<li><p><strong>Maturity Date</strong>: The date when the bond’s principal is repaid.</p></li>
+<li><p><strong>Payment Frequency</strong>: How often interest payments are made (annual, semiannual, etc.).</p></li>
+<li><p><strong>Issue Date vs. Settlement Date</strong>: Issue date is when the bond is created; settlement date is when it is purchased.</p></li>
+</ul>
+<p>Fixed income instruments, such as bonds, are debt securities that provide investors with regular interest payments and the return of principal at maturity. The core structure of a bond includes the face or par value (the amount repaid at maturity), the coupon rate (the interest paid to bondholders), the maturity date (when the principal is repaid), and the payment frequency (how often interest is paid). Bonds are issued on a specific issue date and are often purchased on a later settlement date.</p>
+<p>There are various types of bonds, each with unique features. Government bonds are issued by national governments and are generally considered low-risk. Corporate bonds are issued by companies and may offer higher yields to compensate for higher risk. Municipal bonds are issued by local governments and may provide tax advantages.</p>
+<p>Zero-coupon bonds do not pay periodic interest but are sold at a discount and pay the full face value at maturity. Coupon bonds pay regular interest, while callable bonds can be redeemed by the issuer before maturity. Putable bonds allow the holder to force the issuer to repurchase the bond before maturity. Convertible bonds can be exchanged for a predetermined number of shares of the issuing company.</p>
+<p>Bond cash flow patterns vary. Level coupon bonds pay fixed interest at regular intervals. Amortizing bonds pay both interest and part of the principal over time, reducing the outstanding balance. Perpetual bonds pay interest indefinitely and have no maturity date.</p>
+<p>Bond prices are quoted using different conventions. The clean price excludes accrued interest, while the dirty price includes it. Accrued interest is the interest earned since the last payment but not yet paid to the bondholder.</p>
+<p>Yield concepts are fundamental to understanding bond returns. The current yield is calculated as the annual coupon divided by the current price. Yield to maturity (YTM) represents the total return anticipated if the bond is held until maturity, taking into account all coupon payments and the difference between the purchase price and face value.</p>
+</section>
+<section id="types-of-bonds">
+<h2>Types of Bonds<a class="headerlink" href="#types-of-bonds" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Government Bonds</strong>: Issued by national governments (e.g., Treasuries, sovereign bonds).</p></li>
+<li><p><strong>Corporate Bonds</strong>: Issued by companies.</p></li>
+<li><p><strong>Municipal Bonds</strong>: Issued by local governments.</p></li>
+<li><p><strong>Zero-Coupon Bonds</strong>: Pay no periodic interest, sold at a discount.</p></li>
+<li><p><strong>Coupon Bonds</strong>: Pay periodic interest.</p></li>
+<li><p><strong>Callable Bonds</strong>: Can be redeemed by issuer before maturity.</p></li>
+<li><p><strong>Putable Bonds</strong>: Holder can force issuer to repurchase before maturity.</p></li>
+<li><p><strong>Convertible Bonds</strong>: Can be converted into a predetermined number of shares.</p></li>
+</ul>
+</section>
+<section id="cash-flow-patterns">
+<h2>Cash Flow Patterns<a class="headerlink" href="#cash-flow-patterns" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Level Coupon Bonds</strong>: Pay fixed interest at regular intervals.</p></li>
+<li><p><strong>Amortizing Bonds</strong>: Pay both interest and part of principal over time.</p></li>
+<li><p><strong>Perpetual Bonds</strong>: Pay interest forever, no maturity date.</p></li>
+</ul>
+</section>
+<section id="price-conventions">
+<h2>Price Conventions<a class="headerlink" href="#price-conventions" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Clean Price</strong>: Price excluding accrued interest.</p></li>
+<li><p><strong>Dirty Price</strong>: Price including accrued interest.</p></li>
+<li><p><strong>Accrued Interest Calculation</strong>: Interest earned since last payment but not yet paid.</p></li>
+</ul>
+</section>
+<section id="introduction-to-yield-concepts-preview">
+<h2>Introduction to Yield Concepts (Preview)<a class="headerlink" href="#introduction-to-yield-concepts-preview" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Current Yield</strong>: Annual coupon divided by current price.</p></li>
+<li><p><strong>Yield to Maturity (YTM)</strong>: The total return anticipated if the bond is held to maturity (conceptual introduction; details in future classes).</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example: Calculate accrued interest for a bond</span>
+<span class="n">face_value</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">coupon_rate</span> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># 5% annual coupon</span>
+<span class="n">payment_frequency</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># semiannual</span>
+<span class="n">days_since_last_payment</span> <span class="o">=</span> <span class="mi">60</span>
+<span class="n">days_in_period</span> <span class="o">=</span> <span class="mi">182</span>  <span class="c1"># typical for semiannual</span>
+
+<span class="n">accrued_interest</span> <span class="o">=</span> <span class="p">(</span><span class="n">face_value</span> <span class="o">*</span> <span class="n">coupon_rate</span> <span class="o">/</span> <span class="n">payment_frequency</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">days_since_last_payment</span> <span class="o">/</span> <span class="n">days_in_period</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Accrued Interest: $</span><span class="si">{</span><span class="n">accrued_interest</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Accrued Interest: $8.24
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="00_economics_of_interest_rates.html" class="btn btn-neutral float-left" title="Economics of Interest Rates" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../contributing.html" class="btn btn-neutral float-right" title="🧑‍💻 Contributing to Python Financial Analyst" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

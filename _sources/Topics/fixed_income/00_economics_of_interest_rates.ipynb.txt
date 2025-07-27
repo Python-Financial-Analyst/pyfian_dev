@@ -18,10 +18,18 @@
   },
   {
    "cell_type": "markdown",
-   "id": "fe4aed0f",
+   "id": "bbdd4253",
    "metadata": {},
    "source": [
-    "### Installation"
+    "## Learning Objectives\n",
+    "\n",
+    "By the end of this notebook, you will be able to:\n",
+    "\n",
+    "- Identify and explain the key determinants of interest rates, including real risk-free rate, inflation premium, default risk premium, liquidity premium, maturity premium, and tax premium.\n",
+    "- Understand and apply the formula for calculating nominal interest rates as the sum of its components.\n",
+    "- Distinguish between nominal and real interest rates, and explain the significance of breakeven inflation.\n",
+    "- Retrieve and visualize historical data for nominal rates, real rates, breakeven inflation, and credit spreads using Python.\n",
+    "- Interpret the relationship between government bond yields, inflation expectations, and credit spreads in the context of financial markets."
    ]
   },
   {
@@ -29,6 +37,8 @@
    "id": "0b6d8138",
    "metadata": {},
    "source": [
+    "## Installation\n",
+    "\n",
     "The following cell will install the `pyfian` package, which provides tools for financial analysis in Python. This step ensures that all necessary modules are available for the calculations and examples in this notebook."
    ]
   },
@@ -52,7 +62,7 @@
     "    importlib.import_module(\"pyfian\")\n",
     "except ImportError:\n",
     "    print(f\"Installing {\"pyfian\"}...\")\n",
-    "    subprocess.check_call([sys.executable, \"-m\", \"pip\", \"install\", \"git+https://github.com/Python-Financial-Analyst/pyfian_dev.git\"])\n",
+    "    subprocess.check_call([sys.executable, \"-m\", \"pip\", \"install\", \"pyfian\"])\n",
     "\n",
     "try:\n",
     "    importlib.import_module(\"pandas_datareader\")\n",
@@ -66,7 +76,7 @@
    "id": "da91dd4d",
    "metadata": {},
    "source": [
-    "### Determinants of Interest Rates\n",
+    "## Determinants of Interest Rates\n",
     "\n",
     "Interest rates are influenced by several key factors, often referred to as their determinants. Understanding these components helps explain why interest rates vary across different financial instruments and over time:\n",
     "\n",
@@ -90,7 +100,7 @@
    "id": "fbb4633e",
    "metadata": {},
    "source": [
-    "### Formula for Nominal Interest Rates\n",
+    "## Formula for Nominal Interest Rates\n",
     "\n",
     "The nominal interest rate ($r_{nom}$) is calculated as the sum of its key components:\n",
     "\n",
@@ -176,7 +186,7 @@
    "id": "ac56d1b7",
    "metadata": {},
    "source": [
-    "### Real vs Nominal Rates"
+    "## Real vs Nominal Rates"
    ]
   },
   {
@@ -355,7 +365,7 @@
     "\n",
     "In summary, while the nominal rate is the headline figure often cited, understanding the real rate and breakeven inflation is essential for evaluating the true economic return on investments, especially in inflationary environments.\n",
     "\n",
-    "### Credit Spread\n",
+    "## Credit Spread\n",
     "\n",
     "The credit spread refers to the difference in yield between a corporate bond (or any non-government security) and a comparable maturity risk-free government bond, such as a U.S. Treasury. This spread compensates investors for taking on credit risk, which is the possibility that the issuer might default on its payments. The yield on a corporate bond is therefore composed of two main parts:\n",
     "\n",
