@@ -175,6 +175,18 @@
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.present_value.</span></span><span class="sig-name descname"><span class="pre">present_value_annuity_annual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annual_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">years</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payments_per_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/present_value.html#present_value_annuity_annual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.present_value.present_value_annuity_annual" title="Link to this definition"></a></dt>
 <dd><p>Calculate the present value of a fixed annuity with an annual interest rate
 and a specified number of payments per year.</p>
+<p>The present value is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[# noqa: E501
+PV = P \times \frac{1 - (1 + r)^{-N}}{r}  # noqa: E501\]</div>
+<dl class="simple">
+<dt>where:</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P\)</span> is the payment per period</p></li>
+<li><p><span class="math notranslate nohighlight">\(r\)</span> is the periodic interest rate (annual_rate / payments_per_year)</p></li>
+<li><p><span class="math notranslate nohighlight">\(N\)</span> is the total number of periods, with <span class="math notranslate nohighlight">\(N = \text{years} \times \text{payments\_per\_year}\)</span></p></li>
+</ul>
+</dd>
+</dl>
 <p>This function adjusts the interest rate and number of periods
 for non-annual payment frequencies.</p>
 <dl class="field-list simple">
@@ -204,6 +216,19 @@ for non-annual payment frequencies.</p>
 <dt class="sig sig-object py" id="pyfian.time_value.present_value.present_value_growing_annuity">
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.present_value.</span></span><span class="sig-name descname"><span class="pre">present_value_growing_annuity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periods</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">growth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/present_value.html#present_value_growing_annuity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.present_value.present_value_growing_annuity" title="Link to this definition"></a></dt>
 <dd><p>Calculate the present value of a growing annuity.</p>
+<p>The present value is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[# noqa: E501
+PV = P \times \frac{1 - \left(\frac{1 + r}{1 + g}\right)^{-n}}{\left(\frac{1 + r}{1 + g}\right) - 1}  # noqa: E501\]</div>
+<dl class="simple">
+<dt>where:</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P\)</span> is the payment at time t=0</p></li>
+<li><p><span class="math notranslate nohighlight">\(r\)</span> is the interest rate per period</p></li>
+<li><p><span class="math notranslate nohighlight">\(g\)</span> is the growth rate per period</p></li>
+<li><p><span class="math notranslate nohighlight">\(n\)</span> is the total number of periods</p></li>
+</ul>
+</dd>
+</dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <cite>payment</cite> parameter corresponds to the payment at time t=0.
@@ -244,7 +269,7 @@ Growth is applied in the first period as well, so the payment at time t=k is:</p
 <dd><p>Calculate the present value of a growing perpetuity (infinite growing annuity).</p>
 <p>The present value of a growing perpetuity is given by:</p>
 <div class="math notranslate nohighlight">
-\[PV = \frac{P*(1+g)}{r - g}\]</div>
+\[PV = \frac{P \times (1+g)}{r - g}\]</div>
 <dl class="simple">
 <dt>where:</dt><dd><ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(PV\)</span> is the present value</p></li>
@@ -292,6 +317,21 @@ Growth is applied in the first period as well, so the payment at time t=k is:</p
 <dt class="sig sig-object py" id="pyfian.time_value.present_value.present_value_two_stage_annuity">
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.present_value.</span></span><span class="sig-name descname"><span class="pre">present_value_two_stage_annuity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periods1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periods2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/present_value.html#present_value_two_stage_annuity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.present_value.present_value_two_stage_annuity" title="Link to this definition"></a></dt>
 <dd><p>Calculate the present value of a two-stage annuity.</p>
+<p>The present value is calculated as:
+.. math:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PV</span> <span class="o">=</span> <span class="n">PV_</span><span class="p">{</span>\<span class="n">text</span><span class="p">{</span><span class="n">stage1</span><span class="p">}}</span> <span class="o">+</span> <span class="n">PV_</span><span class="p">{</span>\<span class="n">text</span><span class="p">{</span><span class="n">stage2</span><span class="p">}}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>where:</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(PV_{\text{stage1}}\)</span> is the present value of the first stage annuity</p></li>
+<li><p><span class="math notranslate nohighlight">\(PV_{\text{stage2}}\)</span> is the present value of the second stage annuity</p></li>
+</ul>
+</dd>
+</dl>
+<p>The present value of the first stage is calculated using the <cite>present_value_annuity</cite>
+function, and the second stage is calculated using the <cite>present_value_annuity</cite>
+function, discounted back to the present using the interest rate of the first stage.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <cite>payment</cite> parameter corresponds to the payment at time t=0.
@@ -330,6 +370,20 @@ Growth is applied in the first period as well, so the payment at time t=k is:</p
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.present_value.</span></span><span class="sig-name descname"><span class="pre">present_value_two_stage_annuity_perpetuity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periods1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">growth1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">growth2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/present_value.html#present_value_two_stage_annuity_perpetuity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.present_value.present_value_two_stage_annuity_perpetuity" title="Link to this definition"></a></dt>
 <dd><p>Calculate the present value of a two-stage annuity where the first stage
 is a (possibly growing) annuity and the second stage is a (possibly growing) perpetuity.</p>
+<p>The present value is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[PV = PV_{\text{stage1}} + PV_{\text{stage2}}\]</div>
+<dl class="simple">
+<dt>where:</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(PV_{\text{stage1}}\)</span> is the present value of the first stage annuity</p></li>
+<li><p><span class="math notranslate nohighlight">\(PV_{\text{stage2}}\)</span> is the present value of the second stage perpetuity.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The present value of the first stage is calculated using the <cite>present_value_growing_annuity</cite>
+function, and the second stage is calculated using the <cite>present_value_growing_perpetuity</cite>
+function.
+The perpetuity is discounted back to the present using the interest rate of the first stage.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <cite>payment</cite> parameter corresponds to the payment at time t=0.

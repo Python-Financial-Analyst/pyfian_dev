@@ -18,6 +18,9 @@
       <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -117,6 +120,12 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.irr.np_irr" title="pyfian.time_value.irr.np_irr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">np_irr</span></code></a>(→ float)</p></td>
 <td><p>Compute the Internal Rate of Return using numpy-financial's IRR function.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.irr.xirr_base" title="pyfian.time_value.irr.xirr_base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xirr_base</span></code></a>(→ float)</p></td>
+<td><p>Calculate the IRR (Yield) for non-periodic cash flows (XIRR).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.irr.xirr" title="pyfian.time_value.irr.xirr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xirr</span></code></a>(→ float)</p></td>
+<td><p>Calculate the IRR (Yield) for non-periodic cash flows (XIRR).</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -126,6 +135,21 @@
 <dt class="sig sig-object py" id="pyfian.time_value.irr.npv">
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.irr.</span></span><span class="sig-name descname"><span class="pre">npv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cash_flows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/irr.html#npv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.irr.npv" title="Link to this definition"></a></dt>
 <dd><p>Compute the Net Present Value (NPV) for a series of cash flows.</p>
+<p>The NPV is calculated as the sum of the present values of each cash flow,
+discounted at the specified rate. The formula is:
+.. math:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">NPV</span> <span class="o">=</span> \<span class="n">sum_</span><span class="p">{</span><span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> \<span class="n">frac</span><span class="p">{</span><span class="n">CF_t</span><span class="p">}{(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span><span class="o">^</span><span class="n">t</span><span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>where:</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(NPV\)</span> is the net present value</p></li>
+<li><p><span class="math notranslate nohighlight">\(CF_t\)</span> is the cash flow at time <cite>t</cite></p></li>
+<li><p><span class="math notranslate nohighlight">\(r\)</span> is the discount rate</p></li>
+<li><p><span class="math notranslate nohighlight">\(n\)</span> is the total number of periods</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -151,6 +175,21 @@
 <dt class="sig sig-object py" id="pyfian.time_value.irr.irr">
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.irr.</span></span><span class="sig-name descname"><span class="pre">irr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cash_flows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/irr.html#irr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.irr.irr" title="Link to this definition"></a></dt>
 <dd><p>Estimate the Internal Rate of Return (IRR) using the Newton-Raphson method.</p>
+<p>The IRR is the rate that makes the NPV of cash flows equal to zero. The formula is:
+.. math:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="o">=</span> \<span class="n">sum_</span><span class="p">{</span><span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> \<span class="n">frac</span><span class="p">{</span><span class="n">CF_t</span><span class="p">}{(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">IRR</span><span class="p">)</span><span class="o">^</span><span class="n">t</span><span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>where:</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(IRR\)</span> is the internal rate of return</p></li>
+<li><p><span class="math notranslate nohighlight">\(CF_t\)</span> is the cash flow at time <cite>t</cite></p></li>
+<li><p><span class="math notranslate nohighlight">\(n\)</span> is the total number of periods</p></li>
+</ul>
+</dd>
+</dl>
+<p>This function uses the Newton-Raphson method to find the IRR iteratively.
+Convergence is determined by the specified tolerance and maximum iterations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -181,20 +220,160 @@
 <dt class="sig sig-object py" id="pyfian.time_value.irr.np_irr">
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.irr.</span></span><span class="sig-name descname"><span class="pre">np_irr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cash_flows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/irr.html#np_irr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.irr.np_irr" title="Link to this definition"></a></dt>
 <dd><p>Compute the Internal Rate of Return using numpy-financial’s IRR function.</p>
+<p>This function is a wrapper around numpy-financial’s <cite>irr</cite> function,
+which calculates the IRR for a series of cash flows. It is useful for quickly
+obtaining the IRR without manually implementing the calculation.</p>
+<section id="formula">
+<h3>Formula<a class="headerlink" href="#formula" title="Link to this heading"></a></h3>
+<div class="math notranslate nohighlight">
+\[0 = \sum_{t=0}^{n} \frac{CF_t}{(1 + IRR)^t}\]</div>
+<dl class="simple">
+<dt>where:</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(IRR\)</span> is the internal rate of return</p></li>
+<li><p><span class="math notranslate nohighlight">\(CF_t\)</span> is the cash flow at time <cite>t</cite></p></li>
+<li><p><span class="math notranslate nohighlight">\(n\)</span> is the total number of periods</p></li>
+</ul>
+</dd>
+</dl>
+<p>This function uses numpy-financial’s built-in IRR calculation, which is efficient
+and handles various edge cases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">param cash_flows<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Cash flow values, where the index represents the time period.</p>
+</dd>
+<dt class="field-even">type cash_flows<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of float</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Internal Rate of Return as a decimal.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np_irr</span><span class="p">([</span><span class="o">-</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">])</span>
+<span class="go">0.2488833566240709</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.time_value.irr.xirr_base">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.irr.</span></span><span class="sig-name descname"><span class="pre">xirr_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cash_flows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/irr.html#xirr_base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.irr.xirr_base" title="Link to this definition"></a></dt>
+<dd><p>Calculate the IRR (Yield) for non-periodic cash flows (XIRR).</p>
+<p>This function computes the IRR for a series of cash flows that occur at irregular intervals.
+It uses the Newton-Raphson method to find the rate that makes the NPV
+of the cash flows equal to zero.</p>
+<p>The formula is:
+.. math:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="o">=</span> \<span class="n">sum_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> \<span class="n">frac</span><span class="p">{</span><span class="n">CF_i</span><span class="p">}{(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">IRR</span><span class="p">)</span><span class="o">^</span><span class="p">{</span>\<span class="n">frac</span><span class="p">{</span><span class="n">d_i</span> <span class="o">-</span> <span class="n">d_0</span><span class="p">}{</span><span class="mi">365</span><span class="p">}}}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>where:</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(IRR\)</span> is the internal rate of return</p></li>
+<li><p><span class="math notranslate nohighlight">\(CF_i\)</span> is the cash flow at time <cite>i</cite></p></li>
+<li><p><span class="math notranslate nohighlight">\(d_i\)</span> is the date of cash flow <cite>i</cite></p></li>
+<li><p><span class="math notranslate nohighlight">\(d_0\)</span> is the date of the first cash flow</p></li>
+<li><p><span class="math notranslate nohighlight">\(n\)</span> is the total number of cash flows</p></li>
+</ul>
+</dd>
+</dl>
+<p>This function adjusts the cash flows based on the number of days between each cash flow and
+the first cash flow date.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>cash_flows</strong> (<em>list</em><em> of </em><em>float</em>) – Cash flow values, where the index represents the time period.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cash_flows</strong> (<em>Sequence</em><em>[</em><em>float</em><em>]</em>) – Cash flow values, where each value corresponds to a date in <cite>dates</cite>.</p></li>
+<li><p><strong>dates</strong> (<em>Sequence</em><em>[</em><em>datetime</em><em>]</em>) – Dates of each cash flow. Must be the same length as <cite>cash_flows</cite>.</p></li>
+<li><p><strong>guess</strong> (<em>float</em><em>, </em><em>optional</em>) – Initial guess for the IRR (default is 0.1, i.e. 10%).</p></li>
+<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for convergence (default is 1e-6).</p></li>
+<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of iterations (default is 100).</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Internal Rate of Return as a decimal.</p>
+<dd class="field-even"><p>Estimated IRR as a decimal.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the IRR calculation does not converge.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cash_flows</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dates</span> <span class="o">=</span> <span class="p">[</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>         <span class="n">datetime</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2022</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xirr</span><span class="p">(</span><span class="n">cash_flows</span><span class="p">,</span> <span class="n">dates</span><span class="p">)</span>
+<span class="go">0.5831820341312749  # Example output</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.time_value.irr.xirr">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.irr.</span></span><span class="sig-name descname"><span class="pre">xirr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cash_flows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/irr.html#xirr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.irr.xirr" title="Link to this definition"></a></dt>
+<dd><p>Calculate the IRR (Yield) for non-periodic cash flows (XIRR).</p>
+<p>Flexible wrapper for xirr that accepts dict, pandas Series, or separate lists for cash flows
+and dates. This function computes the IRR for a series of cash flows that occur
+at irregular intervals.</p>
+<p>It uses the Newton-Raphson method to find the rate that makes the NPV
+of the cash flows equal to zero.</p>
+<p>The formula is:
+.. math:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="o">=</span> \<span class="n">sum_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> \<span class="n">frac</span><span class="p">{</span><span class="n">CF_i</span><span class="p">}{(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">IRR</span><span class="p">)</span><span class="o">^</span><span class="p">{</span>\<span class="n">frac</span><span class="p">{</span><span class="n">d_i</span> <span class="o">-</span> <span class="n">d_0</span><span class="p">}{</span><span class="mi">365</span><span class="p">}}}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>where:</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(IRR\)</span> is the internal rate of return</p></li>
+<li><p><span class="math notranslate nohighlight">\(CF_i\)</span> is the cash flow at time <cite>i</cite></p></li>
+<li><p><span class="math notranslate nohighlight">\(d_i\)</span> is the date of cash flow <cite>i</cite></p></li>
+<li><p><span class="math notranslate nohighlight">\(d_0\)</span> is the date of the first cash flow</p></li>
+<li><p><span class="math notranslate nohighlight">\(n\)</span> is the total number of cash flows</p></li>
+</ul>
+</dd>
+</dl>
+<p>This function adjusts the cash flows based on the number of days between each cash flow
+and the first cash flow date.
+If <cite>cash_flows</cite> is a dictionary, keys must be dates (datetime or string
+convertible to datetime), and values are cash flows.
+If <cite>cash_flows</cite> is a pandas Series, the index must be dates.
+If <cite>cash_flows</cite> is a list/sequence, <cite>dates</cite> must be provided as a sequence of
+datetime or string.
+If <cite>dates</cite> is not provided, it assumes <cite>cash_flows</cite> is a dictionary or Series
+with dates as keys/index.
+This function handles NaNs and works with NumPy arrays and pandas Series/DataFrames.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cash_flows</strong> (<em>dict</em><em>, </em><em>pandas.Series</em><em>, or </em><em>list/sequence</em><em> of </em><em>floats</em>) – If dict or Series, keys/index must be dates (datetime or string convertible to datetime),
+values are cash flows.
+If list/sequence, must provide <cite>dates</cite> as a sequence of datetime or string.</p></li>
+<li><p><strong>dates</strong> (<em>sequence</em><em> of </em><em>datetime</em><em> or </em><em>string</em><em>, </em><em>optional</em>) – Dates corresponding to cash flows if cash_flows is a sequence.</p></li>
+<li><p><strong>guess</strong> (<em>see xirr</em>)</p></li>
+<li><p><strong>tol</strong> (<em>see xirr</em>)</p></li>
+<li><p><strong>max_iter</strong> (<em>see xirr</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Estimated IRR as a decimal.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np_irr</span><span class="p">([</span><span class="o">-</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">])</span>
-<span class="go">0.2488833566240709</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="o">-</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">],</span>
+<span class="gp">... </span>               <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">([</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2020-06-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2021-01-01&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                                     <span class="s2">&quot;2021-06-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2022-01-01&quot;</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xirr</span><span class="p">(</span><span class="n">cf</span><span class="p">)</span>
+<span class="go">0.5831820341312749  # Example output</span>
 </pre></div>
 </div>
 </dd></dl>

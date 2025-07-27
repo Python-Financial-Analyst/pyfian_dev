@@ -28,6 +28,12 @@ Module Contents
    (e.g., 0.05 for +5%), handles NaNs, and works with NumPy arrays and pandas
    Series/DataFrames.
 
+   The geometric mean is calculated as:
+   .. math::
+       GM = \left(\prod_{i=1}^{n} (1 + r_i)\right)^{\frac{1}{n}} - 1
+
+   where :math:`r_i` are the individual returns.
+
    :param returns: Input percent returns. For example, a 5% return should be passed as 0.05.
    :type returns: array-like, pandas.Series, or pandas.DataFrame
    :param axis: Axis along which the geometric mean is computed. Default is 0.
@@ -71,6 +77,9 @@ Module Contents
    the average return over a period without considering compounding effects.
    This function accepts percent returns (e.g., 0.05 for +5%), handles NaNs,
    and works with NumPy arrays and pandas Series/DataFrames.
+   The arithmetic mean is calculated as:
+   .. math::
+       AM = \frac{1}{n} \sum_{i=1}^{n} r_i
 
    :param returns: Input percent returns. For example, a 5% return should be passed as 0.05.
    :type returns: array-like, pandas.Series, or pandas.DataFrame
@@ -117,6 +126,11 @@ Module Contents
    This function accepts percent returns (e.g., 0.05 for +5%), handles NaNs,
    and works with NumPy arrays and pandas Series/DataFrames.
 
+   The harmonic mean is calculated as:
+   .. math::
+       HM = \frac{n}{\sum_{i=1}^{n} \frac{1}{x_i}}
+   where :math:`x_i` are the individual values.
+
    :param values: Input values to calculate the harmonic mean.
    :type values: array-like, pandas.Series, or pandas.DataFrame
    :param axis: Axis along which the harmonic mean is computed. Default is 0.
@@ -161,6 +175,14 @@ Module Contents
    with a weight (e.g., time period length).
    Returns and weights must be broadcastable to the same shape.
 
+   This function accepts percent returns (e.g., 0.05 for +5%), handles NaNs,
+   and works with NumPy arrays and pandas Series/DataFrames.
+
+   The weighted geometric mean is calculated as:
+   .. math::
+       WGM = \left(\prod_{i=1}^{n} (1 + r_i)^{w_i}\right)^{\frac{1}{\sum w_i}} - 1
+   where :math:`r_i` are the individual returns and :math:`w_i` are the weights.
+
    :param returns: Input percent returns (e.g., 0.05 for +5%).
    :type returns: array-like, pandas.Series, or pandas.DataFrame
    :param weights: Weights for each return (e.g., time in years or months).
@@ -183,6 +205,14 @@ Module Contents
 
    In finance, this is useful for averaging ratios (e.g., P/E ratios) where each value is weighted
    by a relevant factor such as market capitalization.
+
+   This function accepts values (e.g., P/E ratios) and weights (e.g., market capitalization),
+   handles NaNs, and works with NumPy arrays and pandas Series/DataFrames.
+
+   The weighted harmonic mean is calculated as:
+   .. math::
+       WHM = \frac{\sum_{i=1}^{n} w_i}{\sum_{i=1}^{n} \frac{w_i}{x_i}}
+   where :math:`x_i` are the individual values and :math:`w_i` are the weights.
 
    :param values: Input values to calculate the weighted harmonic mean (e.g., P/E ratios).
    :type values: array-like, pandas.Series, or pandas.DataFrame

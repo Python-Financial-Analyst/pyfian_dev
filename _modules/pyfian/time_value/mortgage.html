@@ -87,12 +87,24 @@
     <span class="n">term_months</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">payment_interval_months</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the fixed payment per payment period for a mortgage.</span>
 
 <span class="sd">    This function computes the payment amount due each payment period given</span>
 <span class="sd">    the principal, annual interest rate, total loan term in months, and the</span>
 <span class="sd">    interval between payments in months.</span>
+
+<span class="sd">    The formula used is:</span>
+<span class="sd">    .. math::</span>
+<span class="sd">        PMT = \frac{P \cdot r}{1 - (1 + r)^{-n}}</span>
+<span class="sd">    where:</span>
+<span class="sd">        - :math:`PMT` is the payment amount per period</span>
+<span class="sd">        - :math:`P` is the principal loan amount</span>
+<span class="sd">        - :math:`r` is the periodic interest rate. This is calculated as the annual rate</span>
+<span class="sd">        divided by the number of payments per year.</span>
+<span class="sd">        - :math:`n` is the total number of payments</span>
+<span class="sd">    This function handles cases where the payment interval is not monthly,</span>
+<span class="sd">    adjusting the interest rate and number of payments accordingly.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -219,6 +231,14 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate mortgage cash flows (amortization schedule).</span>
+
+<span class="sd">    This function generates a DataFrame containing the amortization schedule</span>
+<span class="sd">    for a mortgage loan, including the payment amount, interest, principal,</span>
+<span class="sd">    and remaining balance for each period.</span>
+
+<span class="sd">    The schedule is generated using the `generate_amortization_schedule` function,</span>
+<span class="sd">    which calculates the fixed payment per period and breaks down each payment</span>
+<span class="sd">    into interest and principal components.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>

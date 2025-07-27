@@ -18,6 +18,9 @@
       <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -127,6 +130,23 @@
 <p>This function computes the payment amount due each payment period given
 the principal, annual interest rate, total loan term in months, and the
 interval between payments in months.</p>
+<p>The formula used is:
+.. math:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PMT</span> <span class="o">=</span> \<span class="n">frac</span><span class="p">{</span><span class="n">P</span> \<span class="n">cdot</span> <span class="n">r</span><span class="p">}{</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span><span class="o">^</span><span class="p">{</span><span class="o">-</span><span class="n">n</span><span class="p">}}</span>
+</pre></div>
+</div>
+<dl>
+<dt>where:</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(PMT\)</span> is the payment amount per period</p></li>
+<li><p><span class="math notranslate nohighlight">\(P\)</span> is the principal loan amount</p></li>
+<li><p><span class="math notranslate nohighlight">\(r\)</span> is the periodic interest rate. This is calculated as the annual rate</p></li>
+</ul>
+<p>divided by the number of payments per year.
+- <span class="math notranslate nohighlight">\(n\)</span> is the total number of payments</p>
+</dd>
+</dl>
+<p>This function handles cases where the payment interval is not monthly,
+adjusting the interest rate and number of payments accordingly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -193,6 +213,12 @@ Principal, Remaining Balance.</p>
 <dt class="sig sig-object py" id="pyfian.time_value.mortgage.mortgage_cash_flows">
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.mortgage.</span></span><span class="sig-name descname"><span class="pre">mortgage_cash_flows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">principal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annual_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">term_months</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payment_interval_months</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.DataFrame</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/mortgage.html#mortgage_cash_flows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.mortgage.mortgage_cash_flows" title="Link to this definition"></a></dt>
 <dd><p>Calculate mortgage cash flows (amortization schedule).</p>
+<p>This function generates a DataFrame containing the amortization schedule
+for a mortgage loan, including the payment amount, interest, principal,
+and remaining balance for each period.</p>
+<p>The schedule is generated using the <cite>generate_amortization_schedule</cite> function,
+which calculates the fixed payment per period and breaks down each payment
+into interest and principal components.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

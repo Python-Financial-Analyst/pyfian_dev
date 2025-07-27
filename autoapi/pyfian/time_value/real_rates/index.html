@@ -18,6 +18,9 @@
       <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -123,18 +126,28 @@
 <dt class="sig sig-object py" id="pyfian.time_value.real_rates.fisher_real_rate">
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.real_rates.</span></span><span class="sig-name descname"><span class="pre">fisher_real_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nominal_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inflation_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/real_rates.html#fisher_real_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.real_rates.fisher_real_rate" title="Link to this definition"></a></dt>
 <dd><p>Compute the real interest rate using the approximate Fisher equation.</p>
+<section id="formula">
+<h3>Formula<a class="headerlink" href="#formula" title="Link to this heading"></a></h3>
+<div class="math notranslate nohighlight">
+\[r_{real} \approx r_{nominal} - r_{inflation}\]</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>nominal_rate</strong> (<em>float</em>) – Nominal interest rate as a decimal (e.g., 0.05 for 5%).</p></li>
-<li><p><strong>inflation_rate</strong> (<em>float</em>) – Expected inflation rate as a decimal (e.g., 0.02 for 2%).</p></li>
-</ul>
+<dt class="field-odd">param nominal_rate<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Nominal interest rate as a decimal (e.g., 0.05 for 5%).</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Approximate real interest rate as a decimal.</p>
+<dt class="field-even">type nominal_rate<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
+<dt class="field-odd">param inflation_rate<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Expected inflation rate as a decimal (e.g., 0.02 for 2%).</p>
+</dd>
+<dt class="field-even">type inflation_rate<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Approximate real interest rate as a decimal.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -142,24 +155,35 @@
 <span class="go">0.03</span>
 </pre></div>
 </div>
+</section>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyfian.time_value.real_rates.fisher_exact_real_rate">
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.real_rates.</span></span><span class="sig-name descname"><span class="pre">fisher_exact_real_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nominal_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inflation_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/real_rates.html#fisher_exact_real_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.real_rates.fisher_exact_real_rate" title="Link to this definition"></a></dt>
 <dd><p>Compute the real interest rate using the exact Fisher equation.</p>
+<section id="id1">
+<h3>Formula<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<div class="math notranslate nohighlight">
+\[r_{real} = \frac{1 + r_{nominal}}{1 + r_{inflation}} - 1\]</div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>nominal_rate</strong> (<em>float</em>) – Nominal interest rate as a decimal.</p></li>
-<li><p><strong>inflation_rate</strong> (<em>float</em>) – Expected inflation rate as a decimal.</p></li>
-</ul>
+<dt class="field-odd">param nominal_rate<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Nominal interest rate as a decimal.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Exact real interest rate as a decimal.</p>
+<dt class="field-even">type nominal_rate<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
+<dt class="field-odd">param inflation_rate<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Expected inflation rate as a decimal.</p>
+</dd>
+<dt class="field-even">type inflation_rate<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Exact real interest rate as a decimal.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -167,6 +191,7 @@
 <span class="go">0.029412</span>
 </pre></div>
 </div>
+</section>
 </dd></dl>
 
 </section>

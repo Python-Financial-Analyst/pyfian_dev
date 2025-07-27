@@ -18,6 +18,9 @@
       <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -134,6 +137,12 @@
 because it accounts for compounding. This function accepts percent returns
 (e.g., 0.05 for +5%), handles NaNs, and works with NumPy arrays and pandas
 Series/DataFrames.</p>
+<p>The geometric mean is calculated as:
+.. math:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GM</span> <span class="o">=</span> \<span class="n">left</span><span class="p">(</span>\<span class="n">prod_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">r_i</span><span class="p">)</span>\<span class="n">right</span><span class="p">)</span><span class="o">^</span><span class="p">{</span>\<span class="n">frac</span><span class="p">{</span><span class="mi">1</span><span class="p">}{</span><span class="n">n</span><span class="p">}}</span> <span class="o">-</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(r_i\)</span> are the individual returns.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -183,7 +192,12 @@ NaN values are ignored.</p>
 <p>The arithmetic mean is a simple average of returns, useful for understanding
 the average return over a period without considering compounding effects.
 This function accepts percent returns (e.g., 0.05 for +5%), handles NaNs,
-and works with NumPy arrays and pandas Series/DataFrames.</p>
+and works with NumPy arrays and pandas Series/DataFrames.
+The arithmetic mean is calculated as:
+.. math:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AM</span> <span class="o">=</span> \<span class="n">frac</span><span class="p">{</span><span class="mi">1</span><span class="p">}{</span><span class="n">n</span><span class="p">}</span> \<span class="n">sum_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> <span class="n">r_i</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -233,6 +247,12 @@ It is less sensitive to large outliers and is appropriate when the data are defi
 in relation to some unit (e.g., per share, per year).</p>
 <p>This function accepts percent returns (e.g., 0.05 for +5%), handles NaNs,
 and works with NumPy arrays and pandas Series/DataFrames.</p>
+<p>The harmonic mean is calculated as:
+.. math:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">HM</span> <span class="o">=</span> \<span class="n">frac</span><span class="p">{</span><span class="n">n</span><span class="p">}{</span>\<span class="n">sum_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> \<span class="n">frac</span><span class="p">{</span><span class="mi">1</span><span class="p">}{</span><span class="n">x_i</span><span class="p">}}</span>
+</pre></div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(x_i\)</span> are the individual values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -280,6 +300,14 @@ or for calculating the average cost per share in dollar-cost averaging strategie
 <p>Useful for time-weighted returns, where each return is associated
 with a weight (e.g., time period length).
 Returns and weights must be broadcastable to the same shape.</p>
+<p>This function accepts percent returns (e.g., 0.05 for +5%), handles NaNs,
+and works with NumPy arrays and pandas Series/DataFrames.</p>
+<p>The weighted geometric mean is calculated as:
+.. math:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">WGM</span> <span class="o">=</span> \<span class="n">left</span><span class="p">(</span>\<span class="n">prod_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">r_i</span><span class="p">)</span><span class="o">^</span><span class="p">{</span><span class="n">w_i</span><span class="p">}</span>\<span class="n">right</span><span class="p">)</span><span class="o">^</span><span class="p">{</span>\<span class="n">frac</span><span class="p">{</span><span class="mi">1</span><span class="p">}{</span>\<span class="nb">sum</span> <span class="n">w_i</span><span class="p">}}</span> <span class="o">-</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(r_i\)</span> are the individual returns and <span class="math notranslate nohighlight">\(w_i\)</span> are the weights.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -308,6 +336,14 @@ Returns and weights must be broadcastable to the same shape.</p>
 <dd><p>Calculate the weighted harmonic mean of values.</p>
 <p>In finance, this is useful for averaging ratios (e.g., P/E ratios) where each value is weighted
 by a relevant factor such as market capitalization.</p>
+<p>This function accepts values (e.g., P/E ratios) and weights (e.g., market capitalization),
+handles NaNs, and works with NumPy arrays and pandas Series/DataFrames.</p>
+<p>The weighted harmonic mean is calculated as:
+.. math:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">WHM</span> <span class="o">=</span> \<span class="n">frac</span><span class="p">{</span>\<span class="n">sum_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> <span class="n">w_i</span><span class="p">}{</span>\<span class="n">sum_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> \<span class="n">frac</span><span class="p">{</span><span class="n">w_i</span><span class="p">}{</span><span class="n">x_i</span><span class="p">}}</span>
+</pre></div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(x_i\)</span> are the individual values and <span class="math notranslate nohighlight">\(w_i\)</span> are the weights.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
