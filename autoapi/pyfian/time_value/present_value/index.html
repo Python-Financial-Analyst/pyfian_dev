@@ -317,11 +317,9 @@ Growth is applied in the first period as well, so the payment at time t=k is:</p
 <dt class="sig sig-object py" id="pyfian.time_value.present_value.present_value_two_stage_annuity">
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.present_value.</span></span><span class="sig-name descname"><span class="pre">present_value_two_stage_annuity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periods1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periods2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/present_value.html#present_value_two_stage_annuity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.present_value.present_value_two_stage_annuity" title="Link to this definition"></a></dt>
 <dd><p>Calculate the present value of a two-stage annuity.</p>
-<p>The present value is calculated as:
-.. math:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PV</span> <span class="o">=</span> <span class="n">PV_</span><span class="p">{</span>\<span class="n">text</span><span class="p">{</span><span class="n">stage1</span><span class="p">}}</span> <span class="o">+</span> <span class="n">PV_</span><span class="p">{</span>\<span class="n">text</span><span class="p">{</span><span class="n">stage2</span><span class="p">}}</span>
-</pre></div>
-</div>
+<p>The present value is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[PV = PV_{\text{stage1}} + PV_{\text{stage2}}\]</div>
 <dl class="simple">
 <dt>where:</dt><dd><ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(PV_{\text{stage1}}\)</span> is the present value of the first stage annuity</p></li>

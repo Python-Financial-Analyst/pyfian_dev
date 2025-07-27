@@ -29,6 +29,7 @@ Module Contents
 
    Formula
    -------
+
    .. math::
        r_{real} \approx r_{nominal} - r_{inflation}
 
@@ -52,6 +53,7 @@ Module Contents
 
    Formula
    -------
+
    .. math::
        r_{real} = \frac{1 + r_{nominal}}{1 + r_{inflation}} - 1
 

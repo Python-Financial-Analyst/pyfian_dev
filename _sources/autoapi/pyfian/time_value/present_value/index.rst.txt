@@ -58,8 +58,6 @@ Module Contents
 
    The present value is calculated as:
 
-
-
    .. math::
        PV = P \times \frac{1 - (1 + r)^{-N}}{r}
 
@@ -95,7 +93,6 @@ Module Contents
    Calculate the present value of a growing annuity.
 
    The present value is calculated as:
-
 
    .. math::
        PV = P \times \frac{1 - \left(\frac{1 + r}{1 + g}\right)^{-n}}
@@ -179,6 +176,7 @@ Module Contents
    Calculate the present value of a two-stage annuity.
 
    The present value is calculated as:
+
    .. math::
        PV = PV_{\text{stage1}} + PV_{\text{stage2}}
    where:

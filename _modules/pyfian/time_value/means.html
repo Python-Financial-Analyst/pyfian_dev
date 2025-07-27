@@ -92,6 +92,7 @@
 <span class="sd">    Series/DataFrames.</span>
 
 <span class="sd">    The geometric mean is calculated as:</span>
+
 <span class="sd">    .. math::</span>
 <span class="sd">        GM = \left(\prod_{i=1}^{n} (1 + r_i)\right)^{\frac{1}{n}} - 1</span>
 
@@ -173,6 +174,7 @@
 <span class="sd">    This function accepts percent returns (e.g., 0.05 for +5%), handles NaNs,</span>
 <span class="sd">    and works with NumPy arrays and pandas Series/DataFrames.</span>
 <span class="sd">    The arithmetic mean is calculated as:</span>
+
 <span class="sd">    .. math::</span>
 <span class="sd">        AM = \frac{1}{n} \sum_{i=1}^{n} r_i</span>
 
@@ -240,6 +242,7 @@
 <span class="sd">    and works with NumPy arrays and pandas Series/DataFrames.</span>
 
 <span class="sd">    The harmonic mean is calculated as:</span>
+
 <span class="sd">    .. math::</span>
 <span class="sd">        HM = \frac{n}{\sum_{i=1}^{n} \frac{1}{x_i}}</span>
 <span class="sd">    where :math:`x_i` are the individual values.</span>
@@ -325,6 +328,7 @@
 <span class="sd">    and works with NumPy arrays and pandas Series/DataFrames.</span>
 
 <span class="sd">    The weighted geometric mean is calculated as:</span>
+
 <span class="sd">    .. math::</span>
 <span class="sd">        WGM = \left(\prod_{i=1}^{n} (1 + r_i)^{w_i}\right)^{\frac{1}{\sum w_i}} - 1</span>
 <span class="sd">    where :math:`r_i` are the individual returns and :math:`w_i` are the weights.</span>
@@ -376,6 +380,7 @@
 <span class="sd">    handles NaNs, and works with NumPy arrays and pandas Series/DataFrames.</span>
 
 <span class="sd">    The weighted harmonic mean is calculated as:</span>
+
 <span class="sd">    .. math::</span>
 <span class="sd">        WHM = \frac{\sum_{i=1}^{n} w_i}{\sum_{i=1}^{n} \frac{w_i}{x_i}}</span>
 <span class="sd">    where :math:`x_i` are the individual values and :math:`w_i` are the weights.</span>

@@ -136,11 +136,9 @@
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.irr.</span></span><span class="sig-name descname"><span class="pre">npv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cash_flows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/irr.html#npv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.irr.npv" title="Link to this definition"></a></dt>
 <dd><p>Compute the Net Present Value (NPV) for a series of cash flows.</p>
 <p>The NPV is calculated as the sum of the present values of each cash flow,
-discounted at the specified rate. The formula is:
-.. math:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">NPV</span> <span class="o">=</span> \<span class="n">sum_</span><span class="p">{</span><span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> \<span class="n">frac</span><span class="p">{</span><span class="n">CF_t</span><span class="p">}{(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span><span class="o">^</span><span class="n">t</span><span class="p">}</span>
-</pre></div>
-</div>
+discounted at the specified rate. The formula is:</p>
+<div class="math notranslate nohighlight">
+\[NPV = \sum_{t=0}^{n} \frac{CF_t}{(1 + r)^t}\]</div>
 <dl class="simple">
 <dt>where:</dt><dd><ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(NPV\)</span> is the net present value</p></li>
@@ -175,11 +173,9 @@ discounted at the specified rate. The formula is:
 <dt class="sig sig-object py" id="pyfian.time_value.irr.irr">
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.irr.</span></span><span class="sig-name descname"><span class="pre">irr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cash_flows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/irr.html#irr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.irr.irr" title="Link to this definition"></a></dt>
 <dd><p>Estimate the Internal Rate of Return (IRR) using the Newton-Raphson method.</p>
-<p>The IRR is the rate that makes the NPV of cash flows equal to zero. The formula is:
-.. math:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="o">=</span> \<span class="n">sum_</span><span class="p">{</span><span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> \<span class="n">frac</span><span class="p">{</span><span class="n">CF_t</span><span class="p">}{(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">IRR</span><span class="p">)</span><span class="o">^</span><span class="n">t</span><span class="p">}</span>
-</pre></div>
-</div>
+<p>The IRR is the rate that makes the NPV of cash flows equal to zero. The formula is:</p>
+<div class="math notranslate nohighlight">
+\[0 = \sum_{t=0}^{n} \frac{CF_t}{(1 + IRR)^t}\]</div>
 <dl class="simple">
 <dt>where:</dt><dd><ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(IRR\)</span> is the internal rate of return</p></li>
@@ -266,11 +262,9 @@ and handles various edge cases.</p>
 <p>This function computes the IRR for a series of cash flows that occur at irregular intervals.
 It uses the Newton-Raphson method to find the rate that makes the NPV
 of the cash flows equal to zero.</p>
-<p>The formula is:
-.. math:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="o">=</span> \<span class="n">sum_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> \<span class="n">frac</span><span class="p">{</span><span class="n">CF_i</span><span class="p">}{(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">IRR</span><span class="p">)</span><span class="o">^</span><span class="p">{</span>\<span class="n">frac</span><span class="p">{</span><span class="n">d_i</span> <span class="o">-</span> <span class="n">d_0</span><span class="p">}{</span><span class="mi">365</span><span class="p">}}}</span>
-</pre></div>
-</div>
+<p>The formula is:</p>
+<div class="math notranslate nohighlight">
+\[0 = \sum_{i=0}^{n} \frac{CF_i}{(1 + IRR)^{\frac{d_i - d_0}{365}}}\]</div>
 <dl class="simple">
 <dt>where:</dt><dd><ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(IRR\)</span> is the internal rate of return</p></li>
@@ -323,11 +317,9 @@ and dates. This function computes the IRR for a series of cash flows that occur
 at irregular intervals.</p>
 <p>It uses the Newton-Raphson method to find the rate that makes the NPV
 of the cash flows equal to zero.</p>
-<p>The formula is:
-.. math:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="o">=</span> \<span class="n">sum_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> \<span class="n">frac</span><span class="p">{</span><span class="n">CF_i</span><span class="p">}{(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">IRR</span><span class="p">)</span><span class="o">^</span><span class="p">{</span>\<span class="n">frac</span><span class="p">{</span><span class="n">d_i</span> <span class="o">-</span> <span class="n">d_0</span><span class="p">}{</span><span class="mi">365</span><span class="p">}}}</span>
-</pre></div>
-</div>
+<p>The formula is:</p>
+<div class="math notranslate nohighlight">
+\[0 = \sum_{i=0}^{n} \frac{CF_i}{(1 + IRR)^{\frac{d_i - d_0}{365}}}\]</div>
 <dl class="simple">
 <dt>where:</dt><dd><ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(IRR\)</span> is the internal rate of return</p></li>

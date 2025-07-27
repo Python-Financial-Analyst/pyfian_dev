@@ -137,11 +137,9 @@
 because it accounts for compounding. This function accepts percent returns
 (e.g., 0.05 for +5%), handles NaNs, and works with NumPy arrays and pandas
 Series/DataFrames.</p>
-<p>The geometric mean is calculated as:
-.. math:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GM</span> <span class="o">=</span> \<span class="n">left</span><span class="p">(</span>\<span class="n">prod_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">r_i</span><span class="p">)</span>\<span class="n">right</span><span class="p">)</span><span class="o">^</span><span class="p">{</span>\<span class="n">frac</span><span class="p">{</span><span class="mi">1</span><span class="p">}{</span><span class="n">n</span><span class="p">}}</span> <span class="o">-</span> <span class="mi">1</span>
-</pre></div>
-</div>
+<p>The geometric mean is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[GM = \left(\prod_{i=1}^{n} (1 + r_i)\right)^{\frac{1}{n}} - 1\]</div>
 <p>where <span class="math notranslate nohighlight">\(r_i\)</span> are the individual returns.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -193,11 +191,9 @@ NaN values are ignored.</p>
 the average return over a period without considering compounding effects.
 This function accepts percent returns (e.g., 0.05 for +5%), handles NaNs,
 and works with NumPy arrays and pandas Series/DataFrames.
-The arithmetic mean is calculated as:
-.. math:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AM</span> <span class="o">=</span> \<span class="n">frac</span><span class="p">{</span><span class="mi">1</span><span class="p">}{</span><span class="n">n</span><span class="p">}</span> \<span class="n">sum_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> <span class="n">r_i</span>
-</pre></div>
-</div>
+The arithmetic mean is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[AM = \frac{1}{n} \sum_{i=1}^{n} r_i\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -247,11 +243,9 @@ It is less sensitive to large outliers and is appropriate when the data are defi
 in relation to some unit (e.g., per share, per year).</p>
 <p>This function accepts percent returns (e.g., 0.05 for +5%), handles NaNs,
 and works with NumPy arrays and pandas Series/DataFrames.</p>
-<p>The harmonic mean is calculated as:
-.. math:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">HM</span> <span class="o">=</span> \<span class="n">frac</span><span class="p">{</span><span class="n">n</span><span class="p">}{</span>\<span class="n">sum_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> \<span class="n">frac</span><span class="p">{</span><span class="mi">1</span><span class="p">}{</span><span class="n">x_i</span><span class="p">}}</span>
-</pre></div>
-</div>
+<p>The harmonic mean is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[HM = \frac{n}{\sum_{i=1}^{n} \frac{1}{x_i}}\]</div>
 <p>where <span class="math notranslate nohighlight">\(x_i\)</span> are the individual values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -302,11 +296,9 @@ with a weight (e.g., time period length).
 Returns and weights must be broadcastable to the same shape.</p>
 <p>This function accepts percent returns (e.g., 0.05 for +5%), handles NaNs,
 and works with NumPy arrays and pandas Series/DataFrames.</p>
-<p>The weighted geometric mean is calculated as:
-.. math:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">WGM</span> <span class="o">=</span> \<span class="n">left</span><span class="p">(</span>\<span class="n">prod_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">r_i</span><span class="p">)</span><span class="o">^</span><span class="p">{</span><span class="n">w_i</span><span class="p">}</span>\<span class="n">right</span><span class="p">)</span><span class="o">^</span><span class="p">{</span>\<span class="n">frac</span><span class="p">{</span><span class="mi">1</span><span class="p">}{</span>\<span class="nb">sum</span> <span class="n">w_i</span><span class="p">}}</span> <span class="o">-</span> <span class="mi">1</span>
-</pre></div>
-</div>
+<p>The weighted geometric mean is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[WGM = \left(\prod_{i=1}^{n} (1 + r_i)^{w_i}\right)^{\frac{1}{\sum w_i}} - 1\]</div>
 <p>where <span class="math notranslate nohighlight">\(r_i\)</span> are the individual returns and <span class="math notranslate nohighlight">\(w_i\)</span> are the weights.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -338,11 +330,9 @@ and works with NumPy arrays and pandas Series/DataFrames.</p>
 by a relevant factor such as market capitalization.</p>
 <p>This function accepts values (e.g., P/E ratios) and weights (e.g., market capitalization),
 handles NaNs, and works with NumPy arrays and pandas Series/DataFrames.</p>
-<p>The weighted harmonic mean is calculated as:
-.. math:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">WHM</span> <span class="o">=</span> \<span class="n">frac</span><span class="p">{</span>\<span class="n">sum_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> <span class="n">w_i</span><span class="p">}{</span>\<span class="n">sum_</span><span class="p">{</span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">}</span><span class="o">^</span><span class="p">{</span><span class="n">n</span><span class="p">}</span> \<span class="n">frac</span><span class="p">{</span><span class="n">w_i</span><span class="p">}{</span><span class="n">x_i</span><span class="p">}}</span>
-</pre></div>
-</div>
+<p>The weighted harmonic mean is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[WHM = \frac{\sum_{i=1}^{n} w_i}{\sum_{i=1}^{n} \frac{w_i}{x_i}}\]</div>
 <p>where <span class="math notranslate nohighlight">\(x_i\)</span> are the individual values and <span class="math notranslate nohighlight">\(w_i\)</span> are the weights.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

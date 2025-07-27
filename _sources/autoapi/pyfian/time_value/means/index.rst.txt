@@ -29,6 +29,7 @@ Module Contents
    Series/DataFrames.
 
    The geometric mean is calculated as:
+
    .. math::
        GM = \left(\prod_{i=1}^{n} (1 + r_i)\right)^{\frac{1}{n}} - 1
 
@@ -78,6 +79,7 @@ Module Contents
    This function accepts percent returns (e.g., 0.05 for +5%), handles NaNs,
    and works with NumPy arrays and pandas Series/DataFrames.
    The arithmetic mean is calculated as:
+
    .. math::
        AM = \frac{1}{n} \sum_{i=1}^{n} r_i
 
@@ -127,6 +129,7 @@ Module Contents
    and works with NumPy arrays and pandas Series/DataFrames.
 
    The harmonic mean is calculated as:
+
    .. math::
        HM = \frac{n}{\sum_{i=1}^{n} \frac{1}{x_i}}
    where :math:`x_i` are the individual values.
@@ -179,6 +182,7 @@ Module Contents
    and works with NumPy arrays and pandas Series/DataFrames.
 
    The weighted geometric mean is calculated as:
+
    .. math::
        WGM = \left(\prod_{i=1}^{n} (1 + r_i)^{w_i}\right)^{\frac{1}{\sum w_i}} - 1
    where :math:`r_i` are the individual returns and :math:`w_i` are the weights.
@@ -210,6 +214,7 @@ Module Contents
    handles NaNs, and works with NumPy arrays and pandas Series/DataFrames.
 
    The weighted harmonic mean is calculated as:
+
    .. math::
        WHM = \frac{\sum_{i=1}^{n} w_i}{\sum_{i=1}^{n} \frac{w_i}{x_i}}
    where :math:`x_i` are the individual values and :math:`w_i` are the weights.
