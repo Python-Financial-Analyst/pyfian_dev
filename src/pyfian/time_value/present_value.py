@@ -49,13 +49,14 @@ def present_value_annuity_annual(
 
 
 
-    .. math::  # noqa: E501
-        PV = P \times \frac{1 - (1 + r)^{-N}}{r}  # noqa: E501
+    .. math::
+        PV = P \times \frac{1 - (1 + r)^{-N}}{r}
 
     where:
         - :math:`P` is the payment per period
         - :math:`r` is the periodic interest rate (annual_rate / payments_per_year)
-        - :math:`N` is the total number of periods, with :math:`N = \text{years} \times \text{payments\_per\_year}`
+        - :math:`N` is the total number of periods,
+        with :math:`N = \text{years} \times \text{payments_per_year}`
 
     This function adjusts the interest rate and number of periods
     for non-annual payment frequencies.
@@ -95,8 +96,9 @@ def present_value_growing_annuity(
     The present value is calculated as:
 
 
-    .. math::  # noqa: E501
-        PV = P \times \frac{1 - \left(\frac{1 + r}{1 + g}\right)^{-n}}{\left(\frac{1 + r}{1 + g}\right) - 1}  # noqa: E501
+    .. math::
+        PV = P \times \frac{1 - \left(\frac{1 + r}{1 + g}\right)^{-n}}
+        {\left(\frac{1 + r}{1 + g}\right) - 1}
 
     where:
         - :math:`P` is the payment at time t=0
