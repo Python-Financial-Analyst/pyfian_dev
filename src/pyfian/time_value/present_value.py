@@ -45,6 +45,18 @@ def present_value_annuity_annual(
     Calculate the present value of a fixed annuity with an annual interest rate
     and a specified number of payments per year.
 
+    The present value is calculated as:
+
+
+
+    .. math::  # noqa: E501
+        PV = P \times \frac{1 - (1 + r)^{-N}}{r}  # noqa: E501
+
+    where:
+        - :math:`P` is the payment per period
+        - :math:`r` is the periodic interest rate (annual_rate / payments_per_year)
+        - :math:`N` is the total number of periods, with :math:`N = \text{years} \times \text{payments\_per\_year}`
+
     This function adjusts the interest rate and number of periods
     for non-annual payment frequencies.
 
@@ -77,8 +89,20 @@ def present_value_annuity_annual(
 def present_value_growing_annuity(
     payment: float, rate: float, periods: int, growth: float = 0.0
 ) -> float:
-    """
+    r"""
     Calculate the present value of a growing annuity.
+
+    The present value is calculated as:
+
+
+    .. math::  # noqa: E501
+        PV = P \times \frac{1 - \left(\frac{1 + r}{1 + g}\right)^{-n}}{\left(\frac{1 + r}{1 + g}\right) - 1}  # noqa: E501
+
+    where:
+        - :math:`P` is the payment at time t=0
+        - :math:`r` is the interest rate per period
+        - :math:`g` is the growth rate per period
+        - :math:`n` is the total number of periods
 
     Note
     ----
@@ -122,7 +146,7 @@ def present_value_growing_perpetuity(
     The present value of a growing perpetuity is given by:
 
     .. math::
-        PV = \frac{P*(1+g)}{r - g}
+        PV = \frac{P \times (1+g)}{r - g}
 
     where:
         - :math:`PV` is the present value
@@ -172,8 +196,18 @@ def present_value_growing_perpetuity(
 def present_value_two_stage_annuity(
     payment: float, rate1: float, rate2: float, periods1: int, periods2: int
 ) -> float:
-    """
+    r"""
     Calculate the present value of a two-stage annuity.
+
+    The present value is calculated as:
+    .. math::
+        PV = PV_{\text{stage1}} + PV_{\text{stage2}}
+    where:
+        - :math:`PV_{\text{stage1}}` is the present value of the first stage annuity
+        - :math:`PV_{\text{stage2}}` is the present value of the second stage annuity
+    The present value of the first stage is calculated using the `present_value_annuity`
+    function, and the second stage is calculated using the `present_value_annuity`
+    function, discounted back to the present using the interest rate of the first stage.
 
     Note
     ----
@@ -223,6 +257,18 @@ def present_value_two_stage_annuity_perpetuity(
     r"""
     Calculate the present value of a two-stage annuity where the first stage
     is a (possibly growing) annuity and the second stage is a (possibly growing) perpetuity.
+
+    The present value is calculated as:
+
+    .. math::
+        PV = PV_{\text{stage1}} + PV_{\text{stage2}}
+    where:
+        - :math:`PV_{\text{stage1}}` is the present value of the first stage annuity
+        - :math:`PV_{\text{stage2}}` is the present value of the second stage perpetuity.
+    The present value of the first stage is calculated using the `present_value_growing_annuity`
+    function, and the second stage is calculated using the `present_value_growing_perpetuity`
+    function.
+    The perpetuity is discounted back to the present using the interest rate of the first stage.
 
     Note
     ----

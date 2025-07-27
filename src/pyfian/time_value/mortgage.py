@@ -7,12 +7,24 @@ def calculate_payment(
     term_months: int,
     payment_interval_months: int = 1,
 ) -> float:
-    """
+    r"""
     Calculate the fixed payment per payment period for a mortgage.
 
     This function computes the payment amount due each payment period given
     the principal, annual interest rate, total loan term in months, and the
     interval between payments in months.
+
+    The formula used is:
+    .. math::
+        PMT = \frac{P \cdot r}{1 - (1 + r)^{-n}}
+    where:
+        - :math:`PMT` is the payment amount per period
+        - :math:`P` is the principal loan amount
+        - :math:`r` is the periodic interest rate. This is calculated as the annual rate
+        divided by the number of payments per year.
+        - :math:`n` is the total number of payments
+    This function handles cases where the payment interval is not monthly,
+    adjusting the interest rate and number of payments accordingly.
 
     Parameters
     ----------
@@ -133,6 +145,14 @@ def mortgage_cash_flows(
 ) -> pd.DataFrame:
     """
     Calculate mortgage cash flows (amortization schedule).
+
+    This function generates a DataFrame containing the amortization schedule
+    for a mortgage loan, including the payment amount, interest, principal,
+    and remaining balance for each period.
+
+    The schedule is generated using the `generate_amortization_schedule` function,
+    which calculates the fixed payment per period and breaks down each payment
+    into interest and principal components.
 
     Parameters
     ----------
