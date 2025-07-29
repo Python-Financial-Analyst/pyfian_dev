@@ -76,138 +76,344 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pyfian.time_value.future_value</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Module for calculating future values with different growth assumptions.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.present_value</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">present_value_annuity</span><span class="p">,</span>
+    <span class="n">present_value_growing_annuity</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="future_value_annuity">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/future_value/index.html#pyfian.time_value.future_value.future_value_annuity">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">future_value_annuity</span><span class="p">(</span><span class="n">payment</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">periods</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculates the future value of a series of equal payments with discrete compounding.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the present value of a fixed annuity.</span>
+
+<span class="sd">    The present value of a fixed annuity is given by:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        PV = P \times \frac{1 - (1 + r)^{-n}}{r}</span>
+
+<span class="sd">    where:</span>
+<span class="sd">        - :math:`PV` is the present value</span>
+<span class="sd">        - :math:`P` is the payment per period</span>
+<span class="sd">        - :math:`r` is the interest rate per period</span>
+<span class="sd">        - :math:`n` is the total number of periods</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    payment : float</span>
-<span class="sd">        Amount invested each period (e.g., annually).</span>
+<span class="sd">        The fixed payment amount per period.</span>
 <span class="sd">    rate : float</span>
-<span class="sd">        Interest rate per period (as decimal).</span>
+<span class="sd">        The interest rate per period (as a decimal).</span>
 <span class="sd">    periods : int</span>
-<span class="sd">        Number of periods (e.g., years).</span>
+<span class="sd">        The total number of periods.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
-<span class="sd">        Future value of the investment.</span>
+<span class="sd">        Present value of the fixed annuity.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; future_value_annuity(1000, 0.05, 10)</span>
-<span class="sd">    12577.8925355488  # example value</span>
+<span class="sd">    &gt;&gt;&gt; present_value_annuity(100, 0.05, 10)</span>
+<span class="sd">    772.1734929184818</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">payment</span> <span class="o">*</span> <span class="n">periods</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Future value of an annuity formula</span>
-        <span class="c1"># FV = P * (((1 + r)^n - 1) / r)</span>
-        <span class="c1"># where P is the payment, r is the rate, and n is the number of periods</span>
-        <span class="n">fv</span> <span class="o">=</span> <span class="n">payment</span> <span class="o">*</span> <span class="p">(((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="n">periods</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">rate</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">fv</span></div>
+    <span class="n">pv</span> <span class="o">=</span> <span class="n">present_value_annuity</span><span class="p">(</span><span class="n">payment</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">periods</span><span class="p">)</span>
+    <span class="n">fv</span> <span class="o">=</span> <span class="n">pv</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="n">periods</span>
+    <span class="k">return</span> <span class="n">fv</span></div>
+
+
+
+<div class="viewcode-block" id="future_value_annuity_annual">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/future_value/index.html#pyfian.time_value.future_value.future_value_annuity_annual">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">future_value_annuity_annual</span><span class="p">(</span>
+    <span class="n">payment</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">annual_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">years</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payments_per_year</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the present value of a fixed annuity with an annual interest rate</span>
+<span class="sd">    and a specified number of payments per year.</span>
+
+<span class="sd">    The present value is calculated as:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        PV = P \times \frac{1 - (1 + r)^{-N}}{r}</span>
+
+<span class="sd">    where:</span>
+<span class="sd">        - :math:`P` is the payment per period</span>
+<span class="sd">        - :math:`r` is the periodic interest rate (annual_rate / payments_per_year)</span>
+<span class="sd">        - :math:`N` is the total number of periods,</span>
+<span class="sd">        with :math:`N = \text{years} \times \text{payments_per_year}`</span>
+
+<span class="sd">    This function adjusts the interest rate and number of periods</span>
+<span class="sd">    for non-annual payment frequencies.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    payment : float</span>
+<span class="sd">        The fixed payment amount per period.</span>
+<span class="sd">    annual_rate : float</span>
+<span class="sd">        The annual interest rate (as a decimal).</span>
+<span class="sd">    years : int</span>
+<span class="sd">        The total number of years.</span>
+<span class="sd">    payments_per_year : int</span>
+<span class="sd">        The number of payments per year.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Present value of the fixed annuity.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; present_value_annuity_annual(100, 0.05, 10, 12)</span>
+<span class="sd">    9428.135032823473</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">annual_rate</span> <span class="o">/</span> <span class="n">payments_per_year</span>
+    <span class="n">periods</span> <span class="o">=</span> <span class="n">years</span> <span class="o">*</span> <span class="n">payments_per_year</span>
+    <span class="k">return</span> <span class="n">future_value_annuity</span><span class="p">(</span><span class="n">payment</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">periods</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="future_value_growing_annuity">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/future_value/index.html#pyfian.time_value.future_value.future_value_growing_annuity">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">future_value_growing_annuity</span><span class="p">(</span>
-    <span class="n">payment</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">growth</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">periods</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">payment</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">periods</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">growth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculates the future value of a growing annuity (constant growth in payments).</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the present value of a growing annuity.</span>
+
+<span class="sd">    The present value is calculated as:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        PV = P \times \frac{1 - \left(\frac{1 + r}{1 + g}\right)^{-n}}</span>
+<span class="sd">        {\left(\frac{1 + r}{1 + g}\right) - 1}</span>
+
+<span class="sd">    where:</span>
+<span class="sd">        - :math:`P` is the payment at time t=0</span>
+<span class="sd">        - :math:`r` is the interest rate per period</span>
+<span class="sd">        - :math:`g` is the growth rate per period</span>
+<span class="sd">        - :math:`n` is the total number of periods</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    The `payment` parameter corresponds to the payment at time t=0.</span>
+<span class="sd">    Growth is applied in the first period as well, so the payment at time t=k is:</span>
+<span class="sd">        payment * (1 + growth)^(k+1)</span>
+<span class="sd">    for each period k.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    payment : float</span>
-<span class="sd">        Initial payment.</span>
+<span class="sd">        The initial payment amount per period.</span>
 <span class="sd">    rate : float</span>
-<span class="sd">        Interest rate per period (as decimal).</span>
-<span class="sd">    growth : float</span>
-<span class="sd">        Growth rate of payment per period (as decimal).</span>
+<span class="sd">        The interest rate per period (as a decimal).</span>
 <span class="sd">    periods : int</span>
-<span class="sd">        Number of periods.</span>
+<span class="sd">        The total number of periods.</span>
+<span class="sd">    growth : float, optional</span>
+<span class="sd">        The growth rate of the payments (as a decimal). Defaults to 0.0.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
-<span class="sd">        Future value of the growing annuity.</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    If the interest rate equals the growth rate, a simplified formula is used</span>
-<span class="sd">    to avoid division by zero.</span>
+<span class="sd">        Present value of the growing annuity.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; future_value_growing_annuity(1000, 0.05, 0.03, 10)</span>
-<span class="sd">    13268.75  # example value</span>
+<span class="sd">    &gt;&gt;&gt; present_value_growing_annuity(100, 0.05, 10, 0.02 )</span>
+<span class="sd">    855.5867765481578</span>
+<span class="sd">    &gt;&gt;&gt; present_value_growing_annuity(100, 0.05, 10, 0.05)</span>
+<span class="sd">    1000.0</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="n">growth</span><span class="p">:</span>
-        <span class="c1"># Avoid division by zero if r == g</span>
-        <span class="k">return</span> <span class="n">payment</span> <span class="o">*</span> <span class="n">periods</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">periods</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-
-    <span class="n">fv</span> <span class="o">=</span> <span class="n">payment</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="n">periods</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">growth</span><span class="p">)</span> <span class="o">**</span> <span class="n">periods</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">rate</span> <span class="o">-</span> <span class="n">growth</span><span class="p">)</span>
+    <span class="n">pv</span> <span class="o">=</span> <span class="n">present_value_growing_annuity</span><span class="p">(</span><span class="n">payment</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">periods</span><span class="p">,</span> <span class="n">growth</span><span class="p">)</span>
+    <span class="n">fv</span> <span class="o">=</span> <span class="n">pv</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="n">periods</span>
     <span class="k">return</span> <span class="n">fv</span></div>
 
 
 
-<div class="viewcode-block" id="future_value_two_stage_growth">
-<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/future_value/index.html#pyfian.time_value.future_value.future_value_two_stage_growth">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">future_value_two_stage_growth</span><span class="p">(</span>
-    <span class="n">D0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">g1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n1</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">g2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">n2</span><span class="p">:</span> <span class="nb">int</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculates the future value of a two-stage growing investment.</span>
+<span class="c1"># def future_value_growing_perpetuity(</span>
+<span class="c1">#     payment: float, rate: float, growth: float</span>
+<span class="c1"># ) -&gt; float:</span>
+<span class="c1">#     r&quot;&quot;&quot;</span>
+<span class="c1">#     Calculate the present value of a growing perpetuity (infinite growing annuity).</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    D0 : float</span>
-<span class="sd">        Initial investment per period.</span>
-<span class="sd">    r : float</span>
-<span class="sd">        Interest rate per period (as decimal).</span>
-<span class="sd">    g1 : float</span>
-<span class="sd">        Growth rate during first stage.</span>
-<span class="sd">    n1 : int</span>
-<span class="sd">        Number of periods in first stage.</span>
-<span class="sd">    g2 : float</span>
-<span class="sd">        Growth rate during second stage.</span>
-<span class="sd">    n2 : int</span>
-<span class="sd">        Number of periods in second stage.</span>
+<span class="c1">#     The present value of a growing perpetuity is given by:</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    float</span>
-<span class="sd">        Future value at the end of (n1 + n2) periods.</span>
+<span class="c1">#     .. math::</span>
+<span class="c1">#         PV = \frac{P \times (1+g)}{r - g}</span>
 
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; future_value_two_stage_growth(100, 0.05, 0.02, 5, 0.03, 10)</span>
-<span class="sd">    1766.55  # example value</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">total_years</span> <span class="o">=</span> <span class="n">n1</span> <span class="o">+</span> <span class="n">n2</span>
-    <span class="n">total_fv</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="c1">#     where:</span>
+<span class="c1">#         - :math:`PV` is the present value</span>
+<span class="c1">#         - :math:`P` is the payment per period</span>
+<span class="c1">#         - :math:`r` is the interest rate per period</span>
+<span class="c1">#         - :math:`g` is the growth rate per period</span>
 
-    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_years</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">n1</span><span class="p">:</span>
-            <span class="n">payment</span> <span class="o">=</span> <span class="n">D0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">g1</span><span class="p">)</span> <span class="o">**</span> <span class="n">t</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">base</span> <span class="o">=</span> <span class="n">D0</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">g1</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">n1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">payment</span> <span class="o">=</span> <span class="n">base</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">g2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">n1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="c1">#     Note</span>
+<span class="c1">#     ----</span>
+<span class="c1">#     The `payment` parameter corresponds to the payment at time t=0.</span>
+<span class="c1">#     Growth is applied in the first period as well, so the payment at time t=k is:</span>
+<span class="c1">#         payment * (1 + growth)^(k+1)</span>
+<span class="c1">#     for each period k.</span>
 
-        <span class="n">fv</span> <span class="o">=</span> <span class="n">payment</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">total_years</span> <span class="o">-</span> <span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">total_fv</span> <span class="o">+=</span> <span class="n">fv</span>
 
-    <span class="k">return</span> <span class="n">total_fv</span></div>
+<span class="c1">#     Parameters</span>
+<span class="c1">#     ----------</span>
+<span class="c1">#     payment : float</span>
+<span class="c1">#         The initial payment amount per period.</span>
+<span class="c1">#     rate : float</span>
+<span class="c1">#         The interest rate per period (as a decimal).</span>
+<span class="c1">#     growth : float</span>
+<span class="c1">#         The growth rate of the payments (as a decimal).</span>
 
+<span class="c1">#     Returns</span>
+<span class="c1">#     -------</span>
+<span class="c1">#     float</span>
+<span class="c1">#         Present value of the growing perpetuity.</span>
+
+<span class="c1">#     Raises</span>
+<span class="c1">#     ------</span>
+<span class="c1">#     ValueError</span>
+<span class="c1">#         If rate &lt;= growth (would result in division by zero or negative present value).</span>
+
+<span class="c1">#     Examples</span>
+<span class="c1">#     --------</span>
+<span class="c1">#     &gt;&gt;&gt; present_value_growing_perpetuity(100, 0.05, 0.02)</span>
+<span class="c1">#     3400.0</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     if rate &lt;= growth:</span>
+<span class="c1">#         raise ValueError(</span>
+<span class="c1">#             &quot;Interest rate must be greater than growth rate for perpetuity.&quot;</span>
+<span class="c1">#         )</span>
+<span class="c1">#     return present_value_growing_annuity(payment, annual_rate, years, payments_per_year)</span>
+
+
+<span class="c1"># def present_value_two_stage_annuity(</span>
+<span class="c1">#     payment: float, rate1: float, rate2: float, periods1: int, periods2: int</span>
+<span class="c1"># ) -&gt; float:</span>
+<span class="c1">#     r&quot;&quot;&quot;</span>
+<span class="c1">#     Calculate the present value of a two-stage annuity.</span>
+
+<span class="c1">#     The present value is calculated as:</span>
+
+<span class="c1">#     .. math::</span>
+<span class="c1">#         PV = PV_{\text{stage1}} + PV_{\text{stage2}}</span>
+<span class="c1">#     where:</span>
+<span class="c1">#         - :math:`PV_{\text{stage1}}` is the present value of the first stage annuity</span>
+<span class="c1">#         - :math:`PV_{\text{stage2}}` is the present value of the second stage annuity</span>
+<span class="c1">#     The present value of the first stage is calculated using the `present_value_annuity`</span>
+<span class="c1">#     function, and the second stage is calculated using the `present_value_annuity`</span>
+<span class="c1">#     function, discounted back to the present using the interest rate of the first stage.</span>
+
+<span class="c1">#     Note</span>
+<span class="c1">#     ----</span>
+<span class="c1">#     The `payment` parameter corresponds to the payment at time t=0.</span>
+<span class="c1">#     Growth is applied in the first period as well, so the payment at time t=k is:</span>
+<span class="c1">#         payment * (1 + growth)^(k+1)</span>
+<span class="c1">#     for each period k.</span>
+
+<span class="c1">#     Parameters</span>
+<span class="c1">#     ----------</span>
+<span class="c1">#     payment : float</span>
+<span class="c1">#         The fixed payment amount per period.</span>
+<span class="c1">#     rate1 : float</span>
+<span class="c1">#         Interest rate for the first stage (as a decimal).</span>
+<span class="c1">#     rate2 : float</span>
+<span class="c1">#         Interest rate for the second stage (as a decimal).</span>
+<span class="c1">#     periods1 : int</span>
+<span class="c1">#         Number of periods in the first stage.</span>
+<span class="c1">#     periods2 : int</span>
+<span class="c1">#         Number of periods in the second stage.</span>
+
+<span class="c1">#     Returns</span>
+<span class="c1">#     -------</span>
+<span class="c1">#     float</span>
+<span class="c1">#         Present value of the two-stage annuity.</span>
+
+<span class="c1">#     Examples</span>
+<span class="c1">#     --------</span>
+<span class="c1">#     &gt;&gt;&gt; present_value_two_stage_annuity(100, 0.05, 0.06, 5, 5)</span>
+<span class="c1">#     762.9973919305694</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     pv_stage1 = present_value_annuity(payment, rate1, periods1)</span>
+<span class="c1">#     pv_stage2 = (</span>
+<span class="c1">#         present_value_annuity(payment, rate2, periods2) / (1 + rate1) ** periods1</span>
+<span class="c1">#     )</span>
+<span class="c1">#     return pv_stage1 + pv_stage2</span>
+
+
+<span class="c1"># def present_value_two_stage_annuity_perpetuity(</span>
+<span class="c1">#     payment: float,</span>
+<span class="c1">#     rate1: float,</span>
+<span class="c1">#     periods1: int,</span>
+<span class="c1">#     rate2: float,</span>
+<span class="c1">#     growth1: float = 0.0,</span>
+<span class="c1">#     growth2: float = 0.0,</span>
+<span class="c1"># ) -&gt; float:</span>
+<span class="c1">#     r&quot;&quot;&quot;</span>
+<span class="c1">#     Calculate the present value of a two-stage annuity where the first stage</span>
+<span class="c1">#     is a (possibly growing) annuity and the second stage is a (possibly growing) perpetuity.</span>
+
+<span class="c1">#     The present value is calculated as:</span>
+
+<span class="c1">#     .. math::</span>
+<span class="c1">#         PV = PV_{\text{stage1}} + PV_{\text{stage2}}</span>
+<span class="c1">#     where:</span>
+<span class="c1">#         - :math:`PV_{\text{stage1}}` is the present value of the first stage annuity</span>
+<span class="c1">#         - :math:`PV_{\text{stage2}}` is the present value of the second stage perpetuity.</span>
+<span class="c1">#     The present value of the first stage is calculated using the `present_value_growing_annuity`</span>
+<span class="c1">#     function, and the second stage is calculated using the `present_value_growing_perpetuity`</span>
+<span class="c1">#     function.</span>
+<span class="c1">#     The perpetuity is discounted back to the present using the interest rate of the first stage.</span>
+
+<span class="c1">#     Note</span>
+<span class="c1">#     ----</span>
+<span class="c1">#     The `payment` parameter corresponds to the payment at time t=0.</span>
+<span class="c1">#     Growth is applied in the first period as well, so the payment at time t=k is:</span>
+<span class="c1">#         payment * (1 + growth)^(k+1)</span>
+<span class="c1">#     for each period k.</span>
+
+<span class="c1">#     Parameters</span>
+<span class="c1">#     ----------</span>
+<span class="c1">#     payment : float</span>
+<span class="c1">#         The payment amount at time t=0.</span>
+<span class="c1">#     rate1 : float</span>
+<span class="c1">#         Interest rate for the first stage (as a decimal).</span>
+<span class="c1">#     periods1 : int</span>
+<span class="c1">#         Number of periods in the first stage.</span>
+<span class="c1">#     rate2 : float</span>
+<span class="c1">#         Interest rate for the second stage/perpetuity (as a decimal).</span>
+<span class="c1">#     growth1 : float, optional</span>
+<span class="c1">#         Growth rate for the first stage payments (as a decimal, default is 0 for level annuity).</span>
+<span class="c1">#     growth2 : float, optional</span>
+<span class="c1">#         Growth rate for the perpetuity payments (as a decimal, default is 0 for level perpetuity).</span>
+
+<span class="c1">#     Returns</span>
+<span class="c1">#     -------</span>
+<span class="c1">#     float</span>
+<span class="c1">#         Present value of the two-stage annuity with perpetuity.</span>
+
+<span class="c1">#     Raises</span>
+<span class="c1">#     ------</span>
+<span class="c1">#     ValueError</span>
+<span class="c1">#         If rate2 &lt;= growth2 (would result in division by zero or negative present value).</span>
+
+<span class="c1">#     Examples</span>
+<span class="c1">#     --------</span>
+<span class="c1">#     &gt;&gt;&gt; present_value_two_stage_annuity_perpetuity(100, 0.05, 5, 0.06, 0.02, 0.01)</span>
+<span class="c1">#     2206.1948451002554</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     # Present value of first stage (fixed annuity)</span>
+<span class="c1">#     pv_stage1 = present_value_growing_annuity(payment, rate1, periods1, growth1)</span>
+<span class="c1">#     # Update payment for perpetuity to reflect growth over first stage</span>
+<span class="c1">#     payment_perpetuity = (</span>
+<span class="c1">#         payment * (1 + growth1) ** periods1 if growth1 != 0 else payment</span>
+<span class="c1">#     )</span>
+<span class="c1">#     # Use present_value_growing_perpetuity for perpetuity at the end of stage 1</span>
+<span class="c1">#     pv_perpetuity = present_value_growing_perpetuity(payment_perpetuity, rate2, growth2)</span>
+<span class="c1">#     # Discount perpetuity back to present</span>
+<span class="c1">#     pv_stage2 = pv_perpetuity / (1 + rate1) ** periods1</span>
+<span class="c1">#     return pv_stage1 + pv_stage2</span>
 </pre></div>
 
            </div>

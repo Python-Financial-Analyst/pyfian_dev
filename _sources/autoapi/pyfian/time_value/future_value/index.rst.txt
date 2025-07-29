@@ -3,11 +3,6 @@ pyfian.time_value.future_value
 
 .. py:module:: pyfian.time_value.future_value
 
-.. autoapi-nested-parse::
-
-   Module for calculating future values with different growth assumptions.
-
-
 
 Functions
 ---------
@@ -15,8 +10,8 @@ Functions
 .. autoapisummary::
 
    pyfian.time_value.future_value.future_value_annuity
+   pyfian.time_value.future_value.future_value_annuity_annual
    pyfian.time_value.future_value.future_value_growing_annuity
-   pyfian.time_value.future_value.future_value_two_stage_growth
 
 
 Module Contents
@@ -24,74 +19,112 @@ Module Contents
 
 .. py:function:: future_value_annuity(payment: float, rate: float, periods: int) -> float
 
-   Calculates the future value of a series of equal payments with discrete compounding.
+   Calculate the present value of a fixed annuity.
 
-   :param payment: Amount invested each period (e.g., annually).
+   The present value of a fixed annuity is given by:
+
+   .. math::
+       PV = P \times \frac{1 - (1 + r)^{-n}}{r}
+
+   where:
+       - :math:`PV` is the present value
+       - :math:`P` is the payment per period
+       - :math:`r` is the interest rate per period
+       - :math:`n` is the total number of periods
+
+   :param payment: The fixed payment amount per period.
    :type payment: float
-   :param rate: Interest rate per period (as decimal).
+   :param rate: The interest rate per period (as a decimal).
    :type rate: float
-   :param periods: Number of periods (e.g., years).
+   :param periods: The total number of periods.
    :type periods: int
 
-   :returns: Future value of the investment.
+   :returns: Present value of the fixed annuity.
    :rtype: float
 
    .. rubric:: Examples
 
-   >>> future_value_annuity(1000, 0.05, 10)
-   12577.8925355488  # example value
+   >>> present_value_annuity(100, 0.05, 10)
+   772.1734929184818
 
 
-.. py:function:: future_value_growing_annuity(payment: float, rate: float, growth: float, periods: int) -> float
+.. py:function:: future_value_annuity_annual(payment: float, annual_rate: float, years: int, payments_per_year: int) -> float
 
-   Calculates the future value of a growing annuity (constant growth in payments).
+   Calculate the present value of a fixed annuity with an annual interest rate
+   and a specified number of payments per year.
 
-   :param payment: Initial payment.
+   The present value is calculated as:
+
+   .. math::
+       PV = P \times \frac{1 - (1 + r)^{-N}}{r}
+
+   where:
+       - :math:`P` is the payment per period
+       - :math:`r` is the periodic interest rate (annual_rate / payments_per_year)
+       - :math:`N` is the total number of periods,
+       with :math:`N = \text{years} \times \text{payments_per_year}`
+
+   This function adjusts the interest rate and number of periods
+   for non-annual payment frequencies.
+
+   :param payment: The fixed payment amount per period.
    :type payment: float
-   :param rate: Interest rate per period (as decimal).
+   :param annual_rate: The annual interest rate (as a decimal).
+   :type annual_rate: float
+   :param years: The total number of years.
+   :type years: int
+   :param payments_per_year: The number of payments per year.
+   :type payments_per_year: int
+
+   :returns: Present value of the fixed annuity.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> present_value_annuity_annual(100, 0.05, 10, 12)
+   9428.135032823473
+
+
+.. py:function:: future_value_growing_annuity(payment: float, rate: float, periods: int, growth: float = 0.0) -> float
+
+   Calculate the present value of a growing annuity.
+
+   The present value is calculated as:
+
+   .. math::
+       PV = P \times \frac{1 - \left(\frac{1 + r}{1 + g}\right)^{-n}}
+       {\left(\frac{1 + r}{1 + g}\right) - 1}
+
+   where:
+       - :math:`P` is the payment at time t=0
+       - :math:`r` is the interest rate per period
+       - :math:`g` is the growth rate per period
+       - :math:`n` is the total number of periods
+
+   .. note::
+
+      The `payment` parameter corresponds to the payment at time t=0.
+      Growth is applied in the first period as well, so the payment at time t=k is:
+          payment * (1 + growth)^(k+1)
+      for each period k.
+
+   :param payment: The initial payment amount per period.
+   :type payment: float
+   :param rate: The interest rate per period (as a decimal).
    :type rate: float
-   :param growth: Growth rate of payment per period (as decimal).
-   :type growth: float
-   :param periods: Number of periods.
+   :param periods: The total number of periods.
    :type periods: int
+   :param growth: The growth rate of the payments (as a decimal). Defaults to 0.0.
+   :type growth: float, optional
 
-   :returns: Future value of the growing annuity.
-   :rtype: float
-
-   .. rubric:: Notes
-
-   If the interest rate equals the growth rate, a simplified formula is used
-   to avoid division by zero.
-
-   .. rubric:: Examples
-
-   >>> future_value_growing_annuity(1000, 0.05, 0.03, 10)
-   13268.75  # example value
-
-
-.. py:function:: future_value_two_stage_growth(D0: float, r: float, g1: float, n1: int, g2: float, n2: int) -> float
-
-   Calculates the future value of a two-stage growing investment.
-
-   :param D0: Initial investment per period.
-   :type D0: float
-   :param r: Interest rate per period (as decimal).
-   :type r: float
-   :param g1: Growth rate during first stage.
-   :type g1: float
-   :param n1: Number of periods in first stage.
-   :type n1: int
-   :param g2: Growth rate during second stage.
-   :type g2: float
-   :param n2: Number of periods in second stage.
-   :type n2: int
-
-   :returns: Future value at the end of (n1 + n2) periods.
+   :returns: Present value of the growing annuity.
    :rtype: float
 
    .. rubric:: Examples
 
-   >>> future_value_two_stage_growth(100, 0.05, 0.02, 5, 0.03, 10)
-   1766.55  # example value
+   >>> present_value_growing_annuity(100, 0.05, 10, 0.02 )
+   855.5867765481578
+   >>> present_value_growing_annuity(100, 0.05, 10, 0.05)
+   1000.0
 
 
