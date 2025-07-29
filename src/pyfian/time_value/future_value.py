@@ -1,3 +1,6 @@
+from pyfian.time_value.present_value import present_value_annuity, present_value_growing_annuity
+
+
 def future_value_annuity(payment: float, rate: float, periods: int) -> float:
     r"""
     Calculate the present value of a fixed annuity.
@@ -34,7 +37,8 @@ def future_value_annuity(payment: float, rate: float, periods: int) -> float:
     """
     if rate == 0:
         return payment * periods
-    fv = (1 + rate) ** periods * payment * ((1 - (1 + rate) ** -periods) / rate)
+    pv = present_value_annuity(payment, rate, periods)
+    fv = pv * (1 + rate) ** periods
     return fv
 
 
@@ -136,7 +140,7 @@ def future_value_growing_annuity(
     return future_value_annuity(payment, (1 + rate) / (1 + growth) - 1, periods)
 
 
-def present_value_growing_perpetuity(
+def future_value_growing_perpetuity(
     payment: float, rate: float, growth: float
 ) -> float:
     r"""
@@ -189,7 +193,7 @@ def present_value_growing_perpetuity(
         raise ValueError(
             "Interest rate must be greater than growth rate for perpetuity."
         )
-    return payment * (1 + growth) / (rate - growth)
+    return present_value_growing_annuity(payment, annual_rate, years, payments_per_year)
 
 
 def present_value_two_stage_annuity(

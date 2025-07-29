@@ -45,11 +45,13 @@ class TestFutureValueGrowingAnnuity:
             )
         else:
             expected = (
+                
                 payment
                 * (1 + growth)
                 * ((1 - ((1 + growth) / (1 + rate)) ** periods) / (rate - growth))
                 * (1 + rate) ** periods
             )
+
         assert (
             pytest.approx(
                 future_value.future_value_growing_annuity(payment, rate, periods, growth), rel=1e-9
