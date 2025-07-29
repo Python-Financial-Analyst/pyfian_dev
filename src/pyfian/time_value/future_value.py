@@ -1,4 +1,7 @@
-from pyfian.time_value.present_value import present_value_annuity, present_value_growing_annuity
+from pyfian.time_value.present_value import (
+    present_value_annuity,
+    present_value_growing_annuity,
+)
 
 
 def future_value_annuity(payment: float, rate: float, periods: int) -> float:
@@ -137,188 +140,190 @@ def future_value_growing_annuity(
     >>> present_value_growing_annuity(100, 0.05, 10, 0.05)
     1000.0
     """
-    return future_value_annuity(payment, (1 + rate) / (1 + growth) - 1, periods)
+    pv = present_value_growing_annuity(payment, rate, periods, growth)
+    fv = pv * (1 + rate) ** periods
+    return fv
 
 
-def future_value_growing_perpetuity(
-    payment: float, rate: float, growth: float
-) -> float:
-    r"""
-    Calculate the present value of a growing perpetuity (infinite growing annuity).
+# def future_value_growing_perpetuity(
+#     payment: float, rate: float, growth: float
+# ) -> float:
+#     r"""
+#     Calculate the present value of a growing perpetuity (infinite growing annuity).
 
-    The present value of a growing perpetuity is given by:
+#     The present value of a growing perpetuity is given by:
 
-    .. math::
-        PV = \frac{P \times (1+g)}{r - g}
+#     .. math::
+#         PV = \frac{P \times (1+g)}{r - g}
 
-    where:
-        - :math:`PV` is the present value
-        - :math:`P` is the payment per period
-        - :math:`r` is the interest rate per period
-        - :math:`g` is the growth rate per period
+#     where:
+#         - :math:`PV` is the present value
+#         - :math:`P` is the payment per period
+#         - :math:`r` is the interest rate per period
+#         - :math:`g` is the growth rate per period
 
-    Note
-    ----
-    The `payment` parameter corresponds to the payment at time t=0.
-    Growth is applied in the first period as well, so the payment at time t=k is:
-        payment * (1 + growth)^(k+1)
-    for each period k.
-
-
-    Parameters
-    ----------
-    payment : float
-        The initial payment amount per period.
-    rate : float
-        The interest rate per period (as a decimal).
-    growth : float
-        The growth rate of the payments (as a decimal).
-
-    Returns
-    -------
-    float
-        Present value of the growing perpetuity.
-
-    Raises
-    ------
-    ValueError
-        If rate <= growth (would result in division by zero or negative present value).
-
-    Examples
-    --------
-    >>> present_value_growing_perpetuity(100, 0.05, 0.02)
-    3400.0
-    """
-    if rate <= growth:
-        raise ValueError(
-            "Interest rate must be greater than growth rate for perpetuity."
-        )
-    return present_value_growing_annuity(payment, annual_rate, years, payments_per_year)
+#     Note
+#     ----
+#     The `payment` parameter corresponds to the payment at time t=0.
+#     Growth is applied in the first period as well, so the payment at time t=k is:
+#         payment * (1 + growth)^(k+1)
+#     for each period k.
 
 
-def present_value_two_stage_annuity(
-    payment: float, rate1: float, rate2: float, periods1: int, periods2: int
-) -> float:
-    r"""
-    Calculate the present value of a two-stage annuity.
+#     Parameters
+#     ----------
+#     payment : float
+#         The initial payment amount per period.
+#     rate : float
+#         The interest rate per period (as a decimal).
+#     growth : float
+#         The growth rate of the payments (as a decimal).
 
-    The present value is calculated as:
+#     Returns
+#     -------
+#     float
+#         Present value of the growing perpetuity.
 
-    .. math::
-        PV = PV_{\text{stage1}} + PV_{\text{stage2}}
-    where:
-        - :math:`PV_{\text{stage1}}` is the present value of the first stage annuity
-        - :math:`PV_{\text{stage2}}` is the present value of the second stage annuity
-    The present value of the first stage is calculated using the `present_value_annuity`
-    function, and the second stage is calculated using the `present_value_annuity`
-    function, discounted back to the present using the interest rate of the first stage.
+#     Raises
+#     ------
+#     ValueError
+#         If rate <= growth (would result in division by zero or negative present value).
 
-    Note
-    ----
-    The `payment` parameter corresponds to the payment at time t=0.
-    Growth is applied in the first period as well, so the payment at time t=k is:
-        payment * (1 + growth)^(k+1)
-    for each period k.
-
-    Parameters
-    ----------
-    payment : float
-        The fixed payment amount per period.
-    rate1 : float
-        Interest rate for the first stage (as a decimal).
-    rate2 : float
-        Interest rate for the second stage (as a decimal).
-    periods1 : int
-        Number of periods in the first stage.
-    periods2 : int
-        Number of periods in the second stage.
-
-    Returns
-    -------
-    float
-        Present value of the two-stage annuity.
-
-    Examples
-    --------
-    >>> present_value_two_stage_annuity(100, 0.05, 0.06, 5, 5)
-    762.9973919305694
-    """
-    pv_stage1 = present_value_annuity(payment, rate1, periods1)
-    pv_stage2 = (
-        present_value_annuity(payment, rate2, periods2) / (1 + rate1) ** periods1
-    )
-    return pv_stage1 + pv_stage2
+#     Examples
+#     --------
+#     >>> present_value_growing_perpetuity(100, 0.05, 0.02)
+#     3400.0
+#     """
+#     if rate <= growth:
+#         raise ValueError(
+#             "Interest rate must be greater than growth rate for perpetuity."
+#         )
+#     return present_value_growing_annuity(payment, annual_rate, years, payments_per_year)
 
 
-def present_value_two_stage_annuity_perpetuity(
-    payment: float,
-    rate1: float,
-    periods1: int,
-    rate2: float,
-    growth1: float = 0.0,
-    growth2: float = 0.0,
-) -> float:
-    r"""
-    Calculate the present value of a two-stage annuity where the first stage
-    is a (possibly growing) annuity and the second stage is a (possibly growing) perpetuity.
+# def present_value_two_stage_annuity(
+#     payment: float, rate1: float, rate2: float, periods1: int, periods2: int
+# ) -> float:
+#     r"""
+#     Calculate the present value of a two-stage annuity.
 
-    The present value is calculated as:
+#     The present value is calculated as:
 
-    .. math::
-        PV = PV_{\text{stage1}} + PV_{\text{stage2}}
-    where:
-        - :math:`PV_{\text{stage1}}` is the present value of the first stage annuity
-        - :math:`PV_{\text{stage2}}` is the present value of the second stage perpetuity.
-    The present value of the first stage is calculated using the `present_value_growing_annuity`
-    function, and the second stage is calculated using the `present_value_growing_perpetuity`
-    function.
-    The perpetuity is discounted back to the present using the interest rate of the first stage.
+#     .. math::
+#         PV = PV_{\text{stage1}} + PV_{\text{stage2}}
+#     where:
+#         - :math:`PV_{\text{stage1}}` is the present value of the first stage annuity
+#         - :math:`PV_{\text{stage2}}` is the present value of the second stage annuity
+#     The present value of the first stage is calculated using the `present_value_annuity`
+#     function, and the second stage is calculated using the `present_value_annuity`
+#     function, discounted back to the present using the interest rate of the first stage.
 
-    Note
-    ----
-    The `payment` parameter corresponds to the payment at time t=0.
-    Growth is applied in the first period as well, so the payment at time t=k is:
-        payment * (1 + growth)^(k+1)
-    for each period k.
+#     Note
+#     ----
+#     The `payment` parameter corresponds to the payment at time t=0.
+#     Growth is applied in the first period as well, so the payment at time t=k is:
+#         payment * (1 + growth)^(k+1)
+#     for each period k.
 
-    Parameters
-    ----------
-    payment : float
-        The payment amount at time t=0.
-    rate1 : float
-        Interest rate for the first stage (as a decimal).
-    periods1 : int
-        Number of periods in the first stage.
-    rate2 : float
-        Interest rate for the second stage/perpetuity (as a decimal).
-    growth1 : float, optional
-        Growth rate for the first stage payments (as a decimal, default is 0 for level annuity).
-    growth2 : float, optional
-        Growth rate for the perpetuity payments (as a decimal, default is 0 for level perpetuity).
+#     Parameters
+#     ----------
+#     payment : float
+#         The fixed payment amount per period.
+#     rate1 : float
+#         Interest rate for the first stage (as a decimal).
+#     rate2 : float
+#         Interest rate for the second stage (as a decimal).
+#     periods1 : int
+#         Number of periods in the first stage.
+#     periods2 : int
+#         Number of periods in the second stage.
 
-    Returns
-    -------
-    float
-        Present value of the two-stage annuity with perpetuity.
+#     Returns
+#     -------
+#     float
+#         Present value of the two-stage annuity.
 
-    Raises
-    ------
-    ValueError
-        If rate2 <= growth2 (would result in division by zero or negative present value).
+#     Examples
+#     --------
+#     >>> present_value_two_stage_annuity(100, 0.05, 0.06, 5, 5)
+#     762.9973919305694
+#     """
+#     pv_stage1 = present_value_annuity(payment, rate1, periods1)
+#     pv_stage2 = (
+#         present_value_annuity(payment, rate2, periods2) / (1 + rate1) ** periods1
+#     )
+#     return pv_stage1 + pv_stage2
 
-    Examples
-    --------
-    >>> present_value_two_stage_annuity_perpetuity(100, 0.05, 5, 0.06, 0.02, 0.01)
-    2206.1948451002554
-    """
-    # Present value of first stage (fixed annuity)
-    pv_stage1 = present_value_growing_annuity(payment, rate1, periods1, growth1)
-    # Update payment for perpetuity to reflect growth over first stage
-    payment_perpetuity = (
-        payment * (1 + growth1) ** periods1 if growth1 != 0 else payment
-    )
-    # Use present_value_growing_perpetuity for perpetuity at the end of stage 1
-    pv_perpetuity = present_value_growing_perpetuity(payment_perpetuity, rate2, growth2)
-    # Discount perpetuity back to present
-    pv_stage2 = pv_perpetuity / (1 + rate1) ** periods1
-    return pv_stage1 + pv_stage2
+
+# def present_value_two_stage_annuity_perpetuity(
+#     payment: float,
+#     rate1: float,
+#     periods1: int,
+#     rate2: float,
+#     growth1: float = 0.0,
+#     growth2: float = 0.0,
+# ) -> float:
+#     r"""
+#     Calculate the present value of a two-stage annuity where the first stage
+#     is a (possibly growing) annuity and the second stage is a (possibly growing) perpetuity.
+
+#     The present value is calculated as:
+
+#     .. math::
+#         PV = PV_{\text{stage1}} + PV_{\text{stage2}}
+#     where:
+#         - :math:`PV_{\text{stage1}}` is the present value of the first stage annuity
+#         - :math:`PV_{\text{stage2}}` is the present value of the second stage perpetuity.
+#     The present value of the first stage is calculated using the `present_value_growing_annuity`
+#     function, and the second stage is calculated using the `present_value_growing_perpetuity`
+#     function.
+#     The perpetuity is discounted back to the present using the interest rate of the first stage.
+
+#     Note
+#     ----
+#     The `payment` parameter corresponds to the payment at time t=0.
+#     Growth is applied in the first period as well, so the payment at time t=k is:
+#         payment * (1 + growth)^(k+1)
+#     for each period k.
+
+#     Parameters
+#     ----------
+#     payment : float
+#         The payment amount at time t=0.
+#     rate1 : float
+#         Interest rate for the first stage (as a decimal).
+#     periods1 : int
+#         Number of periods in the first stage.
+#     rate2 : float
+#         Interest rate for the second stage/perpetuity (as a decimal).
+#     growth1 : float, optional
+#         Growth rate for the first stage payments (as a decimal, default is 0 for level annuity).
+#     growth2 : float, optional
+#         Growth rate for the perpetuity payments (as a decimal, default is 0 for level perpetuity).
+
+#     Returns
+#     -------
+#     float
+#         Present value of the two-stage annuity with perpetuity.
+
+#     Raises
+#     ------
+#     ValueError
+#         If rate2 <= growth2 (would result in division by zero or negative present value).
+
+#     Examples
+#     --------
+#     >>> present_value_two_stage_annuity_perpetuity(100, 0.05, 5, 0.06, 0.02, 0.01)
+#     2206.1948451002554
+#     """
+#     # Present value of first stage (fixed annuity)
+#     pv_stage1 = present_value_growing_annuity(payment, rate1, periods1, growth1)
+#     # Update payment for perpetuity to reflect growth over first stage
+#     payment_perpetuity = (
+#         payment * (1 + growth1) ** periods1 if growth1 != 0 else payment
+#     )
+#     # Use present_value_growing_perpetuity for perpetuity at the end of stage 1
+#     pv_perpetuity = present_value_growing_perpetuity(payment_perpetuity, rate2, growth2)
+#     # Discount perpetuity back to present
+#     pv_stage2 = pv_perpetuity / (1 + rate1) ** periods1
+#     return pv_stage1 + pv_stage2
