@@ -32,7 +32,7 @@ class TestFutureValueAnnuity:
         )
 
 
-class TestPresentValueGrowingAnnuity:
+class TestFutureValueGrowingAnnuity:
     def test_growing_annuity(self):
         payment = 100
         rate = 0.05
