@@ -1,6 +1,5 @@
 {
     "jupyter.interactiveWindow.creationMode": "single",
-<<<<<<< HEAD
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
         "tests"
@@ -9,10 +8,4 @@
     "python-envs.defaultEnvManager": "ms-python.python:poetry",
     "python-envs.defaultPackageManager": "ms-python.python:poetry",
     "python-envs.pythonProjects": [],
-
-=======
-    "python-envs.defaultEnvManager": "ms-python.python:poetry",
-    "python-envs.defaultPackageManager": "ms-python.python:poetry",
-    "python-envs.pythonProjects": []
->>>>>>> 11bb9f086e547b3a66d75b67f3718b279b1d872a
 }

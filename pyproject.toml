@@ -16,6 +16,7 @@ pandas = "^2.3.0"
 numpy-financial = "^1.0.0"
 matplotlib = "^3.10.3"
 scipy = "^1.16.0"
+types-python-dateutil = "^2.9.0.20250708"
 
 
 [build-system]
@@ -37,6 +38,8 @@ sphinx-autoapi = "^3.6.0"
 sphinx-rtd-theme = "^3.0.2"
 pre-commit = "^4.2.0"
 bumpver = "^2025.1131"
+types-python-dateutil = "^2.9.0.20250708"
+
 
 [tool.flake8]
 max-line-length = 90

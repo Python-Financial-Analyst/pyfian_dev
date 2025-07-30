@@ -19,15 +19,17 @@ class TestFutureValueAnnuity:
             == 1000.0
         )
 
-
-class TestFutureValueAnnuity:
     def test_annuity(self):
         payment = 100
         rate = 0.05
         periods = 10
-        expected = (1+rate) ** periods * payment * ((1 - (1 + rate) ** -periods) / rate)
+        expected = (
+            (1 + rate) ** periods * payment * ((1 - (1 + rate) ** -periods) / rate)
+        )
         assert (
-            pytest.approx(future_value.future_value_annuity(payment, rate, periods), rel=1e-9)
+            pytest.approx(
+                future_value.future_value_annuity(payment, rate, periods), rel=1e-9
+            )
             == expected
         )
 
@@ -45,7 +47,6 @@ class TestFutureValueGrowingAnnuity:
             )
         else:
             expected = (
-                
                 payment
                 * (1 + growth)
                 * ((1 - ((1 + growth) / (1 + rate)) ** periods) / (rate - growth))
@@ -54,7 +55,10 @@ class TestFutureValueGrowingAnnuity:
 
         assert (
             pytest.approx(
-                future_value.future_value_growing_annuity(payment, rate, periods, growth), rel=1e-9
+                future_value.future_value_growing_annuity(
+                    payment, rate, periods, growth
+                ),
+                rel=1e-9,
             )
             == expected
         )
