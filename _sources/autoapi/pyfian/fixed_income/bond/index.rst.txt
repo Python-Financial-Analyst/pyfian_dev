@@ -1,0 +1,191 @@
+pyfian.fixed_income.bond
+========================
+
+.. py:module:: pyfian.fixed_income.bond
+
+.. autoapi-nested-parse::
+
+   bond.py
+
+   Module for fixed income bond analytics, including BulletBond class for payment flows,
+   valuation, and yield calculations.
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   pyfian.fixed_income.bond.BulletBond
+
+
+Module Contents
+---------------
+
+.. py:class:: BulletBond(issue_dt: Union[str, pandas.Timestamp], maturity: Union[str, pandas.Timestamp], cpn: float, cpn_freq: int)
+
+   BulletBond represents a bullet bond with fixed coupon payments and principal at maturity.
+
+   :param issue_dt: Issue date of the bond.
+   :type issue_dt: str or datetime-like
+   :param maturity: Maturity date of the bond.
+   :type maturity: str or datetime-like
+   :param cpn: Annual coupon rate (percentage).
+   :type cpn: float
+   :param cpn_freq: Number of coupon payments per year.
+   :type cpn_freq: int
+
+   .. rubric:: Examples
+
+   >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+   >>> bond.payment_flow
+   {Timestamp('2025-01-01 00:00:00'): 105.0, Timestamp('2024-01-01 00:00:00'): 5.0, ...}
+
+
+   .. py:attribute:: issue_dt
+      :type:  pandas.Timestamp
+      :value: None
+
+
+
+   .. py:attribute:: maturity
+      :type:  pandas.Timestamp
+      :value: None
+
+
+
+   .. py:attribute:: cpn
+      :type:  float
+
+
+   .. py:attribute:: cpn_freq
+      :type:  int
+
+
+   .. py:attribute:: payment_flow
+      :type:  dict[pandas.Timestamp, float]
+
+
+   .. py:method:: make_payment_flow() -> dict[pandas.Timestamp, float]
+
+      Generate the payment flow (cash flows) for the bond.
+
+      :returns: **dict_payments** -- Dictionary with payment dates as keys and cash flow amounts as values.
+      :rtype: dict
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.make_payment_flow()
+      {Timestamp('2025-01-01 00:00:00'): 105.0, Timestamp('2024-01-01 00:00:00'): 5.0, ...}
+
+
+
+   .. py:method:: filter_payment_flow(valuation_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None) -> dict[pandas.Timestamp, float]
+
+      Filter the payment flow to include only payments after the valuation date.
+
+      :param valuation_date: Date from which to consider future payments. Defaults to issue date.
+      :type valuation_date: str or datetime-like, optional
+      :param bond_price: If provided, adds the bond price as a negative cash flow at the valuation date.
+      :type bond_price: float, optional
+
+      :returns: **cash_flows** -- Dictionary of filtered payment dates and cash flows.
+      :rtype: dict
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.filter_payment_flow('2022-01-01')
+      {Timestamp('2023-01-01 00:00:00'): 5.0, Timestamp('2024-01-01 00:00:00'): 5.0,
+      Timestamp('2025-01-01 00:00:00'): 105.0}
+
+
+
+   .. py:method:: calculate_time_to_payments(valuation_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None) -> dict[float, float]
+
+      Calculate the time to each payment from the valuation date.
+
+      :param valuation_date: Date from which to calculate time to payments. Defaults to issue date.
+      :type valuation_date: str or datetime-like, optional
+      :param bond_price: If provided, includes bond price as a negative cash flow.
+      :type bond_price: float, optional
+
+      :returns: Dictionary with time to payment (in years) as keys and cash flow values.
+      :rtype: dict
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.calculate_time_to_payments('2022-01-01')
+      {1.0: 5.0, 2.0: 5.0, 3.0: 105.0}
+
+
+
+   .. py:method:: value_with_curve(curve: Any, valuation_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None) -> tuple[float, dict[float, float]]
+
+      Value the bond using a discount curve.
+
+      :param curve: Discount curve object with a discount_t(t) method.
+      :type curve: object
+      :param valuation_date: Valuation date. Defaults to issue date.
+      :type valuation_date: str or datetime-like, optional
+      :param bond_price: If provided, includes bond price as a negative cash flow.
+      :type bond_price: float, optional
+
+      :returns: * **total_value** (*float*) -- Present value of the bond.
+                * **pv** (*dict*) -- Dictionary of present values for each payment.
+
+      .. rubric:: Examples
+
+      >>> class DummyCurve:
+      ...     def discount_t(self, t):
+      ...         return 1 / (1 + 0.05 * t)
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.value_with_curve(DummyCurve())
+      (value, {t1: pv1, t2: pv2, ...})
+
+
+
+   .. py:method:: yield_to_maturity(bond_price: float, valuation_date: Optional[Union[str, pandas.Timestamp]] = None, tol: float = 1e-06, max_iter: int = 100) -> float
+
+      Estimate the yield to maturity (YTM) using the xirr function from pyfian.time_value.irr.
+
+      :param bond_price: Price of the bond.
+      :type bond_price: float
+      :param valuation_date: Valuation date. Defaults to issue date.
+      :type valuation_date: str or datetime-like, optional
+      :param tol: Tolerance for convergence (default is 1e-6).
+      :type tol: float, optional
+      :param max_iter: Maximum number of iterations (default is 100).
+      :type max_iter: int, optional
+
+      :returns: **ytm** -- Estimated yield to maturity as a decimal.
+      :rtype: float
+
+      :raises ValueError: If bond price is not set or YTM calculation does not converge.
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.yield_to_maturity(price=95)
+      0.06189544078
+
+
+
+   .. py:method:: __repr__() -> str
+
+      Return string representation of the BulletBond object.
+
+      :returns: String representation of the bond.
+      :rtype: str
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> print(bond)
+      BulletBond(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, cpn=5, cpn_freq=1)
+
+
+

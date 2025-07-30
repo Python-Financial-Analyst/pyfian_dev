@@ -18,6 +18,9 @@
       <script src="../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -56,6 +59,12 @@
 <li class="toctree-l3"><a class="reference internal" href="#cash-flow-patterns">Cash Flow Patterns</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#price-conventions">Price Conventions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#introduction-to-yield-concepts-preview">Introduction to Yield Concepts (Preview)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#irr-internal-rate-of-return">IRR: Internal Rate of Return</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xirr-non-periodic-irr">XIRR: Non periodic IRR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#continuous-compounding">Continuous compounding</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#discount-rate">Discount Rate</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -107,7 +116,12 @@
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <p>The following cell will install the <code class="docutils literal notranslate"><span class="pre">pyfian</span></code> package, which provides tools for financial analysis in Python. This step ensures that all necessary modules are available for the calculations and examples in this notebook.</p>
-<div class="cell docutils container">
+<div class="cell tag_hide-input tag_hide-output docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
@@ -127,6 +141,7 @@
 </pre></div>
 </div>
 </div>
+</details>
 </div>
 </section>
 <section id="bond-terminology-and-structure">
@@ -200,6 +215,97 @@
 </div>
 </div>
 </div>
+</section>
+<section id="irr-internal-rate-of-return">
+<h2>IRR: Internal Rate of Return<a class="headerlink" href="#irr-internal-rate-of-return" title="Link to this heading"></a></h2>
+<p>IRR is the discount rate that makes the net present value (NPV) of a series of cash flows equal to zero. When a bond is held to maturity, it is equal to the YTM.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.irr</span><span class="w"> </span><span class="kn">import</span> <span class="n">irr</span>
+
+<span class="n">principal</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">cash_flow_1</span> <span class="o">=</span> <span class="mi">400</span>
+<span class="n">cash_flow_2</span> <span class="o">=</span> <span class="mi">400</span>
+<span class="n">cash_flow_3</span> <span class="o">=</span> <span class="mi">400</span>
+<span class="n">irr</span><span class="p">([</span><span class="o">-</span><span class="n">principal</span><span class="p">,</span> <span class="n">cash_flow_1</span><span class="p">,</span> <span class="n">cash_flow_2</span><span class="p">,</span> <span class="n">cash_flow_3</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.09701025740327297
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="xirr-non-periodic-irr">
+<h2>XIRR: Non periodic IRR<a class="headerlink" href="#xirr-non-periodic-irr" title="Link to this heading"></a></h2>
+<p>XIRR, or Extended Internal Rate of Return, is a financial metric used to calculate the annualized rate of return for a series of cash flows that occur at irregular intervals.</p>
+</section>
+<section id="continuous-compounding">
+<h2>Continuous compounding<a class="headerlink" href="#continuous-compounding" title="Link to this heading"></a></h2>
+<p>We can compound interest using either discrete periods or continuous compounding. For instance, when calculating accrued interest between two periods, such as for a bond, we can use the continuously compounded interest formula for greater precision.</p>
+<p>The formula for present value of continuous compounding interest is:
+$<span class="math notranslate nohighlight">\( PV = FV e^{-rt} \)</span>$</p>
+<p>The formula for future value of continuous compounding interest is:
+$<span class="math notranslate nohighlight">\( FV = PV e^{rt} \)</span>$</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.continuous_compounding</span><span class="w"> </span><span class="kn">import</span> <span class="n">present_value_continuous</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.continuous_compounding</span><span class="w"> </span><span class="kn">import</span> <span class="n">future_value_continuous</span>
+
+<span class="n">PV</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">FV</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="n">t</span> <span class="o">=</span> <span class="mi">1</span> 
+
+<span class="nb">print</span><span class="p">(</span><span class="n">present_value_continuous</span><span class="p">(</span><span class="n">FV</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">future_value_continuous</span><span class="p">(</span><span class="n">PV</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>190.2458849001428
+105.12710963760242
+</pre></div>
+</div>
+</div>
+</div>
+<section id="discount-rate">
+<h3>Discount Rate<a class="headerlink" href="#discount-rate" title="Link to this heading"></a></h3>
+<p>Bonds can be sold at a discount, at par, or at a premium. When a bond is sold at a discount, the difference between its face value and the lower purchase price serves as additional compensation for the investor, reflecting a yield that exceeds the coupon rate. Conversely, when a bond is sold at par, the yield equals the coupon rate. When sold at a premium, the bond’s coupon rate exceeds the yield, and investors pay more upfront in exchange for higher coupon payments.</p>
+<p><strong>Table: Cash Flows for Discounted, Par, and Premium Bonds (Face Value = $1,000, YTM = 5%, 3-Year Maturity)</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bond Type</p></th>
+<th class="head"><p>Time 0 (Price)</p></th>
+<th class="head"><p>Year 1</p></th>
+<th class="head"><p>Year 2</p></th>
+<th class="head"><p>Year 3</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Discounted (3% Coupon)</p></td>
+<td><p>-999.18</p></td>
+<td><p>30.00</p></td>
+<td><p>30.00</p></td>
+<td><p>1030.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>Par (5% Coupon)</p></td>
+<td><p>-1000.00</p></td>
+<td><p>50.00</p></td>
+<td><p>50.00</p></td>
+<td><p>1050.00</p></td>
+</tr>
+<tr class="row-even"><td><p>Premium (7% Coupon)</p></td>
+<td><p>-1000.82</p></td>
+<td><p>70.00</p></td>
+<td><p>70.00</p></td>
+<td><p>1070.00</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 </section>
 

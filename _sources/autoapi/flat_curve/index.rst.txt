@@ -1,0 +1,168 @@
+flat_curve
+==========
+
+.. py:module:: flat_curve
+
+.. autoapi-nested-parse::
+
+   flat_curve.py
+
+   Module for flat yield curve models. Includes FlatCurveLog (log/continuous rates) and
+   FlatCurveAER (annual effective rates).
+
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   flat_curve.FlatCurveLog
+   flat_curve.FlatCurveAER
+
+
+Module Contents
+---------------
+
+.. py:class:: FlatCurveLog(log_rate: float, curve_date: Union[str, pandas.Timestamp])
+
+   FlatCurveLog represents a flat curve with continuously compounded (log) rates.
+
+   :param log_rate: Continuously compounded rate (as decimal, e.g. 0.05 for 5%).
+   :type log_rate: float
+   :param curve_date: Date of the curve.
+   :type curve_date: str or datetime-like
+
+
+   .. py:attribute:: log_rate
+      :type:  float
+
+
+   .. py:attribute:: curve_date
+      :type:  pandas.Timestamp
+      :value: None
+
+
+
+   .. py:method:: discount_t(t: float) -> float
+
+      Discount a cash flow by time t (in years) using log rate.
+
+      :param t: Time in years.
+      :type t: float
+
+      :returns: Discount factor.
+      :rtype: float
+
+
+
+   .. py:method:: discount_date(date: Union[str, pandas.Timestamp]) -> float
+
+      Discount a cash flow by a target date using log rate.
+
+      :param date: Target date for discounting.
+      :type date: str or datetime-like
+
+      :returns: Discount factor.
+      :rtype: float
+
+
+
+   .. py:method:: __call__(t: float) -> float
+
+      Return the log rate at time horizon t (in years).
+
+      :param t: Time in years.
+      :type t: float
+
+      :returns: Log rate (continuously compounded).
+      :rtype: float
+
+
+
+   .. py:method:: date_rate(date: Union[str, pandas.Timestamp]) -> float
+
+      Return the log rate at a specified date.
+
+      :param date: Target date for rate.
+      :type date: str or datetime-like
+
+      :returns: Log rate (continuously compounded).
+      :rtype: float
+
+
+
+   .. py:method:: __repr__() -> str
+
+
+.. py:class:: FlatCurveAER(aer: float, curve_date: Union[str, pandas.Timestamp])
+
+   FlatCurveAER represents a flat curve with annual effective rates (AER).
+
+   :param aer: Annual effective rate (as decimal, e.g. 0.05 for 5%).
+   :type aer: float
+   :param curve_date: Date of the curve.
+   :type curve_date: str or datetime-like
+
+
+   .. py:attribute:: aer
+      :type:  float
+
+
+   .. py:attribute:: curve_date
+      :type:  pandas.Timestamp
+      :value: None
+
+
+
+   .. py:method:: discount_t(t: float) -> float
+
+      Discount a cash flow by time t (in years) using annual effective rate.
+
+      :param t: Time in years.
+      :type t: float
+
+      :returns: Discount factor.
+      :rtype: float
+
+
+
+   .. py:method:: discount_date(date: Union[str, pandas.Timestamp]) -> float
+
+      Discount a cash flow by a target date using annual effective rate.
+
+      :param date: Target date for discounting.
+      :type date: str or datetime-like
+
+      :returns: Discount factor.
+      :rtype: float
+
+
+
+   .. py:method:: __call__(t: float) -> float
+
+      Return the annual effective rate at time horizon t (in years).
+
+      :param t: Time in years.
+      :type t: float
+
+      :returns: Annual effective rate.
+      :rtype: float
+
+
+
+   .. py:method:: date_rate(date: Union[str, pandas.Timestamp]) -> float
+
+      Return the annual effective rate at a specified date.
+
+      :param date: Target date for rate.
+      :type date: str or datetime-like
+
+      :returns: Annual effective rate.
+      :rtype: float
+
+
+
+   .. py:method:: __repr__() -> str
+
+

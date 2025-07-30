@@ -19,6 +19,7 @@ Submodules
    /autoapi/pyfian/data/index
    /autoapi/pyfian/derivatives/index
    /autoapi/pyfian/financial_statements/index
+   /autoapi/pyfian/fixed_income/index
    /autoapi/pyfian/portfolio/index
    /autoapi/pyfian/risk_management/index
    /autoapi/pyfian/statistics/index

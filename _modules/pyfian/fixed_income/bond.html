@@ -1,0 +1,547 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyfian.fixed_income.bond &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Topics/fixed_income/index.html">Fixed Income</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyfian.fixed_income.bond</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyfian.fixed_income.bond</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">bond.py</span>
+
+<span class="sd">Module for fixed income bond analytics, including BulletBond class for payment flows,</span>
+<span class="sd">valuation, and yield calculations.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dateutil.relativedelta</span><span class="w"> </span><span class="kn">import</span> <span class="n">relativedelta</span>  <span class="c1"># type: ignore</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.irr</span><span class="w"> </span><span class="kn">import</span> <span class="n">xirr</span>
+
+
+<div class="viewcode-block" id="BulletBond">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BulletBond</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    BulletBond represents a bullet bond with fixed coupon payments and principal at maturity.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    issue_dt : str or datetime-like</span>
+<span class="sd">        Issue date of the bond.</span>
+<span class="sd">    maturity : str or datetime-like</span>
+<span class="sd">        Maturity date of the bond.</span>
+<span class="sd">    cpn : float</span>
+<span class="sd">        Annual coupon rate (percentage).</span>
+<span class="sd">    cpn_freq : int</span>
+<span class="sd">        Number of coupon payments per year.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; bond = BulletBond(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
+<span class="sd">    &gt;&gt;&gt; bond.payment_flow</span>
+<span class="sd">    {Timestamp(&#39;2025-01-01 00:00:00&#39;): 105.0, Timestamp(&#39;2024-01-01 00:00:00&#39;): 5.0, ...}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">issue_dt</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
+        <span class="n">maturity</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
+        <span class="n">cpn</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">cpn_freq</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">issue_dt</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">issue_dt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maturity</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">maturity</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cpn</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">cpn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cpn_freq</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">cpn_freq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">payment_flow</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_payment_flow</span><span class="p">()</span>
+
+<div class="viewcode-block" id="BulletBond.make_payment_flow">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.make_payment_flow">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_payment_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the payment flow (cash flows) for the bond.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict_payments : dict</span>
+<span class="sd">            Dictionary with payment dates as keys and cash flow amounts as values.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; bond = BulletBond(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
+<span class="sd">        &gt;&gt;&gt; bond.make_payment_flow()</span>
+<span class="sd">        {Timestamp(&#39;2025-01-01 00:00:00&#39;): 105.0, Timestamp(&#39;2024-01-01 00:00:00&#39;): 5.0, ...}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">issue_dt</span><span class="p">,</span> <span class="n">maturity</span><span class="p">,</span> <span class="n">cpn</span><span class="p">,</span> <span class="n">cpn_freq</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">issue_dt</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">maturity</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cpn</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cpn_freq</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">dict_payments</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">dict_payments</span><span class="p">[</span><span class="n">maturity</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">+</span> <span class="n">cpn</span> <span class="o">/</span> <span class="n">cpn_freq</span>
+        <span class="n">next_date_processed</span> <span class="o">=</span> <span class="n">maturity</span> <span class="o">-</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="mi">12</span> <span class="o">//</span> <span class="n">cpn_freq</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">((</span><span class="n">maturity</span> <span class="o">-</span> <span class="n">issue_dt</span><span class="p">)</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">*</span> <span class="n">cpn_freq</span> <span class="o">+</span> <span class="mi">3</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">next_date_processed</span> <span class="o">-</span> <span class="n">issue_dt</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">365</span> <span class="o">*</span> <span class="mf">0.9</span><span class="p">)</span> <span class="o">//</span> <span class="n">cpn_freq</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">dict_payments</span><span class="p">[</span><span class="n">next_date_processed</span><span class="p">]</span> <span class="o">=</span> <span class="n">cpn</span> <span class="o">/</span> <span class="n">cpn_freq</span>
+            <span class="n">next_date_processed</span> <span class="o">=</span> <span class="n">maturity</span> <span class="o">-</span> <span class="n">relativedelta</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="mi">12</span> <span class="o">//</span> <span class="n">cpn_freq</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dict_payments</span></div>
+
+
+<div class="viewcode-block" id="BulletBond.filter_payment_flow">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.filter_payment_flow">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_payment_flow</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Filter the payment flow to include only payments after the valuation date.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        valuation_date : str or datetime-like, optional</span>
+<span class="sd">            Date from which to consider future payments. Defaults to issue date.</span>
+<span class="sd">        bond_price : float, optional</span>
+<span class="sd">            If provided, adds the bond price as a negative cash flow at the valuation date.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        cash_flows : dict</span>
+<span class="sd">            Dictionary of filtered payment dates and cash flows.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; bond = BulletBond(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
+<span class="sd">        &gt;&gt;&gt; bond.filter_payment_flow(&#39;2022-01-01&#39;)</span>
+<span class="sd">        {Timestamp(&#39;2023-01-01 00:00:00&#39;): 5.0, Timestamp(&#39;2024-01-01 00:00:00&#39;): 5.0,</span>
+<span class="sd">        Timestamp(&#39;2025-01-01 00:00:00&#39;): 105.0}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="p">(</span>
+            <span class="n">issue_dt</span><span class="p">,</span>
+            <span class="n">maturity</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">issue_dt</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">maturity</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">valuation_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">valuation_date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">valuation_date</span> <span class="o">=</span> <span class="n">issue_dt</span>
+
+        <span class="k">if</span> <span class="n">valuation_date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">maturity</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span>
+            <span class="mi">1</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="n">cash_flows</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span> <span class="n">value</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">payment_flow</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">valuation_date</span> <span class="o">&lt;=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="n">maturity</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="n">valuation_date</span> <span class="o">&lt;=</span> <span class="n">key</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">bond_price</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cash_flows</span><span class="p">[</span><span class="n">valuation_date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="n">bond_price</span>
+        <span class="k">return</span> <span class="n">cash_flows</span></div>
+
+
+<div class="viewcode-block" id="BulletBond.calculate_time_to_payments">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.calculate_time_to_payments">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_time_to_payments</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the time to each payment from the valuation date.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        valuation_date : str or datetime-like, optional</span>
+<span class="sd">            Date from which to calculate time to payments. Defaults to issue date.</span>
+<span class="sd">        bond_price : float, optional</span>
+<span class="sd">            If provided, includes bond price as a negative cash flow.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary with time to payment (in years) as keys and cash flow values.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; bond = BulletBond(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
+<span class="sd">        &gt;&gt;&gt; bond.calculate_time_to_payments(&#39;2022-01-01&#39;)</span>
+<span class="sd">        {1.0: 5.0, 2.0: 5.0, 3.0: 105.0}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">valuation_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">valuation_date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">valuation_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_dt</span>
+
+        <span class="n">flujos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="p">(</span><span class="n">key</span> <span class="o">-</span> <span class="p">(</span><span class="n">valuation_date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span><span class="o">.</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">:</span> <span class="n">value</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">flujos</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="BulletBond.value_with_curve">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.value_with_curve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">value_with_curve</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">curve</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Value the bond using a discount curve.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        curve : object</span>
+<span class="sd">            Discount curve object with a discount_t(t) method.</span>
+<span class="sd">        valuation_date : str or datetime-like, optional</span>
+<span class="sd">            Valuation date. Defaults to issue date.</span>
+<span class="sd">        bond_price : float, optional</span>
+<span class="sd">            If provided, includes bond price as a negative cash flow.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        total_value : float</span>
+<span class="sd">            Present value of the bond.</span>
+<span class="sd">        pv : dict</span>
+<span class="sd">            Dictionary of present values for each payment.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; class DummyCurve:</span>
+<span class="sd">        ...     def discount_t(self, t):</span>
+<span class="sd">        ...         return 1 / (1 + 0.05 * t)</span>
+<span class="sd">        &gt;&gt;&gt; bond = BulletBond(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
+<span class="sd">        &gt;&gt;&gt; bond.value_with_curve(DummyCurve())</span>
+<span class="sd">        (value, {t1: pv1, t2: pv2, ...})</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">time_to_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_time_to_payments</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">)</span>
+        <span class="n">pv</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="p">:</span> <span class="n">curve</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">value</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">time_to_payments</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">pv</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">pv</span></div>
+
+
+<div class="viewcode-block" id="BulletBond.yield_to_maturity">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.yield_to_maturity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">yield_to_maturity</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">bond_price</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
+        <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimate the yield to maturity (YTM) using the xirr function from pyfian.time_value.irr.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bond_price : float</span>
+<span class="sd">            Price of the bond.</span>
+<span class="sd">        valuation_date : str or datetime-like, optional</span>
+<span class="sd">            Valuation date. Defaults to issue date.</span>
+<span class="sd">        tol : float, optional</span>
+<span class="sd">            Tolerance for convergence (default is 1e-6).</span>
+<span class="sd">        max_iter : int, optional</span>
+<span class="sd">            Maximum number of iterations (default is 100).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ytm : float</span>
+<span class="sd">            Estimated yield to maturity as a decimal.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If bond price is not set or YTM calculation does not converge.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; bond = BulletBond(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
+<span class="sd">        &gt;&gt;&gt; bond.yield_to_maturity(price=95)</span>
+<span class="sd">        0.06189544078</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Prepare cash flows and dates</span>
+        <span class="n">payment_flow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">,</span> <span class="n">bond_price</span><span class="o">=</span><span class="n">bond_price</span><span class="p">)</span>
+        <span class="c1"># Use xirr to calculate YTM</span>
+        <span class="k">return</span> <span class="n">xirr</span><span class="p">(</span><span class="n">payment_flow</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BulletBond.__repr__">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.__repr__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return string representation of the BulletBond object.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            String representation of the bond.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; bond = BulletBond(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
+<span class="sd">        &gt;&gt;&gt; print(bond)</span>
+<span class="sd">        BulletBond(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, cpn=5, cpn_freq=1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;BulletBond(issue_dt=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">issue_dt</span><span class="si">}</span><span class="s2">, maturity=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;cpn=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cpn</span><span class="si">}</span><span class="s2">, cpn_freq=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cpn_freq</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<span class="c1"># class BulletBond:</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Bullet Bond class representing a standard fixed-income security.</span>
+
+<span class="c1">#     Parameters</span>
+<span class="c1">#     ----------</span>
+<span class="c1">#     face_value : float</span>
+<span class="c1">#         The nominal value of the bond (par value).</span>
+<span class="c1">#     coupon_rate : float</span>
+<span class="c1">#         Annual coupon rate as a decimal (e.g., 0.05 for 5%).</span>
+<span class="c1">#     maturity : int</span>
+<span class="c1">#         Number of years until maturity.</span>
+<span class="c1">#     price : float, optional</span>
+<span class="c1">#         Current market price of the bond. Defaults to face value.</span>
+<span class="c1">#     frequency : int, optional</span>
+<span class="c1">#         Number of coupon payments per year. Defaults to 1.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     def __init__(self, face_value: float, coupon_rate: float, maturity: int,</span>
+<span class="c1">#                   price: float = None, frequency: int = 1):</span>
+<span class="c1">#         self.face_value = face_value</span>
+<span class="c1">#         self.coupon_rate = coupon_rate</span>
+<span class="c1">#         self.maturity = maturity</span>
+<span class="c1">#         self.price = price if price is not None else face_value</span>
+<span class="c1">#         self.frequency = frequency</span>
+
+<span class="c1">#     def coupon_payment(self) -&gt; float:</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         Return the coupon payment per period.</span>
+
+<span class="c1">#         Returns</span>
+<span class="c1">#         -------</span>
+<span class="c1">#         payment : float</span>
+<span class="c1">#             Coupon payment per period.</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         return self.face_value * self.coupon_rate / self.frequency</span>
+
+<span class="c1">#     def cash_flows(self) -&gt; list:</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         Return a list of all cash flows (coupons + principal at maturity).</span>
+
+<span class="c1">#         Returns</span>
+<span class="c1">#         -------</span>
+<span class="c1">#         flows : list of float</span>
+<span class="c1">#             List of cash flows for each period.</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         flows = [self.coupon_payment()] * (self.maturity * self.frequency)</span>
+<span class="c1">#         flows[-1] += self.face_value</span>
+<span class="c1">#         return flows</span>
+
+<span class="c1">#     def price_from_yield(self, yield_to_maturity: float) -&gt; float:</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         Calculate the price of the bond given a yield to maturity (YTM).</span>
+
+<span class="c1">#         Parameters</span>
+<span class="c1">#         ----------</span>
+<span class="c1">#         yield_to_maturity : float</span>
+<span class="c1">#             Yield to maturity as a decimal (e.g., 0.05 for 5%).</span>
+
+<span class="c1">#         Returns</span>
+<span class="c1">#         -------</span>
+<span class="c1">#         price : float</span>
+<span class="c1">#             Price of the bond.</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         ytm = yield_to_maturity / self.frequency</span>
+<span class="c1">#         n = self.maturity * self.frequency</span>
+<span class="c1">#         c = self.coupon_payment()</span>
+<span class="c1">#         price = sum([c / (1 + ytm) ** t for t in range(1, n + 1)])</span>
+<span class="c1">#         price += self.face_value / (1 + ytm) ** n</span>
+<span class="c1">#         return price</span>
+
+<span class="c1">#     def yield_to_maturity(self) -&gt; float:</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         Estimate the yield to maturity (YTM) using Newton-Raphson method.</span>
+
+<span class="c1">#         Returns</span>
+<span class="c1">#         -------</span>
+<span class="c1">#         ytm : float</span>
+<span class="c1">#             Estimated yield to maturity as a decimal.</span>
+
+<span class="c1">#         Raises</span>
+<span class="c1">#         ------</span>
+<span class="c1">#         ValueError</span>
+<span class="c1">#             If bond price is not set.</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         if self.price is None:</span>
+<span class="c1">#             raise ValueError(&quot;Bond price must be set to calculate YTM.&quot;)</span>
+<span class="c1">#         n = self.maturity * self.frequency</span>
+<span class="c1">#         c = self.coupon_payment()</span>
+<span class="c1">#         price = self.price</span>
+<span class="c1">#         ytm = self.coupon_rate  # initial guess</span>
+<span class="c1">#         for _ in range(100):</span>
+<span class="c1">#             f = sum([c / (1 + ytm / self.frequency) ** t for t in range(1, n + 1)])</span>
+<span class="c1">#             f += self.face_value / (1 + ytm / self.frequency) ** n</span>
+<span class="c1">#             f -= price</span>
+<span class="c1">#             # Derivative</span>
+<span class="c1">#             df = sum([-t * c / self.frequency / (1 + ytm / self.frequency) ** (t + 1)</span>
+<span class="c1">#                       for t in range(1, n + 1)])</span>
+<span class="c1">#             df += -n * self.face_value / self.frequency / (1 + ytm / self.frequency) ** (n + 1)</span>
+<span class="c1">#             if abs(df) &lt; 1e-8:</span>
+<span class="c1">#                 break</span>
+<span class="c1">#             ytm -= f / df</span>
+<span class="c1">#             if abs(f) &lt; 1e-8:</span>
+<span class="c1">#                 break</span>
+<span class="c1">#         return ytm</span>
+
+<span class="c1">#     def duration(self, yield_to_maturity: float = None) -&gt; float:</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         Calculate Macaulay duration of the bond.</span>
+
+<span class="c1">#         Parameters</span>
+<span class="c1">#         ----------</span>
+<span class="c1">#         yield_to_maturity : float, optional</span>
+<span class="c1">#             Yield to maturity as a decimal. Defaults to coupon rate.</span>
+
+<span class="c1">#         Returns</span>
+<span class="c1">#         -------</span>
+<span class="c1">#         duration : float</span>
+<span class="c1">#             Macaulay duration in years.</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         if yield_to_maturity is None:</span>
+<span class="c1">#             yield_to_maturity = self.coupon_rate</span>
+<span class="c1">#         ytm = yield_to_maturity / self.frequency</span>
+<span class="c1">#         n = self.maturity * self.frequency</span>
+<span class="c1">#         c = self.coupon_payment()</span>
+<span class="c1">#         price = self.price_from_yield(yield_to_maturity)</span>
+<span class="c1">#         duration = sum([t * c / (1 + ytm) ** t for t in range(1, n + 1)])</span>
+<span class="c1">#         duration += n * self.face_value / (1 + ytm) ** n</span>
+<span class="c1">#         duration /= price</span>
+<span class="c1">#         return duration / self.frequency</span>
+
+<span class="c1">#     def __repr__(self):</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         Return string representation of the Bond object.</span>
+
+<span class="c1">#         Returns</span>
+<span class="c1">#         -------</span>
+<span class="c1">#         repr : str</span>
+<span class="c1">#             String representation.</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         return (f&quot;Bond(face_value={self.face_value}, coupon_rate={self.coupon_rate}, &quot;</span>
+<span class="c1">#                 f&quot;maturity={self.maturity}, price={self.price}, frequency={self.frequency})&quot;)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
