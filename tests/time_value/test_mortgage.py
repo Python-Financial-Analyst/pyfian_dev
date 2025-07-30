@@ -96,7 +96,7 @@ class TestCalculatePayment:
             calculate_payment(100000, 0.05, 360, 0)
 
 
-if __name__ == "__main__":
-    test = TestMortgageCashFlows()
-    test.test_mortgage_cash_flows_basic()
-    test.test_mortgage_cash_flows_zero_interest()
+# if __name__ == "__main__":
+#     test = TestMortgageCashFlows()
+#     test.test_mortgage_cash_flows_basic()
+#     test.test_mortgage_cash_flows_zero_interest()

@@ -35,17 +35,12 @@ class TestPresentValueGrowingAnnuity:
         rate = 0.05
         growth = 0.02
         periods = 10
-        if rate == growth:
-            expected = sum(
-                payment * ((1 + growth) / (1 + rate)) ** k
-                for k in range(1, periods + 1)
-            )
-        else:
-            expected = (
-                payment
-                * (1 + growth)
-                * ((1 - ((1 + growth) / (1 + rate)) ** periods) / (rate - growth))
-            )
+
+        expected = (
+            payment
+            * (1 + growth)
+            * ((1 - ((1 + growth) / (1 + rate)) ** periods) / (rate - growth))
+        )
         assert (
             pytest.approx(
                 present_value_growing_annuity(payment, rate, periods, growth), rel=1e-9
@@ -58,14 +53,10 @@ class TestPresentValueGrowingAnnuity:
         rate = 0.05
         growth = 0.05
         periods = 10
-        if rate == growth:
-            expected = sum(
-                payment * (1 + growth) ** k / (1 + rate) ** k for k in range(periods)
-            )
-        else:
-            expected = payment * (
-                (1 - ((1 + growth) / (1 + rate)) ** periods) / (rate - growth)
-            )
+        expected = sum(
+            payment * (1 + growth) ** k / (1 + rate) ** k for k in range(periods)
+        )
+
         assert (
             pytest.approx(
                 present_value_growing_annuity(payment, rate, periods, growth), rel=1e-9
