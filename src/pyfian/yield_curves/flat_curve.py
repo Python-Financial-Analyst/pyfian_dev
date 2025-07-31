@@ -10,8 +10,10 @@ from typing import Union
 import numpy as np
 import pandas as pd
 
+from pyfian.visualization.mixins import YieldCurvePlotMixin
 
-class FlatCurveLog:
+
+class FlatCurveLog(YieldCurvePlotMixin):
     """
     FlatCurveLog represents a flat curve with continuously compounded (log) rates.
 
@@ -95,7 +97,7 @@ class FlatCurveLog:
         )
 
 
-class FlatCurveAER:
+class FlatCurveAER(YieldCurvePlotMixin):
     """
     FlatCurveAER represents a flat curve with annual effective rates (AER).
 
