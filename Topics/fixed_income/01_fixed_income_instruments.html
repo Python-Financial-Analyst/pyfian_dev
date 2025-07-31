@@ -131,14 +131,22 @@
 <span class="k">try</span><span class="p">:</span>
     <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;pyfian&quot;</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Installing </span><span class="si">{</span><span class="s2">&quot;pyfian&quot;</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Installing </span><span class="si">{</span><span class="s1">&#39;pyfian&#39;</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
     <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="s2">&quot;pyfian&quot;</span><span class="p">])</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;pandas_datareader&quot;</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Installing </span><span class="si">{</span><span class="s2">&quot;pandas_datareader&quot;</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
-    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="s2">&quot;git+https://github.com/pydata/pandas-datareader.git&quot;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Installing </span><span class="si">{</span><span class="s1">&#39;pandas_datareader&#39;</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
+            <span class="s2">&quot;-m&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pip&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;install&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;git+https://github.com/pydata/pandas-datareader.git&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -205,8 +213,10 @@
 <span class="n">days_since_last_payment</span> <span class="o">=</span> <span class="mi">60</span>
 <span class="n">days_in_period</span> <span class="o">=</span> <span class="mi">182</span>  <span class="c1"># typical for semiannual</span>
 
-<span class="n">accrued_interest</span> <span class="o">=</span> <span class="p">(</span><span class="n">face_value</span> <span class="o">*</span> <span class="n">coupon_rate</span> <span class="o">/</span> <span class="n">payment_frequency</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">days_since_last_payment</span> <span class="o">/</span> <span class="n">days_in_period</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Accrued Interest: $</span><span class="si">{</span><span class="n">accrued_interest</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">accrued_interest</span> <span class="o">=</span> <span class="p">(</span><span class="n">face_value</span> <span class="o">*</span> <span class="n">coupon_rate</span> <span class="o">/</span> <span class="n">payment_frequency</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+    <span class="n">days_since_last_payment</span> <span class="o">/</span> <span class="n">days_in_period</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accrued Interest: $</span><span class="si">{</span><span class="n">accrued_interest</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -258,7 +268,7 @@ $<span class="math notranslate nohighlight">\( FV = PV e^{rt} \)</span>$</p>
 <span class="n">PV</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="n">FV</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="n">i</span> <span class="o">=</span> <span class="mf">0.05</span>
-<span class="n">t</span> <span class="o">=</span> <span class="mi">1</span> 
+<span class="n">t</span> <span class="o">=</span> <span class="mi">1</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">present_value_continuous</span><span class="p">(</span><span class="n">FV</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">future_value_continuous</span><span class="p">(</span><span class="n">PV</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
