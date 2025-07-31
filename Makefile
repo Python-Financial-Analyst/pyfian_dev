@@ -2,6 +2,7 @@
 
 .PHONY: help clean build docs test
 
+
 help:
 	@echo "Available targets:"
 	@echo "  build     - Build the project (install dependencies)"
@@ -9,6 +10,15 @@ help:
 	@echo "  docs      - Build documentation using Sphinx"
 	@echo "  test      - Run tests using pytest"
 	@echo "  coverage  - Run tests with coverage and generate HTML report"
+	@echo "  ruff      - Lint Python code with ruff"
+	@echo "  format    - Format Python code with ruff format"
+	@echo "  precommit - Run pre-commit hooks"
+
+ruff:
+	poetry run ruff check .
+
+format:
+	poetry run ruff format .
 
 build:
 	poetry install
@@ -36,3 +46,6 @@ test:
 coverage:
 	poetry run pytest --cov=pyfian --cov-report=html tests/
 	@echo "Coverage HTML report generated in htmlcov/index.html"
+
+precommit:
+	poetry run pre-commit run --all-files
