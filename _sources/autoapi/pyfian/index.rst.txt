@@ -25,6 +25,7 @@ Submodules
    /autoapi/pyfian/statistics/index
    /autoapi/pyfian/time_value/index
    /autoapi/pyfian/utils/index
+   /autoapi/pyfian/visualization/index
 
 
 Attributes

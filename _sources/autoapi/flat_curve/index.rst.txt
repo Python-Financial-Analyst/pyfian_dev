@@ -26,6 +26,9 @@ Module Contents
 
 .. py:class:: FlatCurveLog(log_rate: float, curve_date: Union[str, pandas.Timestamp])
 
+   Bases: :py:obj:`pyfian.visualization.mixins.YieldCurvePlotMixin`
+
+
    FlatCurveLog represents a flat curve with continuously compounded (log) rates.
 
    :param log_rate: Continuously compounded rate (as decimal, e.g. 0.05 for 5%).
@@ -96,6 +99,9 @@ Module Contents
 
 
 .. py:class:: FlatCurveAER(aer: float, curve_date: Union[str, pandas.Timestamp])
+
+   Bases: :py:obj:`pyfian.visualization.mixins.YieldCurvePlotMixin`
+
 
    FlatCurveAER represents a flat curve with annual effective rates (AER).
 
