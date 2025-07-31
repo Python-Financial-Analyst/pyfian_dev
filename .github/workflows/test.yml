@@ -51,6 +51,11 @@ jobs:
         poetry run ruff check --select=E9,F63,F7,F82
         # exit-zero treats all errors as warnings
         poetry run ruff check --exit-zero --statistics
+
+    - name: Check formatting with ruff format
+      run: |
+        # Check code formatting using ruff format
+        poetry run ruff format --check
     - name: Run tests
       run: |
         poetry run pytest

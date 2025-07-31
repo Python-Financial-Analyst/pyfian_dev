@@ -1,20 +1,12 @@
+
 repos:
-  - repo: https://github.com/psf/black
-    rev: 25.1.0
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.12.7
     hooks:
-      - id: black
-
-  - repo: https://github.com/PyCQA/isort
-    rev: 6.0.1
-    hooks:
-      - id: isort
-        args: ["--profile", "black"]
-
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.3.0
-    hooks:
-      - id: flake8
-        args: [--max-line-length=100]
+      - id: ruff-check
+        args: ["--fix"]
+      - id: ruff-format
+        args: ["--output-format=github", "--fix"]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.17.0
@@ -33,14 +25,6 @@ repos:
       - id: detect-secrets
         exclude: ".*\\.ipynb$"
 
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
-    hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-added-large-files
-        args: ["--maxkb=1024"]
-
   # - repo: local
   #   hooks:
   #     - id: add-colab-badges
@@ -48,10 +32,3 @@ repos:
   #       entry: poetry run python add_colab_badge.py
   #       language: system
   #       files: ^(notebooks|tutorials|examples)/.*\.ipynb$
-
-  - repo: https://github.com/PyCQA/pydocstyle
-    rev: 6.3.0
-    hooks:
-      - id: pydocstyle
-        args: ["--convention=numpy"]
-        files: \.py$
