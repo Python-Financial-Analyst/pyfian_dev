@@ -39,7 +39,7 @@ Or, for development, clone the repository and install locally:
 
 ```bash
 git clone <repo-url>
-cd pyfian_dev
+cd pyfian
 pip install -e .
 ```
 

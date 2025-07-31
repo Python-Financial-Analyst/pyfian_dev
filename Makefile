@@ -1,4 +1,4 @@
-# Makefile for pyfian_dev
+# Makefile for pyfian
 
 .PHONY: help clean build docs test
 
