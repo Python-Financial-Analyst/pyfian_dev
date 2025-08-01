@@ -23,7 +23,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: BulletBond(issue_dt: Union[str, pandas.Timestamp], maturity: Union[str, pandas.Timestamp], cpn: float, cpn_freq: int)
+.. py:class:: BulletBond(issue_dt: Union[str, pandas.Timestamp], maturity: Union[str, pandas.Timestamp], cpn: float, cpn_freq: int, notional: float = 100, settlement_convention_t_plus: int = 1, record_date_t_minus: int = 1, valuation_date: Optional[Union[str, pandas.Timestamp]] = None, yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None)
 
    BulletBond represents a bullet bond with fixed coupon payments and principal at maturity.
 
@@ -35,12 +35,27 @@ Module Contents
    :type cpn: float
    :param cpn_freq: Number of coupon payments per year.
    :type cpn_freq: int
+   :param notional: Face value (principal) of the bond. Defaults to 100.
+   :type notional: float, optional
+   :param settlement_convention_t_plus: Settlement convention. How many days after trade date the payments are made, e.g., T+1.
+                                        Defaults to 1.
+   :type settlement_convention_t_plus: int, optional
+   :param record_date_t_minus: Record date convention. How many days before the coupon payment is made to receive it.
+                               If 1, you receive the payment if you had settled the trade 1 day before coupon payment.
+                               Defaults to 1.
+   :type record_date_t_minus: int, optional
+   :param valuation_date: Date for valuation. Defaults to None.
+   :type valuation_date: str or datetime-like, optional
+   :param yield_to_maturity: Yield to maturity of the bond. Defaults to None.
+   :type yield_to_maturity: float, optional
+   :param bond_price: Market price of the bond. Defaults to None.
+   :type bond_price: float, optional
 
    .. rubric:: Examples
 
-   >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+   >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1, notional=1000)
    >>> bond.payment_flow
-   {Timestamp('2025-01-01 00:00:00'): 105.0, Timestamp('2024-01-01 00:00:00'): 5.0, ...}
+   {Timestamp('2025-01-01 00:00:00'): 1050.0, Timestamp('2024-01-01 00:00:00'): 50.0, ...}
 
 
    .. py:attribute:: issue_dt
@@ -63,11 +78,61 @@ Module Contents
       :type:  int
 
 
+   .. py:attribute:: notional
+      :type:  float
+      :value: 100
+
+
+
+   .. py:attribute:: settlement_convention_t_plus
+      :type:  int
+      :value: 1
+
+
+
+   .. py:attribute:: record_date_t_minus
+      :type:  int
+      :value: 1
+
+
+
    .. py:attribute:: payment_flow
       :type:  dict[pandas.Timestamp, float]
 
 
-   .. py:method:: make_payment_flow() -> dict[pandas.Timestamp, float]
+   .. py:attribute:: coupon_flow
+      :type:  dict[pandas.Timestamp, float]
+
+
+   .. py:attribute:: amortization_flow
+      :type:  dict[pandas.Timestamp, float]
+
+
+   .. py:attribute:: _valuation_date
+      :type:  Optional[pandas.Timestamp]
+      :value: None
+
+
+
+   .. py:method:: set_valuation_date(valuation_date: Optional[Union[str, pandas.Timestamp]], reset_yield_to_maturity: bool = True) -> Optional[pandas.Timestamp]
+
+      Set the default valuation date for the bond.
+
+
+
+   .. py:method:: set_yield_to_maturity(ytm: Optional[float], valuation_date: Optional[Union[str, pandas.Timestamp, None]] = None) -> None
+
+      Set the default yield to maturity for the bond. Updates bond price accordingly.
+
+
+
+   .. py:method:: set_bond_price(price: Optional[float], valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> None
+
+      Set the default bond price for the bond. Updates yield to maturity accordingly.
+
+
+
+   .. py:method:: make_payment_flow() -> tuple[dict[pandas.Timestamp, float], dict[pandas.Timestamp, float], dict[pandas.Timestamp, float]]
 
       Generate the payment flow (cash flows) for the bond.
 
@@ -76,13 +141,13 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1, notional=1000)
       >>> bond.make_payment_flow()
-      {Timestamp('2025-01-01 00:00:00'): 105.0, Timestamp('2024-01-01 00:00:00'): 5.0, ...}
+      {Timestamp('2025-01-01 00:00:00'): 1050.0, Timestamp('2024-01-01 00:00:00'): 50.0, ...}
 
 
 
-   .. py:method:: filter_payment_flow(valuation_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None) -> dict[pandas.Timestamp, float]
+   .. py:method:: filter_payment_flow(valuation_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None, payment_flow: Optional[dict[pandas.Timestamp, float]] = None) -> dict[pandas.Timestamp, float]
 
       Filter the payment flow to include only payments after the valuation date.
 
@@ -90,6 +155,8 @@ Module Contents
       :type valuation_date: str or datetime-like, optional
       :param bond_price: If provided, adds the bond price as a negative cash flow at the valuation date.
       :type bond_price: float, optional
+      :param payment_flow: Dictionary of payment dates and cash flows. If not provided, uses the bond's payment flow.
+      :type payment_flow: dict, optional
 
       :returns: **cash_flows** -- Dictionary of filtered payment dates and cash flows.
       :rtype: dict
@@ -186,6 +253,264 @@ Module Contents
       >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
       >>> print(bond)
       BulletBond(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, cpn=5, cpn_freq=1)
+
+
+
+   .. py:method:: _resolve_ytm(yield_to_maturity: Optional[float], price: Optional[float], valuation_date: Optional[Union[str, pandas.Timestamp]]) -> float
+
+      Helper to resolve yield_to_maturity from direct input, price, or default to notional.
+
+
+
+   .. py:method:: _get_ytm_payments_price(yield_to_maturity: Optional[float], price: Optional[float], valuation_date: Optional[Union[str, pandas.Timestamp]]) -> tuple[float, dict[float, float], float]
+
+      Helper to resolve ytm, time_to_payments, and price_calc for DRY.
+      Returns (ytm, time_to_payments, price_calc)
+
+
+
+   .. py:method:: modified_duration(yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
+
+      Calculate modified duration of the bond.
+      If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
+
+      :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
+      :type yield_to_maturity: float, optional
+      :param bond_price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+      :type bond_price: float, optional
+      :param valuation_date: Valuation date. Defaults to issue date.
+      :type valuation_date: str or datetime-like, optional
+
+      :returns: **duration** -- Modified duration in years.
+      :rtype: float
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.modified_duration(yield_to_maturity=0.05)
+      4.2
+
+
+
+   .. py:method:: convexity(yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
+
+      Calculate the convexity of the bond.
+
+      If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
+
+      :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from price if given.
+      :type yield_to_maturity: float, optional
+      :param bond_price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+      :type bond_price: float, optional
+      :param valuation_date: Valuation date. Defaults to issue date.
+      :type valuation_date: str or datetime-like, optional
+
+      :returns: **convexity** -- Bond convexity.
+      :rtype: float
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.convexity(yield_to_maturity=0.05)
+      18.7
+
+
+
+   .. py:method:: accrued_interest(settlement_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
+
+      Calculate accrued interest since last coupon payment.
+
+      :param settlement_date: Date for which to calculate accrued interest. Defaults to today.
+      :type settlement_date: str or datetime-like, optional
+
+      :returns: **accrued** -- Accrued interest amount.
+      :rtype: float
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.accrued_interest('2023-06-01')
+      2.5
+
+
+
+   .. py:method:: clean_price(dirty_price: float, settlement_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
+
+      Convert dirty price to clean price.
+
+      :param dirty_price: Dirty price of the bond.
+      :type dirty_price: float
+      :param settlement_date: Settlement date. Defaults to today.
+      :type settlement_date: str or datetime-like, optional
+
+      :returns: **clean_price** -- Clean price of the bond.
+      :rtype: float
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.clean_price(102.5, '2023-06-01')
+      100.0
+
+
+
+   .. py:method:: dirty_price(clean_price: float, settlement_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
+
+      Convert clean price to dirty price.
+
+      :param clean_price: Clean price of the bond.
+      :type clean_price: float
+      :param settlement_date: Settlement date. Defaults to today.
+      :type settlement_date: str or datetime-like, optional
+
+      :returns: **dirty_price** -- Dirty price of the bond.
+      :rtype: float
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.dirty_price(100.0, '2023-06-01')
+      102.5
+
+
+
+   .. py:method:: price_from_yield(yield_to_maturity: float, valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
+
+      Calculate the price of the bond given a yield to maturity (YTM).
+
+      :param yield_to_maturity: Yield to maturity as a decimal.
+      :type yield_to_maturity: float
+      :param valuation_date: Valuation date. Defaults to issue date.
+      :type valuation_date: str or datetime-like, optional
+
+      :returns: **price** -- Price of the bond.
+      :rtype: float
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.price_from_yield(0.05)
+      100.0
+
+
+
+   .. py:method:: _price_from_yield(time_to_payments: dict[float, float], yield_to_maturity: float) -> float
+
+
+   .. py:method:: cash_flows(valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> list[float]
+
+      Return a list of all future cash flows (coupons + principal at maturity).
+
+      :param valuation_date: Date from which to consider future payments. Defaults to issue date.
+      :type valuation_date: str or datetime-like, optional
+
+      :returns: **flows** -- List of cash flows for each period.
+      :rtype: list of float
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.cash_flows('2022-01-01')
+      [5.0, 5.0, 105.0]
+
+
+
+   .. py:method:: next_coupon_date(from_date: Optional[Union[str, pandas.Timestamp]] = None) -> Optional[pandas.Timestamp]
+
+      Get the next coupon payment date from a given date.
+
+      :param from_date: Date from which to search. Defaults to today.
+      :type from_date: str or datetime-like, optional
+
+      :returns: **next_date** -- Next coupon payment date, or None if none remain.
+      :rtype: pd.Timestamp or None
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.next_coupon_date('2023-06-01')
+      Timestamp('2024-01-01 00:00:00')
+
+
+
+   .. py:method:: previous_coupon_date(from_date: Optional[Union[str, pandas.Timestamp]] = None) -> Optional[pandas.Timestamp]
+
+      Get the previous coupon payment date from a given date.
+
+      :param from_date: Date from which to search. Defaults to today.
+      :type from_date: str or datetime-like, optional
+
+      :returns: **prev_date** -- Previous coupon payment date, or None if none exist.
+      :rtype: pd.Timestamp or None
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.previous_coupon_date('2023-06-01')
+      Timestamp('2023-01-01 00:00:00')
+
+
+
+   .. py:method:: to_dataframe(valuation_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None) -> pandas.DataFrame
+
+      Export the bond’s cash flow schedule as a pandas DataFrame.
+
+      :param valuation_date: Date from which to consider future payments. Defaults to issue date.
+      :type valuation_date: str or datetime-like, optional
+      :param bond_price: If provided, includes bond price as a negative cash flow.
+      :type bond_price: float, optional
+
+      :returns: **df** -- DataFrame with columns ['date', 'cash_flow']
+      :rtype: pd.DataFrame
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.to_dataframe('2022-01-01')
+      date        cash_flow
+      0 2023-01-01    5.0
+      1 2024-01-01    5.0
+      2 2025-01-01    105.0
+
+
+
+   .. py:method:: dv01(yield_to_maturity: Optional[float], bond_price: Optional[float] = None, valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
+
+      Calculate the DV01 (Dollar Value of a 1 basis point) for the bond.
+      If neither yield_to_maturity nor bond_price is provided, it is assumed that the clean price is equal to the notional.
+
+      :param yield_to_maturity: Yield to maturity as a decimal (e.g., 0.05 for 5%).
+      :type yield_to_maturity: float
+      :param bond_price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+      :type bond_price: float, optional
+      :param valuation_date: Valuation date. Defaults to issue date.
+      :type valuation_date: str or datetime-like, optional
+
+      :returns: **dv01** -- The change in price for a 1 basis point (0.0001) change in yield.
+      :rtype: float
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.dv01(0.05)
+      -0.42
+
+
+
+   .. py:method:: plot_cash_flows(valuation_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None) -> None
+
+      Visualize the cash flow schedule using matplotlib as stacked bars.
+
+      :param valuation_date: Date from which to consider future payments. Defaults to issue date.
+      :type valuation_date: str or datetime-like, optional
+      :param bond_price: If provided, includes bond price as a negative cash flow.
+      :type bond_price: float, optional
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.plot_cash_flows('2022-01-01')
+      # Shows a plot
 
 
 
