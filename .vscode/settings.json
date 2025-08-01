@@ -1,5 +1,5 @@
 {
-    "jupyter.interactiveWindow.creationMode": "single",
+    "jupyter.interactiveWindow.creationMode": "multiple",
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
         "tests"
