@@ -79,13 +79,13 @@
 <div class="viewcode-block" id="present_value_annuity">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/present_value/index.html#pyfian.time_value.present_value.present_value_annuity">[docs]</a>
 <span></span><span class="k">def</span><span class="w"> </span><span class="nf">present_value_annuity</span><span class="p">(</span><span class="n">payment</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">periods</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the present value of a fixed annuity.</span>
 
 <span class="sd">    The present value of a fixed annuity is given by:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        PV = P \times \frac{1 - (1 + r)^{-n}}{r}</span>
+<span class="sd">        PV = P \\times \\frac{1 - (1 + r)^{-n}}{r}</span>
 
 <span class="sd">    where:</span>
 <span class="sd">        - :math:`PV` is the present value</span>
@@ -124,20 +124,21 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">present_value_annuity_annual</span><span class="p">(</span>
     <span class="n">payment</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">annual_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">years</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payments_per_year</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the present value of a fixed annuity with an annual interest rate</span>
 <span class="sd">    and a specified number of payments per year.</span>
 
 <span class="sd">    The present value is calculated as:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        PV = P \times \frac{1 - (1 + r)^{-N}}{r}</span>
+<span class="sd">        PV = P \\times \\frac{1 - (1 + r)^{-N}}{r}</span>
 
 <span class="sd">    where:</span>
+
 <span class="sd">        - :math:`P` is the payment per period</span>
 <span class="sd">        - :math:`r` is the periodic interest rate (annual_rate / payments_per_year)</span>
 <span class="sd">        - :math:`N` is the total number of periods,</span>
-<span class="sd">        with :math:`N = \text{years} \times \text{payments_per_year}`</span>
+<span class="sd">        with :math:`N = \\text{years} \\times \\text{payments_per_year}`</span>
 
 <span class="sd">    This function adjusts the interest rate and number of periods</span>
 <span class="sd">    for non-annual payment frequencies.</span>
@@ -174,14 +175,14 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">present_value_growing_annuity</span><span class="p">(</span>
     <span class="n">payment</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">periods</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">growth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the present value of a growing annuity.</span>
 
 <span class="sd">    The present value is calculated as:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        PV = P \times \frac{1 - \left(\frac{1 + r}{1 + g}\right)^{-n}}</span>
-<span class="sd">        {\left(\frac{1 + r}{1 + g}\right) - 1}</span>
+<span class="sd">        PV = P \\times \\frac{1 - \\left(\\frac{1 + r}{1 + g}\\right)^{-n}}</span>
+<span class="sd">        {\\left(\\frac{1 + r}{1 + g}\\right) - 1}</span>
 
 <span class="sd">    where:</span>
 <span class="sd">        - :math:`P` is the payment at time t=0</span>
@@ -228,13 +229,13 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">present_value_growing_perpetuity</span><span class="p">(</span>
     <span class="n">payment</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">growth</span><span class="p">:</span> <span class="nb">float</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the present value of a growing perpetuity (infinite growing annuity).</span>
 
 <span class="sd">    The present value of a growing perpetuity is given by:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        PV = \frac{P \times (1+g)}{r - g}</span>
+<span class="sd">        PV = \\frac{P \\times (1+g)}{r - g}</span>
 
 <span class="sd">    where:</span>
 <span class="sd">        - :math:`PV` is the present value</span>
@@ -287,16 +288,16 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">present_value_two_stage_annuity</span><span class="p">(</span>
     <span class="n">payment</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rate1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rate2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">periods1</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">periods2</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the present value of a two-stage annuity.</span>
 
 <span class="sd">    The present value is calculated as:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        PV = PV_{\text{stage1}} + PV_{\text{stage2}}</span>
+<span class="sd">        PV = PV_{\\text{stage1}} + PV_{\\text{stage2}}</span>
 <span class="sd">    where:</span>
-<span class="sd">        - :math:`PV_{\text{stage1}}` is the present value of the first stage annuity</span>
-<span class="sd">        - :math:`PV_{\text{stage2}}` is the present value of the second stage annuity</span>
+<span class="sd">        - :math:`PV_{\\text{stage1}}` is the present value of the first stage annuity</span>
+<span class="sd">        - :math:`PV_{\\text{stage2}}` is the present value of the second stage annuity</span>
 <span class="sd">    The present value of the first stage is calculated using the `present_value_annuity`</span>
 <span class="sd">    function, and the second stage is calculated using the `present_value_annuity`</span>
 <span class="sd">    function, discounted back to the present using the interest rate of the first stage.</span>
@@ -349,17 +350,17 @@
     <span class="n">growth1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="n">growth2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the present value of a two-stage annuity where the first stage</span>
 <span class="sd">    is a (possibly growing) annuity and the second stage is a (possibly growing) perpetuity.</span>
 
 <span class="sd">    The present value is calculated as:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        PV = PV_{\text{stage1}} + PV_{\text{stage2}}</span>
+<span class="sd">        PV = PV_{\\text{stage1}} + PV_{\\text{stage2}}</span>
 <span class="sd">    where:</span>
-<span class="sd">        - :math:`PV_{\text{stage1}}` is the present value of the first stage annuity</span>
-<span class="sd">        - :math:`PV_{\text{stage2}}` is the present value of the second stage perpetuity.</span>
+<span class="sd">        - :math:`PV_{\\text{stage1}}` is the present value of the first stage annuity</span>
+<span class="sd">        - :math:`PV_{\\text{stage2}}` is the present value of the second stage perpetuity.</span>
 <span class="sd">    The present value of the first stage is calculated using the `present_value_growing_annuity`</span>
 <span class="sd">    function, and the second stage is calculated using the `present_value_growing_perpetuity`</span>
 <span class="sd">    function.</span>

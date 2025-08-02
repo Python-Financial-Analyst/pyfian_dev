@@ -98,13 +98,12 @@ Module Contents
    This function is a wrapper around numpy-financial's `irr` function,
    which calculates the IRR for a series of cash flows. It is useful for quickly
    obtaining the IRR without manually implementing the calculation.
-
-   Formula
-   -------
+   The IRR is the rate that makes the NPV of cash flows equal to zero. The formula is:
 
    .. math::
        0 = \sum_{t=0}^{n} \frac{CF_t}{(1 + IRR)^t}
    where:
+
        - :math:`IRR` is the internal rate of return
        - :math:`CF_t` is the cash flow at time `t`
        - :math:`n` is the total number of periods
@@ -135,6 +134,7 @@ Module Contents
 
    .. math::
        0 = \sum_{i=0}^{n} \frac{CF_i}{(1 + IRR)^{\frac{d_i - d_0}{365}}}
+
    where:
        - :math:`IRR` is the internal rate of return
        - :math:`CF_i` is the cash flow at time `i`

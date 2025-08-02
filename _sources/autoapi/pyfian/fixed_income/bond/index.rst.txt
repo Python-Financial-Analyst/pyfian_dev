@@ -229,11 +229,15 @@ Module Contents
    .. py:method:: value_with_curve(curve: Any, valuation_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None) -> tuple[float, dict[float, float]]
 
       Value the bond using a discount curve.
+
       Calculates the present value of the bond's cash flows using the provided discount curve.
+
       Returns the total present value and a dictionary of present values for each payment.
+
       If a bond price is provided, it is included as a negative cash flow, and the
       present value would be equivalent to a Net Present Value (NPV) calculation, useful for
       comparing the bond's market price against its theoretical value based on the discount curve.
+
       This can be used to optimize the yield curve fitting process.
 
       :param curve: Discount curve object with a discount_t(t) method.
@@ -287,78 +291,66 @@ Module Contents
 
    .. py:method:: modified_duration(yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
 
-              Calculate modified duration of the bond.
-              If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
+      Calculate modified duration of the bond.
+      If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
 
-              ::math
-                  Modified Duration =
-      rac{1}{P} \sum_{t=1}^{T}
-      rac{C_t}{(1 + YTM)^{(t+1)}} \cdot t
-              where:
-              - P is the price of the bond
-              - C_t is the cash flow at time t
-              - YTM is the yield to maturity
-              - T is the total number of periods
+      .. math::
+          Modified Duration = \frac{1}{P} \sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{(t+1)}} \cdot t
+      where:
 
-              Parameters
-              ----------
-              yield_to_maturity : float, optional
-                  Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
-              bond_price : float, optional
-                  Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
-              valuation_date : str or datetime-like, optional
-                  Valuation date. Defaults to issue date.
+      - :math:`P` is the price of the bond
+      - :math:`C_t` is the cash flow at time t
+      - :math:`YTM` is the yield to maturity
+      - :math:`T` is the total number of periods
 
-              Returns
-              -------
-              duration : float
-                  Modified duration in years.
+      :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
+      :type yield_to_maturity: float, optional
+      :param bond_price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+      :type bond_price: float, optional
+      :param valuation_date: Valuation date. Defaults to issue date.
+      :type valuation_date: str or datetime-like, optional
 
-              Examples
-              --------
-              >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
-              >>> bond.modified_duration(yield_to_maturity=0.05)
-              4.2
+      :returns: **duration** -- Modified duration in years.
+      :rtype: float
 
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.modified_duration(yield_to_maturity=0.05)
+      4.2
 
 
 
    .. py:method:: convexity(yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
 
-              Calculate the convexity of the bond.
+      Calculate the convexity of the bond.
 
-              If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
+      If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
 
-              ::math
-                  Convexity =
-      rac{1}{P} \sum_{t=1}^{T}
-      rac{C_t \cdot t \cdot (t + 1)}{(1 + YTM)^{(t + 2)}}
-              where:
-              - P is the price of the bond
-              - C_t is the cash flow at time t
-              - YTM is the yield to maturity
-              - T is the total number of periods
+      .. math::
+          Convexity = \frac{1}{P} \sum_{t=1}^{T} \frac{C_t \cdot t \cdot (t + 1)}{(1 + YTM)^{(t + 2)}}
+      where:
 
-              Parameters
-              ----------
-              yield_to_maturity : float, optional
-                  Yield to maturity as a decimal. If not provided, will be calculated from price if given.
-              bond_price : float, optional
-                  Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
-              valuation_date : str or datetime-like, optional
-                  Valuation date. Defaults to issue date.
+      - :math:`P` is the price of the bond
+      - :math:`C_t` is the cash flow at time t
+      - :math:`YTM` is the yield to maturity
+      - :math:`T` is the total number of periods
 
-              Returns
-              -------
-              convexity : float
-                  Bond convexity.
+      :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from price if given.
+      :type yield_to_maturity: float, optional
+      :param bond_price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+      :type bond_price: float, optional
+      :param valuation_date: Valuation date. Defaults to issue date.
+      :type valuation_date: str or datetime-like, optional
 
-              Examples
-              --------
-              >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
-              >>> bond.convexity(yield_to_maturity=0.05)
-              18.7
+      :returns: **convexity** -- Bond convexity.
+      :rtype: float
 
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.convexity(yield_to_maturity=0.05)
+      18.7
 
 
 

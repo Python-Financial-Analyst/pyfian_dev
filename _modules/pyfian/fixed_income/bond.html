@@ -516,11 +516,15 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Value the bond using a discount curve.</span>
+
 <span class="sd">        Calculates the present value of the bond&#39;s cash flows using the provided discount curve.</span>
+
 <span class="sd">        Returns the total present value and a dictionary of present values for each payment.</span>
+
 <span class="sd">        If a bond price is provided, it is included as a negative cash flow, and the</span>
 <span class="sd">        present value would be equivalent to a Net Present Value (NPV) calculation, useful for</span>
 <span class="sd">        comparing the bond&#39;s market price against its theoretical value based on the discount curve.</span>
+
 <span class="sd">        This can be used to optimize the yield curve fitting process.</span>
 
 <span class="sd">        Parameters</span>
@@ -612,13 +616,14 @@
 <span class="sd">        Calculate modified duration of the bond.</span>
 <span class="sd">        If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.</span>
 
-<span class="sd">        ::math</span>
-<span class="sd">            Modified Duration = \frac{1}{P} \\sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{(t+1)}} \\cdot t</span>
+<span class="sd">        .. math::</span>
+<span class="sd">            Modified Duration = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t}{(1 + YTM)^{(t+1)}} \\cdot t</span>
 <span class="sd">        where:</span>
-<span class="sd">        - P is the price of the bond</span>
-<span class="sd">        - C_t is the cash flow at time t</span>
-<span class="sd">        - YTM is the yield to maturity</span>
-<span class="sd">        - T is the total number of periods</span>
+
+<span class="sd">        - :math:`P` is the price of the bond</span>
+<span class="sd">        - :math:`C_t` is the cash flow at time t</span>
+<span class="sd">        - :math:`YTM` is the yield to maturity</span>
+<span class="sd">        - :math:`T` is the total number of periods</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -664,13 +669,14 @@
 
 <span class="sd">        If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.</span>
 
-<span class="sd">        ::math</span>
-<span class="sd">            Convexity = \frac{1}{P} \\sum_{t=1}^{T} \frac{C_t \\cdot t \\cdot (t + 1)}{(1 + YTM)^{(t + 2)}}</span>
+<span class="sd">        .. math::</span>
+<span class="sd">            Convexity = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t \\cdot t \\cdot (t + 1)}{(1 + YTM)^{(t + 2)}}</span>
 <span class="sd">        where:</span>
-<span class="sd">        - P is the price of the bond</span>
-<span class="sd">        - C_t is the cash flow at time t</span>
-<span class="sd">        - YTM is the yield to maturity</span>
-<span class="sd">        - T is the total number of periods</span>
+
+<span class="sd">        - :math:`P` is the price of the bond</span>
+<span class="sd">        - :math:`C_t` is the cash flow at time t</span>
+<span class="sd">        - :math:`YTM` is the yield to maturity</span>
+<span class="sd">        - :math:`T` is the total number of periods</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>

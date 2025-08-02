@@ -221,33 +221,29 @@ Convergence is determined by the specified tolerance and maximum iterations.</p>
 <dd><p>Compute the Internal Rate of Return using numpy-financial’s IRR function.</p>
 <p>This function is a wrapper around numpy-financial’s <cite>irr</cite> function,
 which calculates the IRR for a series of cash flows. It is useful for quickly
-obtaining the IRR without manually implementing the calculation.</p>
-<section id="formula">
-<h3>Formula<a class="headerlink" href="#formula" title="Link to this heading"></a></h3>
+obtaining the IRR without manually implementing the calculation.
+The IRR is the rate that makes the NPV of cash flows equal to zero. The formula is:</p>
 <div class="math notranslate nohighlight">
 \[0 = \sum_{t=0}^{n} \frac{CF_t}{(1 + IRR)^t}\]</div>
-<dl class="simple">
-<dt>where:</dt><dd><ul class="simple">
+<p>where:</p>
+<blockquote>
+<div><ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(IRR\)</span> is the internal rate of return</p></li>
 <li><p><span class="math notranslate nohighlight">\(CF_t\)</span> is the cash flow at time <cite>t</cite></p></li>
 <li><p><span class="math notranslate nohighlight">\(n\)</span> is the total number of periods</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 <p>This function uses numpy-financial’s built-in IRR calculation, which is efficient
 and handles various edge cases.</p>
 <dl class="field-list simple">
-<dt class="field-odd">param cash_flows<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Cash flow values, where the index represents the time period.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cash_flows</strong> (<em>list</em><em> of </em><em>float</em>) – Cash flow values, where the index represents the time period.</p>
 </dd>
-<dt class="field-even">type cash_flows<span class="colon">:</span></dt>
-<dd class="field-even"><p>list of float</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Internal Rate of Return as a decimal.</p>
 </dd>
-<dt class="field-odd">returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Internal Rate of Return as a decimal.</p>
-</dd>
-<dt class="field-even">rtype<span class="colon">:</span></dt>
-<dd class="field-even"><p>float</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -255,7 +251,6 @@ and handles various edge cases.</p>
 <span class="go">0.2488833566240709</span>
 </pre></div>
 </div>
-</section>
 </dd></dl>
 
 <dl class="py function">

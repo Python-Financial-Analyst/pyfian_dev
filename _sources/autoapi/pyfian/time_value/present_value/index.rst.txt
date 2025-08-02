@@ -62,6 +62,7 @@ Module Contents
        PV = P \times \frac{1 - (1 + r)^{-N}}{r}
 
    where:
+
        - :math:`P` is the payment per period
        - :math:`r` is the periodic interest rate (annual_rate / payments_per_year)
        - :math:`N` is the total number of periods,

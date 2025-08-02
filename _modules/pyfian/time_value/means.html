@@ -83,7 +83,7 @@
 <div class="viewcode-block" id="geometric_mean">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/means/index.html#pyfian.time_value.means.geometric_mean">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">geometric_mean</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the geometric mean of percent returns.</span>
 
 <span class="sd">    The geometric mean is useful for evaluating investment returns over time</span>
@@ -94,7 +94,7 @@
 <span class="sd">    The geometric mean is calculated as:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        GM = \left(\prod_{i=1}^{n} (1 + r_i)\right)^{\frac{1}{n}} - 1</span>
+<span class="sd">        GM = \\left(\\prod_{i=1}^{n} (1 + r_i)\\right)^{\\frac{1}{n}} - 1</span>
 
 <span class="sd">    where :math:`r_i` are the individual returns.</span>
 
@@ -166,7 +166,7 @@
 <div class="viewcode-block" id="arithmetic_mean">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/means/index.html#pyfian.time_value.means.arithmetic_mean">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">arithmetic_mean</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the arithmetic mean of percent returns.</span>
 
 <span class="sd">    The arithmetic mean is a simple average of returns, useful for understanding</span>
@@ -176,7 +176,7 @@
 <span class="sd">    The arithmetic mean is calculated as:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        AM = \frac{1}{n} \sum_{i=1}^{n} r_i</span>
+<span class="sd">        AM = \\frac{1}{n} \\sum_{i=1}^{n} r_i</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -229,7 +229,7 @@
 <div class="viewcode-block" id="harmonic_mean">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/means/index.html#pyfian.time_value.means.harmonic_mean">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">harmonic_mean</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the harmonic mean of values.</span>
 
 <span class="sd">    The harmonic mean is the reciprocal of the arithmetic mean of the reciprocals.</span>
@@ -244,7 +244,7 @@
 <span class="sd">    The harmonic mean is calculated as:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        HM = \frac{n}{\sum_{i=1}^{n} \frac{1}{x_i}}</span>
+<span class="sd">        HM = \\frac{n}{\\sum_{i=1}^{n} \\frac{1}{x_i}}</span>
 <span class="sd">    where :math:`x_i` are the individual values.</span>
 
 <span class="sd">    Parameters</span>
@@ -317,7 +317,7 @@
 <div class="viewcode-block" id="weighted_geometric_mean">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/means/index.html#pyfian.time_value.means.weighted_geometric_mean">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">weighted_geometric_mean</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the weighted geometric mean of percent returns.</span>
 
 <span class="sd">    Useful for time-weighted returns, where each return is associated</span>
@@ -330,7 +330,7 @@
 <span class="sd">    The weighted geometric mean is calculated as:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        WGM = \left(\prod_{i=1}^{n} (1 + r_i)^{w_i}\right)^{\frac{1}{\sum w_i}} - 1</span>
+<span class="sd">        WGM = \\left(\\prod_{i=1}^{n} (1 + r_i)^{w_i}\\right)^{\\frac{1}{\\sum w_i}} - 1</span>
 <span class="sd">    where :math:`r_i` are the individual returns and :math:`w_i` are the weights.</span>
 
 <span class="sd">    Parameters</span>
@@ -370,7 +370,7 @@
 <div class="viewcode-block" id="weighted_harmonic_mean">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/means/index.html#pyfian.time_value.means.weighted_harmonic_mean">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">weighted_harmonic_mean</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the weighted harmonic mean of values.</span>
 
 <span class="sd">    In finance, this is useful for averaging ratios (e.g., P/E ratios) where each value is weighted</span>
@@ -382,7 +382,7 @@
 <span class="sd">    The weighted harmonic mean is calculated as:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        WHM = \frac{\sum_{i=1}^{n} w_i}{\sum_{i=1}^{n} \frac{w_i}{x_i}}</span>
+<span class="sd">        WHM = \\frac{\\sum_{i=1}^{n} w_i}{\\sum_{i=1}^{n} \\frac{w_i}{x_i}}</span>
 <span class="sd">    where :math:`x_i` are the individual values and :math:`w_i` are the weights.</span>
 
 <span class="sd">    Parameters</span>

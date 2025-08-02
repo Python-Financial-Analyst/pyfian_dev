@@ -31,7 +31,7 @@ Module Contents
    -------
 
    .. math::
-       r_{real} \approx r_{nominal} - r_{inflation}
+       r_{real} pprox r_{nominal} - r_{inflation}
 
    :param nominal_rate: Nominal interest rate as a decimal (e.g., 0.05 for 5%).
    :type nominal_rate: float
