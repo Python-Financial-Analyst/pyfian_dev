@@ -23,13 +23,11 @@ class TestInterestIncomeContinuous:
 
 class TestInterestIncomeEffective:
     def test_basic(self):
-        assert np.isclose(
-            interest_income.interest_income_effective(0.05, 180), 0.024113688402427045
-        )
+        assert np.isclose(interest_income.interest_income_effective(0.05, 1), 0.05)
 
     def test_notional(self):
         assert np.isclose(
-            interest_income.interest_income_effective(0.05, 365, notional=100), 5.0
+            interest_income.interest_income_effective(0.05, 1, notional=100), 5.0
         )
 
 

@@ -93,10 +93,10 @@ def interest_income_continuous(
 
 
 def interest_income_effective(
-    effective_rate: float, days: int, base_year: int = 365, notional: float = 1.0
+    effective_rate: float, time: float, notional: float = 1.0
 ) -> float:
     r"""
-    Calculate interest income using an effective annual rate for a given period.
+    Calculate interest income using an effective annual rate for a given period of time.
 
     Formula
     -------
@@ -107,11 +107,19 @@ def interest_income_effective(
     ----------
     effective_rate : float
         Effective annual rate (as decimal).
-    days : int
-        Number of days in the period.
-    base_year : int, optional
-        Number of days in a year (default 365).
+    time : float
+        Time period in years (can be fractional).
     notional : float, optional
+        Notional amount (default 1.0).
+
+    Returns
+    -------
+    float
+        Interest income for the given period.
+
+    Examples
+    --------
+    >>> interest_income_effective(0.05, 180)
         Notional amount (default 1.0).
 
     Returns
@@ -124,8 +132,7 @@ def interest_income_effective(
     >>> interest_income_effective(0.05, 180)
     0.024113688402427045
     """
-    period_fraction = days / base_year
-    return notional * ((1 + effective_rate) ** period_fraction - 1)
+    return notional * ((1 + effective_rate) ** time - 1)
 
 
 def interest_income_nominal_periods(
