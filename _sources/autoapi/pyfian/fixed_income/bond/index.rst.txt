@@ -26,6 +26,7 @@ Module Contents
 .. py:class:: BulletBond(issue_dt: Union[str, pandas.Timestamp], maturity: Union[str, pandas.Timestamp], cpn: float, cpn_freq: int, notional: float = 100, settlement_convention_t_plus: int = 1, record_date_t_minus: int = 1, valuation_date: Optional[Union[str, pandas.Timestamp]] = None, yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None)
 
    BulletBond represents a bullet bond with fixed coupon payments and principal at maturity.
+   It allows for payment flow generation, valuation, yield calculations, and other bond analytics.
 
    :param issue_dt: Issue date of the bond.
    :type issue_dt: str or datetime-like
@@ -37,7 +38,7 @@ Module Contents
    :type cpn_freq: int
    :param notional: Face value (principal) of the bond. Defaults to 100.
    :type notional: float, optional
-   :param settlement_convention_t_plus: Settlement convention. How many days after trade date the payments are made, e.g., T+1.
+   :param settlement_convention_t_plus: Settlement convention. How many days after trade date the payment is made, e.g., T+1.
                                         Defaults to 1.
    :type settlement_convention_t_plus: int, optional
    :param record_date_t_minus: Record date convention. How many days before the coupon payment is made to receive it.
@@ -46,7 +47,7 @@ Module Contents
    :type record_date_t_minus: int, optional
    :param valuation_date: Date for valuation. Defaults to None.
    :type valuation_date: str or datetime-like, optional
-   :param yield_to_maturity: Yield to maturity of the bond. Defaults to None.
+   :param yield_to_maturity: Yield to maturity of the bond. Set in decimal, e.g., 0.05 for 5%. Defaults to None.
    :type yield_to_maturity: float, optional
    :param bond_price: Market price of the bond. Defaults to None.
    :type bond_price: float, optional
@@ -117,12 +118,31 @@ Module Contents
    .. py:method:: set_valuation_date(valuation_date: Optional[Union[str, pandas.Timestamp]], reset_yield_to_maturity: bool = True) -> Optional[pandas.Timestamp]
 
       Set the default valuation date for the bond.
+      If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
+
+      :param valuation_date: The valuation date to set.
+      :type valuation_date: Union[str, pd.Timestamp], optional
+      :param reset_yield_to_maturity: Whether to reset the yield to maturity and bond price.
+      :type reset_yield_to_maturity: bool, optional
+
+      :returns: The updated valuation date.
+      :rtype: Optional[pd.Timestamp]
+
+      :raises ValueError: If the valuation date is not set when the bond price is set.
+      :raises If the valuation date is changed, resets the bond price and yield to maturity if reset_yield_to_maturity is True.:
 
 
 
    .. py:method:: set_yield_to_maturity(ytm: Optional[float], valuation_date: Optional[Union[str, pandas.Timestamp, None]] = None) -> None
 
       Set the default yield to maturity for the bond. Updates bond price accordingly.
+      :param ytm: The yield to maturity to set.
+      :type ytm: float, optional
+      :param valuation_date: The valuation date to set.
+      :type valuation_date: Union[str, pd.Timestamp], optional
+
+      :raises ValueError: If the valuation date is not set when the yield to maturity is set.
+      :raises If the yield to maturity is set, it will also update the bond price based on the yield.:
 
 
 
@@ -130,14 +150,29 @@ Module Contents
 
       Set the default bond price for the bond. Updates yield to maturity accordingly.
 
+      :param price: The bond price to set.
+      :type price: float, optional
+      :param valuation_date: The valuation date to set.
+      :type valuation_date: Union[str, pd.Timestamp], optional
+
+      :raises ValueError: If the valuation date is not set when the bond price is set.
+      :raises If the bond price is set, it will also update the yield to maturity based on the bond price.:
+
 
 
    .. py:method:: make_payment_flow() -> tuple[dict[pandas.Timestamp, float], dict[pandas.Timestamp, float], dict[pandas.Timestamp, float]]
 
       Generate the payment flow (cash flows) for the bond.
+      Returns a tuple of dictionaries:
+      - dict_payments: Payment dates as keys and cash flow amounts as values.
+      - dict_coupons: Coupon payment dates as keys and coupon amounts as values.
+      - dict_amortization: Amortization payment dates as keys and amortization amounts as values.
 
-      :returns: **dict_payments** -- Dictionary with payment dates as keys and cash flow amounts as values.
-      :rtype: dict
+      :returns: * **dict_payments** (*dict*) -- Dictionary with payment dates as keys and cash flow amounts as values.
+                * **dict_coupons** (*dict*) -- Dictionary with coupon payment dates as keys and coupon amounts as values.
+                * **dict_amortization** (*dict*) -- Dictionary with amortization payment dates as keys and amortization amounts as values.
+
+      :raises ValueError: If the bond is not properly initialized.
 
       .. rubric:: Examples
 
@@ -173,6 +208,7 @@ Module Contents
    .. py:method:: calculate_time_to_payments(valuation_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None) -> dict[float, float]
 
       Calculate the time to each payment from the valuation date.
+      The time is expressed in years.
 
       :param valuation_date: Date from which to calculate time to payments. Defaults to issue date.
       :type valuation_date: str or datetime-like, optional
@@ -193,6 +229,12 @@ Module Contents
    .. py:method:: value_with_curve(curve: Any, valuation_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None) -> tuple[float, dict[float, float]]
 
       Value the bond using a discount curve.
+      Calculates the present value of the bond's cash flows using the provided discount curve.
+      Returns the total present value and a dictionary of present values for each payment.
+      If a bond price is provided, it is included as a negative cash flow, and the
+      present value would be equivalent to a Net Present Value (NPV) calculation, useful for
+      comparing the bond's market price against its theoretical value based on the discount curve.
+      This can be used to optimize the yield curve fitting process.
 
       :param curve: Discount curve object with a discount_t(t) method.
       :type curve: object
@@ -219,6 +261,8 @@ Module Contents
 
       Estimate the yield to maturity (YTM) using the xirr function from pyfian.time_value.irr.
 
+      The YTM is the internal rate of return (IRR) of the bond's cash flows, assuming the bond is held to maturity.
+
       :param bond_price: Price of the bond.
       :type bond_price: float
       :param valuation_date: Valuation date. Defaults to issue date.
@@ -241,84 +285,87 @@ Module Contents
 
 
 
-   .. py:method:: __repr__() -> str
-
-      Return string representation of the BulletBond object.
-
-      :returns: String representation of the bond.
-      :rtype: str
-
-      .. rubric:: Examples
-
-      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
-      >>> print(bond)
-      BulletBond(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, cpn=5, cpn_freq=1)
-
-
-
-   .. py:method:: _resolve_ytm(yield_to_maturity: Optional[float], price: Optional[float], valuation_date: Optional[Union[str, pandas.Timestamp]]) -> float
-
-      Helper to resolve yield_to_maturity from direct input, price, or default to notional.
-
-
-
-   .. py:method:: _get_ytm_payments_price(yield_to_maturity: Optional[float], price: Optional[float], valuation_date: Optional[Union[str, pandas.Timestamp]]) -> tuple[float, dict[float, float], float]
-
-      Helper to resolve ytm, time_to_payments, and price_calc for DRY.
-      Returns (ytm, time_to_payments, price_calc)
-
-
-
    .. py:method:: modified_duration(yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
 
-      Calculate modified duration of the bond.
-      If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
+              Calculate modified duration of the bond.
+              If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
 
-      :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
-      :type yield_to_maturity: float, optional
-      :param bond_price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
-      :type bond_price: float, optional
-      :param valuation_date: Valuation date. Defaults to issue date.
-      :type valuation_date: str or datetime-like, optional
+              ::math
+                  Modified Duration =
+      rac{1}{P} \sum_{t=1}^{T}
+      rac{C_t}{(1 + YTM)^{(t+1)}} \cdot t
+              where:
+              - P is the price of the bond
+              - C_t is the cash flow at time t
+              - YTM is the yield to maturity
+              - T is the total number of periods
 
-      :returns: **duration** -- Modified duration in years.
-      :rtype: float
+              Parameters
+              ----------
+              yield_to_maturity : float, optional
+                  Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
+              bond_price : float, optional
+                  Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+              valuation_date : str or datetime-like, optional
+                  Valuation date. Defaults to issue date.
 
-      .. rubric:: Examples
+              Returns
+              -------
+              duration : float
+                  Modified duration in years.
 
-      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
-      >>> bond.modified_duration(yield_to_maturity=0.05)
-      4.2
+              Examples
+              --------
+              >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+              >>> bond.modified_duration(yield_to_maturity=0.05)
+              4.2
+
 
 
 
    .. py:method:: convexity(yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
 
-      Calculate the convexity of the bond.
+              Calculate the convexity of the bond.
 
-      If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
+              If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
 
-      :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from price if given.
-      :type yield_to_maturity: float, optional
-      :param bond_price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
-      :type bond_price: float, optional
-      :param valuation_date: Valuation date. Defaults to issue date.
-      :type valuation_date: str or datetime-like, optional
+              ::math
+                  Convexity =
+      rac{1}{P} \sum_{t=1}^{T}
+      rac{C_t \cdot t \cdot (t + 1)}{(1 + YTM)^{(t + 2)}}
+              where:
+              - P is the price of the bond
+              - C_t is the cash flow at time t
+              - YTM is the yield to maturity
+              - T is the total number of periods
 
-      :returns: **convexity** -- Bond convexity.
-      :rtype: float
+              Parameters
+              ----------
+              yield_to_maturity : float, optional
+                  Yield to maturity as a decimal. If not provided, will be calculated from price if given.
+              bond_price : float, optional
+                  Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+              valuation_date : str or datetime-like, optional
+                  Valuation date. Defaults to issue date.
 
-      .. rubric:: Examples
+              Returns
+              -------
+              convexity : float
+                  Bond convexity.
 
-      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
-      >>> bond.convexity(yield_to_maturity=0.05)
-      18.7
+              Examples
+              --------
+              >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+              >>> bond.convexity(yield_to_maturity=0.05)
+              18.7
 
 
 
-   .. py:method:: accrued_interest(settlement_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
+
+   .. py:method:: accrued_interest(valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
 
       Calculate accrued interest since last coupon payment.
+      This is the interest that has accumulated on the bond since the last coupon payment date
 
       :param settlement_date: Date for which to calculate accrued interest. Defaults to today.
       :type settlement_date: str or datetime-like, optional
@@ -376,25 +423,35 @@ Module Contents
 
    .. py:method:: price_from_yield(yield_to_maturity: float, valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
 
-      Calculate the price of the bond given a yield to maturity (YTM).
+              Calculate the price of the bond given a yield to maturity (YTM).
 
-      :param yield_to_maturity: Yield to maturity as a decimal.
-      :type yield_to_maturity: float
-      :param valuation_date: Valuation date. Defaults to issue date.
-      :type valuation_date: str or datetime-like, optional
+              ::math
+                  Price = \sum_{t=1}^{T}
+      rac{C_t}{(1 + YTM)^{t}}
+              where:
+                  - \(C_t\) is the cash flow at time \(t\)
+                  - \(YTM\) is the yield to maturity
+                  - \(T\) is the total number of periods
 
-      :returns: **price** -- Price of the bond.
-      :rtype: float
+              Parameters
+              ----------
+              yield_to_maturity : float
+                  Yield to maturity as a decimal.
+              valuation_date : str or datetime-like, optional
+                  Valuation date. Defaults to issue date.
 
-      .. rubric:: Examples
+              Returns
+              -------
+              price : float
+                  Price of the bond.
 
-      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
-      >>> bond.price_from_yield(0.05)
-      100.0
+              Examples
+              --------
+              >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+              >>> bond.price_from_yield(0.05)
+              100.0
 
 
-
-   .. py:method:: _price_from_yield(time_to_payments: dict[float, float], yield_to_maturity: float) -> float
 
 
    .. py:method:: cash_flows(valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> list[float]
@@ -415,12 +472,12 @@ Module Contents
 
 
 
-   .. py:method:: next_coupon_date(from_date: Optional[Union[str, pandas.Timestamp]] = None) -> Optional[pandas.Timestamp]
+   .. py:method:: next_coupon_date(valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> Optional[pandas.Timestamp]
 
       Get the next coupon payment date from a given date.
 
-      :param from_date: Date from which to search. Defaults to today.
-      :type from_date: str or datetime-like, optional
+      :param valuation_date: Date from which to search. Defaults to today. Adjusts to settlement date.
+      :type valuation_date: str or datetime-like, optional
 
       :returns: **next_date** -- Next coupon payment date, or None if none remain.
       :rtype: pd.Timestamp or None
@@ -433,12 +490,12 @@ Module Contents
 
 
 
-   .. py:method:: previous_coupon_date(from_date: Optional[Union[str, pandas.Timestamp]] = None) -> Optional[pandas.Timestamp]
+   .. py:method:: previous_coupon_date(valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> Optional[pandas.Timestamp]
 
       Get the previous coupon payment date from a given date.
 
-      :param from_date: Date from which to search. Defaults to today.
-      :type from_date: str or datetime-like, optional
+      :param valuation_date: Date from which to search. Defaults to today. Adjusts to settlement date.
+      :type valuation_date: str or datetime-like, optional
 
       :returns: **prev_date** -- Previous coupon payment date, or None if none exist.
       :rtype: pd.Timestamp or None
@@ -511,6 +568,55 @@ Module Contents
       >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
       >>> bond.plot_cash_flows('2022-01-01')
       # Shows a plot
+
+
+
+   .. py:method:: __repr__() -> str
+
+      Return string representation of the BulletBond object.
+
+      :returns: String representation of the bond.
+      :rtype: str
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> print(bond)
+      BulletBond(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, cpn=5, cpn_freq=1)
+
+
+
+   .. py:method:: _price_from_yield(time_to_payments: dict[float, float], yield_to_maturity: float) -> float
+
+      Helper to calculate the price of the bond from yield to maturity and time to payments.
+      :param time_to_payments: Dictionary with time to payment (in years) as keys and cash flow values.
+      :type time_to_payments: dict
+      :param yield_to_maturity: Yield to maturity as a decimal (e.g., 0.05 for 5%).
+      :type yield_to_maturity: float
+
+      :returns: Price of the bond.
+      :rtype: float
+
+
+
+   .. py:method:: _resolve_ytm(yield_to_maturity: Optional[float], price: Optional[float], valuation_date: Optional[Union[str, pandas.Timestamp]]) -> float
+
+      Helper to resolve yield_to_maturity from direct input, price, or default to notional.
+
+
+
+   .. py:method:: _get_ytm_payments_price(yield_to_maturity: Optional[float], price: Optional[float], valuation_date: Optional[Union[str, pandas.Timestamp]]) -> tuple[float, dict[float, float], float]
+
+      Helper to resolve ytm, time_to_payments, and price_calc for DRY.
+      Returns (ytm, time_to_payments, price_calc)
+
+
+
+   .. py:method:: _resolve_valuation_date(valuation_date: Optional[Union[str, pandas.Timestamp]]) -> pandas.Timestamp
+
+      Helper to resolve the valuation date for the bond.
+      If valuation_date is provided, converts to pd.Timestamp.
+      Otherwise, uses self._valuation_date or self.issue_dt.
 
 
 

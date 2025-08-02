@@ -86,18 +86,18 @@
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/future_value/index.html#pyfian.time_value.future_value.future_value_annuity">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">future_value_annuity</span><span class="p">(</span><span class="n">payment</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">periods</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the present value of a fixed annuity.</span>
+<span class="sd">    Calculate the future value of a fixed annuity.</span>
 
-<span class="sd">    The present value of a fixed annuity is given by:</span>
+<span class="sd">    The future value of a fixed annuity is given by:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        PV = P \times \frac{1 - (1 + r)^{-n}}{r}</span>
+<span class="sd">        FV = P \times (1 + r)^{N} \times \frac{1 - \frac{1}{(1 + r)^{N}}}{r}</span>
 
 <span class="sd">    where:</span>
-<span class="sd">        - :math:`PV` is the present value</span>
+<span class="sd">        - :math:`FV` is the future value</span>
 <span class="sd">        - :math:`P` is the payment per period</span>
 <span class="sd">        - :math:`r` is the interest rate per period</span>
-<span class="sd">        - :math:`n` is the total number of periods</span>
+<span class="sd">        - :math:`N` is the total number of periods</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -111,12 +111,12 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
-<span class="sd">        Present value of the fixed annuity.</span>
+<span class="sd">        Future value of the fixed annuity.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; present_value_annuity(100, 0.05, 10)</span>
-<span class="sd">    772.1734929184818</span>
+<span class="sd">    &gt;&gt;&gt; future_value_annuity(100, 0.05, 10)</span>
+<span class="sd">    1257.7892535548839</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">payment</span> <span class="o">*</span> <span class="n">periods</span>
@@ -132,13 +132,13 @@
     <span class="n">payment</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">annual_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">years</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">payments_per_year</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the present value of a fixed annuity with an annual interest rate</span>
+<span class="sd">    Calculate the future value of a fixed annuity with an annual interest rate</span>
 <span class="sd">    and a specified number of payments per year.</span>
 
-<span class="sd">    The present value is calculated as:</span>
+<span class="sd">    The future value is calculated as:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        PV = P \times \frac{1 - (1 + r)^{-N}}{r}</span>
+<span class="sd">        FV = P \times (1 + r)^{N} \times \frac{1 - \frac{1}{(1 + r)^{N}}}{r}</span>
 
 <span class="sd">    where:</span>
 <span class="sd">        - :math:`P` is the payment per period</span>
@@ -163,12 +163,12 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
-<span class="sd">        Present value of the fixed annuity.</span>
+<span class="sd">        Future value of the fixed annuity.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; present_value_annuity_annual(100, 0.05, 10, 12)</span>
-<span class="sd">    9428.135032823473</span>
+<span class="sd">    &gt;&gt;&gt; future_value_annuity_annual(100, 0.05, 10, 12)</span>
+<span class="sd">    15528.22794456672</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">rate</span> <span class="o">=</span> <span class="n">annual_rate</span> <span class="o">/</span> <span class="n">payments_per_year</span>
     <span class="n">periods</span> <span class="o">=</span> <span class="n">years</span> <span class="o">*</span> <span class="n">payments_per_year</span>
@@ -182,12 +182,22 @@
     <span class="n">payment</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">periods</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">growth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the present value of a growing annuity.</span>
+<span class="sd">    Calculate the future value of a growing annuity.</span>
 
-<span class="sd">    The present value is calculated as:</span>
+<span class="sd">    The future value is calculated as:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        PV = P \times \frac{1 - \left(\frac{1 + r}{1 + g}\right)^{-n}}</span>
+<span class="sd">        FV = P \times \frac{(1 + r)^{N} - (1 + g)^{N}}{r - g}</span>
+
+<span class="sd">    where:</span>
+<span class="sd">        - :math:`FV` is the future value</span>
+<span class="sd">        - :math:`P` is the payment at time t=0</span>
+<span class="sd">        - :math:`r` is the interest rate per period</span>
+<span class="sd">        - :math:`g` is the growth rate per period</span>
+<span class="sd">        - :math:`N` is the total number of periods</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
 <span class="sd">        {\left(\frac{1 + r}{1 + g}\right) - 1}</span>
 
 <span class="sd">    where:</span>
@@ -217,14 +227,14 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
-<span class="sd">        Present value of the growing annuity.</span>
+<span class="sd">        Future value of the growing annuity.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; present_value_growing_annuity(100, 0.05, 10, 0.02 )</span>
-<span class="sd">    855.5867765481578</span>
-<span class="sd">    &gt;&gt;&gt; present_value_growing_annuity(100, 0.05, 10, 0.05)</span>
-<span class="sd">    1000.0</span>
+<span class="sd">    &gt;&gt;&gt; future_value_growing_annuity(100, 0.05, 10, 0.02)</span>
+<span class="sd">    1393.6607030611262</span>
+<span class="sd">    &gt;&gt;&gt; future_value_growing_annuity(100, 0.05, 10, 0.05)</span>
+<span class="sd">    1628.894626777442</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pv</span> <span class="o">=</span> <span class="n">present_value_growing_annuity</span><span class="p">(</span><span class="n">payment</span><span class="p">,</span> <span class="n">rate</span><span class="p">,</span> <span class="n">periods</span><span class="p">,</span> <span class="n">growth</span><span class="p">)</span>
     <span class="n">fv</span> <span class="o">=</span> <span class="n">pv</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="n">periods</span>

@@ -28,13 +28,13 @@ Module Contents
    The formula used is:
 
    .. math::
-       PMT = \frac{P \cdot r}{1 - (1 + r)^{-n}}
+       PMT = \frac{P \cdot r}{1 - \frac{1}{(1 + r)^{N}}}
    where:
        - :math:`PMT` is the payment amount per period
        - :math:`P` is the principal loan amount
        - :math:`r` is the periodic interest rate. This is calculated as the annual rate
        divided by the number of payments per year.
-       - :math:`n` is the total number of payments
+       - :math:`N` is the total number of payments
    This function handles cases where the payment interval is not monthly,
    adjusting the interest rate and number of payments accordingly.
 

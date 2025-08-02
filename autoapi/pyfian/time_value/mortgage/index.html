@@ -135,7 +135,7 @@ the principal, annual interest rate, total loan term in months, and the
 interval between payments in months.</p>
 <p>The formula used is:</p>
 <div class="math notranslate nohighlight">
-\[PMT = \frac{P \cdot r}{1 - (1 + r)^{-n}}\]</div>
+\[PMT = \frac{P \cdot r}{1 - \frac{1}{(1 + r)^{N}}}\]</div>
 <dl>
 <dt>where:</dt><dd><ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(PMT\)</span> is the payment amount per period</p></li>
@@ -143,7 +143,7 @@ interval between payments in months.</p>
 <li><p><span class="math notranslate nohighlight">\(r\)</span> is the periodic interest rate. This is calculated as the annual rate</p></li>
 </ul>
 <p>divided by the number of payments per year.
-- <span class="math notranslate nohighlight">\(n\)</span> is the total number of payments</p>
+- <span class="math notranslate nohighlight">\(N\)</span> is the total number of payments</p>
 </dd>
 </dl>
 <p>This function handles cases where the payment interval is not monthly,

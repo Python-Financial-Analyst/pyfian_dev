@@ -1,0 +1,299 @@
+pyfian.time_value.interest_income
+=================================
+
+.. py:module:: pyfian.time_value.interest_income
+
+.. autoapi-nested-parse::
+
+   interest_income.py
+
+   Interest Income Calculation Module
+   ==================================
+
+   This module provides functions to calculate expected interest income for a given period using different types of interest rates:
+
+   - Continuous compounding
+   - Effective annual rate
+   - Nominal rate (periodic compounding)
+   - Nominal rate (custom day count)
+   - Money Market Rate (add-on and discount)
+   - Bond Equivalent Yield (BEY)
+
+   All calculations are per dollar by default, but the principal (notional) can be customized.
+
+   Formulas
+   --------
+
+   - Continuous compounding: ::math:: `I = N (e^{rt} - 1)`
+   - Effective annual: ::math:: `I = N ((1 + r)^{t} - 1)`
+   - Nominal (periodic): ::math:: `I = N \frac{r}{n} p`
+   - Nominal (days): ::math:: `I = N r \frac{d}{y}`
+   - Money Market Rate (discount): ::math:: `I = N r \frac{d}{b}`
+   - Money Market Rate (add-on, notional): ::math:: `I = \frac{N}{1 + r d / b} r \frac{d}{b}`
+   - Money Market Rate (add-on, investment): ::math:: `I = N r \frac{d}{b}`
+   - BEY: ::math:: `I = N \frac{r}{2} p`
+
+   Where:
+       - `N` = notional
+       - `r` = rate (as decimal)
+       - `t` = time in years
+       - `n` = periods per year
+       - `p` = number of periods
+       - `d` = days in period
+       - `y` = days in year
+       - `b` = base days for year (e.g., 360)
+
+   .. rubric:: Examples
+
+   >>> interest_income_continuous(0.05, 1)
+   0.05127109637602412
+   >>> interest_income_effective(0.05, 180)
+   0.024113688402427045
+   >>> interest_income_nominal_periods(0.06, 12, 6)
+   0.03
+   >>> interest_income_nominal_days(0.06, 30, 90)
+   0.014794520547945205
+   >>> interest_income_money_market_discount(0.06, 180)
+   0.03
+   >>> interest_income_money_market_addon_notional(0.06, 180)
+   0.02912621359223301
+   >>> interest_income_money_market_addon_investment(0.06, 180)
+   0.03
+   >>> interest_income_bey(0.06, 2)
+   0.06
+
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   pyfian.time_value.interest_income.interest_income_continuous
+   pyfian.time_value.interest_income.interest_income_effective
+   pyfian.time_value.interest_income.interest_income_nominal_periods
+   pyfian.time_value.interest_income.interest_income_nominal_days
+   pyfian.time_value.interest_income.interest_income_money_market_discount
+   pyfian.time_value.interest_income.interest_income_money_market_addon_notional
+   pyfian.time_value.interest_income.interest_income_money_market_addon_investment
+   pyfian.time_value.interest_income.interest_income_bey
+
+
+Module Contents
+---------------
+
+.. py:function:: interest_income_continuous(rate: float, time: float, notional: float = 1.0) -> float
+
+   Calculate interest income using a continuously compounded rate for a given period.
+
+   Formula
+   -------
+   ::math:: `I = N (e^{rt} - 1)`
+
+   :param rate: Continuously compounded rate (as decimal).
+   :type rate: float
+   :param time: Time period (in years).
+   :type time: float
+   :param notional: Notional amount (default 1.0).
+   :type notional: float, optional
+
+   :returns: Interest income for the given period.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> interest_income_continuous(0.05, 1)
+   0.05127109637602412
+
+
+.. py:function:: interest_income_effective(effective_rate: float, time: float, notional: float = 1.0) -> float
+
+   Calculate interest income using an effective annual rate for a given period of time.
+
+   Formula
+   -------
+   ::math:: `I = N ((1 + r)^{t} - 1)`
+   where :math:`t = \frac{\text{days}}{\text{base\_year}}`
+
+   :param effective_rate: Effective annual rate (as decimal).
+   :type effective_rate: float
+   :param time: Time period in years (can be fractional).
+   :type time: float
+   :param notional: Notional amount (default 1.0).
+   :type notional: float, optional
+
+   :returns: Interest income for the given period.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> interest_income_effective(0.05, 180)
+       Notional amount (default 1.0).
+
+   :returns: Interest income for the given period.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> interest_income_effective(0.05, 180)
+   0.024113688402427045
+
+
+.. py:function:: interest_income_nominal_periods(nominal_rate: float, periods_per_year: int, periods: float = 1.0, notional: float = 1.0) -> float
+
+   Calculate interest income using a nominal rate (periodic compounding) for a given number of periods.
+
+   Formula
+   -------
+   ::math:: `I = N \frac{r}{n} p`
+
+   :param nominal_rate: Nominal annual rate (as decimal).
+   :type nominal_rate: float
+   :param periods_per_year: Number of periods per year (e.g., 12 for monthly).
+   :type periods_per_year: int
+   :param periods: Number of periods (can be fractional for partial periods, default 1.0).
+   :type periods: float, optional
+   :param notional: Notional amount (default 1.0).
+   :type notional: float, optional
+
+   :returns: Interest income for the given number of periods.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> interest_income_nominal_periods(0.06, 12, 6)
+   0.03
+
+
+.. py:function:: interest_income_nominal_days(nominal_rate: float, period_days: int, days: int, base_year: int = 365, notional: float = 1.0) -> float
+
+   Calculate interest income using a nominal rate for a custom period (e.g., 30, 90 days) for a given period.
+
+   Formula
+   -------
+   ::math:: `I = N r \frac{d}{y}`
+
+   :param nominal_rate: Nominal annual rate (as decimal).
+   :type nominal_rate: float
+   :param period_days: Number of days in the compounding period (e.g., 30 for monthly, 90 for quarterly).
+   :type period_days: int
+   :param days: Number of days in the period.
+   :type days: int
+   :param base_year: Number of days in a year (default 365).
+   :type base_year: int, optional
+   :param notional: Notional amount (default 1.0).
+   :type notional: float, optional
+
+   :returns: Interest income for the given period.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> interest_income_nominal_days(0.06, 30, 90)
+   0.014794520547945205
+
+
+.. py:function:: interest_income_money_market_discount(mmr: float, mmr_days: int = 360, base: float = 360, notional: float = 1.0) -> float
+
+   Calculate interest income using a Money Market Rate (discount) for a given period.
+
+   Formula
+   -------
+   ::math:: `I = N r \frac{d}{b}`
+
+   :param mmr: Money Market Rate (discount, as decimal).
+   :type mmr: float
+   :param mmr_days: Number of days in the period (default 360).
+   :type mmr_days: int, optional
+   :param base: Base days for the year (default 360).
+   :type base: float, optional
+   :param notional: Notional amount (default 1.0).
+   :type notional: float, optional
+
+   :returns: Interest income for the given period.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> interest_income_money_market_discount(0.06, 180)
+   0.03
+
+
+.. py:function:: interest_income_money_market_addon_notional(mmr: float, mmr_days: int, base: float = 360, notional: float = 1.0) -> float
+
+   Calculate interest income using a Money Market Rate (add-on) for a given period.
+   This function assumes the notional is the total amount to be paid (face value).
+
+   Formula
+   -------
+   ::math:: `I = \frac{N}{1 + r d / b} r \frac{d}{b}`
+
+   :param mmr: Money Market Rate (add-on, as decimal).
+   :type mmr: float
+   :param mmr_days: Number of days in the period.
+   :type mmr_days: int
+   :param base: Base days for the year (default 360).
+   :type base: float, optional
+   :param notional: Notional (face value) amount (default 1.0).
+   :type notional: float, optional
+
+   :returns: Interest income for the given period.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> interest_income_money_market_addon_notional(0.06, 180)
+   0.02912621359223301
+
+
+.. py:function:: interest_income_money_market_addon_investment(mmr: float, mmr_days: int, base: float = 360, notional: float = 1.0) -> float
+
+   Calculate interest income using a Money Market Rate (add-on) for a given period.
+   This function assumes the notional is the amount that will earn interest (investment amount).
+
+   Formula
+   -------
+   ::math:: `I = N r \frac{d}{b}`
+
+   :param mmr: Money Market Rate (add-on, as decimal).
+   :type mmr: float
+   :param mmr_days: Number of days in the period.
+   :type mmr_days: int
+   :param base: Base days for the year (default 360).
+   :type base: float, optional
+   :param notional: Notional (investment) amount (default 1.0).
+   :type notional: float, optional
+
+   :returns: Interest income for the given period.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> interest_income_money_market_addon_investment(0.06, 180)
+   0.03
+
+
+.. py:function:: interest_income_bey(bey: float, periods: int = 1, notional: float = 1.0) -> float
+
+   Calculate interest income using Bond Equivalent Yield (BEY) for a given period.
+
+   Formula
+   -------
+   ::math:: `I = N \frac{r}{2} p`
+
+   :param bey: Bond Equivalent Yield (as decimal, annualized, semiannual compounding).
+   :type bey: float
+   :param periods: Number of semiannual periods (default 1).
+   :type periods: int, optional
+   :param notional: Notional amount (default 1.0).
+   :type notional: float, optional
+
+   :returns: Interest income for the given period.
+   :rtype: float
+
+   .. rubric:: Examples
+
+   >>> interest_income_bey(0.06, 2)
+   0.06
+
+

@@ -1,0 +1,617 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyfian.time_value.interest_income &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="pyfian.time_value.irr" href="../irr/index.html" />
+    <link rel="prev" title="pyfian.time_value.future_value" href="../future_value/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Topics/fixed_income/index.html">Fixed Income</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">pyfian</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../corporate_finance/index.html">pyfian.corporate_finance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../data/index.html">pyfian.data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../derivatives/index.html">pyfian.derivatives</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../financial_statements/index.html">pyfian.financial_statements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../fixed_income/index.html">pyfian.fixed_income</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../portfolio/index.html">pyfian.portfolio</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../risk_management/index.html">pyfian.risk_management</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../statistics/index.html">pyfian.statistics</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">pyfian.time_value</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/index.html">pyfian.utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../visualization/index.html">pyfian.visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#attributes">Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../flat_curve/index.html">flat_curve</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">pyfian</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">pyfian.time_value</a></li>
+      <li class="breadcrumb-item active">pyfian.time_value.interest_income</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/pyfian/time_value/interest_income/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyfian.time_value.interest_income">
+<span id="pyfian-time-value-interest-income"></span><h1>pyfian.time_value.interest_income<a class="headerlink" href="#module-pyfian.time_value.interest_income" title="Link to this heading"></a></h1>
+<p>interest_income.py</p>
+<section id="interest-income-calculation-module">
+<h2>Interest Income Calculation Module<a class="headerlink" href="#interest-income-calculation-module" title="Link to this heading"></a></h2>
+<p>This module provides functions to calculate expected interest income for a given period using different types of interest rates:</p>
+<ul class="simple">
+<li><p>Continuous compounding</p></li>
+<li><p>Effective annual rate</p></li>
+<li><p>Nominal rate (periodic compounding)</p></li>
+<li><p>Nominal rate (custom day count)</p></li>
+<li><p>Money Market Rate (add-on and discount)</p></li>
+<li><p>Bond Equivalent Yield (BEY)</p></li>
+</ul>
+<p>All calculations are per dollar by default, but the principal (notional) can be customized.</p>
+<section id="formulas">
+<h3>Formulas<a class="headerlink" href="#formulas" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Continuous compounding: ::math:: <cite>I = N (e^{rt} - 1)</cite></p></li>
+<li><p>Effective annual: ::math:: <cite>I = N ((1 + r)^{t} - 1)</cite></p></li>
+<li><p>Nominal (periodic): ::math:: <cite>I = N frac{r}{n} p</cite></p></li>
+<li><p>Nominal (days): ::math:: <cite>I = N r frac{d}{y}</cite></p></li>
+<li><p>Money Market Rate (discount): ::math:: <cite>I = N r frac{d}{b}</cite></p></li>
+<li><p>Money Market Rate (add-on, notional): ::math:: <cite>I = frac{N}{1 + r d / b} r frac{d}{b}</cite></p></li>
+<li><p>Money Market Rate (add-on, investment): ::math:: <cite>I = N r frac{d}{b}</cite></p></li>
+<li><p>BEY: ::math:: <cite>I = N frac{r}{2} p</cite></p></li>
+</ul>
+<dl class="simple">
+<dt>Where:</dt><dd><ul class="simple">
+<li><p><cite>N</cite> = notional</p></li>
+<li><p><cite>r</cite> = rate (as decimal)</p></li>
+<li><p><cite>t</cite> = time in years</p></li>
+<li><p><cite>n</cite> = periods per year</p></li>
+<li><p><cite>p</cite> = number of periods</p></li>
+<li><p><cite>d</cite> = days in period</p></li>
+<li><p><cite>y</cite> = days in year</p></li>
+<li><p><cite>b</cite> = base days for year (e.g., 360)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_continuous</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">0.05127109637602412</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_effective</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+<span class="go">0.024113688402427045</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_nominal_periods</span><span class="p">(</span><span class="mf">0.06</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="go">0.03</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_nominal_days</span><span class="p">(</span><span class="mf">0.06</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">90</span><span class="p">)</span>
+<span class="go">0.014794520547945205</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_money_market_discount</span><span class="p">(</span><span class="mf">0.06</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+<span class="go">0.03</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_money_market_addon_notional</span><span class="p">(</span><span class="mf">0.06</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+<span class="go">0.02912621359223301</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_money_market_addon_investment</span><span class="p">(</span><span class="mf">0.06</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+<span class="go">0.03</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_bey</span><span class="p">(</span><span class="mf">0.06</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">0.06</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.interest_income.interest_income_continuous" title="pyfian.time_value.interest_income.interest_income_continuous"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interest_income_continuous</span></code></a>(→ float)</p></td>
+<td><p>Calculate interest income using a continuously compounded rate for a given period.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.interest_income.interest_income_effective" title="pyfian.time_value.interest_income.interest_income_effective"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interest_income_effective</span></code></a>(→ float)</p></td>
+<td><p>Calculate interest income using an effective annual rate for a given period of time.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.interest_income.interest_income_nominal_periods" title="pyfian.time_value.interest_income.interest_income_nominal_periods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interest_income_nominal_periods</span></code></a>(→ float)</p></td>
+<td><p>Calculate interest income using a nominal rate (periodic compounding) for a given number of periods.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.interest_income.interest_income_nominal_days" title="pyfian.time_value.interest_income.interest_income_nominal_days"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interest_income_nominal_days</span></code></a>(→ float)</p></td>
+<td><p>Calculate interest income using a nominal rate for a custom period (e.g., 30, 90 days) for a given period.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.interest_income.interest_income_money_market_discount" title="pyfian.time_value.interest_income.interest_income_money_market_discount"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interest_income_money_market_discount</span></code></a>(→ float)</p></td>
+<td><p>Calculate interest income using a Money Market Rate (discount) for a given period.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.interest_income.interest_income_money_market_addon_notional" title="pyfian.time_value.interest_income.interest_income_money_market_addon_notional"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interest_income_money_market_addon_notional</span></code></a>(→ float)</p></td>
+<td><p>Calculate interest income using a Money Market Rate (add-on) for a given period.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.interest_income.interest_income_money_market_addon_investment" title="pyfian.time_value.interest_income.interest_income_money_market_addon_investment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interest_income_money_market_addon_investment</span></code></a>(→ float)</p></td>
+<td><p>Calculate interest income using a Money Market Rate (add-on) for a given period.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.interest_income.interest_income_bey" title="pyfian.time_value.interest_income.interest_income_bey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interest_income_bey</span></code></a>(→ float)</p></td>
+<td><p>Calculate interest income using Bond Equivalent Yield (BEY) for a given period.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.time_value.interest_income.interest_income_continuous">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.interest_income.</span></span><span class="sig-name descname"><span class="pre">interest_income_continuous</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/interest_income.html#interest_income_continuous"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.interest_income.interest_income_continuous" title="Link to this definition"></a></dt>
+<dd><p>Calculate interest income using a continuously compounded rate for a given period.</p>
+<section id="formula">
+<h3>Formula<a class="headerlink" href="#formula" title="Link to this heading"></a></h3>
+<p>::math:: <cite>I = N (e^{rt} - 1)</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">param rate<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Continuously compounded rate (as decimal).</p>
+</dd>
+<dt class="field-even">type rate<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param time<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Time period (in years).</p>
+</dd>
+<dt class="field-even">type time<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param notional<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Notional amount (default 1.0).</p>
+</dd>
+<dt class="field-even">type notional<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, optional</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Interest income for the given period.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_continuous</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">0.05127109637602412</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.time_value.interest_income.interest_income_effective">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.interest_income.</span></span><span class="sig-name descname"><span class="pre">interest_income_effective</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">effective_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/interest_income.html#interest_income_effective"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.interest_income.interest_income_effective" title="Link to this definition"></a></dt>
+<dd><p>Calculate interest income using an effective annual rate for a given period of time.</p>
+<section id="id1">
+<h3>Formula<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p>::math:: <cite>I = N ((1 + r)^{t} - 1)</cite>
+where <span class="math notranslate nohighlight">\(t = \frac{\text{days}}{\text{base\_year}}\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">param effective_rate<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Effective annual rate (as decimal).</p>
+</dd>
+<dt class="field-even">type effective_rate<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param time<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Time period in years (can be fractional).</p>
+</dd>
+<dt class="field-even">type time<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param notional<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Notional amount (default 1.0).</p>
+</dd>
+<dt class="field-even">type notional<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, optional</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Interest income for the given period.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_effective</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+<span class="go">    Notional amount (default 1.0).</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Interest income for the given period.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_effective</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+<span class="go">0.024113688402427045</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.time_value.interest_income.interest_income_nominal_periods">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.interest_income.</span></span><span class="sig-name descname"><span class="pre">interest_income_nominal_periods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nominal_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periods_per_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periods</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/interest_income.html#interest_income_nominal_periods"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.interest_income.interest_income_nominal_periods" title="Link to this definition"></a></dt>
+<dd><p>Calculate interest income using a nominal rate (periodic compounding) for a given number of periods.</p>
+<section id="id2">
+<h3>Formula<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p>::math:: <cite>I = N frac{r}{n} p</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">param nominal_rate<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Nominal annual rate (as decimal).</p>
+</dd>
+<dt class="field-even">type nominal_rate<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param periods_per_year<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of periods per year (e.g., 12 for monthly).</p>
+</dd>
+<dt class="field-even">type periods_per_year<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">param periods<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of periods (can be fractional for partial periods, default 1.0).</p>
+</dd>
+<dt class="field-even">type periods<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, optional</p>
+</dd>
+<dt class="field-odd">param notional<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Notional amount (default 1.0).</p>
+</dd>
+<dt class="field-even">type notional<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, optional</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Interest income for the given number of periods.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_nominal_periods</span><span class="p">(</span><span class="mf">0.06</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="go">0.03</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.time_value.interest_income.interest_income_nominal_days">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.interest_income.</span></span><span class="sig-name descname"><span class="pre">interest_income_nominal_days</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nominal_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">365</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/interest_income.html#interest_income_nominal_days"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.interest_income.interest_income_nominal_days" title="Link to this definition"></a></dt>
+<dd><p>Calculate interest income using a nominal rate for a custom period (e.g., 30, 90 days) for a given period.</p>
+<section id="id3">
+<h3>Formula<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p>::math:: <cite>I = N r frac{d}{y}</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">param nominal_rate<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Nominal annual rate (as decimal).</p>
+</dd>
+<dt class="field-even">type nominal_rate<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param period_days<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of days in the compounding period (e.g., 30 for monthly, 90 for quarterly).</p>
+</dd>
+<dt class="field-even">type period_days<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">param days<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of days in the period.</p>
+</dd>
+<dt class="field-even">type days<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">param base_year<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of days in a year (default 365).</p>
+</dd>
+<dt class="field-even">type base_year<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, optional</p>
+</dd>
+<dt class="field-odd">param notional<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Notional amount (default 1.0).</p>
+</dd>
+<dt class="field-even">type notional<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, optional</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Interest income for the given period.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_nominal_days</span><span class="p">(</span><span class="mf">0.06</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">90</span><span class="p">)</span>
+<span class="go">0.014794520547945205</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.time_value.interest_income.interest_income_money_market_discount">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.interest_income.</span></span><span class="sig-name descname"><span class="pre">interest_income_money_market_discount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mmr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mmr_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">360</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">360</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/interest_income.html#interest_income_money_market_discount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.interest_income.interest_income_money_market_discount" title="Link to this definition"></a></dt>
+<dd><p>Calculate interest income using a Money Market Rate (discount) for a given period.</p>
+<section id="id4">
+<h3>Formula<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>::math:: <cite>I = N r frac{d}{b}</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">param mmr<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Money Market Rate (discount, as decimal).</p>
+</dd>
+<dt class="field-even">type mmr<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param mmr_days<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of days in the period (default 360).</p>
+</dd>
+<dt class="field-even">type mmr_days<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, optional</p>
+</dd>
+<dt class="field-odd">param base<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Base days for the year (default 360).</p>
+</dd>
+<dt class="field-even">type base<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, optional</p>
+</dd>
+<dt class="field-odd">param notional<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Notional amount (default 1.0).</p>
+</dd>
+<dt class="field-even">type notional<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, optional</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Interest income for the given period.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_money_market_discount</span><span class="p">(</span><span class="mf">0.06</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+<span class="go">0.03</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.time_value.interest_income.interest_income_money_market_addon_notional">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.interest_income.</span></span><span class="sig-name descname"><span class="pre">interest_income_money_market_addon_notional</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mmr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mmr_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">360</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/interest_income.html#interest_income_money_market_addon_notional"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.interest_income.interest_income_money_market_addon_notional" title="Link to this definition"></a></dt>
+<dd><p>Calculate interest income using a Money Market Rate (add-on) for a given period.
+This function assumes the notional is the total amount to be paid (face value).</p>
+<section id="id5">
+<h3>Formula<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<p>::math:: <cite>I = frac{N}{1 + r d / b} r frac{d}{b}</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">param mmr<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Money Market Rate (add-on, as decimal).</p>
+</dd>
+<dt class="field-even">type mmr<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param mmr_days<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of days in the period.</p>
+</dd>
+<dt class="field-even">type mmr_days<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">param base<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Base days for the year (default 360).</p>
+</dd>
+<dt class="field-even">type base<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, optional</p>
+</dd>
+<dt class="field-odd">param notional<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Notional (face value) amount (default 1.0).</p>
+</dd>
+<dt class="field-even">type notional<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, optional</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Interest income for the given period.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_money_market_addon_notional</span><span class="p">(</span><span class="mf">0.06</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+<span class="go">0.02912621359223301</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.time_value.interest_income.interest_income_money_market_addon_investment">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.interest_income.</span></span><span class="sig-name descname"><span class="pre">interest_income_money_market_addon_investment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mmr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mmr_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">360</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/interest_income.html#interest_income_money_market_addon_investment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.interest_income.interest_income_money_market_addon_investment" title="Link to this definition"></a></dt>
+<dd><p>Calculate interest income using a Money Market Rate (add-on) for a given period.
+This function assumes the notional is the amount that will earn interest (investment amount).</p>
+<section id="id6">
+<h3>Formula<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<p>::math:: <cite>I = N r frac{d}{b}</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">param mmr<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Money Market Rate (add-on, as decimal).</p>
+</dd>
+<dt class="field-even">type mmr<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param mmr_days<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of days in the period.</p>
+</dd>
+<dt class="field-even">type mmr_days<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">param base<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Base days for the year (default 360).</p>
+</dd>
+<dt class="field-even">type base<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, optional</p>
+</dd>
+<dt class="field-odd">param notional<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Notional (investment) amount (default 1.0).</p>
+</dd>
+<dt class="field-even">type notional<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, optional</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Interest income for the given period.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_money_market_addon_investment</span><span class="p">(</span><span class="mf">0.06</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+<span class="go">0.03</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.time_value.interest_income.interest_income_bey">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.interest_income.</span></span><span class="sig-name descname"><span class="pre">interest_income_bey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periods</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/interest_income.html#interest_income_bey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.interest_income.interest_income_bey" title="Link to this definition"></a></dt>
+<dd><p>Calculate interest income using Bond Equivalent Yield (BEY) for a given period.</p>
+<section id="id7">
+<h3>Formula<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<p>::math:: <cite>I = N frac{r}{2} p</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">param bey<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Bond Equivalent Yield (as decimal, annualized, semiannual compounding).</p>
+</dd>
+<dt class="field-even">type bey<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param periods<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of semiannual periods (default 1).</p>
+</dd>
+<dt class="field-even">type periods<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, optional</p>
+</dd>
+<dt class="field-odd">param notional<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Notional amount (default 1.0).</p>
+</dd>
+<dt class="field-even">type notional<span class="colon">:</span></dt>
+<dd class="field-even"><p>float, optional</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Interest income for the given period.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">interest_income_bey</span><span class="p">(</span><span class="mf">0.06</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">0.06</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../future_value/index.html" class="btn btn-neutral float-left" title="pyfian.time_value.future_value" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../irr/index.html" class="btn btn-neutral float-right" title="pyfian.time_value.irr" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

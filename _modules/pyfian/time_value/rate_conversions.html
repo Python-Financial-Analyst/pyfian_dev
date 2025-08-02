@@ -1,0 +1,674 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyfian.time_value.rate_conversions &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Topics/fixed_income/index.html">Fixed Income</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyfian.time_value.rate_conversions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyfian.time_value.rate_conversions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">rate_conversions.py</span>
+
+<span class="sd">Module for converting between all major types of interest and yield rates used in finance.</span>
+
+<span class="sd">Supported conversions:</span>
+<span class="sd">- Continuous compounding (force of interest) &lt;-&gt; Effective annual rate (EAR)</span>
+<span class="sd">- Nominal rate (periodic compounding, e.g., monthly, quarterly, semiannual) &lt;-&gt; Effective annual rate (EAR)</span>
+<span class="sd">- Nominal rate for custom periods (e.g., 30, 90, 180 days) &lt;-&gt; Effective annual rate (EAR)</span>
+<span class="sd">- Single period rate &lt;-&gt; Effective annual rate (EAR)</span>
+<span class="sd">- Money Market Rate (MMR, add-on or discount, actual/360) &lt;-&gt; Effective annual rate (EAR)</span>
+<span class="sd">- Bond Equivalent Yield (BEY, semiannual-pay bond convention) &lt;-&gt; Effective annual rate (EAR)</span>
+
+<span class="sd">These conversions are essential for comparing, quoting, and reporting interest rates and yields across different financial products, regulatory frameworks, and institutional conventions.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<span class="c1"># --- Internal helpers for exponentiation logic ---</span>
+<div class="viewcode-block" id="_exp_general">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions._exp_general">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_exp_general</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generalized exponentiation for rate conversions:</span>
+<span class="sd">    Returns base**n - 1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span></div>
+
+
+
+<span class="c1"># --- Centralized input validation ---</span>
+<div class="viewcode-block" id="_validate_numeric">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions._validate_numeric">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_numeric</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a number or numpy array.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="_validate_positive_number">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions._validate_positive_number">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_positive_number</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be a positive integer or float.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be positive.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="_validate_effective_rate">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions._validate_effective_rate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_validate_effective_rate</span><span class="p">(</span><span class="n">effective_rate</span><span class="p">):</span>
+    <span class="n">_validate_numeric</span><span class="p">(</span><span class="n">effective_rate</span><span class="p">,</span> <span class="s2">&quot;effective_rate&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">less_equal</span><span class="p">(</span><span class="n">effective_rate</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;effective_rate must be greater than -1.&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># continuous_to_effective &lt;-&gt; effective_to_continuous conversions</span>
+<div class="viewcode-block" id="continuous_to_effective">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.continuous_to_effective">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">continuous_to_effective</span><span class="p">(</span><span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a continuously compounded rate to an effective annual rate.</span>
+
+<span class="sd">    Theory &amp; Institutional Context:</span>
+<span class="sd">    - Continuously compounded rates (also called &quot;force of interest&quot;) are a mathematical idealization where interest is compounded at every instant. This is common in theoretical finance, derivatives pricing, and some institutional contexts (e.g., certain bond math, Black-Scholes model).</span>
+<span class="sd">    - Effective annual rate (EAR) is the real-world annualized return, accounting for compounding. It is the standard for comparing investments or loans with different compounding conventions.</span>
+<span class="sd">    - Regulatory and institutional reporting (e.g., APR, APY) often require conversion to EAR for transparency and comparability.</span>
+
+<span class="sd">    This function calculates the effective annual rate (EAR) from a continuously compounded rate.</span>
+<span class="sd">    Continuously compounded interest is a theoretical concept where interest is calculated and</span>
+<span class="sd">    added to the principal constantly, creating a smooth growth curve. The relationship is</span>
+<span class="sd">    defined by the formula: :math:`\mathrm{EAR} = e^{r} - 1`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rate : float</span>
+<span class="sd">        The continuously compounded rate, expressed as a decimal.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The corresponding effective annual rate, expressed as a decimal.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; continuous_to_effective(0.05)</span>
+<span class="sd">    0.05127109637602411</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_validate_numeric</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="s2">&quot;rate&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="effective_to_continuous">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.effective_to_continuous">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">effective_to_continuous</span><span class="p">(</span><span class="n">effective_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert an effective annual rate to a continuously compounded rate.</span>
+
+<span class="sd">    Theory &amp; Institutional Context:</span>
+<span class="sd">    - Effective annual rate (EAR) is the standard for comparing interest rates across products and institutions, as it reflects the true annualized return or cost.</span>
+<span class="sd">    - Continuously compounded rates are used in advanced financial mathematics, fixed income analytics, and some institutional contracts (e.g., certain swaps, derivatives, and bond pricing models).</span>
+<span class="sd">    - Regulatory disclosures may require conversion from EAR to continuous rates for risk-neutral pricing or actuarial calculations.</span>
+
+<span class="sd">    The relationship is defined by the formula: :math:`r = \ln(1 + \mathrm{EAR})`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    effective_rate : float</span>
+<span class="sd">        Effective annual rate (as decimal).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Continuously compounded rate (as decimal).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; effective_to_continuous(0.05127109637602411)</span>
+<span class="sd">    0.05</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_validate_effective_rate</span><span class="p">(</span><span class="n">effective_rate</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">effective_rate</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># periodic_to_effective &lt;-&gt; effective_to_periodic conversions</span>
+<div class="viewcode-block" id="nominal_periods_to_effective">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.nominal_periods_to_effective">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nominal_periods_to_effective</span><span class="p">(</span><span class="n">nominal_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">periods_per_year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a nominal rate that refers to periods (e.g., monthly, quarterly, semiannual) to an effective annual rate (EAR).</span>
+
+<span class="sd">    Theory &amp; Institutional Context:</span>
+<span class="sd">    - Nominal rates (&quot;APR&quot; in some contexts) are often quoted by banks and financial institutions for loans, mortgages, and deposits, but do not account for intra-year compounding.</span>
+<span class="sd">    - Effective annual rate (EAR) is required for true comparability, as it incorporates the effect of compounding within the year.</span>
+<span class="sd">    - Regulatory frameworks (e.g., Truth in Lending Act, EU Consumer Credit Directive) often require disclosure of EAR/APY for consumer protection.</span>
+<span class="sd">    - This conversion is essential for comparing products with different compounding conventions (e.g., monthly vs. quarterly).</span>
+
+<span class="sd">    The relationship is defined by the formula:</span>
+<span class="sd">    :math:`\mathrm{EAR} = (1 + r/n)^{n} - 1`,</span>
+<span class="sd">    where :math:`r` is the nominal rate and :math:`n` is the number of periods per year.</span>
+<span class="sd">    Quarterly equals 4 periods per year, monthly equals 12, Semiannual equals 2.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nominal_rate : float</span>
+<span class="sd">        The nominal rate (as decimal).</span>
+<span class="sd">    periods_per_year : int</span>
+<span class="sd">        Number of periods per year (e.g., 12 for monthly, 4 for quarterly, 2 for semiannual).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Effective annual rate (as decimal).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; nominal_periods_to_effective(0.12, 12)  # monthly 1%</span>
+<span class="sd">    0.12682503013196977</span>
+<span class="sd">    &gt;&gt;&gt; nominal_periods_to_effective(0.12, 4)   # quarterly 3%</span>
+<span class="sd">    0.12550881349224116</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_validate_numeric</span><span class="p">(</span><span class="n">nominal_rate</span><span class="p">,</span> <span class="s2">&quot;nominal_rate&quot;</span><span class="p">)</span>
+    <span class="n">_validate_positive_number</span><span class="p">(</span><span class="n">periods_per_year</span><span class="p">,</span> <span class="s2">&quot;periods_per_year&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_exp_general</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nominal_rate</span> <span class="o">/</span> <span class="n">periods_per_year</span><span class="p">,</span> <span class="n">periods_per_year</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="effective_to_nominal_periods">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.effective_to_nominal_periods">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">effective_to_nominal_periods</span><span class="p">(</span><span class="n">effective_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">periods_per_year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert an effective annual rate (EAR) to a nominal rate that refers to periods (e.g., monthly, quarterly, semiannual).</span>
+
+<span class="sd">    Theory &amp; Institutional Context:</span>
+<span class="sd">    - Effective annual rate (EAR) is the true annualized return or cost, accounting for compounding, and is the regulatory standard for disclosure.</span>
+<span class="sd">    - Nominal rates are often used in contracts, advertisements, and loan agreements, but may mislead if compounding is not considered.</span>
+<span class="sd">    - This conversion is required for constructing payment schedules, amortization tables, and for regulatory compliance in financial product disclosures.</span>
+
+<span class="sd">    The relationship is defined by the formula:</span>
+<span class="sd">    :math:`r = ((1 + \\mathrm{EAR})^{1/n} - 1) \times n`,</span>
+<span class="sd">    where :math:`n` is the number of periods per year.</span>
+<span class="sd">    Quarterly equals 4 periods per year, monthly equals 12, Semiannual equals 2.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    effective_rate : float</span>
+<span class="sd">        Effective annual rate (as decimal).</span>
+<span class="sd">    periods_per_year : int</span>
+<span class="sd">        Number of periods per year (e.g., 12 for monthly, 4 for quarterly, 2 for semiannual).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Periodic rate (as decimal).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; effective_to_nominal_periods(0.12682503013196977, 12)  # monthly</span>
+<span class="sd">    0.12</span>
+<span class="sd">    &gt;&gt;&gt; effective_to_nominal_periods(0.12550881349224116, 4)   # quarterly</span>
+<span class="sd">    0.12</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_validate_effective_rate</span><span class="p">(</span><span class="n">effective_rate</span><span class="p">)</span>
+    <span class="n">_validate_positive_number</span><span class="p">(</span><span class="n">periods_per_year</span><span class="p">,</span> <span class="s2">&quot;periods_per_year&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_exp_general</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">effective_rate</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">periods_per_year</span><span class="p">)</span> <span class="o">*</span> <span class="n">periods_per_year</span></div>
+
+
+
+<span class="c1"># nominal_days_to_effective &lt;-&gt; effective_to_nominal_days conversions</span>
+<div class="viewcode-block" id="nominal_days_to_effective">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.nominal_days_to_effective">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nominal_days_to_effective</span><span class="p">(</span>
+    <span class="n">nominal_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">days</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">base_year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">365</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a nominal rate for a period of given days to an effective annual rate.</span>
+
+<span class="sd">    Theory &amp; Institutional Context:</span>
+<span class="sd">    - Nominal rates for non-standard periods (e.g., 30, 90, 180 days) are common in money markets,</span>
+<span class="sd">      commercial paper, and short-term lending.</span>
+<span class="sd">    - Effective annual rate (EAR) is needed for comparing instruments with different day-count conventions</span>
+<span class="sd">      or maturities.</span>
+<span class="sd">    - Institutional conventions (e.g., actual/360, actual/365, 30/360) affect the calculation and regulatory reporting.</span>
+<span class="sd">    - This conversion is essential for yield curve construction, risk management, and regulatory disclosures.</span>
+
+<span class="sd">    The relationship is defined by the formula:</span>
+<span class="sd">    :math:`\mathrm{EAR} = (1 + r)^{N} - 1`,</span>
+<span class="sd">    where :math:`N = \frac{\text{base\_year}}{\text{days}}`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nominal_rate : float</span>
+<span class="sd">        Nominal rate for the period (as decimal).</span>
+<span class="sd">    days : int</span>
+<span class="sd">        Number of days in the period.</span>
+<span class="sd">    base_year : int, optional</span>
+<span class="sd">        Number of days in the year (default 365).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Effective annual rate (as decimal).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; nominal_days_to_effective(0.12, 30, 360)</span>
+<span class="sd">    0.12682503013196977</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_validate_numeric</span><span class="p">(</span><span class="n">nominal_rate</span><span class="p">,</span> <span class="s2">&quot;nominal_rate&quot;</span><span class="p">)</span>
+    <span class="n">_validate_positive_number</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="s2">&quot;days&quot;</span><span class="p">)</span>
+    <span class="n">_validate_positive_number</span><span class="p">(</span><span class="n">base_year</span><span class="p">,</span> <span class="s2">&quot;base_year&quot;</span><span class="p">)</span>
+    <span class="n">periods</span> <span class="o">=</span> <span class="n">base_year</span> <span class="o">/</span> <span class="n">days</span>
+    <span class="k">return</span> <span class="n">_exp_general</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nominal_rate</span> <span class="o">/</span> <span class="n">periods</span><span class="p">,</span> <span class="n">periods</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="effective_to_nominal_days">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.effective_to_nominal_days">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">effective_to_nominal_days</span><span class="p">(</span>
+    <span class="n">effective_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">days</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">base_year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">365</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert an effective annual rate to a nominal rate for a period of given days.</span>
+
+<span class="sd">    Theory &amp; Institutional Context:</span>
+<span class="sd">    - Effective annual rate (EAR) is the standard for comparability, but many money market and short-term</span>
+<span class="sd">      instruments are quoted on a non-annual basis (e.g., 30, 90, 180 days).</span>
+<span class="sd">    - This conversion is required for pricing, quoting, and regulatory reporting of short-term debt, repos,</span>
+<span class="sd">      and commercial paper.</span>
+<span class="sd">    - Day-count conventions (actual/360, actual/365, 30/360) are institutionally defined and affect the calculation.</span>
+
+<span class="sd">    The relationship is defined by the formula:</span>
+<span class="sd">    :math:`r = (1 + \mathrm{EAR})^{1/N} - 1`,</span>
+<span class="sd">    where :math:`N = \frac{\text{base\_year}}{\text{days}}`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    effective_rate : float</span>
+<span class="sd">        Effective annual rate (as decimal).</span>
+<span class="sd">    days : int</span>
+<span class="sd">        Number of days in the period.</span>
+<span class="sd">    base_year : int, optional</span>
+<span class="sd">        Number of days in the year (default 365).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Nominal rate for the period (as decimal).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; effective_to_nominal_days(0.12682503013196977, 30, 360)</span>
+<span class="sd">    0.12</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_validate_effective_rate</span><span class="p">(</span><span class="n">effective_rate</span><span class="p">)</span>
+    <span class="n">_validate_positive_number</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="s2">&quot;days&quot;</span><span class="p">)</span>
+    <span class="n">_validate_positive_number</span><span class="p">(</span><span class="n">base_year</span><span class="p">,</span> <span class="s2">&quot;base_year&quot;</span><span class="p">)</span>
+    <span class="n">periods</span> <span class="o">=</span> <span class="n">base_year</span> <span class="o">/</span> <span class="n">days</span>
+    <span class="k">return</span> <span class="n">_exp_general</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">effective_rate</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">periods</span><span class="p">)</span> <span class="o">*</span> <span class="n">periods</span></div>
+
+
+
+<span class="c1"># single_period_to_effective &lt;-&gt; effective_to_period conversions</span>
+<div class="viewcode-block" id="single_period_to_effective">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.single_period_to_effective">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">single_period_to_effective</span><span class="p">(</span><span class="n">period_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">periods</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a periodic rate to an effective annual rate.</span>
+
+<span class="sd">    Theory &amp; Institutional Context:</span>
+<span class="sd">    - Periodic rates (e.g., monthly, quarterly) are used in most consumer and institutional loan and</span>
+<span class="sd">      deposit products.</span>
+<span class="sd">    - Effective annual rate (EAR) is the standard for comparing products with different compounding intervals.</span>
+<span class="sd">    - This conversion is required for regulatory disclosures, product comparison, and financial modeling.</span>
+
+<span class="sd">    This function computes the effective annual rate (EAR) from a rate that compounds at a specified</span>
+<span class="sd">    frequency. The formula is: :math:`\mathrm{EAR} = (1 + r)^{n} - 1`.</span>
+<span class="sd">    For example, a monthly rate is a periodic rate with 12 periods per year. This is a fundamental calculation</span>
+<span class="sd">    for comparing different investment opportunities with varying compounding frequencies.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    period_rate : float</span>
+<span class="sd">        The rate for the compounding period, expressed as a decimal.</span>
+<span class="sd">    periods : int</span>
+<span class="sd">        The number of compounding periods in one year.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The effective annual rate, expressed as a decimal.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; single_period_to_effective(0.01, 12)</span>
+<span class="sd">    0.12682503013196977</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_validate_numeric</span><span class="p">(</span><span class="n">period_rate</span><span class="p">,</span> <span class="s2">&quot;period_rate&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">periods</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;periods must be a number.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">periods</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;periods must be positive.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_exp_general</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">period_rate</span><span class="p">,</span> <span class="n">periods</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="effective_to_single_period">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.effective_to_single_period">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">effective_to_single_period</span><span class="p">(</span><span class="n">effective_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">periods</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert an effective annual rate to a periodic rate.</span>
+
+<span class="sd">    Theory &amp; Institutional Context:</span>
+<span class="sd">    - Effective annual rate (EAR) is the regulatory and economic standard for comparability.</span>
+<span class="sd">    - Periodic rates are used for payment calculations, amortization, and contract terms in loans,</span>
+<span class="sd">      mortgages, and deposits.</span>
+<span class="sd">    - This conversion is necessary for constructing payment schedules and for regulatory compliance.</span>
+
+<span class="sd">    The relationship is defined by the formula:</span>
+<span class="sd">    :math:`r = (1 + \mathrm{EAR})^{1/n} - 1`,</span>
+<span class="sd">    where :math:`n` is the number of periods per year.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    effective_rate : float</span>
+<span class="sd">        Effective annual rate (as decimal).</span>
+<span class="sd">    periods : int</span>
+<span class="sd">        Number of periods per year.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Rate for the period (as decimal).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; effective_to_single_period(0.12682503013196977, 12)</span>
+<span class="sd">    0.01</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_validate_effective_rate</span><span class="p">(</span><span class="n">effective_rate</span><span class="p">)</span>
+    <span class="n">_validate_positive_number</span><span class="p">(</span><span class="n">periods</span><span class="p">,</span> <span class="s2">&quot;periods&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_exp_general</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">effective_rate</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">periods</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># money_market_rate_to_effective &lt;-&gt; effective_to_money_market_rate conversions</span>
+<div class="viewcode-block" id="money_market_rate_to_effective">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.money_market_rate_to_effective">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">money_market_rate_to_effective</span><span class="p">(</span>
+    <span class="n">mmr</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">days</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">360</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">360</span><span class="p">,</span> <span class="n">discount</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a Money Market Rate (MMR, actual/360) to effective annual rate (EAR).</span>
+
+<span class="sd">    Theory &amp; Institutional Context:</span>
+<span class="sd">    - Money Market Rates (MMR) are quoted on a 360-day basis and may be add-on (interest-bearing) or discount rates. These conventions are standard in interbank markets, T-bills, and commercial paper.</span>
+<span class="sd">    - Effective annual rate (EAR) is required for comparability across instruments and regulatory reporting.</span>
+<span class="sd">    - Discount rates are used for zero-coupon instruments (e.g., T-bills), while add-on rates are used for interest-bearing notes.</span>
+<span class="sd">    - Regulatory and accounting standards may require conversion to EAR for disclosure and risk management.</span>
+
+<span class="sd">    If discount is False (add-on):</span>
+<span class="sd">    :math:`\\mathrm{EAR} = (1 + \\mathrm{MMR})^{\text{base}/\text{days}} - 1`</span>
+
+<span class="sd">    If discount is True:</span>
+<span class="sd">    :math:`\\mathrm{EAR} = (1 / (1 - \\mathrm{MMR}))^{\text{base}/\text{days}} - 1`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mmr : float</span>
+<span class="sd">        Money Market Rate (as decimal).</span>
+<span class="sd">    days : int, optional</span>
+<span class="sd">        Number of days in the year (default 360).</span>
+<span class="sd">    base : float, optional</span>
+<span class="sd">        Base for the calculation (default 360).</span>
+<span class="sd">    discount : bool, optional</span>
+<span class="sd">        If True, interpret mmr as a discount rate. If False (default), as an add-on (interest-bearing) rate.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Effective annual rate (as decimal).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; money_market_rate_to_effective(0.05, 360)</span>
+<span class="sd">    0.05126749646744716</span>
+<span class="sd">    &gt;&gt;&gt; money_market_rate_to_effective(0.05, 360, discount=True)</span>
+<span class="sd">    0.05263157894736836</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_validate_numeric</span><span class="p">(</span><span class="n">mmr</span><span class="p">,</span> <span class="s2">&quot;mmr&quot;</span><span class="p">)</span>
+    <span class="n">_validate_positive_number</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="s2">&quot;days&quot;</span><span class="p">)</span>
+    <span class="n">_validate_positive_number</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="s2">&quot;base&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">discount</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_exp_general</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">mmr</span><span class="p">),</span> <span class="n">base</span> <span class="o">/</span> <span class="n">days</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_exp_general</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">mmr</span><span class="p">,</span> <span class="n">base</span> <span class="o">/</span> <span class="n">days</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="effective_to_money_market_rate">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.effective_to_money_market_rate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">effective_to_money_market_rate</span><span class="p">(</span>
+    <span class="n">effective_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">days</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">360</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">360</span><span class="p">,</span> <span class="n">discount</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert an effective annual rate (EAR) to a Money Market Rate (actual/360).</span>
+
+<span class="sd">    Theory &amp; Institutional Context:</span>
+<span class="sd">    - Effective annual rate (EAR) is the standard for comparability, but money market instruments are quoted using market conventions (actual/360, add-on or discount).</span>
+<span class="sd">    - This conversion is required for quoting, pricing, and regulatory reporting of T-bills, commercial paper, and interbank loans.</span>
+<span class="sd">    - Discount and add-on conventions are institutionally defined and affect the calculation and comparability.</span>
+
+<span class="sd">    If discount is False (add-on):</span>
+<span class="sd">    :math:`\\mathrm{MMR} = (1 + \\mathrm{EAR})^{\text{days}/\text{base}} - 1`</span>
+
+<span class="sd">    If discount is True:</span>
+<span class="sd">    :math:`\\mathrm{MMR} = 1 - 1 / (1 + \\mathrm{EAR})^{\text{days}/\text{base}}`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    effective_rate : float</span>
+<span class="sd">        Effective annual rate (as decimal).</span>
+<span class="sd">    days : int, optional</span>
+<span class="sd">        Number of days in the year (default 360).</span>
+<span class="sd">    base : float, optional</span>
+<span class="sd">        Base for the calculation (default 360).</span>
+<span class="sd">    discount : bool, optional</span>
+<span class="sd">        If True, return the discount rate. If False (default), return the add-on (interest-bearing) rate.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Money Market Rate (as decimal).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; effective_to_money_market_rate(0.05126749646744716, 360)</span>
+<span class="sd">    0.05</span>
+<span class="sd">    &gt;&gt;&gt; effective_to_money_market_rate(0.05263157894736836, 360, discount=True)</span>
+<span class="sd">    0.05</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_validate_effective_rate</span><span class="p">(</span><span class="n">effective_rate</span><span class="p">)</span>
+    <span class="n">_validate_positive_number</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="s2">&quot;days&quot;</span><span class="p">)</span>
+    <span class="n">_validate_positive_number</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="s2">&quot;base&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">discount</span><span class="p">:</span>
+        <span class="c1"># Discount basis: mmr = 1 - 1 / (1 + EAR) ** (days/base)</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">effective_rate</span><span class="p">,</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_exp_general</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">effective_rate</span><span class="p">,</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Bond Equivalent Yield (BEY) &lt;-&gt; Effective Annual Rate conversions</span>
+<div class="viewcode-block" id="bey_to_effective_annual">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.bey_to_effective_annual">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">bey_to_effective_annual</span><span class="p">(</span><span class="n">bey</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert Bond Equivalent Yield (BEY) to effective annual rate (EAR).</span>
+
+<span class="sd">    Theory &amp; Institutional Context:</span>
+<span class="sd">    - Bond Equivalent Yield (BEY) is a convention used in US bond markets to annualize yields on semiannual-pay bonds, making them comparable to other investments.</span>
+<span class="sd">    - BEY is not compounded; it simply doubles the semiannual rate. Effective annual rate (EAR) compounds the semiannual rate, providing a true annualized return.</span>
+<span class="sd">    - Regulatory and institutional reporting (e.g., SEC, FINRA) may require both BEY and EAR for disclosure and comparability.</span>
+<span class="sd">    - This conversion is essential for comparing bonds to other fixed income or investment products.</span>
+
+<span class="sd">    BEY is defined as 2 * semiannual rate (not compounded). EAR compounds the semiannual rate:</span>
+<span class="sd">    :math:`\mathrm{EAR} = (1 + \mathrm{BEY}/2)^2 - 1`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bey : float</span>
+<span class="sd">        Bond Equivalent Yield (as decimal).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Effective annual rate (as decimal).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; bey_to_effective_annual(0.06)</span>
+<span class="sd">    0.0609</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">semiannual</span> <span class="o">=</span> <span class="n">bey</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="n">_exp_general</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">semiannual</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="effective_annual_to_bey">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.effective_annual_to_bey">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">effective_annual_to_bey</span><span class="p">(</span><span class="n">effective_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert effective annual rate (EAR) to Bond Equivalent Yield (BEY).</span>
+
+<span class="sd">    Theory &amp; Institutional Context:</span>
+<span class="sd">    - Effective annual rate (EAR) is the true annualized return, accounting for compounding, and is the standard for comparability.</span>
+<span class="sd">    - Bond Equivalent Yield (BEY) is a market convention for quoting yields on semiannual-pay bonds, used for comparability in US fixed income markets.</span>
+<span class="sd">    - Regulatory disclosures and institutional reporting may require both BEY and EAR for transparency and comparability.</span>
+<span class="sd">    - This conversion is necessary for comparing bonds to other investments and for regulatory filings.</span>
+
+<span class="sd">    Inverse of bey_to_effective_annual. :math:`\\mathrm{BEY} = 2 \times \text{semiannual rate}`, where</span>
+<span class="sd">    :math:`\text{semiannual} = (1 + \\mathrm{EAR})^{0.5} - 1`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    effective_rate : float</span>
+<span class="sd">        Effective annual rate (as decimal).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Bond Equivalent Yield (as decimal).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; effective_annual_to_bey(0.0609)</span>
+<span class="sd">    0.06</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">semiannual</span> <span class="o">=</span> <span class="n">_exp_general</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">effective_rate</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">semiannual</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
