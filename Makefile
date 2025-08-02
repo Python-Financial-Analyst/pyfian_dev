@@ -38,7 +38,7 @@ endif
 # Build documentation
 # Assumes Sphinx is set up in docs/
 docs:
-	cd docs && make html
+	poetry run sphinx-build docs/source docs/_build
 
 test:
 	poetry run pytest

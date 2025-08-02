@@ -3,7 +3,7 @@ import pandas as pd
 
 
 def geometric_mean(returns, axis=0):
-    r"""
+    """
     Calculate the geometric mean of percent returns.
 
     The geometric mean is useful for evaluating investment returns over time
@@ -14,7 +14,7 @@ def geometric_mean(returns, axis=0):
     The geometric mean is calculated as:
 
     .. math::
-        GM = \left(\prod_{i=1}^{n} (1 + r_i)\right)^{\frac{1}{n}} - 1
+        GM = \\left(\\prod_{i=1}^{n} (1 + r_i)\\right)^{\\frac{1}{n}} - 1
 
     where :math:`r_i` are the individual returns.
 
@@ -83,7 +83,7 @@ def geometric_mean(returns, axis=0):
 
 
 def arithmetic_mean(returns, axis=0):
-    r"""
+    """
     Calculate the arithmetic mean of percent returns.
 
     The arithmetic mean is a simple average of returns, useful for understanding
@@ -93,7 +93,7 @@ def arithmetic_mean(returns, axis=0):
     The arithmetic mean is calculated as:
 
     .. math::
-        AM = \frac{1}{n} \sum_{i=1}^{n} r_i
+        AM = \\frac{1}{n} \\sum_{i=1}^{n} r_i
 
     Parameters
     ----------
@@ -143,7 +143,7 @@ def arithmetic_mean(returns, axis=0):
 
 
 def harmonic_mean(values, axis=0):
-    r"""
+    """
     Calculate the harmonic mean of values.
 
     The harmonic mean is the reciprocal of the arithmetic mean of the reciprocals.
@@ -158,7 +158,7 @@ def harmonic_mean(values, axis=0):
     The harmonic mean is calculated as:
 
     .. math::
-        HM = \frac{n}{\sum_{i=1}^{n} \frac{1}{x_i}}
+        HM = \\frac{n}{\\sum_{i=1}^{n} \\frac{1}{x_i}}
     where :math:`x_i` are the individual values.
 
     Parameters
@@ -228,7 +228,7 @@ def harmonic_mean(values, axis=0):
 
 
 def weighted_geometric_mean(returns, weights, axis=0):
-    r"""
+    """
     Calculate the weighted geometric mean of percent returns.
 
     Useful for time-weighted returns, where each return is associated
@@ -241,7 +241,7 @@ def weighted_geometric_mean(returns, weights, axis=0):
     The weighted geometric mean is calculated as:
 
     .. math::
-        WGM = \left(\prod_{i=1}^{n} (1 + r_i)^{w_i}\right)^{\frac{1}{\sum w_i}} - 1
+        WGM = \\left(\\prod_{i=1}^{n} (1 + r_i)^{w_i}\\right)^{\\frac{1}{\\sum w_i}} - 1
     where :math:`r_i` are the individual returns and :math:`w_i` are the weights.
 
     Parameters
@@ -278,7 +278,7 @@ def weighted_geometric_mean(returns, weights, axis=0):
 
 
 def weighted_harmonic_mean(values, weights, axis=0):
-    r"""
+    """
     Calculate the weighted harmonic mean of values.
 
     In finance, this is useful for averaging ratios (e.g., P/E ratios) where each value is weighted
@@ -290,7 +290,7 @@ def weighted_harmonic_mean(values, weights, axis=0):
     The weighted harmonic mean is calculated as:
 
     .. math::
-        WHM = \frac{\sum_{i=1}^{n} w_i}{\sum_{i=1}^{n} \frac{w_i}{x_i}}
+        WHM = \\frac{\\sum_{i=1}^{n} w_i}{\\sum_{i=1}^{n} \\frac{w_i}{x_i}}
     where :math:`x_i` are the individual values and :math:`w_i` are the weights.
 
     Parameters

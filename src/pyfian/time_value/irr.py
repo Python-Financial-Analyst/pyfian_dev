@@ -13,14 +13,14 @@ from scipy.optimize import newton
 
 
 def npv(rate: float, cash_flows: list[float]) -> float:
-    r"""
+    """
     Compute the Net Present Value (NPV) for a series of cash flows.
 
     The NPV is calculated as the sum of the present values of each cash flow,
     discounted at the specified rate. The formula is:
 
     .. math::
-        NPV = \sum_{t=0}^{n} \frac{CF_t}{(1 + r)^t}
+        NPV = \\sum_{t=0}^{n} \\frac{CF_t}{(1 + r)^t}
     where:
         - :math:`NPV` is the net present value
         - :math:`CF_t` is the cash flow at time `t`
@@ -51,13 +51,13 @@ def npv(rate: float, cash_flows: list[float]) -> float:
 def irr(
     cash_flows: list[float], guess: float = 0.1, tol: float = 1e-6, max_iter: int = 1000
 ) -> float:
-    r"""
+    """
     Estimate the Internal Rate of Return (IRR) using the Newton-Raphson method.
 
     The IRR is the rate that makes the NPV of cash flows equal to zero. The formula is:
 
     .. math::
-        0 = \sum_{t=0}^{n} \frac{CF_t}{(1 + IRR)^t}
+        0 = \\sum_{t=0}^{n} \\frac{CF_t}{(1 + IRR)^t}
     where:
         - :math:`IRR` is the internal rate of return
         - :math:`CF_t` is the cash flow at time `t`
@@ -107,19 +107,18 @@ def irr(
 
 
 def np_irr(cash_flows: list[float]) -> float:
-    r"""
+    """
     Compute the Internal Rate of Return using numpy-financial's IRR function.
 
     This function is a wrapper around numpy-financial's `irr` function,
     which calculates the IRR for a series of cash flows. It is useful for quickly
     obtaining the IRR without manually implementing the calculation.
-
-    Formula
-    -------
+    The IRR is the rate that makes the NPV of cash flows equal to zero. The formula is:
 
     .. math::
-        0 = \sum_{t=0}^{n} \frac{CF_t}{(1 + IRR)^t}
+        0 = \\sum_{t=0}^{n} \\frac{CF_t}{(1 + IRR)^t}
     where:
+
         - :math:`IRR` is the internal rate of return
         - :math:`CF_t` is the cash flow at time `t`
         - :math:`n` is the total number of periods
@@ -151,7 +150,7 @@ def xirr_base(
     tol: float = 1e-6,
     max_iter: int = 100,
 ) -> float:
-    r"""
+    """
     Calculate the IRR (Yield) for non-periodic cash flows (XIRR).
 
     This function computes the IRR for a series of cash flows that occur at irregular intervals.
@@ -161,7 +160,8 @@ def xirr_base(
     The formula is:
 
     .. math::
-        0 = \sum_{i=0}^{n} \frac{CF_i}{(1 + IRR)^{\frac{d_i - d_0}{365}}}
+        0 = \\sum_{i=0}^{n} \\frac{CF_i}{(1 + IRR)^{\\frac{d_i - d_0}{365}}}
+
     where:
         - :math:`IRR` is the internal rate of return
         - :math:`CF_i` is the cash flow at time `i`
@@ -227,7 +227,7 @@ def xirr_base(
 def xirr(
     cash_flows, dates=None, guess: float = 0.1, tol: float = 1e-6, max_iter: int = 100
 ) -> float:
-    r"""
+    """
     Calculate the IRR (Yield) for non-periodic cash flows (XIRR).
 
     Flexible wrapper for xirr that accepts dict, pandas Series, or separate lists for cash flows
@@ -240,7 +240,7 @@ def xirr(
     The formula is:
 
     .. math::
-        0 = \sum_{i=0}^{n} \frac{CF_i}{(1 + IRR)^{\frac{d_i - d_0}{365}}}
+        0 = \\sum_{i=0}^{n} \\frac{CF_i}{(1 + IRR)^{\\frac{d_i - d_0}{365}}}
     where:
         - :math:`IRR` is the internal rate of return
         - :math:`CF_i` is the cash flow at time `i`

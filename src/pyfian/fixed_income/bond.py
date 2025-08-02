@@ -416,11 +416,15 @@ class BulletBond:
     ) -> tuple[float, dict[float, float]]:
         """
         Value the bond using a discount curve.
+
         Calculates the present value of the bond's cash flows using the provided discount curve.
+
         Returns the total present value and a dictionary of present values for each payment.
+
         If a bond price is provided, it is included as a negative cash flow, and the
         present value would be equivalent to a Net Present Value (NPV) calculation, useful for
         comparing the bond's market price against its theoretical value based on the discount curve.
+
         This can be used to optimize the yield curve fitting process.
 
         Parameters
@@ -506,13 +510,14 @@ class BulletBond:
         Calculate modified duration of the bond.
         If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
 
-        ::math
-            Modified Duration = \frac{1}{P} \\sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{(t+1)}} \\cdot t
+        .. math::
+            Modified Duration = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t}{(1 + YTM)^{(t+1)}} \\cdot t
         where:
-        - P is the price of the bond
-        - C_t is the cash flow at time t
-        - YTM is the yield to maturity
-        - T is the total number of periods
+
+        - :math:`P` is the price of the bond
+        - :math:`C_t` is the cash flow at time t
+        - :math:`YTM` is the yield to maturity
+        - :math:`T` is the total number of periods
 
         Parameters
         ----------
@@ -555,13 +560,14 @@ class BulletBond:
 
         If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
 
-        ::math
-            Convexity = \frac{1}{P} \\sum_{t=1}^{T} \frac{C_t \\cdot t \\cdot (t + 1)}{(1 + YTM)^{(t + 2)}}
+        .. math::
+            Convexity = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t \\cdot t \\cdot (t + 1)}{(1 + YTM)^{(t + 2)}}
         where:
-        - P is the price of the bond
-        - C_t is the cash flow at time t
-        - YTM is the yield to maturity
-        - T is the total number of periods
+
+        - :math:`P` is the price of the bond
+        - :math:`C_t` is the cash flow at time t
+        - :math:`YTM` is the yield to maturity
+        - :math:`T` is the total number of periods
 
         Parameters
         ----------

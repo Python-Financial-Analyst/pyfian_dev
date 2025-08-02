@@ -1,4 +1,4 @@
-r"""
+"""
 interest_income.py
 
 Interest Income Calculation Module
@@ -20,22 +20,22 @@ Formulas
 
 - Continuous compounding: ::math:: `I = N (e^{rt} - 1)`
 - Effective annual: ::math:: `I = N ((1 + r)^{t} - 1)`
-- Nominal (periodic): ::math:: `I = N \frac{r}{n} p`
-- Nominal (days): ::math:: `I = N r \frac{d}{y}`
-- Money Market Rate (discount): ::math:: `I = N r \frac{d}{b}`
-- Money Market Rate (add-on, notional): ::math:: `I = \frac{N}{1 + r d / b} r \frac{d}{b}`
-- Money Market Rate (add-on, investment): ::math:: `I = N r \frac{d}{b}`
-- BEY: ::math:: `I = N \frac{r}{2} p`
+- Nominal (periodic): ::math:: `I = N \\frac{r}{n} p`
+- Nominal (days): ::math:: `I = N r \\frac{d}{y}`
+- Money Market Rate (discount): ::math:: `I = N r \\frac{d}{b}`
+- Money Market Rate (add-on, notional): ::math:: `I = \\frac{N}{1 + r d / b} r \\frac{d}{b}`
+- Money Market Rate (add-on, investment): ::math:: `I = N r \\frac{d}{b}`
+- BEY: ::math:: `I = N \\frac{r}{2} p`
 
 Where:
-    - `N` = notional
-    - `r` = rate (as decimal)
-    - `t` = time in years
-    - `n` = periods per year
-    - `p` = number of periods
-    - `d` = days in period
-    - `y` = days in year
-    - `b` = base days for year (e.g., 360)
+    - ::math::`N` = notional
+    - ::math::`r` = rate (as decimal)
+    - ::math::`t` = time in years
+    - ::math::`n` = periods per year
+    - ::math::`p` = number of periods
+    - ::math::`d` = days in period
+    - ::math::`y` = days in year
+    - ::math::`b` = base days for year (e.g., 360)
 
 Examples
 --------
@@ -63,12 +63,18 @@ import numpy as np
 def interest_income_continuous(
     rate: float, time: float, notional: float = 1.0
 ) -> float:
-    r"""
+    """
     Calculate interest income using a continuously compounded rate for a given period.
 
-    Formula
-    -------
-    ::math:: `I = N (e^{rt} - 1)`
+    The formula used is:
+
+    .. math::
+        Interest = N \\times (e^{rt} - 1)
+    where
+
+    - :math:`N` is the notional amount.
+    - :math:`r` is the continuously compounded rate (as decimal).
+    - :math:`t` is the time period in years.
 
     Parameters
     ----------
@@ -95,13 +101,19 @@ def interest_income_continuous(
 def interest_income_effective(
     effective_rate: float, time: float, notional: float = 1.0
 ) -> float:
-    r"""
+    """
     Calculate interest income using an effective annual rate for a given period of time.
 
-    Formula
-    -------
-    ::math:: `I = N ((1 + r)^{t} - 1)`
-    where :math:`t = \frac{\text{days}}{\text{base\_year}}`
+    The formula used is:
+
+    .. math::
+        Interest = N \\times ((1 + r)^{t} - 1)
+
+    where
+
+    - :math:`N` is the notional amount.
+    - :math:`r` is the effective annual rate (as decimal).
+    - :math:`t` is the time period in years (can be fractional).
 
     Parameters
     ----------
@@ -141,12 +153,20 @@ def interest_income_nominal_periods(
     periods: float = 1.0,
     notional: float = 1.0,
 ) -> float:
-    r"""
+    """
     Calculate interest income using a nominal rate (periodic compounding) for a given number of periods.
 
-    Formula
-    -------
-    ::math:: `I = N \frac{r}{n} p`
+    The formula used is:
+
+    .. math::
+        Interest = N \\times \\frac{r}{n} \\times p
+
+    where
+
+    - :math:`N` is the notional amount.
+    - :math:`r` is the nominal rate (as decimal).
+    - :math:`n` is the number of periods per year.
+    - :math:`p` is the number of periods.
 
     Parameters
     ----------
@@ -175,24 +195,29 @@ def interest_income_nominal_periods(
 
 def interest_income_nominal_days(
     nominal_rate: float,
-    period_days: int,
     days: int,
     base_year: int = 365,
     notional: float = 1.0,
 ) -> float:
-    r"""
+    """
     Calculate interest income using a nominal rate for a custom period (e.g., 30, 90 days) for a given period.
 
-    Formula
-    -------
-    ::math:: `I = N r \frac{d}{y}`
+    The formula used is:
+
+    .. math::
+        Interest = N \\times r \\times \\frac{d}{base\\_year}
+
+    where
+
+    - :math:`N` is the notional amount.
+    - :math:`r` is the nominal rate (as decimal).
+    - :math:`d` is the number of days in the period.
+    - :math:`base_year` is the convention of days in the year (default 365).
 
     Parameters
     ----------
     nominal_rate : float
         Nominal annual rate (as decimal).
-    period_days : int
-        Number of days in the compounding period (e.g., 30 for monthly, 90 for quarterly).
     days : int
         Number of days in the period.
     base_year : int, optional
@@ -217,12 +242,19 @@ def interest_income_nominal_days(
 def interest_income_money_market_discount(
     mmr: float, mmr_days: int = 360, base: float = 360, notional: float = 1.0
 ) -> float:
-    r"""
+    """
     Calculate interest income using a Money Market Rate (discount) for a given period.
 
-    Formula
-    -------
-    ::math:: `I = N r \frac{d}{b}`
+    The formula used is:
+
+    .. math::
+        Interest = N \\times r \\times \\frac{d}{base\\_year}
+    where
+
+    - :math:`N` is the notional amount.
+    - :math:`r` is the Money Market Rate (as decimal).
+    - :math:`d` is the number of days in the period.
+    - :math:`base\\_year` is the convention of days in the year (default 360).
 
     Parameters
     ----------
@@ -252,13 +284,21 @@ def interest_income_money_market_discount(
 def interest_income_money_market_addon_notional(
     mmr: float, mmr_days: int, base: float = 360, notional: float = 1.0
 ) -> float:
-    r"""
+    """
     Calculate interest income using a Money Market Rate (add-on) for a given period.
     This function assumes the notional is the total amount to be paid (face value).
 
-    Formula
-    -------
-    ::math:: `I = \frac{N}{1 + r d / b} r \frac{d}{b}`
+    The formula used is:
+
+    .. math::
+        Interest = \\frac{Notional}{1 + r d / base\\_year} \\times r \\times \\frac{d}{base\\_year}
+
+    where
+
+    - :math:`Notional` is the notional amount (face value).
+    - :math:`r` is the Money Market Rate (as decimal).
+    - :math:`d` is the number of days in the period.
+    - :math:`base\\_year` is the convention of days in the year (default 360).
 
     Parameters
     ----------
@@ -288,13 +328,21 @@ def interest_income_money_market_addon_notional(
 def interest_income_money_market_addon_investment(
     mmr: float, mmr_days: int, base: float = 360, notional: float = 1.0
 ) -> float:
-    r"""
+    """
     Calculate interest income using a Money Market Rate (add-on) for a given period.
     This function assumes the notional is the amount that will earn interest (investment amount).
 
-    Formula
-    -------
-    ::math:: `I = N r \frac{d}{b}`
+    The formula used is:
+
+    .. math::
+        Interest = N \\times r \\times \\frac{d}{base\\_year}
+
+    where
+
+    - :math:`N` is the notional amount (investment).
+    - :math:`r` is the Money Market Rate (as decimal).
+    - :math:`d` is the number of days in the period.
+    - :math:`base\\_year` is the convention of days in the year (default 360).
 
     Parameters
     ----------
@@ -321,12 +369,19 @@ def interest_income_money_market_addon_investment(
 
 
 def interest_income_bey(bey: float, periods: int = 1, notional: float = 1.0) -> float:
-    r"""
+    """
     Calculate interest income using Bond Equivalent Yield (BEY) for a given period.
 
-    Formula
-    -------
-    ::math:: `I = N \frac{r}{2} p`
+    The formula used is:
+
+    .. math::
+        Interest = N \\times \\frac{r}{2} \\times p
+
+    where
+
+    - :math:`N` is the notional amount.
+    - :math:`r` is the Bond Equivalent Yield (as decimal).
+    - :math:`p` is the number of semiannual periods.
 
     Parameters
     ----------

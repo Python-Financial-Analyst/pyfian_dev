@@ -7,7 +7,7 @@ def calculate_payment(
     term_months: int,
     payment_interval_months: int = 1,
 ) -> float:
-    r"""
+    """
     Calculate the fixed payment per payment period for a mortgage.
 
     This function computes the payment amount due each payment period given
@@ -17,7 +17,7 @@ def calculate_payment(
     The formula used is:
 
     .. math::
-        PMT = \frac{P \cdot r}{1 - \frac{1}{(1 + r)^{N}}}
+        PMT = \\frac{P \\cdot r}{1 - \\frac{1}{(1 + r)^{N}}}
     where:
         - :math:`PMT` is the payment amount per period
         - :math:`P` is the principal loan amount
