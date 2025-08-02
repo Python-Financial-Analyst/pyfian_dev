@@ -46,14 +46,14 @@ class TestInterestIncomeNominalPeriods:
 class TestInterestIncomeNominalDays:
     def test_basic(self):
         assert np.isclose(
-            interest_income.interest_income_nominal_days(0.06, 30, 90),
-            0.014794520547945205,
+            interest_income.interest_income_nominal_days(0.06, 30, 360),
+            0.005,
         )
 
     def test_notional(self):
         assert np.isclose(
-            interest_income.interest_income_nominal_days(0.06, 30, 180, notional=1000),
-            29.58904109589041,
+            interest_income.interest_income_nominal_days(0.06, 30, 360, notional=1000),
+            5.0,
         )
 
 

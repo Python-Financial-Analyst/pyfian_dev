@@ -18,35 +18,35 @@ All calculations are per dollar by default, but the principal (notional) can be 
 Formulas
 --------
 
-- Continuous compounding: ::math:: `I = N (e^{rt} - 1)`
-- Effective annual: ::math:: `I = N ((1 + r)^{t} - 1)`
-- Nominal (periodic): ::math:: `I = N \\frac{r}{n} p`
-- Nominal (days): ::math:: `I = N r \\frac{d}{y}`
-- Money Market Rate (discount): ::math:: `I = N r \\frac{d}{b}`
-- Money Market Rate (add-on, notional): ::math:: `I = \\frac{N}{1 + r d / b} r \\frac{d}{b}`
-- Money Market Rate (add-on, investment): ::math:: `I = N r \\frac{d}{b}`
-- BEY: ::math:: `I = N \\frac{r}{2} p`
+- Continuous compounding: :math: `I = N (e^{rt} - 1)`
+- Effective annual: :math: `I = N ((1 + r)^{t} - 1)`
+- Nominal (periodic): :math: `I = N \\frac{r}{n} p`
+- Nominal (days): :math: `I = N r \\frac{d}{y}`
+- Money Market Rate (discount): :math: `I = N r \\frac{d}{b}`
+- Money Market Rate (add-on, notional): :math: `I = \\frac{N}{1 + r d / b} r \\frac{d}{b}`
+- Money Market Rate (add-on, investment): :math: `I = N r \\frac{d}{b}`
+- BEY: :math: `I = N \\frac{r}{2} p`
 
 Where:
-    - ::math::`N` = notional
-    - ::math::`r` = rate (as decimal)
-    - ::math::`t` = time in years
-    - ::math::`n` = periods per year
-    - ::math::`p` = number of periods
-    - ::math::`d` = days in period
-    - ::math::`y` = days in year
-    - ::math::`b` = base days for year (e.g., 360)
+    - :math:`N` = notional
+    - :math:`r` = rate (as decimal)
+    - :math:`t` = time in years
+    - :math:`n` = periods per year
+    - :math:`p` = number of periods
+    - :math:`d` = days in period
+    - :math:`y` = days in year
+    - :math:`b` = base days for year (e.g., 360)
 
 Examples
 --------
 >>> interest_income_continuous(0.05, 1)
 0.05127109637602412
->>> interest_income_effective(0.05, 180)
-0.024113688402427045
+>>> interest_income_effective(0.05, 1)
+0.05
 >>> interest_income_nominal_periods(0.06, 12, 6)
 0.03
->>> interest_income_nominal_days(0.06, 30, 90)
-0.014794520547945205
+>>> interest_income_nominal_days(0.06, 30, 360)
+0.005
 >>> interest_income_money_market_discount(0.06, 180)
 0.03
 >>> interest_income_money_market_addon_notional(0.06, 180)
@@ -131,18 +131,8 @@ def interest_income_effective(
 
     Examples
     --------
-    >>> interest_income_effective(0.05, 180)
-        Notional amount (default 1.0).
-
-    Returns
-    -------
-    float
-        Interest income for the given period.
-
-    Examples
-    --------
-    >>> interest_income_effective(0.05, 180)
-    0.024113688402427045
+    >>> interest_income_effective(0.05, 1)
+    0.05
     """
     return notional * ((1 + effective_rate) ** time - 1)
 
@@ -232,8 +222,8 @@ def interest_income_nominal_days(
 
     Examples
     --------
-    >>> interest_income_nominal_days(0.06, 30, 90)
-    0.014794520547945205
+    >>> interest_income_nominal_days(0.06, 30, 360)
+    0.005
     """
     # Calculate interest income directly from nominal rate and compounding for custom period
     return notional * nominal_rate * (days / base_year)
