@@ -32,6 +32,13 @@ class TestYieldCurvePlotMixin:
         curve.plot_curve(kind="discount", show=False)
         plt.close(fig)
 
+    @pytest.mark.filterwarnings("ignore::UserWarning")
+    def test_plot_curve_rate_show(self):
+        curve = DummyCurve()
+        fig = plt.figure()
+        curve.plot_curve(kind="rate", show=True)
+        plt.close(fig)
+
     def test_plot_curve_invalid_kind(self):
         curve = DummyCurve()
         with pytest.raises(ValueError):

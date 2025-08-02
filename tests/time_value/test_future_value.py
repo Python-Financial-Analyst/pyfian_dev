@@ -62,3 +62,21 @@ class TestFutureValueGrowingAnnuity:
             )
             == expected
         )
+
+
+class TestFutureValueAnnuityAnnual:
+    def test_annual(self):
+        payment = 100
+        rate = 0.05
+        year = 10
+        payments_per_year = 12
+
+        assert (
+            pytest.approx(
+                future_value.future_value_annuity_annual(
+                    payment, rate, year, payments_per_year
+                ),
+                rel=1e-9,
+            )
+            == 15528.22794456672
+        )

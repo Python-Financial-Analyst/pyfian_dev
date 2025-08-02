@@ -41,7 +41,7 @@ class BulletBond:
     valuation_date : str or datetime-like, optional
         Date for valuation. Defaults to None.
     yield_to_maturity : float, optional
-        Yield to maturity of the bond. Defaults to None.
+        Yield to maturity of the bond. Set in decimal, e.g., 0.05 for 5%. Defaults to None.
     bond_price : float, optional
         Market price of the bond. Defaults to None.
 
@@ -65,6 +65,12 @@ class BulletBond:
         yield_to_maturity: Optional[float] = None,
         bond_price: Optional[float] = None,
     ) -> None:
+        # If coupon is positive, the coupon frequency must be greater than 0
+        if cpn > 0 and cpn_freq <= 0:
+            raise ValueError(
+                "Coupon frequency must be greater than zero for positive coupons."
+            )
+
         self.issue_dt: pd.Timestamp = pd.to_datetime(issue_dt)
         self.maturity: pd.Timestamp = pd.to_datetime(maturity)
         self.cpn: float = cpn
@@ -97,10 +103,10 @@ class BulletBond:
             # Throw error if bond_price is not None and valuation_date is None
             if self._valuation_date is None:
                 raise ValueError("Valuation date must be set if bond_price is set.")
-            if yield_to_maturity is None:
+            if yield_to_maturity is not None:
                 # Check if self._bond_price is approximately equal to the bond_price, else raise ValueError
                 if (
-                    self._bond_price is not None
+                    getattr(self, "_bond_price", None) is not None
                     and abs(self._bond_price - bond_price) / self._bond_price > 1e-5
                 ):
                     raise ValueError(
@@ -277,21 +283,24 @@ class BulletBond:
         dict_amortization = {}
 
         # Final payment: principal + last coupon
-        last_coupon = (cpn / cpn_freq) * notional / 100
+        last_coupon = (cpn / cpn_freq) * notional / 100 if cpn > 0 else 0
         dict_payments[maturity] = notional + last_coupon
-        dict_coupons[maturity] = last_coupon
         dict_amortization[maturity] = notional
 
-        next_date_processed = maturity - relativedelta(months=12 // cpn_freq)
+        if cpn > 0:
+            dict_coupons[maturity] = last_coupon
+            next_date_processed = maturity - relativedelta(months=12 // cpn_freq)
 
-        for i in range(2, ((maturity - issue_dt) / 365).days * cpn_freq + 3):
-            if (next_date_processed - issue_dt).days < (365 * 0.9) // cpn_freq:
-                break
-            coupon = (cpn / cpn_freq) * notional / 100
-            dict_payments[next_date_processed] = coupon
-            dict_coupons[next_date_processed] = coupon
-            dict_amortization[next_date_processed] = 0.0
-            next_date_processed = maturity - relativedelta(months=12 // cpn_freq * i)
+            for i in range(2, ((maturity - issue_dt) / 365).days * cpn_freq + 3):
+                if (next_date_processed - issue_dt).days < (365 * 0.9) // cpn_freq:
+                    break
+                coupon = (cpn / cpn_freq) * notional / 100
+                dict_payments[next_date_processed] = coupon
+                dict_coupons[next_date_processed] = coupon
+                dict_amortization[next_date_processed] = 0.0
+                next_date_processed = maturity - relativedelta(
+                    months=12 // cpn_freq * i
+                )
 
         # Sort the payment dates
         dict_payments = dict(sorted(dict_payments.items()))
@@ -525,6 +534,8 @@ class BulletBond:
         >>> bond.modified_duration(yield_to_maturity=0.05)
         4.2
         """
+        valuation_date = self._resolve_valuation_date(valuation_date)
+
         ytm, time_to_payments, price_calc = self._get_ytm_payments_price(
             yield_to_maturity, bond_price, valuation_date
         )
@@ -572,6 +583,7 @@ class BulletBond:
         >>> bond.convexity(yield_to_maturity=0.05)
         18.7
         """
+        valuation_date = self._resolve_valuation_date(valuation_date)
 
         ytm, time_to_payments, price_calc = self._get_ytm_payments_price(
             yield_to_maturity, bond_price, valuation_date
@@ -613,17 +625,20 @@ class BulletBond:
             self.settlement_convention_t_plus
         )
 
+        if self.cpn_freq == 0 or self.cpn == 0:
+            return 0.0
+
         prev_coupon = self.previous_coupon_date(settlement_date)
         next_coupon = self.next_coupon_date(settlement_date)
         coupon = (self.cpn / self.cpn_freq) * self.notional / 100
         # If before first coupon, accrue from issue date
+        if next_coupon is None:
+            return 0.0
         if prev_coupon is None and next_coupon is not None:
             days_between = (next_coupon - self.issue_dt).days
             days_accrued = (settlement_date - self.issue_dt).days
             return coupon * days_accrued / days_between if days_between > 0 else 0.0
-        # If after last coupon, no accrual
-        if next_coupon is None or prev_coupon is None:
-            return 0.0
+
         days_between = (next_coupon - prev_coupon).days
         days_accrued = (settlement_date - prev_coupon).days
         return coupon * days_accrued / days_between if days_between > 0 else 0.0
@@ -773,7 +788,7 @@ class BulletBond:
         settlement_date = valuation_date + pd.offsets.BDay(
             self.settlement_convention_t_plus
         )
-        future_dates = [d for d in self.payment_flow.keys() if d > settlement_date]
+        future_dates = [d for d in self.coupon_flow.keys() if d > settlement_date]
         return min(future_dates) if future_dates else None
 
     def previous_coupon_date(
@@ -804,7 +819,7 @@ class BulletBond:
             self.settlement_convention_t_plus
         )
 
-        past_dates = [d for d in self.payment_flow.keys() if d <= settlement_date]
+        past_dates = [d for d in self.coupon_flow.keys() if d <= settlement_date]
 
         return max(past_dates) if past_dates else None
 
@@ -995,15 +1010,6 @@ class BulletBond:
         """
         Helper to resolve yield_to_maturity from direct input, price, or default to notional.
         """
-        if yield_to_maturity is not None:
-            return yield_to_maturity
-        if valuation_date is None:
-            if self._valuation_date is not None:
-                valuation_date = self._valuation_date
-            else:
-                valuation_date = self.issue_dt
-        else:
-            valuation_date = pd.to_datetime(valuation_date)
         if price is not None:
             return self.yield_to_maturity(
                 bond_price=price, valuation_date=valuation_date

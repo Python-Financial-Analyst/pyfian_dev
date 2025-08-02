@@ -6,18 +6,18 @@ from pyfian.time_value.present_value import (
 
 def future_value_annuity(payment: float, rate: float, periods: int) -> float:
     r"""
-    Calculate the present value of a fixed annuity.
+    Calculate the future value of a fixed annuity.
 
-    The present value of a fixed annuity is given by:
+    The future value of a fixed annuity is given by:
 
     .. math::
-        PV = P \times \frac{1 - (1 + r)^{-n}}{r}
+        FV = P \times (1 + r)^{N} \times \frac{1 - \frac{1}{(1 + r)^{N}}}{r}
 
     where:
-        - :math:`PV` is the present value
+        - :math:`FV` is the future value
         - :math:`P` is the payment per period
         - :math:`r` is the interest rate per period
-        - :math:`n` is the total number of periods
+        - :math:`N` is the total number of periods
 
     Parameters
     ----------
@@ -31,12 +31,12 @@ def future_value_annuity(payment: float, rate: float, periods: int) -> float:
     Returns
     -------
     float
-        Present value of the fixed annuity.
+        Future value of the fixed annuity.
 
     Examples
     --------
-    >>> present_value_annuity(100, 0.05, 10)
-    772.1734929184818
+    >>> future_value_annuity(100, 0.05, 10)
+    1257.7892535548839
     """
     if rate == 0:
         return payment * periods
@@ -49,13 +49,13 @@ def future_value_annuity_annual(
     payment: float, annual_rate: float, years: int, payments_per_year: int
 ) -> float:
     r"""
-    Calculate the present value of a fixed annuity with an annual interest rate
+    Calculate the future value of a fixed annuity with an annual interest rate
     and a specified number of payments per year.
 
-    The present value is calculated as:
+    The future value is calculated as:
 
     .. math::
-        PV = P \times \frac{1 - (1 + r)^{-N}}{r}
+        FV = P \times (1 + r)^{N} \times \frac{1 - \frac{1}{(1 + r)^{N}}}{r}
 
     where:
         - :math:`P` is the payment per period
@@ -80,12 +80,12 @@ def future_value_annuity_annual(
     Returns
     -------
     float
-        Present value of the fixed annuity.
+        Future value of the fixed annuity.
 
     Examples
     --------
-    >>> present_value_annuity_annual(100, 0.05, 10, 12)
-    9428.135032823473
+    >>> future_value_annuity_annual(100, 0.05, 10, 12)
+    15528.22794456672
     """
     rate = annual_rate / payments_per_year
     periods = years * payments_per_year
@@ -96,12 +96,22 @@ def future_value_growing_annuity(
     payment: float, rate: float, periods: int, growth: float = 0.0
 ) -> float:
     r"""
-    Calculate the present value of a growing annuity.
+    Calculate the future value of a growing annuity.
 
-    The present value is calculated as:
+    The future value is calculated as:
 
     .. math::
-        PV = P \times \frac{1 - \left(\frac{1 + r}{1 + g}\right)^{-n}}
+        FV = P \times \frac{(1 + r)^{N} - (1 + g)^{N}}{r - g}
+
+    where:
+        - :math:`FV` is the future value
+        - :math:`P` is the payment at time t=0
+        - :math:`r` is the interest rate per period
+        - :math:`g` is the growth rate per period
+        - :math:`N` is the total number of periods
+
+    Note
+    ----
         {\left(\frac{1 + r}{1 + g}\right) - 1}
 
     where:
@@ -131,14 +141,14 @@ def future_value_growing_annuity(
     Returns
     -------
     float
-        Present value of the growing annuity.
+        Future value of the growing annuity.
 
     Examples
     --------
-    >>> present_value_growing_annuity(100, 0.05, 10, 0.02 )
-    855.5867765481578
-    >>> present_value_growing_annuity(100, 0.05, 10, 0.05)
-    1000.0
+    >>> future_value_growing_annuity(100, 0.05, 10, 0.02)
+    1393.6607030611262
+    >>> future_value_growing_annuity(100, 0.05, 10, 0.05)
+    1628.894626777442
     """
     pv = present_value_growing_annuity(payment, rate, periods, growth)
     fv = pv * (1 + rate) ** periods
