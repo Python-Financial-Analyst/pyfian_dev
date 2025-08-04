@@ -657,8 +657,8 @@ class BulletBond:
         if self.cpn_freq == 0 or self.cpn == 0:
             return 0.0
 
-        prev_coupon = self.previous_coupon_date(settlement_date)
-        next_coupon = self.next_coupon_date(settlement_date)
+        prev_coupon: pd.Timestamp = self.previous_coupon_date(settlement_date)
+        next_coupon: pd.Timestamp = self.next_coupon_date(settlement_date)
         coupon = (self.cpn / self.cpn_freq) * self.notional / 100
         # If before first coupon, accrue from issue date
         if prev_coupon is None and next_coupon is not None:
@@ -666,13 +666,10 @@ class BulletBond:
             days_accrued = (settlement_date - self.issue_dt).days
             return coupon * days_accrued / days_between if days_between > 0 else 0.0
         # If between coupons, accrue from previous coupon
-        elif prev_coupon is not None and next_coupon is not None:
+        else:  # prev_coupon is not None and next_coupon is not None:
             days_between = (next_coupon - prev_coupon).days
             days_accrued = (settlement_date - prev_coupon).days
             return coupon * days_accrued / days_between if days_between > 0 else 0.0
-        else:
-            # If no previous or next coupon, return 0
-            return 0.0
 
     def clean_price(
         self,
