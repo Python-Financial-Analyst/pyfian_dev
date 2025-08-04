@@ -9,6 +9,11 @@ authors = [
 readme = "README.md"
 packages = [{include = "pyfian", from = "src"}]
 
+# Add project URLs
+homepage = "https://python-financial-analyst.github.io/pyfian_dev/index.html"
+repository = "https://github.com/Python-Financial-Analyst/pyfian_dev"
+documentation = "https://python-financial-analyst.github.io/pyfian_dev/index.html"
+
 [tool.poetry.dependencies]
 python = "^3.11"
 numpy = "^2.3.1"

@@ -1,17 +1,20 @@
+
 # PyFiAn
 
-PyFiAn is a Python library for financial analysis, modeling, and computations. It provides modules for corporate finance, derivatives, financial statements, portfolio management, risk management, statistics, time value of money, yield curves, and utility functions.
+PyFiAn is a comprehensive Python library designed for financial analysis, modeling, and computation. Developed as a companion to our Python Financial Analyst YouTube channel, PyFiAn bridges the gap between financial theory and practical application. The library offers a wide range of modules covering corporate finance, derivatives, financial statements, fixed income, portfolio management, risk management, statistics, time value of money, yield curves, and utility functions and visualization. Our mission is to help you learn finance by translating concepts into code, enabling hands-on application and access to real-world data.
 
 ## Features
 - Corporate finance calculations
 - Derivatives pricing and analytics
 - Financial statement analysis
+- Fixed Income Tools
 - Portfolio management tools
 - Risk management metrics
 - Statistical analysis
 - Time value of money functions
 - Yield curve modeling
 - Utility functions for financial data
+- Visualization tools
 
 ## Project Structure
 ```
@@ -20,12 +23,14 @@ pyfian/
     data/
     derivatives/
     financial_statements/
+    fixed_income/
     portfolio/
     risk_management/
     statistics/
     time_value/
     utils/
     yield_curves/
+    visualization/
 ```
 
 ## Installation
