@@ -351,6 +351,8 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; nominal_days_to_effective(0.12, 30, 365)</span>
+<span class="sd">    0.1268341704586875</span>
 <span class="sd">    &gt;&gt;&gt; nominal_days_to_effective(0.12, 30, 360)</span>
 <span class="sd">    0.12682503013196977</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -402,6 +404,8 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; effective_to_nominal_days(0.1268341704586875, 30, 365)</span>
+<span class="sd">    0.12</span>
 <span class="sd">    &gt;&gt;&gt; effective_to_nominal_days(0.12682503013196977, 30, 360)</span>
 <span class="sd">    0.12</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -549,10 +553,12 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; money_market_rate_to_effective(0.05, 360)</span>
-<span class="sd">    0.05126749646744716</span>
-<span class="sd">    &gt;&gt;&gt; money_market_rate_to_effective(0.05, 360, discount=True)</span>
-<span class="sd">    0.05263157894736836</span>
+<span class="sd">    &gt;&gt;&gt; money_market_rate_to_effective(0.05, 365)</span>
+<span class="sd">    0.05178480420654806</span>
+<span class="sd">    &gt;&gt;&gt; money_market_rate_to_effective(0.05, 252)</span>
+<span class="sd">    0.05097451209647329</span>
+<span class="sd">    &gt;&gt;&gt; money_market_rate_to_effective(0.05, 365, discount=True)</span>
+<span class="sd">    0.05319148936170213</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_validate_numeric</span><span class="p">(</span><span class="n">mmr</span><span class="p">,</span> <span class="s2">&quot;mmr&quot;</span><span class="p">)</span>
     <span class="n">_validate_positive_number</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="s2">&quot;days&quot;</span><span class="p">)</span>
@@ -604,9 +610,11 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; effective_to_money_market_rate(0.05126749646744716, 360)</span>
+<span class="sd">    &gt;&gt;&gt; effective_to_money_market_rate(0.05178480420654806, 365)</span>
 <span class="sd">    0.05</span>
-<span class="sd">    &gt;&gt;&gt; effective_to_money_market_rate(0.05263157894736836, 360, discount=True)</span>
+<span class="sd">    &gt;&gt;&gt; effective_to_money_market_rate(0.05097451209647329, 252)</span>
+<span class="sd">    0.05</span>
+<span class="sd">    &gt;&gt;&gt; effective_to_money_market_rate(0.05319148936170213, 365, discount=True)</span>
 <span class="sd">    0.05</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_validate_effective_rate</span><span class="p">(</span><span class="n">effective_rate</span><span class="p">)</span>

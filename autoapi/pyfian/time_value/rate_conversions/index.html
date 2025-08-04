@@ -385,7 +385,9 @@ or maturities.</p></li>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nominal_days_to_effective</span><span class="p">(</span><span class="mf">0.12</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">360</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nominal_days_to_effective</span><span class="p">(</span><span class="mf">0.12</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">365</span><span class="p">)</span>
+<span class="go">0.1268341704586875</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nominal_days_to_effective</span><span class="p">(</span><span class="mf">0.12</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">360</span><span class="p">)</span>
 <span class="go">0.12682503013196977</span>
 </pre></div>
 </div>
@@ -426,7 +428,9 @@ and commercial paper.</p></li>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">effective_to_nominal_days</span><span class="p">(</span><span class="mf">0.12682503013196977</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">360</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">effective_to_nominal_days</span><span class="p">(</span><span class="mf">0.1268341704586875</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">365</span><span class="p">)</span>
+<span class="go">0.12</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">effective_to_nominal_days</span><span class="p">(</span><span class="mf">0.12682503013196977</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">360</span><span class="p">)</span>
 <span class="go">0.12</span>
 </pre></div>
 </div>
@@ -544,10 +548,12 @@ mortgages, and deposits.</p></li>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">money_market_rate_to_effective</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">360</span><span class="p">)</span>
-<span class="go">0.05126749646744716</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">money_market_rate_to_effective</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">0.05263157894736836</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">money_market_rate_to_effective</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">365</span><span class="p">)</span>
+<span class="go">0.05178480420654806</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">money_market_rate_to_effective</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">252</span><span class="p">)</span>
+<span class="go">0.05097451209647329</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">money_market_rate_to_effective</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">365</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">0.05319148936170213</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -585,9 +591,11 @@ mortgages, and deposits.</p></li>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">effective_to_money_market_rate</span><span class="p">(</span><span class="mf">0.05126749646744716</span><span class="p">,</span> <span class="mi">360</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">effective_to_money_market_rate</span><span class="p">(</span><span class="mf">0.05178480420654806</span><span class="p">,</span> <span class="mi">365</span><span class="p">)</span>
 <span class="go">0.05</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">effective_to_money_market_rate</span><span class="p">(</span><span class="mf">0.05263157894736836</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">effective_to_money_market_rate</span><span class="p">(</span><span class="mf">0.05097451209647329</span><span class="p">,</span> <span class="mi">252</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">effective_to_money_market_rate</span><span class="p">(</span><span class="mf">0.05319148936170213</span><span class="p">,</span> <span class="mi">365</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">0.05</span>
 </pre></div>
 </div>
