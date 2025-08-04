@@ -18,25 +18,40 @@ class TestRateConversions:
         assert np.isclose(ear, 0.12682503013196977)
         assert np.isclose(rc.effective_to_single_period(ear, periods), period_rate)
 
-    def test_nominal_days_to_effective_and_inverse(self):
-        nominal = 0.12
-        days = 30
-        base = 360
+    @pytest.mark.parametrize(
+        "nominal,days,base,expected_ear",
+        [
+            (0.12, 30, 365, 0.1268341704586875),
+            (0.12, 30, 360, 0.12682503013196977),
+        ],
+    )
+    def test_nominal_days_to_effective_and_inverse(
+        self, nominal, days, base, expected_ear
+    ):
         ear = rc.nominal_days_to_effective(nominal, days, base)
-        assert np.isclose(ear, 0.12682503013196977)
+        assert np.isclose(ear, expected_ear)
         assert np.isclose(rc.effective_to_nominal_days(ear, days, base), nominal)
 
-    def test_money_market_rate_to_effective_and_inverse(self):
-        mmr = 0.05
-        days = 360
-        ear = rc.money_market_rate_to_effective(mmr, days)
-        assert np.isclose(ear, 0.05)
-        assert np.isclose(rc.effective_to_money_market_rate(ear, days), mmr)
+    @pytest.mark.parametrize(
+        "mmr,days,base,expected_ear",
+        [
+            (0.05, 180, 360, 0.050625),
+            (0.12, 30, 360, 0.12682503013196977),
+        ],
+    )
+    def test_money_market_rate_to_effective_and_inverse(
+        self, mmr, days, base, expected_ear
+    ):
+        ear = rc.money_market_rate_to_effective(mmr, days, base)
+        assert np.isclose(ear, expected_ear)
+        assert np.isclose(rc.effective_to_money_market_rate(ear, days, base), mmr)
         # Discount basis
-        ear_disc = rc.money_market_rate_to_effective(mmr, days, discount=True)
-        assert np.isclose(ear_disc, 1 / (1 - 0.05) - 1)
+        ear_disc = rc.money_market_rate_to_effective(mmr, days, base, discount=True)
+        # Calculate expected discount EAR for assertion
+        expected_ear_disc = (1 / (1 - mmr * days / base)) ** (base / days) - 1
+        assert np.isclose(ear_disc, expected_ear_disc)
         assert np.isclose(
-            rc.effective_to_money_market_rate(ear_disc, days, discount=True), mmr
+            rc.effective_to_money_market_rate(ear_disc, days, base, discount=True), mmr
         )
 
     def test_bey_to_effective_annual_and_inverse(self):

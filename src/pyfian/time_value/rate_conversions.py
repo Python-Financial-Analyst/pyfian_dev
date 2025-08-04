@@ -247,6 +247,8 @@ def nominal_days_to_effective(
 
     Examples
     --------
+    >>> nominal_days_to_effective(0.12, 30, 365)
+    0.1268341704586875
     >>> nominal_days_to_effective(0.12, 30, 360)
     0.12682503013196977
     """
@@ -295,6 +297,8 @@ def effective_to_nominal_days(
 
     Examples
     --------
+    >>> effective_to_nominal_days(0.1268341704586875, 30, 365)
+    0.12
     >>> effective_to_nominal_days(0.12682503013196977, 30, 360)
     0.12
     """
@@ -433,10 +437,12 @@ def money_market_rate_to_effective(
 
     Examples
     --------
-    >>> money_market_rate_to_effective(0.05, 360)
-    0.05126749646744716
-    >>> money_market_rate_to_effective(0.05, 360, discount=True)
-    0.05263157894736836
+    >>> money_market_rate_to_effective(0.05, 365)
+    0.05178480420654806
+    >>> money_market_rate_to_effective(0.05, 252)
+    0.05097451209647329
+    >>> money_market_rate_to_effective(0.05, 365, discount=True)
+    0.05319148936170213
     """
     _validate_numeric(mmr, "mmr")
     _validate_positive_number(days, "days")
@@ -485,9 +491,11 @@ def effective_to_money_market_rate(
 
     Examples
     --------
-    >>> effective_to_money_market_rate(0.05126749646744716, 360)
+    >>> effective_to_money_market_rate(0.05178480420654806, 365)
     0.05
-    >>> effective_to_money_market_rate(0.05263157894736836, 360, discount=True)
+    >>> effective_to_money_market_rate(0.05097451209647329, 252)
+    0.05
+    >>> effective_to_money_market_rate(0.05319148936170213, 365, discount=True)
     0.05
     """
     _validate_effective_rate(effective_rate)
