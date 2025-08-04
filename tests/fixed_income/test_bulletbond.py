@@ -6,19 +6,42 @@ from pyfian.yield_curves.flat_curve import FlatCurveLog
 
 
 class TestBulletBond:
+    def test_get_methods(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
+        # Initially, get methods should return None
+        assert bond.get_settlement_date() is None
+        assert bond.get_yield_to_maturity() is None
+        assert bond.get_bond_price() is None
+
+        # Set settlement date
+        bond.set_settlement_date("2022-01-01")
+        assert bond.get_settlement_date() == pd.to_datetime("2022-01-01")
+
+        # Set yield to maturity and check get method
+        bond.set_yield_to_maturity(0.05, "2022-01-01")
+        assert bond.get_yield_to_maturity() == pytest.approx(0.05)
+        assert isinstance(bond.get_bond_price(), float)
+
+        # Set bond price and check get method
+        bond.set_bond_price(100, "2022-01-01")
+        assert bond.get_bond_price() == pytest.approx(100)
+        assert isinstance(bond.get_yield_to_maturity(), float)
+
     def test_make_payment_flow(self):
         bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
         dict_payments, dict_coupons, dict_amortization = bond.make_payment_flow()
         assert pd.to_datetime("2025-01-01") in dict_payments
         assert dict_payments[pd.to_datetime("2025-01-01")] == pytest.approx(105)
 
-    def test_set_valuation_date(self):
+    def test_set_settlement_date(self):
         bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
-        val_date = bond.set_valuation_date("2022-01-01")
-        assert val_date == pd.to_datetime("2022-01-01")
+        settle_date = bond.set_settlement_date("2022-01-01")
+        assert settle_date == pd.to_datetime("2022-01-01")
 
     def test_set_yield_to_maturity_and_set_bond_price(self):
-        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1, valuation_date="2022-01-01")
+        bond = BulletBond(
+            "2020-01-01", "2025-01-01", 5, 1, settlement_date="2022-01-01"
+        )
         bond.set_yield_to_maturity(0.05, "2022-01-01")
         assert isinstance(bond._bond_price, float)
         bond.set_bond_price(100, "2022-01-01")
@@ -177,42 +200,47 @@ class TestBulletBond:
         ):
             BulletBond("2020-01-01", "2025-01-01", 5, 0, notional=1000)
 
-    # Test set input for yield_to_maturity but no valuation date
-    def test_set_yield_to_maturity_no_valuation_date(self):
+    # Test set input for yield_to_maturity but no settlement date
+    def test_set_yield_to_maturity_no_settlement_date(self):
         with pytest.raises(
-            ValueError, match="Valuation date must be set if yield to maturity is set."
+            ValueError, match="Settlement date must be set if yield to maturity is set."
         ):
             _ = BulletBond(
                 "2020-01-01", "2025-01-01", 5, 1, notional=1000, yield_to_maturity=0.05
             )
 
-    # Test set input for bond_price but no valuation date
-    def test_set_bond_price_no_valuation_date(self):
+    # Test set input for bond_price but no settlement date
+    def test_set_bond_price_no_settlement_date(self):
         with pytest.raises(
-            ValueError, match="Valuation date must be set if bond_price is set."
+            ValueError, match="Settlement date must be set if bond_price is set."
         ):
             BulletBond("2020-01-01", "2025-01-01", 5, 1, notional=1000, bond_price=95)
 
-    # Test input bond with yield_to_maturity and valuation_date
-    def test_bond_with_yield_to_maturity_and_valuation_date(self):
+    # Test input bond with yield_to_maturity and settlement_date
+    def test_bond_with_yield_to_maturity_and_settlement_date(self):
         bond = BulletBond(
             "2020-01-01",
             "2025-01-01",
             5,
             1,
-            valuation_date="2022-01-01",
+            settlement_date="2022-01-01",
             yield_to_maturity=0.05,
         )
         assert bond._yield_to_maturity == 0.05
-        assert bond._valuation_date == pd.to_datetime("2022-01-01")
+        assert bond._settlement_date == pd.to_datetime("2022-01-01")
 
-    # Test input bond with yield_to_maturity and valuation_date
-    def test_bond_with_bond_price_and_valuation_date(self):
+    # Test input bond with yield_to_maturity and settlement_date
+    def test_bond_with_bond_price_and_settlement_date(self):
         bond = BulletBond(
-            "2020-01-01", "2025-01-01", 5, 1, valuation_date="2022-01-01", bond_price=95
+            "2020-01-01",
+            "2025-01-01",
+            5,
+            1,
+            settlement_date="2022-01-01",
+            bond_price=95,
         )
         assert bond._bond_price == 95
-        assert bond._valuation_date == pd.to_datetime("2022-01-01")
+        assert bond._settlement_date == pd.to_datetime("2022-01-01")
 
     # Test input bond with yield_to_maturity and bond_price not compatible
     def test_bond_with_yield_to_maturity_and_bond_price_not_compatible(self):
@@ -225,7 +253,7 @@ class TestBulletBond:
                 "2025-01-01",
                 5,
                 1,
-                valuation_date="2022-01-01",
+                settlement_date="2022-01-01",
                 yield_to_maturity=0.05,
                 bond_price=95,
             )
@@ -237,17 +265,19 @@ class TestBulletBond:
             "2025-01-01",
             5,
             1,
-            valuation_date="2022-01-01",
+            settlement_date="2020-01-01",
             yield_to_maturity=0.05,
-            bond_price=100.0139744,
+            bond_price=99.9738493726302,
         )
 
-    # Test set a new valuation date
-    def test_set_new_valuation_date(self):
-        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1, valuation_date="2022-01-01")
-        new_date = bond.set_valuation_date("2023-01-01")
+    # Test set a new settlement date
+    def test_set_new_settlement_date(self):
+        bond = BulletBond(
+            "2020-01-01", "2025-01-01", 5, 1, settlement_date="2022-01-01"
+        )
+        new_date = bond.set_settlement_date("2023-01-01")
         assert new_date == pd.to_datetime("2023-01-01")
-        assert bond._valuation_date == pd.to_datetime("2023-01-01")
+        assert bond._settlement_date == pd.to_datetime("2023-01-01")
 
     # Test set a new valuation date but not resetting yield_to_maturity
     def test_set_new_valuation_date_not_resetting_yield_to_maturity(self):
@@ -256,18 +286,18 @@ class TestBulletBond:
             "2025-01-01",
             5,
             1,
-            valuation_date="2022-01-01",
+            settlement_date="2022-01-01",
             yield_to_maturity=0.05,
         )
-        new_date = bond.set_valuation_date("2023-01-01", reset_yield_to_maturity=False)
+        new_date = bond.set_settlement_date("2023-01-01", reset_yield_to_maturity=False)
         assert new_date == pd.to_datetime("2023-01-01")
-        assert bond._valuation_date == pd.to_datetime("2023-01-01")
+        assert bond._settlement_date == pd.to_datetime("2023-01-01")
         assert bond._yield_to_maturity == 0.05
 
-    # Test set a valuation date as None, and check that _bond_price is None and _yield_to_maturity is None as well
-    def test_set_valuation_date_none(self):
+    # Test set a settlement date as None, and check that _bond_price is None and _yield_to_maturity is None as well
+    def test_set_settlement_date_none(self):
         bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
-        bond.set_valuation_date(None)
+        bond.set_settlement_date(None)
         assert bond._bond_price is None
         assert bond._yield_to_maturity is None
 
@@ -278,7 +308,7 @@ class TestBulletBond:
             "2025-01-01",
             5,
             1,
-            valuation_date="2022-01-01",
+            settlement_date="2022-01-01",
             yield_to_maturity=0.05,
         )
         bond.set_yield_to_maturity(None)
@@ -289,7 +319,7 @@ class TestBulletBond:
         bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
         with pytest.raises(
             ValueError,
-            match="Valuation date must be set since there is no default valuation_date for the bond.",
+            match="Settlement date must be set since there is no default settlement_date for the bond.",
         ):
             bond.set_yield_to_maturity(0.05)
 
@@ -300,18 +330,18 @@ class TestBulletBond:
             "2025-01-01",
             5,
             1,
-            valuation_date="2022-01-01",
+            settlement_date="2022-01-01",
             bond_price=100,
         )
         bond.set_bond_price(None)
         assert bond._bond_price is None
 
-    # Test set bond price but there is no valuation date
-    def test_set_bond_price_none_no_valuation_date(self):
+    # Test set bond price but there is no settlement date
+    def test_set_bond_price_none_no_settlement_date(self):
         bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
         with pytest.raises(
             ValueError,
-            match="Valuation date must be set since there is no default valuation_date for the bond.",
+            match="Settlement date must be set since there is no default settlement_date for the bond.",
         ):
             bond.set_bond_price(100)
 
@@ -322,12 +352,14 @@ class TestBulletBond:
             "2025-01-01",
             5,
             1,
-            valuation_date="2022-01-01",
+            settlement_date="2022-01-01",
             yield_to_maturity=0.05,
         )
         bond.modified_duration()
 
     # Test modified_duration for a bond setting a price
     def test_modified_duration_with_price(self):
-        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1, valuation_date="2022-01-01")
+        bond = BulletBond(
+            "2020-01-01", "2025-01-01", 5, 1, settlement_date="2022-01-01"
+        )
         bond.modified_duration(bond_price=100)

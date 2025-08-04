@@ -38,8 +38,8 @@ class BulletBond:
         Record date convention. How many days before the coupon payment is made to receive it.
         If 1, you receive the payment if you had settled the trade 1 day before coupon payment.
         Defaults to 1.
-    valuation_date : str or datetime-like, optional
-        Date for valuation. Defaults to None.
+    settlement_date : str or datetime-like, optional
+        Settlement date for the bond. Defaults to None.
     yield_to_maturity : float, optional
         Yield to maturity of the bond. Set in decimal, e.g., 0.05 for 5%. Defaults to None.
     bond_price : float, optional
@@ -61,7 +61,7 @@ class BulletBond:
         notional: float = 100,
         settlement_convention_t_plus: int = 1,
         record_date_t_minus: int = 1,
-        valuation_date: Optional[Union[str, pd.Timestamp]] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         yield_to_maturity: Optional[float] = None,
         bond_price: Optional[float] = None,
     ) -> None:
@@ -84,25 +84,25 @@ class BulletBond:
         self.amortization_flow: dict[pd.Timestamp, float] = dict_amortization
 
         # New attributes for defaults
-        self._valuation_date: Optional[pd.Timestamp] = None
+        self._settlement_date: Optional[pd.Timestamp] = None
 
-        if valuation_date is not None:
-            self.set_valuation_date(valuation_date)
+        if settlement_date is not None:
+            self.set_settlement_date(settlement_date)
 
         if yield_to_maturity is not None:
-            # Throw error if yield_to_maturity is not None and valuation_date is None
-            if self._valuation_date is None:
+            # Throw error if yield_to_maturity is not None and settlement_date is None
+            if self._settlement_date is None:
                 raise ValueError(
-                    "Valuation date must be set if yield to maturity is set."
+                    "Settlement date must be set if yield to maturity is set."
                 )
-            self.set_yield_to_maturity(yield_to_maturity, valuation_date)
+            self.set_yield_to_maturity(yield_to_maturity, settlement_date)
         else:
             self._yield_to_maturity: Optional[float] = None
 
         if bond_price is not None:
-            # Throw error if bond_price is not None and valuation_date is None
-            if self._valuation_date is None:
-                raise ValueError("Valuation date must be set if bond_price is set.")
+            # Throw error if bond_price is not None and settlement_date is None
+            if self._settlement_date is None:
+                raise ValueError("Settlement date must be set if bond_price is set.")
             if yield_to_maturity is not None:
                 # Check if self._bond_price is approximately equal to the bond_price, else raise ValueError
                 if (
@@ -111,43 +111,47 @@ class BulletBond:
                 ):
                     raise ValueError(
                         "Bond price calculated by yield to maturity does not match the current bond price."
+                        f" (calculated: {self._bond_price}, given: {bond_price})"
                     )
-            self.set_bond_price(bond_price, valuation_date)
+            self.set_bond_price(bond_price, settlement_date)
         elif yield_to_maturity is None:
             # If neither yield_to_maturity nor bond_price is set, set bond price to None
             self._bond_price: Optional[float] = None
 
-    def set_valuation_date(
+    def set_settlement_date(
         self,
-        valuation_date: Optional[Union[str, pd.Timestamp]],
+        settlement_date: Optional[Union[str, pd.Timestamp]],
         reset_yield_to_maturity: bool = True,
     ) -> Optional[pd.Timestamp]:
         """
-        Set the default valuation date for the bond.
+        Set the default settlement date for the bond.
         If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 
         Parameters
         ----------
-        valuation_date : Union[str, pd.Timestamp], optional
-            The valuation date to set.
+        settlement_date : Union[str, pd.Timestamp], optional
+            The settlement date to set.
         reset_yield_to_maturity : bool, optional
             Whether to reset the yield to maturity and bond price.
         Returns
         -------
         Optional[pd.Timestamp]
-            The updated valuation date.
+            The updated settlement date.
         Raises
         ------
         ValueError
-            If the valuation date is not set when the bond price is set.
-        If the valuation date is changed, resets the bond price and yield to maturity if reset_yield_to_maturity is True.
+            If the settlement date is not set when the bond price is set.
+        If the settlement date is changed, resets the bond price and yield to maturity if reset_yield_to_maturity is True.
         """
-        old_valuation_date = self._valuation_date
+        old_settlement_date = self._settlement_date
 
-        if valuation_date is not None:
-            valuation_date = pd.to_datetime(valuation_date)
-            if old_valuation_date is not None and valuation_date != old_valuation_date:
-                # If the valuation date is changed, reset related attributes
+        if settlement_date is not None:
+            settlement_date = pd.to_datetime(settlement_date)
+            if (
+                old_settlement_date is not None
+                and settlement_date != old_settlement_date
+            ):
+                # If the settlement date is changed, reset related attributes
                 self._bond_price = None
                 if reset_yield_to_maturity:
                     self._yield_to_maturity = None
@@ -155,21 +159,21 @@ class BulletBond:
                     # If not resetting YTM, ensure it is still valid
                     if self._yield_to_maturity is not None:
                         self._bond_price = self.price_from_yield(
-                            self._yield_to_maturity, valuation_date
+                            self._yield_to_maturity, settlement_date
                         )
 
-            self._valuation_date = pd.to_datetime(valuation_date)
+            self._settlement_date = pd.to_datetime(settlement_date)
         else:
-            self._valuation_date = None
-            # If no valuation date is set, reset bond price and YTM
+            self._settlement_date = None
+            # If no settlement date is set, reset bond price and YTM
             self._bond_price = None
             self._yield_to_maturity = None
-        return self._valuation_date
+        return self._settlement_date
 
     def set_yield_to_maturity(
         self,
         ytm: Optional[float],
-        valuation_date: Optional[Union[str, pd.Timestamp, None]] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp, None]] = None,
     ) -> None:
         """
         Set the default yield to maturity for the bond. Updates bond price accordingly.
@@ -177,25 +181,25 @@ class BulletBond:
         ----------
         ytm : float, optional
             The yield to maturity to set.
-        valuation_date : Union[str, pd.Timestamp], optional
-            The valuation date to set.
+        settlement_date : Union[str, pd.Timestamp], optional
+            The settlement date to set.
         Raises
         ------
         ValueError
-            If the valuation date is not set when the yield to maturity is set.
+            If the settlement date is not set when the yield to maturity is set.
 
         If the yield to maturity is set, it will also update the bond price based on the yield.
         """
         self._yield_to_maturity = ytm
 
-        if valuation_date is not None:
-            valuation_date = self.set_valuation_date(valuation_date)
+        if settlement_date is not None:
+            settlement_date = self.set_settlement_date(settlement_date)
         # Since ytm is set, update bond price
         if ytm is not None:
-            vdate = self._valuation_date
+            vdate = self._settlement_date
             if vdate is None:
                 raise ValueError(
-                    "Valuation date must be set since there is no default valuation_date for the bond."
+                    "Settlement date must be set since there is no default settlement_date for the bond."
                 )
             self._bond_price = self.price_from_yield(ytm, vdate)
         else:
@@ -206,7 +210,7 @@ class BulletBond:
     def set_bond_price(
         self,
         price: Optional[float],
-        valuation_date: Optional[Union[str, pd.Timestamp]] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
     ) -> None:
         """
         Set the default bond price for the bond. Updates yield to maturity accordingly.
@@ -215,24 +219,24 @@ class BulletBond:
         ----------
         price : float, optional
             The bond price to set.
-        valuation_date : Union[str, pd.Timestamp], optional
-            The valuation date to set.
+        settlement_date : Union[str, pd.Timestamp], optional
+            The settlement date to set.
         Raises
         ------
         ValueError
-            If the valuation date is not set when the bond price is set.
+            If the settlement date is not set when the bond price is set.
 
         If the bond price is set, it will also update the yield to maturity based on the bond price.
         """
         self._bond_price = price
-        if valuation_date is not None:
-            valuation_date = self.set_valuation_date(valuation_date)
+        if settlement_date is not None:
+            settlement_date = self.set_settlement_date(settlement_date)
         # Since price is set, update yield to maturity
         if price is not None:
-            vdate = self._valuation_date
+            vdate = self._settlement_date
             if vdate is None:
                 raise ValueError(
-                    "Valuation date must be set since there is no default valuation_date for the bond."
+                    "Settlement date must be set since there is no default settlement_date for the bond."
                 )
             self._yield_to_maturity = self.yield_to_maturity(price, vdate)
         else:
@@ -240,15 +244,15 @@ class BulletBond:
             self._bond_price = None
             self._yield_to_maturity = None
 
-    def get_valuation_date(self) -> Optional[pd.Timestamp]:
+    def get_settlement_date(self) -> Optional[pd.Timestamp]:
         """
-        Get the current valuation date for the bond.
+        Get the current settlement date for the bond.
         Returns
         -------
         Optional[pd.Timestamp]
-            The current valuation date, or None if not set.
+            The current settlement date, or None if not set.
         """
-        return self._valuation_date
+        return self._settlement_date
 
     def get_yield_to_maturity(self) -> Optional[float]:
         """
@@ -340,19 +344,19 @@ class BulletBond:
 
     def filter_payment_flow(
         self,
-        valuation_date: Optional[Union[str, pd.Timestamp]] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         bond_price: Optional[float] = None,
         payment_flow: Optional[dict[pd.Timestamp, float]] = None,
     ) -> dict[pd.Timestamp, float]:
         """
-        Filter the payment flow to include only payments after the valuation date.
+        Filter the payment flow to include only payments after the settlement date.
 
         Parameters
         ----------
-        valuation_date : str or datetime-like, optional
+        settlement_date : str or datetime-like, optional
             Date from which to consider future payments. Defaults to issue date.
         bond_price : float, optional
-            If provided, adds the bond price as a negative cash flow at the valuation date.
+            If provided, adds the bond price as a negative cash flow at the settlement date.
         payment_flow : dict, optional
             Dictionary of payment dates and cash flows. If not provided, uses the bond's payment flow.
 
@@ -372,11 +376,7 @@ class BulletBond:
         if payment_flow is None:
             payment_flow = self.payment_flow
 
-        valuation_date = self._resolve_valuation_date(valuation_date)
-
-        settlement_date = valuation_date + pd.offsets.BDay(
-            self.settlement_convention_t_plus
-        )
+        settlement_date = self._resolve_settlement_date(settlement_date)
 
         # If settlement date would be after maturity, there are no cash flows
         if settlement_date > maturity - pd.offsets.BDay(1) + pd.offsets.BDay(1):
@@ -386,8 +386,6 @@ class BulletBond:
         # If a bond_price is provided, add it as a negative cash flow
         if bond_price is not None:
             cash_flows[settlement_date] = -bond_price
-
-        pd.offsets.BDay(self.record_date_t_minus)
 
         # Include all payments after the settlement date
         cash_flows.update(
@@ -405,16 +403,16 @@ class BulletBond:
 
     def calculate_time_to_payments(
         self,
-        valuation_date: Optional[Union[str, pd.Timestamp]] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         bond_price: Optional[float] = None,
     ) -> dict[float, float]:
         """
-        Calculate the time to each payment from the valuation date.
+        Calculate the time to each payment from the settlement date.
         The time is expressed in years.
 
         Parameters
         ----------
-        valuation_date : str or datetime-like, optional
+        settlement_date : str or datetime-like, optional
             Date from which to calculate time to payments. Defaults to issue date.
         bond_price : float, optional
             If provided, includes bond price as a negative cash flow.
@@ -430,18 +428,17 @@ class BulletBond:
         >>> bond.calculate_time_to_payments('2022-01-01')
         {1.0: 5.0, 2.0: 5.0, 3.0: 105.0}
         """
-        valuation_date = self._resolve_valuation_date(valuation_date)
+        settlement_date = self._resolve_settlement_date(settlement_date)
 
-        flujos = self.filter_payment_flow(valuation_date, bond_price)
+        flujos = self.filter_payment_flow(settlement_date, bond_price)
         return {
-            (key - (valuation_date + pd.offsets.BDay(1))).days / 365: value
-            for key, value in flujos.items()
+            (key - settlement_date).days / 365: value for key, value in flujos.items()
         }
 
     def value_with_curve(
         self,
         curve: Any,
-        valuation_date: Optional[Union[str, pd.Timestamp]] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         bond_price: Optional[float] = None,
     ) -> tuple[float, dict[float, float]]:
         """
@@ -461,8 +458,8 @@ class BulletBond:
         ----------
         curve : object
             Discount curve object with a discount_t(t) method.
-        valuation_date : str or datetime-like, optional
-            Valuation date. Defaults to issue date.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
         bond_price : float, optional
             If provided, includes bond price as a negative cash flow.
 
@@ -482,14 +479,14 @@ class BulletBond:
         >>> bond.value_with_curve(DummyCurve())
         (value, {t1: pv1, t2: pv2, ...})
         """
-        time_to_payments = self.calculate_time_to_payments(valuation_date, bond_price)
+        time_to_payments = self.calculate_time_to_payments(settlement_date, bond_price)
         pv = {t: curve.discount_t(t) * value for t, value in time_to_payments.items()}
         return sum(pv.values()), pv
 
     def yield_to_maturity(
         self,
         bond_price: float,
-        valuation_date: Optional[Union[str, pd.Timestamp]] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         tol: float = 1e-6,
         max_iter: int = 100,
     ) -> float:
@@ -502,8 +499,8 @@ class BulletBond:
         ----------
         bond_price : float
             Price of the bond.
-        valuation_date : str or datetime-like, optional
-            Valuation date. Defaults to issue date.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
         tol : float, optional
             Tolerance for convergence (default is 1e-6).
         max_iter : int, optional
@@ -526,7 +523,7 @@ class BulletBond:
         0.06189544078
         """
         # Prepare cash flows and dates
-        payment_flow = self.filter_payment_flow(valuation_date, bond_price=bond_price)
+        payment_flow = self.filter_payment_flow(settlement_date, bond_price=bond_price)
         # Use xirr to calculate YTM
         return xirr(payment_flow, tol=tol, max_iter=max_iter)
 
@@ -534,7 +531,7 @@ class BulletBond:
         self,
         yield_to_maturity: Optional[float] = None,
         bond_price: Optional[float] = None,
-        valuation_date: Optional[Union[str, pd.Timestamp]] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
     ) -> float:
         """
         Calculate modified duration of the bond.
@@ -555,8 +552,8 @@ class BulletBond:
             Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
         bond_price : float, optional
             Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
-        valuation_date : str or datetime-like, optional
-            Valuation date. Defaults to issue date.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
 
         Returns
         -------
@@ -569,10 +566,10 @@ class BulletBond:
         >>> bond.modified_duration(yield_to_maturity=0.05)
         4.2
         """
-        valuation_date = self._resolve_valuation_date(valuation_date)
+        settlement_date = self._resolve_settlement_date(settlement_date)
 
         ytm, time_to_payments, price_calc = self._get_ytm_payments_price(
-            yield_to_maturity, bond_price, valuation_date
+            yield_to_maturity, bond_price, settlement_date
         )
         duration = sum(
             [t * cf / (1 + ytm) ** (t + 1) for t, cf in time_to_payments.items()]
@@ -583,7 +580,7 @@ class BulletBond:
         self,
         yield_to_maturity: Optional[float] = None,
         bond_price: Optional[float] = None,
-        valuation_date: Optional[Union[str, pd.Timestamp]] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
     ) -> float:
         """
         Calculate the convexity of the bond.
@@ -605,8 +602,8 @@ class BulletBond:
             Yield to maturity as a decimal. If not provided, will be calculated from price if given.
         bond_price : float, optional
             Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
-        valuation_date : str or datetime-like, optional
-            Valuation date. Defaults to issue date.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
 
         Returns
         -------
@@ -619,10 +616,10 @@ class BulletBond:
         >>> bond.convexity(yield_to_maturity=0.05)
         18.7
         """
-        valuation_date = self._resolve_valuation_date(valuation_date)
+        settlement_date = self._resolve_settlement_date(settlement_date)
 
         ytm, time_to_payments, price_calc = self._get_ytm_payments_price(
-            yield_to_maturity, bond_price, valuation_date
+            yield_to_maturity, bond_price, settlement_date
         )
         convexity = sum(
             [
@@ -633,7 +630,7 @@ class BulletBond:
         return convexity / price_calc if price_calc != 0 else 0.0
 
     def accrued_interest(
-        self, valuation_date: Optional[Union[str, pd.Timestamp]] = None
+        self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
     ) -> float:
         """
         Calculate accrued interest since last coupon payment.
@@ -655,11 +652,7 @@ class BulletBond:
         >>> bond.accrued_interest('2023-06-01')
         2.5
         """
-        valuation_date = self._resolve_valuation_date(valuation_date)
-
-        settlement_date = valuation_date + pd.offsets.BDay(
-            self.settlement_convention_t_plus
-        )
+        settlement_date = self._resolve_settlement_date(settlement_date)
 
         if self.cpn_freq == 0 or self.cpn == 0:
             return 0.0
@@ -668,16 +661,18 @@ class BulletBond:
         next_coupon = self.next_coupon_date(settlement_date)
         coupon = (self.cpn / self.cpn_freq) * self.notional / 100
         # If before first coupon, accrue from issue date
-        if next_coupon is None:
-            return 0.0
         if prev_coupon is None and next_coupon is not None:
             days_between = (next_coupon - self.issue_dt).days
             days_accrued = (settlement_date - self.issue_dt).days
             return coupon * days_accrued / days_between if days_between > 0 else 0.0
-
-        days_between = (next_coupon - prev_coupon).days
-        days_accrued = (settlement_date - prev_coupon).days
-        return coupon * days_accrued / days_between if days_between > 0 else 0.0
+        # If between coupons, accrue from previous coupon
+        elif prev_coupon is not None and next_coupon is not None:
+            days_between = (next_coupon - prev_coupon).days
+            days_accrued = (settlement_date - prev_coupon).days
+            return coupon * days_accrued / days_between if days_between > 0 else 0.0
+        else:
+            # If no previous or next coupon, return 0
+            return 0.0
 
     def clean_price(
         self,
@@ -738,7 +733,7 @@ class BulletBond:
     def price_from_yield(
         self,
         yield_to_maturity: float,
-        valuation_date: Optional[Union[str, pd.Timestamp]] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
     ) -> float:
         """
         Calculate the price of the bond given a yield to maturity (YTM).
@@ -755,8 +750,8 @@ class BulletBond:
         ----------
         yield_to_maturity : float
             Yield to maturity as a decimal.
-        valuation_date : str or datetime-like, optional
-            Valuation date. Defaults to issue date.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
 
         Returns
         -------
@@ -769,19 +764,19 @@ class BulletBond:
         >>> bond.price_from_yield(0.05)
         100.0
         """
-        time_to_payments = self.calculate_time_to_payments(valuation_date)
+        time_to_payments = self.calculate_time_to_payments(settlement_date)
         price = self._price_from_yield(time_to_payments, yield_to_maturity)
         return price
 
     def cash_flows(
-        self, valuation_date: Optional[Union[str, pd.Timestamp]] = None
+        self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
     ) -> list[float]:
         """
         Return a list of all future cash flows (coupons + principal at maturity).
 
         Parameters
         ----------
-        valuation_date : str or datetime-like, optional
+        settlement_date : str or datetime-like, optional
             Date from which to consider future payments. Defaults to issue date.
 
         Returns
@@ -795,18 +790,18 @@ class BulletBond:
         >>> bond.cash_flows('2022-01-01')
         [5.0, 5.0, 105.0]
         """
-        flows = self.filter_payment_flow(valuation_date)
+        flows = self.filter_payment_flow(settlement_date)
         return list(flows.values())
 
     def next_coupon_date(
-        self, valuation_date: Optional[Union[str, pd.Timestamp]] = None
+        self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
     ) -> Optional[pd.Timestamp]:
         """
         Get the next coupon payment date from a given date.
 
         Parameters
         ----------
-        valuation_date : str or datetime-like, optional
+        settlement_date : str or datetime-like, optional
             Date from which to search. Defaults to today. Adjusts to settlement date.
 
         Returns
@@ -820,23 +815,20 @@ class BulletBond:
         >>> bond.next_coupon_date('2023-06-01')
         Timestamp('2024-01-01 00:00:00')
         """
-        valuation_date = self._resolve_valuation_date(valuation_date)
+        settlement_date = self._resolve_settlement_date(settlement_date)
 
-        settlement_date = valuation_date + pd.offsets.BDay(
-            self.settlement_convention_t_plus
-        )
         future_dates = [d for d in self.coupon_flow.keys() if d > settlement_date]
         return min(future_dates) if future_dates else None
 
     def previous_coupon_date(
-        self, valuation_date: Optional[Union[str, pd.Timestamp]] = None
+        self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
     ) -> Optional[pd.Timestamp]:
         """
         Get the previous coupon payment date from a given date.
 
         Parameters
         ----------
-        valuation_date : str or datetime-like, optional
+        settlement_date : str or datetime-like, optional
             Date from which to search. Defaults to today. Adjusts to settlement date.
 
         Returns
@@ -850,11 +842,7 @@ class BulletBond:
         >>> bond.previous_coupon_date('2023-06-01')
         Timestamp('2023-01-01 00:00:00')
         """
-        valuation_date = self._resolve_valuation_date(valuation_date)
-
-        settlement_date = valuation_date + pd.offsets.BDay(
-            self.settlement_convention_t_plus
-        )
+        settlement_date = self._resolve_settlement_date(settlement_date)
 
         past_dates = [d for d in self.coupon_flow.keys() if d <= settlement_date]
 
@@ -862,7 +850,7 @@ class BulletBond:
 
     def to_dataframe(
         self,
-        valuation_date: Optional[Union[str, pd.Timestamp]] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         bond_price: Optional[float] = None,
     ) -> pd.DataFrame:
         """
@@ -870,7 +858,7 @@ class BulletBond:
 
         Parameters
         ----------
-        valuation_date : str or datetime-like, optional
+        settlement_date : str or datetime-like, optional
             Date from which to consider future payments. Defaults to issue date.
         bond_price : float, optional
             If provided, includes bond price as a negative cash flow.
@@ -889,16 +877,16 @@ class BulletBond:
         1 2024-01-01    5.0
         2 2025-01-01    105.0
         """
-        valuation_date = self._resolve_valuation_date(valuation_date)
+        settlement_date = self._resolve_settlement_date(settlement_date)
 
         ytm, time_to_payments, price_calc = self._get_ytm_payments_price(
-            None, bond_price, valuation_date
+            None, bond_price, settlement_date
         )
 
-        flows = self.filter_payment_flow(valuation_date, price_calc)
-        coupon_flows = self.filter_payment_flow(valuation_date, None, self.coupon_flow)
+        flows = self.filter_payment_flow(settlement_date, price_calc)
+        coupon_flows = self.filter_payment_flow(settlement_date, None, self.coupon_flow)
         amortization_flows = self.filter_payment_flow(
-            valuation_date, None, self.amortization_flow
+            settlement_date, None, self.amortization_flow
         )
         # Concat coupon_flows and amortization_flows in a single dataframe
         df = pd.concat(
@@ -917,7 +905,7 @@ class BulletBond:
         self,
         yield_to_maturity: Optional[float],
         bond_price: Optional[float] = None,
-        valuation_date: Optional[Union[str, pd.Timestamp]] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
     ) -> float:
         """
         Calculate the DV01 (Dollar Value of a 1 basis point) for the bond.
@@ -929,8 +917,8 @@ class BulletBond:
             Yield to maturity as a decimal (e.g., 0.05 for 5%).
         bond_price : float, optional
             Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
-        valuation_date : str or datetime-like, optional
-            Valuation date. Defaults to issue date.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
 
         Returns
         -------
@@ -943,17 +931,17 @@ class BulletBond:
         >>> bond.dv01(0.05)
         -0.42
         """
-        valuation_date = self._resolve_valuation_date(valuation_date)
+        settlement_date = self._resolve_settlement_date(settlement_date)
         # Resolve yield to maturity and bond price
         ytm, time_to_payments, price_calc = self._get_ytm_payments_price(
-            yield_to_maturity, bond_price, valuation_date
+            yield_to_maturity, bond_price, settlement_date
         )
-        price_up = self.price_from_yield(ytm + 0.0001, valuation_date)
+        price_up = self.price_from_yield(ytm + 0.0001, settlement_date)
         return price_up - price_calc
 
     def plot_cash_flows(
         self,
-        valuation_date: Optional[Union[str, pd.Timestamp]] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         bond_price: Optional[float] = None,
     ) -> None:
         """
@@ -961,7 +949,7 @@ class BulletBond:
 
         Parameters
         ----------
-        valuation_date : str or datetime-like, optional
+        settlement_date : str or datetime-like, optional
             Date from which to consider future payments. Defaults to issue date.
         bond_price : float, optional
             If provided, includes bond price as a negative cash flow.
@@ -973,7 +961,7 @@ class BulletBond:
         # Shows a plot
         """
 
-        df = self.to_dataframe(valuation_date, bond_price)
+        df = self.to_dataframe(settlement_date, bond_price)
         x_labels = df.index.strftime("%Y-%m-%d")
         cost = df["Cost"]
         coupon = df["Coupon"]
@@ -1042,54 +1030,54 @@ class BulletBond:
         self,
         yield_to_maturity: Optional[float],
         price: Optional[float],
-        valuation_date: Optional[Union[str, pd.Timestamp]],
+        settlement_date: Optional[Union[str, pd.Timestamp]],
     ) -> float:
         """
         Helper to resolve yield_to_maturity from direct input, price, or default to notional.
         """
         if price is not None:
             return self.yield_to_maturity(
-                bond_price=price, valuation_date=valuation_date
+                bond_price=price, settlement_date=settlement_date
             )
         if yield_to_maturity is not None:
             return yield_to_maturity
         if (
             self._yield_to_maturity is not None
-            and self._valuation_date == valuation_date
+            and self._settlement_date == settlement_date
         ):
             return self._yield_to_maturity
         return self.yield_to_maturity(
-            bond_price=self.dirty_price(self.notional, valuation_date),
-            valuation_date=valuation_date,
+            bond_price=self.dirty_price(self.notional, settlement_date),
+            settlement_date=settlement_date,
         )
 
     def _get_ytm_payments_price(
         self,
         yield_to_maturity: Optional[float],
         price: Optional[float],
-        valuation_date: Optional[Union[str, pd.Timestamp]],
+        settlement_date: Optional[Union[str, pd.Timestamp]],
     ) -> tuple[float, dict[float, float], float]:
         """
         Helper to resolve ytm, time_to_payments, and price_calc for DRY.
         Returns (ytm, time_to_payments, price_calc)
         """
-        ytm = self._resolve_ytm(yield_to_maturity, price, valuation_date)
-        time_to_payments = self.calculate_time_to_payments(valuation_date)
+        ytm = self._resolve_ytm(yield_to_maturity, price, settlement_date)
+        time_to_payments = self.calculate_time_to_payments(settlement_date)
         price_calc = self._price_from_yield(time_to_payments, ytm)
         return ytm, time_to_payments, price_calc
 
-    def _resolve_valuation_date(
-        self, valuation_date: Optional[Union[str, pd.Timestamp]]
+    def _resolve_settlement_date(
+        self, settlement_date: Optional[Union[str, pd.Timestamp]]
     ) -> pd.Timestamp:
         """
-        Helper to resolve the valuation date for the bond.
-        If valuation_date is provided, converts to pd.Timestamp.
-        Otherwise, uses self._valuation_date or self.issue_dt.
+        Helper to resolve the settlement date for the bond.
+        If settlement_date is provided, converts to pd.Timestamp.
+        Otherwise, uses self._settlement_date or self.issue_dt.
         """
-        if valuation_date is not None:
-            return pd.to_datetime(valuation_date)
-        if self._valuation_date is not None:
-            return self._valuation_date
+        if settlement_date is not None:
+            return pd.to_datetime(settlement_date)
+        if self._settlement_date is not None:
+            return self._settlement_date
         return self.issue_dt
 
 
