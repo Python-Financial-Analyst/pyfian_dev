@@ -778,8 +778,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpn_freq</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpn</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">0.0</span>
 
-        <span class="n">prev_coupon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_coupon_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
-        <span class="n">next_coupon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_coupon_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
+        <span class="n">prev_coupon</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_coupon_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
+        <span class="n">next_coupon</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_coupon_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="n">coupon</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cpn</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpn_freq</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">notional</span> <span class="o">/</span> <span class="mi">100</span>
         <span class="c1"># If before first coupon, accrue from issue date</span>
         <span class="k">if</span> <span class="n">prev_coupon</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">next_coupon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -787,13 +787,10 @@
             <span class="n">days_accrued</span> <span class="o">=</span> <span class="p">(</span><span class="n">settlement_date</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_dt</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
             <span class="k">return</span> <span class="n">coupon</span> <span class="o">*</span> <span class="n">days_accrued</span> <span class="o">/</span> <span class="n">days_between</span> <span class="k">if</span> <span class="n">days_between</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
         <span class="c1"># If between coupons, accrue from previous coupon</span>
-        <span class="k">elif</span> <span class="n">prev_coupon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">next_coupon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># prev_coupon is not None and next_coupon is not None:</span>
             <span class="n">days_between</span> <span class="o">=</span> <span class="p">(</span><span class="n">next_coupon</span> <span class="o">-</span> <span class="n">prev_coupon</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
             <span class="n">days_accrued</span> <span class="o">=</span> <span class="p">(</span><span class="n">settlement_date</span> <span class="o">-</span> <span class="n">prev_coupon</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
-            <span class="k">return</span> <span class="n">coupon</span> <span class="o">*</span> <span class="n">days_accrued</span> <span class="o">/</span> <span class="n">days_between</span> <span class="k">if</span> <span class="n">days_between</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># If no previous or next coupon, return 0</span>
-            <span class="k">return</span> <span class="mf">0.0</span></div>
+            <span class="k">return</span> <span class="n">coupon</span> <span class="o">*</span> <span class="n">days_accrued</span> <span class="o">/</span> <span class="n">days_between</span> <span class="k">if</span> <span class="n">days_between</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span></div>
 
 
 <div class="viewcode-block" id="BulletBond.clean_price">
