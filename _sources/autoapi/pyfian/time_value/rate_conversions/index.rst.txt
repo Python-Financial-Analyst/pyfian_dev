@@ -343,11 +343,11 @@ Module Contents
 
    If discount is False (add-on):
 
-   .. math:: \mathrm{EAR} = (1 + \mathrm{MMR})^{\text{base}/\text{days}} - 1
+   .. math:: \mathrm{EAR} = (1 + \mathrm{MMR} \times \frac{\text{days}}{\text{base}})^{\text{base}/\text{days}} - 1
 
    If discount is True:
 
-   .. math:: \mathrm{EAR} = (1 / (1 - \mathrm{MMR}))^{\text{base}/\text{days}} - 1
+   .. math:: \mathrm{EAR} = (1 / (1 - \mathrm{MMR} * \frac{\text{days}}{\text{base}}))^{\text{base}/\text{days}} - 1
 
    :param mmr: Money Market Rate (as decimal).
    :type mmr: float
@@ -381,11 +381,11 @@ Module Contents
 
    If discount is False (add-on):
 
-   .. math:: \mathrm{MMR} = (1 + \mathrm{EAR})^{\text{days}/\text{base}} - 1
+   .. math:: \mathrm{MMR} = ((1 + \mathrm{EAR})^{\text{days}/\text{base}} - 1) \times (\text{days}/\text{base})
 
    If discount is True:
 
-   .. math:: \mathrm{MMR} = 1 - 1 / (1 + \mathrm{EAR})^{\text{days}/\text{base}}
+   .. math:: \mathrm{MMR} = (1 - 1 / (1 + \mathrm{EAR})^{\text{days}/\text{base}}) \times (\text{base}/\text{days})
 
    :param effective_rate: Effective annual rate (as decimal).
    :type effective_rate: float

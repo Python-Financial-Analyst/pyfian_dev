@@ -523,10 +523,10 @@ mortgages, and deposits.</p></li>
 </ul>
 <p>If discount is False (add-on):</p>
 <div class="math notranslate nohighlight">
-\[\mathrm{EAR} = (1 + \mathrm{MMR})^{\text{base}/\text{days}} - 1\]</div>
+\[\mathrm{EAR} = (1 + \mathrm{MMR} \times \frac{\text{days}}{\text{base}})^{\text{base}/\text{days}} - 1\]</div>
 <p>If discount is True:</p>
 <div class="math notranslate nohighlight">
-\[\mathrm{EAR} = (1 / (1 - \mathrm{MMR}))^{\text{base}/\text{days}} - 1\]</div>
+\[\mathrm{EAR} = (1 / (1 - \mathrm{MMR} * \frac{\text{days}}{\text{base}}))^{\text{base}/\text{days}} - 1\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -564,10 +564,10 @@ mortgages, and deposits.</p></li>
 </ul>
 <p>If discount is False (add-on):</p>
 <div class="math notranslate nohighlight">
-\[\mathrm{MMR} = (1 + \mathrm{EAR})^{\text{days}/\text{base}} - 1\]</div>
+\[\mathrm{MMR} = ((1 + \mathrm{EAR})^{\text{days}/\text{base}} - 1) \times (\text{days}/\text{base})\]</div>
 <p>If discount is True:</p>
 <div class="math notranslate nohighlight">
-\[\mathrm{MMR} = 1 - 1 / (1 + \mathrm{EAR})^{\text{days}/\text{base}}\]</div>
+\[\mathrm{MMR} = (1 - 1 / (1 + \mathrm{EAR})^{\text{days}/\text{base}}) \times (\text{base}/\text{days})\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

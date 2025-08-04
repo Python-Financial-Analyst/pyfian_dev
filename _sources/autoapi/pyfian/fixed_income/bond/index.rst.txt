@@ -160,6 +160,30 @@ Module Contents
 
 
 
+   .. py:method:: get_valuation_date() -> Optional[pandas.Timestamp]
+
+      Get the current valuation date for the bond.
+      :returns: The current valuation date, or None if not set.
+      :rtype: Optional[pd.Timestamp]
+
+
+
+   .. py:method:: get_yield_to_maturity() -> Optional[float]
+
+      Get the current yield to maturity for the bond.
+      :returns: The current yield to maturity, or None if not set.
+      :rtype: Optional[float]
+
+
+
+   .. py:method:: get_bond_price() -> Optional[float]
+
+      Get the current bond price for the bond.
+      :returns: The current bond price, or None if not set.
+      :rtype: Optional[float]
+
+
+
    .. py:method:: make_payment_flow() -> tuple[dict[pandas.Timestamp, float], dict[pandas.Timestamp, float], dict[pandas.Timestamp, float]]
 
       Generate the payment flow (cash flows) for the bond.
@@ -415,34 +439,29 @@ Module Contents
 
    .. py:method:: price_from_yield(yield_to_maturity: float, valuation_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
 
-              Calculate the price of the bond given a yield to maturity (YTM).
+      Calculate the price of the bond given a yield to maturity (YTM).
 
-              ::math
-                  Price = \sum_{t=1}^{T}
-      rac{C_t}{(1 + YTM)^{t}}
-              where:
-                  - \(C_t\) is the cash flow at time \(t\)
-                  - \(YTM\) is the yield to maturity
-                  - \(T\) is the total number of periods
+      .. math::
+          Price = \sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{t}}
 
-              Parameters
-              ----------
-              yield_to_maturity : float
-                  Yield to maturity as a decimal.
-              valuation_date : str or datetime-like, optional
-                  Valuation date. Defaults to issue date.
+      where:
+          - :math:`C_t` is the cash flow at time `t`
+          - :math:`YTM` is the yield to maturity
+          - :math:`T` is the total number of periods
 
-              Returns
-              -------
-              price : float
-                  Price of the bond.
+      :param yield_to_maturity: Yield to maturity as a decimal.
+      :type yield_to_maturity: float
+      :param valuation_date: Valuation date. Defaults to issue date.
+      :type valuation_date: str or datetime-like, optional
 
-              Examples
-              --------
-              >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
-              >>> bond.price_from_yield(0.05)
-              100.0
+      :returns: **price** -- Price of the bond.
+      :rtype: float
 
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.price_from_yield(0.05)
+      100.0
 
 
 

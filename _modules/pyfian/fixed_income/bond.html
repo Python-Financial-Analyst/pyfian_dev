@@ -329,6 +329,45 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
+<div class="viewcode-block" id="BulletBond.get_valuation_date">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.get_valuation_date">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_valuation_date</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current valuation date for the bond.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Optional[pd.Timestamp]</span>
+<span class="sd">            The current valuation date, or None if not set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valuation_date</span></div>
+
+
+<div class="viewcode-block" id="BulletBond.get_yield_to_maturity">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.get_yield_to_maturity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_yield_to_maturity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current yield to maturity for the bond.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Optional[float]</span>
+<span class="sd">            The current yield to maturity, or None if not set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span></div>
+
+
+<div class="viewcode-block" id="BulletBond.get_bond_price">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.get_bond_price">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bond_price</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current bond price for the bond.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Optional[float]</span>
+<span class="sd">            The current bond price, or None if not set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bond_price</span></div>
+
+
 <div class="viewcode-block" id="BulletBond.make_payment_flow">
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.make_payment_flow">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">make_payment_flow</span><span class="p">(</span>
@@ -834,12 +873,13 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the price of the bond given a yield to maturity (YTM).</span>
 
-<span class="sd">        ::math</span>
-<span class="sd">            Price = \\sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{t}}</span>
+<span class="sd">        .. math::</span>
+<span class="sd">            Price = \\sum_{t=1}^{T} \\frac{C_t}{(1 + YTM)^{t}}</span>
+
 <span class="sd">        where:</span>
-<span class="sd">            - \\(C_t\\) is the cash flow at time \\(t\\)</span>
-<span class="sd">            - \\(YTM\\) is the yield to maturity</span>
-<span class="sd">            - \\(T\\) is the total number of periods</span>
+<span class="sd">            - :math:`C_t` is the cash flow at time `t`</span>
+<span class="sd">            - :math:`YTM` is the yield to maturity</span>
+<span class="sd">            - :math:`T` is the total number of periods</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1168,6 +1208,8 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">yield_to_maturity</span><span class="p">(</span>
                 <span class="n">bond_price</span><span class="o">=</span><span class="n">price</span><span class="p">,</span> <span class="n">valuation_date</span><span class="o">=</span><span class="n">valuation_date</span>
             <span class="p">)</span>
+        <span class="k">if</span> <span class="n">yield_to_maturity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">yield_to_maturity</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valuation_date</span> <span class="o">==</span> <span class="n">valuation_date</span>

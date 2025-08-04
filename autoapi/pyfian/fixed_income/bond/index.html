@@ -274,6 +274,30 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.bond.BulletBond.get_valuation_date">
+<span class="sig-name descname"><span class="pre">get_valuation_date</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/bond.html#BulletBond.get_valuation_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.bond.BulletBond.get_valuation_date" title="Link to this definition"></a></dt>
+<dd><p>Get the current valuation date for the bond.
+:returns: The current valuation date, or None if not set.
+:rtype: Optional[pd.Timestamp]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.bond.BulletBond.get_yield_to_maturity">
+<span class="sig-name descname"><span class="pre">get_yield_to_maturity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/bond.html#BulletBond.get_yield_to_maturity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.bond.BulletBond.get_yield_to_maturity" title="Link to this definition"></a></dt>
+<dd><p>Get the current yield to maturity for the bond.
+:returns: The current yield to maturity, or None if not set.
+:rtype: Optional[float]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.bond.BulletBond.get_bond_price">
+<span class="sig-name descname"><span class="pre">get_bond_price</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/bond.html#BulletBond.get_bond_price"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.bond.BulletBond.get_bond_price" title="Link to this definition"></a></dt>
+<dd><p>Get the current bond price for the bond.
+:returns: The current bond price, or None if not set.
+:rtype: Optional[float]</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pyfian.fixed_income.bond.BulletBond.make_payment_flow">
 <span class="sig-name descname"><span class="pre">make_payment_flow</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.Timestamp</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.Timestamp</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.Timestamp</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/bond.html#BulletBond.make_payment_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.bond.BulletBond.make_payment_flow" title="Link to this definition"></a></dt>
 <dd><p>Generate the payment flow (cash flows) for the bond.
@@ -579,39 +603,37 @@ This is the interest that has accumulated on the bond since the last coupon paym
 <dl class="py method">
 <dt class="sig sig-object py" id="pyfian.fixed_income.bond.BulletBond.price_from_yield">
 <span class="sig-name descname"><span class="pre">price_from_yield</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yield_to_maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valuation_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/bond.html#BulletBond.price_from_yield"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.bond.BulletBond.price_from_yield" title="Link to this definition"></a></dt>
-<dd><blockquote>
-<div><p>Calculate the price of the bond given a yield to maturity (YTM).</p>
+<dd><p>Calculate the price of the bond given a yield to maturity (YTM).</p>
+<div class="math notranslate nohighlight">
+\[Price = \sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{t}}\]</div>
 <dl class="simple">
-<dt>::math</dt><dd><p>Price = sum_{t=1}^{T}</p>
-</dd>
-</dl>
-</div></blockquote>
-<dl>
-<dt>rac{C_t}{(1 + YTM)^{t}}</dt><dd><dl class="simple">
 <dt>where:</dt><dd><ul class="simple">
-<li><p>(C_t) is the cash flow at time (t)</p></li>
-<li><p>(YTM) is the yield to maturity</p></li>
-<li><p>(T) is the total number of periods</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_t\)</span> is the cash flow at time <cite>t</cite></p></li>
+<li><p><span class="math notranslate nohighlight">\(YTM\)</span> is the yield to maturity</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span> is the total number of periods</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="simple">
-<dt>yield_to_maturity<span class="classifier">float</span></dt><dd><p>Yield to maturity as a decimal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yield_to_maturity</strong> (<em>float</em>) – Yield to maturity as a decimal.</p></li>
+<li><p><strong>valuation_date</strong> (<em>str</em><em> or </em><em>datetime-like</em><em>, </em><em>optional</em>) – Valuation date. Defaults to issue date.</p></li>
+</ul>
 </dd>
-<dt>valuation_date<span class="classifier">str or datetime-like, optional</span></dt><dd><p>Valuation date. Defaults to issue date.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>price</strong> – Price of the bond.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
-<dl class="simple">
-<dt>price<span class="classifier">float</span></dt><dd><p>Price of the bond.</p>
-</dd>
-</dl>
+<p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">BulletBond</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">price_from_yield</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
 <span class="go">100.0</span>
 </pre></div>
 </div>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">

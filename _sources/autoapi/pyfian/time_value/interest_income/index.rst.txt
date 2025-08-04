@@ -24,14 +24,14 @@ pyfian.time_value.interest_income
    Formulas
    --------
 
-   - Continuous compounding: :math: `I = N (e^{rt} - 1)`
-   - Effective annual: :math: `I = N ((1 + r)^{t} - 1)`
-   - Nominal (periodic): :math: `I = N \frac{r}{n} p`
-   - Nominal (days): :math: `I = N r \frac{d}{y}`
-   - Money Market Rate (discount): :math: `I = N r \frac{d}{b}`
-   - Money Market Rate (add-on, notional): :math: `I = \frac{N}{1 + r d / b} r \frac{d}{b}`
-   - Money Market Rate (add-on, investment): :math: `I = N r \frac{d}{b}`
-   - BEY: :math: `I = N \frac{r}{2} p`
+   - Continuous compounding: :math:`I = N \times (e^{rt} - 1)`
+   - Effective annual: :math:`I = N \times ((1 + r)^{t} - 1)`
+   - Nominal (periodic): :math:`I = N \times \frac{r}{n} p`
+   - Nominal (days): :math:`I = N \times r \times \frac{d}{y}`
+   - Money Market Rate (discount): :math:`I = N \times r \times \frac{d}{b}`
+   - Money Market Rate (add-on, notional): :math:`I = \frac{N}{1 + r d / b} \times r \times \frac{d}{b}`
+   - Money Market Rate (add-on, investment): :math:`I = N \times r \times \frac{d}{b}`
+   - BEY: :math:`I = N \times \frac{r}{2} \times p`
 
    Where:
        - :math:`N` = notional
