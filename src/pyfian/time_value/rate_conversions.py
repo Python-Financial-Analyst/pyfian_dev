@@ -48,7 +48,7 @@ def _validate_effective_rate(effective_rate):
 
 # continuous_to_effective <-> effective_to_continuous conversions
 def continuous_to_effective(rate: float) -> float:
-    r"""
+    """
     Convert a continuously compounded rate to an effective annual rate.
 
     Theory & Institutional Context:
@@ -63,7 +63,7 @@ def continuous_to_effective(rate: float) -> float:
 
     The relationship is defined by the formula:
 
-    .. math:: \mathrm{EAR} = e^{r} - 1.
+    .. math:: \\mathrm{EAR} = e^{r} - 1.
 
     Parameters
     ----------
@@ -81,11 +81,11 @@ def continuous_to_effective(rate: float) -> float:
     0.05127109637602411
     """
     _validate_numeric(rate, "rate")
-    return np.exp(rate) - 1
+    return np.expm1(rate)
 
 
 def effective_to_continuous(effective_rate: float) -> float:
-    r"""
+    """
     Convert an effective annual rate to a continuously compounded rate.
 
     Theory & Institutional Context:
@@ -96,7 +96,7 @@ def effective_to_continuous(effective_rate: float) -> float:
 
     The relationship is defined by the formula:
 
-    .. math:: r = \ln(1 + \mathrm{EAR})
+    .. math:: r = \\ln(1 + \\mathrm{EAR})
 
     Parameters
     ----------
@@ -119,7 +119,7 @@ def effective_to_continuous(effective_rate: float) -> float:
 
 # periodic_to_effective <-> effective_to_periodic conversions
 def nominal_periods_to_effective(nominal_rate: float, periods_per_year: int) -> float:
-    r"""
+    """
     Convert a nominal rate that refers to periods (e.g., monthly, quarterly, semiannual) to an effective annual rate (EAR).
 
     Theory & Institutional Context:
@@ -131,7 +131,7 @@ def nominal_periods_to_effective(nominal_rate: float, periods_per_year: int) -> 
 
     The relationship is defined by the formula:
 
-    .. math:: \mathrm{EAR} = (1 + r/n)^{n} - 1
+    .. math:: \\mathrm{EAR} = (1 + r/n)^{n} - 1
 
     where
 
@@ -307,7 +307,7 @@ def effective_to_nominal_days(
 
 # single_period_to_effective <-> effective_to_period conversions
 def single_period_to_effective(period_rate: float, periods: int) -> float:
-    r"""
+    """
     Convert a periodic rate to an effective annual rate.
 
     Theory & Institutional Context:
@@ -322,7 +322,7 @@ def single_period_to_effective(period_rate: float, periods: int) -> float:
 
     The formula is:
 
-    .. math:: \mathrm{EAR} = (1 + r)^{n} - 1
+    .. math:: \\mathrm{EAR} = (1 + r)^{n} - 1
 
     For example, a monthly rate is a periodic rate with 12 periods per year. This is a fundamental calculation
     for comparing different investment opportunities with varying compounding frequencies.
@@ -353,7 +353,7 @@ def single_period_to_effective(period_rate: float, periods: int) -> float:
 
 
 def effective_to_single_period(effective_rate: float, periods: int) -> float:
-    r"""
+    """
     Convert an effective annual rate to a periodic rate.
 
     Theory & Institutional Context:
@@ -365,7 +365,7 @@ def effective_to_single_period(effective_rate: float, periods: int) -> float:
 
     The relationship is defined by the formula:
 
-    .. math:: r = (1 + \mathrm{EAR})^{1/n} - 1
+    .. math:: r = (1 + \\mathrm{EAR})^{1/n} - 1
 
     where
 
@@ -409,11 +409,11 @@ def money_market_rate_to_effective(
 
     If discount is False (add-on):
 
-    .. math:: \\mathrm{EAR} = (1 + \\mathrm{MMR})^{\\text{base}/\\text{days}} - 1
+    .. math:: \\mathrm{EAR} = (1 + \\mathrm{MMR} \\times \\frac{\\text{days}}{\\text{base}})^{\\text{base}/\\text{days}} - 1
 
     If discount is True:
 
-    .. math:: \\mathrm{EAR} = (1 / (1 - \\mathrm{MMR}))^{\\text{base}/\\text{days}} - 1
+    .. math:: \\mathrm{EAR} = (1 / (1 - \\mathrm{MMR} * \\frac{\\text{days}}{\\text{base}}))^{\\text{base}/\\text{days}} - 1
 
     Parameters
     ----------
@@ -442,9 +442,9 @@ def money_market_rate_to_effective(
     _validate_positive_number(days, "days")
     _validate_positive_number(base, "base")
     if discount:
-        return _exp_general(1 / (1 - mmr), base / days)
+        return _exp_general(1 / (1 - mmr * days / base), base / days)
     else:
-        return _exp_general(1 + mmr, base / days)
+        return _exp_general(1 + mmr * days / base, base / days)
 
 
 def effective_to_money_market_rate(
@@ -461,11 +461,11 @@ def effective_to_money_market_rate(
 
     If discount is False (add-on):
 
-    .. math:: \\mathrm{MMR} = (1 + \\mathrm{EAR})^{\\text{days}/\\text{base}} - 1
+    .. math:: \\mathrm{MMR} = ((1 + \\mathrm{EAR})^{\\text{days}/\\text{base}} - 1) \\times (\\text{days}/\\text{base})
 
     If discount is True:
 
-    .. math:: \\mathrm{MMR} = 1 - 1 / (1 + \\mathrm{EAR})^{\\text{days}/\\text{base}}
+    .. math:: \\mathrm{MMR} = (1 - 1 / (1 + \\mathrm{EAR})^{\\text{days}/\\text{base}}) \\times (\\text{base}/\\text{days})
 
     Parameters
     ----------
@@ -494,15 +494,18 @@ def effective_to_money_market_rate(
     _validate_positive_number(days, "days")
     _validate_positive_number(base, "base")
     if discount:
-        # Discount basis: mmr = 1 - 1 / (1 + EAR) ** (days/base)
-        return 1 - 1 / np.power(1 + effective_rate, days / base)
+        # Discount basis: mmr = (1 - 1 / (1 + EAR) ** (days/base) ) * (base/days)
+        # effective_rate = _exp_general(1 / (1 - mmr * days / base), base / days)
+        # (1 + effective_rate) ** (days / base ) = (1 / (1 - mmr * days / base)
+        # 1 / (1 + effective_rate) ** (days / base ) = (1 - mmr * days / base)
+        return (1 - 1 / (np.power(1 + effective_rate, days / base))) * (base / days)
     else:
-        return _exp_general(1 + effective_rate, days / base)
+        return _exp_general(1 + effective_rate, days / base) * base / days
 
 
 # Bond Equivalent Yield (BEY) <-> Effective Annual Rate conversions
 def bey_to_effective_annual(bey: float) -> float:
-    r"""
+    """
     Convert Bond Equivalent Yield (BEY) to effective annual rate (EAR).
 
     Theory & Institutional Context:
@@ -514,7 +517,7 @@ def bey_to_effective_annual(bey: float) -> float:
 
     BEY is defined as 2 * semiannual rate (not compounded). EAR compounds the semiannual rate:
 
-    .. math:: \mathrm{EAR} = (1 + \mathrm{BEY}/2)^2 - 1
+    .. math:: \\mathrm{EAR} = (1 + \\mathrm{BEY}/2)^2 - 1
 
     Parameters
     ----------

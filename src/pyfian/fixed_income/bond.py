@@ -240,6 +240,36 @@ class BulletBond:
             self._bond_price = None
             self._yield_to_maturity = None
 
+    def get_valuation_date(self) -> Optional[pd.Timestamp]:
+        """
+        Get the current valuation date for the bond.
+        Returns
+        -------
+        Optional[pd.Timestamp]
+            The current valuation date, or None if not set.
+        """
+        return self._valuation_date
+
+    def get_yield_to_maturity(self) -> Optional[float]:
+        """
+        Get the current yield to maturity for the bond.
+        Returns
+        -------
+        Optional[float]
+            The current yield to maturity, or None if not set.
+        """
+        return self._yield_to_maturity
+
+    def get_bond_price(self) -> Optional[float]:
+        """
+        Get the current bond price for the bond.
+        Returns
+        -------
+        Optional[float]
+            The current bond price, or None if not set.
+        """
+        return self._bond_price
+
     def make_payment_flow(
         self,
     ) -> tuple[
@@ -713,12 +743,13 @@ class BulletBond:
         """
         Calculate the price of the bond given a yield to maturity (YTM).
 
-        ::math
-            Price = \\sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{t}}
+        .. math::
+            Price = \\sum_{t=1}^{T} \\frac{C_t}{(1 + YTM)^{t}}
+
         where:
-            - \\(C_t\\) is the cash flow at time \\(t\\)
-            - \\(YTM\\) is the yield to maturity
-            - \\(T\\) is the total number of periods
+            - :math:`C_t` is the cash flow at time `t`
+            - :math:`YTM` is the yield to maturity
+            - :math:`T` is the total number of periods
 
         Parameters
         ----------
@@ -1020,6 +1051,8 @@ class BulletBond:
             return self.yield_to_maturity(
                 bond_price=price, valuation_date=valuation_date
             )
+        if yield_to_maturity is not None:
+            return yield_to_maturity
         if (
             self._yield_to_maturity is not None
             and self._valuation_date == valuation_date
