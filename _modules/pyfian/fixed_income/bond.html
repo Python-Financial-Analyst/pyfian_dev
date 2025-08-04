@@ -118,8 +118,8 @@
 <span class="sd">        Record date convention. How many days before the coupon payment is made to receive it.</span>
 <span class="sd">        If 1, you receive the payment if you had settled the trade 1 day before coupon payment.</span>
 <span class="sd">        Defaults to 1.</span>
-<span class="sd">    valuation_date : str or datetime-like, optional</span>
-<span class="sd">        Date for valuation. Defaults to None.</span>
+<span class="sd">    settlement_date : str or datetime-like, optional</span>
+<span class="sd">        Settlement date for the bond. Defaults to None.</span>
 <span class="sd">    yield_to_maturity : float, optional</span>
 <span class="sd">        Yield to maturity of the bond. Set in decimal, e.g., 0.05 for 5%. Defaults to None.</span>
 <span class="sd">    bond_price : float, optional</span>
@@ -141,7 +141,7 @@
         <span class="n">notional</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">settlement_convention_t_plus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">record_date_t_minus</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -164,25 +164,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">amortization_flow</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_amortization</span>
 
         <span class="c1"># New attributes for defaults</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="n">valuation_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_valuation_date</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">yield_to_maturity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># Throw error if yield_to_maturity is not None and valuation_date is None</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valuation_date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Throw error if yield_to_maturity is not None and settlement_date is None</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Valuation date must be set if yield to maturity is set.&quot;</span>
+                    <span class="s2">&quot;Settlement date must be set if yield to maturity is set.&quot;</span>
                 <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_yield_to_maturity</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="p">,</span> <span class="n">valuation_date</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_yield_to_maturity</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="p">,</span> <span class="n">settlement_date</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">bond_price</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># Throw error if bond_price is not None and valuation_date is None</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valuation_date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Valuation date must be set if bond_price is set.&quot;</span><span class="p">)</span>
+            <span class="c1"># Throw error if bond_price is not None and settlement_date is None</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Settlement date must be set if bond_price is set.&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">yield_to_maturity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="c1"># Check if self._bond_price is approximately equal to the bond_price, else raise ValueError</span>
                 <span class="k">if</span> <span class="p">(</span>
@@ -191,45 +191,49 @@
                 <span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                         <span class="s2">&quot;Bond price calculated by yield to maturity does not match the current bond price.&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot; (calculated: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_bond_price</span><span class="si">}</span><span class="s2">, given: </span><span class="si">{</span><span class="n">bond_price</span><span class="si">}</span><span class="s2">)&quot;</span>
                     <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_bond_price</span><span class="p">(</span><span class="n">bond_price</span><span class="p">,</span> <span class="n">valuation_date</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_bond_price</span><span class="p">(</span><span class="n">bond_price</span><span class="p">,</span> <span class="n">settlement_date</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">yield_to_maturity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># If neither yield_to_maturity nor bond_price is set, set bond price to None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="BulletBond.set_valuation_date">
-<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.set_valuation_date">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_valuation_date</span><span class="p">(</span>
+<div class="viewcode-block" id="BulletBond.set_settlement_date">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.set_settlement_date">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_settlement_date</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]],</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]],</span>
         <span class="n">reset_yield_to_maturity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the default valuation date for the bond.</span>
+<span class="sd">        Set the default settlement date for the bond.</span>
 <span class="sd">        If reset_yield_to_maturity is True, resets the yield to maturity and bond price.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        valuation_date : Union[str, pd.Timestamp], optional</span>
-<span class="sd">            The valuation date to set.</span>
+<span class="sd">        settlement_date : Union[str, pd.Timestamp], optional</span>
+<span class="sd">            The settlement date to set.</span>
 <span class="sd">        reset_yield_to_maturity : bool, optional</span>
 <span class="sd">            Whether to reset the yield to maturity and bond price.</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Optional[pd.Timestamp]</span>
-<span class="sd">            The updated valuation date.</span>
+<span class="sd">            The updated settlement date.</span>
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            If the valuation date is not set when the bond price is set.</span>
-<span class="sd">        If the valuation date is changed, resets the bond price and yield to maturity if reset_yield_to_maturity is True.</span>
+<span class="sd">            If the settlement date is not set when the bond price is set.</span>
+<span class="sd">        If the settlement date is changed, resets the bond price and yield to maturity if reset_yield_to_maturity is True.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">old_valuation_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valuation_date</span>
+        <span class="n">old_settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span>
 
-        <span class="k">if</span> <span class="n">valuation_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">valuation_date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">old_valuation_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">valuation_date</span> <span class="o">!=</span> <span class="n">old_valuation_date</span><span class="p">:</span>
-                <span class="c1"># If the valuation date is changed, reset related attributes</span>
+        <span class="k">if</span> <span class="n">settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">settlement_date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">old_settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="n">settlement_date</span> <span class="o">!=</span> <span class="n">old_settlement_date</span>
+            <span class="p">):</span>
+                <span class="c1"># If the settlement date is changed, reset related attributes</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_bond_price</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">if</span> <span class="n">reset_yield_to_maturity</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span> <span class="o">=</span> <span class="kc">None</span>
@@ -237,16 +241,16 @@
                     <span class="c1"># If not resetting YTM, ensure it is still valid</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_bond_price</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">price_from_yield</span><span class="p">(</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span><span class="p">,</span> <span class="n">valuation_date</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span><span class="p">,</span> <span class="n">settlement_date</span>
                         <span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_valuation_date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_valuation_date</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="c1"># If no valuation date is set, reset bond price and YTM</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="c1"># If no settlement date is set, reset bond price and YTM</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bond_price</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valuation_date</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span></div>
 
 
 <div class="viewcode-block" id="BulletBond.set_yield_to_maturity">
@@ -254,7 +258,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">set_yield_to_maturity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ytm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the default yield to maturity for the bond. Updates bond price accordingly.</span>
@@ -262,25 +266,25 @@
 <span class="sd">        ----------</span>
 <span class="sd">        ytm : float, optional</span>
 <span class="sd">            The yield to maturity to set.</span>
-<span class="sd">        valuation_date : Union[str, pd.Timestamp], optional</span>
-<span class="sd">            The valuation date to set.</span>
+<span class="sd">        settlement_date : Union[str, pd.Timestamp], optional</span>
+<span class="sd">            The settlement date to set.</span>
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            If the valuation date is not set when the yield to maturity is set.</span>
+<span class="sd">            If the settlement date is not set when the yield to maturity is set.</span>
 
 <span class="sd">        If the yield to maturity is set, it will also update the bond price based on the yield.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span> <span class="o">=</span> <span class="n">ytm</span>
 
-        <span class="k">if</span> <span class="n">valuation_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">valuation_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_valuation_date</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="c1"># Since ytm is set, update bond price</span>
         <span class="k">if</span> <span class="n">ytm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">vdate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valuation_date</span>
+            <span class="n">vdate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span>
             <span class="k">if</span> <span class="n">vdate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Valuation date must be set since there is no default valuation_date for the bond.&quot;</span>
+                    <span class="s2">&quot;Settlement date must be set since there is no default settlement_date for the bond.&quot;</span>
                 <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bond_price</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">price_from_yield</span><span class="p">(</span><span class="n">ytm</span><span class="p">,</span> <span class="n">vdate</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -294,7 +298,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">set_bond_price</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the default bond price for the bond. Updates yield to maturity accordingly.</span>
@@ -303,24 +307,24 @@
 <span class="sd">        ----------</span>
 <span class="sd">        price : float, optional</span>
 <span class="sd">            The bond price to set.</span>
-<span class="sd">        valuation_date : Union[str, pd.Timestamp], optional</span>
-<span class="sd">            The valuation date to set.</span>
+<span class="sd">        settlement_date : Union[str, pd.Timestamp], optional</span>
+<span class="sd">            The settlement date to set.</span>
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
-<span class="sd">            If the valuation date is not set when the bond price is set.</span>
+<span class="sd">            If the settlement date is not set when the bond price is set.</span>
 
 <span class="sd">        If the bond price is set, it will also update the yield to maturity based on the bond price.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bond_price</span> <span class="o">=</span> <span class="n">price</span>
-        <span class="k">if</span> <span class="n">valuation_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">valuation_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_valuation_date</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="c1"># Since price is set, update yield to maturity</span>
         <span class="k">if</span> <span class="n">price</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">vdate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valuation_date</span>
+            <span class="n">vdate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span>
             <span class="k">if</span> <span class="n">vdate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Valuation date must be set since there is no default valuation_date for the bond.&quot;</span>
+                    <span class="s2">&quot;Settlement date must be set since there is no default settlement_date for the bond.&quot;</span>
                 <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yield_to_maturity</span><span class="p">(</span><span class="n">price</span><span class="p">,</span> <span class="n">vdate</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -329,17 +333,17 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="BulletBond.get_valuation_date">
-<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.get_valuation_date">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_valuation_date</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]:</span>
+<div class="viewcode-block" id="BulletBond.get_settlement_date">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.get_settlement_date">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_settlement_date</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the current valuation date for the bond.</span>
+<span class="sd">        Get the current settlement date for the bond.</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Optional[pd.Timestamp]</span>
-<span class="sd">            The current valuation date, or None if not set.</span>
+<span class="sd">            The current settlement date, or None if not set.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valuation_date</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span></div>
 
 
 <div class="viewcode-block" id="BulletBond.get_yield_to_maturity">
@@ -443,19 +447,19 @@
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.filter_payment_flow">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">filter_payment_flow</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">payment_flow</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Filter the payment flow to include only payments after the valuation date.</span>
+<span class="sd">        Filter the payment flow to include only payments after the settlement date.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        valuation_date : str or datetime-like, optional</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
 <span class="sd">            Date from which to consider future payments. Defaults to issue date.</span>
 <span class="sd">        bond_price : float, optional</span>
-<span class="sd">            If provided, adds the bond price as a negative cash flow at the valuation date.</span>
+<span class="sd">            If provided, adds the bond price as a negative cash flow at the settlement date.</span>
 <span class="sd">        payment_flow : dict, optional</span>
 <span class="sd">            Dictionary of payment dates and cash flows. If not provided, uses the bond&#39;s payment flow.</span>
 
@@ -475,11 +479,7 @@
         <span class="k">if</span> <span class="n">payment_flow</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">payment_flow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">payment_flow</span>
 
-        <span class="n">valuation_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_date</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
-
-        <span class="n">settlement_date</span> <span class="o">=</span> <span class="n">valuation_date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">settlement_convention_t_plus</span>
-        <span class="p">)</span>
+        <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
 
         <span class="c1"># If settlement date would be after maturity, there are no cash flows</span>
         <span class="k">if</span> <span class="n">settlement_date</span> <span class="o">&gt;</span> <span class="n">maturity</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
@@ -489,8 +489,6 @@
         <span class="c1"># If a bond_price is provided, add it as a negative cash flow</span>
         <span class="k">if</span> <span class="n">bond_price</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cash_flows</span><span class="p">[</span><span class="n">settlement_date</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">bond_price</span>
-
-        <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record_date_t_minus</span><span class="p">)</span>
 
         <span class="c1"># Include all payments after the settlement date</span>
         <span class="n">cash_flows</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
@@ -511,16 +509,16 @@
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.calculate_time_to_payments">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">calculate_time_to_payments</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate the time to each payment from the valuation date.</span>
+<span class="sd">        Calculate the time to each payment from the settlement date.</span>
 <span class="sd">        The time is expressed in years.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        valuation_date : str or datetime-like, optional</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
 <span class="sd">            Date from which to calculate time to payments. Defaults to issue date.</span>
 <span class="sd">        bond_price : float, optional</span>
 <span class="sd">            If provided, includes bond price as a negative cash flow.</span>
@@ -536,12 +534,11 @@
 <span class="sd">        &gt;&gt;&gt; bond.calculate_time_to_payments(&#39;2022-01-01&#39;)</span>
 <span class="sd">        {1.0: 5.0, 2.0: 5.0, 3.0: 105.0}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">valuation_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_date</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
+        <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
 
-        <span class="n">flujos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">)</span>
+        <span class="n">flujos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="p">(</span><span class="n">key</span> <span class="o">-</span> <span class="p">(</span><span class="n">valuation_date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span><span class="o">.</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">:</span> <span class="n">value</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">flujos</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">(</span><span class="n">key</span> <span class="o">-</span> <span class="n">settlement_date</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">flujos</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">}</span></div>
 
 
@@ -550,7 +547,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">value_with_curve</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">curve</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -570,8 +567,8 @@
 <span class="sd">        ----------</span>
 <span class="sd">        curve : object</span>
 <span class="sd">            Discount curve object with a discount_t(t) method.</span>
-<span class="sd">        valuation_date : str or datetime-like, optional</span>
-<span class="sd">            Valuation date. Defaults to issue date.</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
+<span class="sd">            Settlement date. Defaults to issue date.</span>
 <span class="sd">        bond_price : float, optional</span>
 <span class="sd">            If provided, includes bond price as a negative cash flow.</span>
 
@@ -591,7 +588,7 @@
 <span class="sd">        &gt;&gt;&gt; bond.value_with_curve(DummyCurve())</span>
 <span class="sd">        (value, {t1: pv1, t2: pv2, ...})</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">time_to_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_time_to_payments</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">)</span>
+        <span class="n">time_to_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_time_to_payments</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">)</span>
         <span class="n">pv</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="p">:</span> <span class="n">curve</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">value</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">time_to_payments</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">pv</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">pv</span></div>
 
@@ -601,7 +598,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">yield_to_maturity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
         <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -614,8 +611,8 @@
 <span class="sd">        ----------</span>
 <span class="sd">        bond_price : float</span>
 <span class="sd">            Price of the bond.</span>
-<span class="sd">        valuation_date : str or datetime-like, optional</span>
-<span class="sd">            Valuation date. Defaults to issue date.</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
+<span class="sd">            Settlement date. Defaults to issue date.</span>
 <span class="sd">        tol : float, optional</span>
 <span class="sd">            Tolerance for convergence (default is 1e-6).</span>
 <span class="sd">        max_iter : int, optional</span>
@@ -638,7 +635,7 @@
 <span class="sd">        0.06189544078</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Prepare cash flows and dates</span>
-        <span class="n">payment_flow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">,</span> <span class="n">bond_price</span><span class="o">=</span><span class="n">bond_price</span><span class="p">)</span>
+        <span class="n">payment_flow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">,</span> <span class="n">bond_price</span><span class="o">=</span><span class="n">bond_price</span><span class="p">)</span>
         <span class="c1"># Use xirr to calculate YTM</span>
         <span class="k">return</span> <span class="n">xirr</span><span class="p">(</span><span class="n">payment_flow</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">)</span></div>
 
@@ -649,7 +646,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate modified duration of the bond.</span>
@@ -670,8 +667,8 @@
 <span class="sd">            Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.</span>
 <span class="sd">        bond_price : float, optional</span>
 <span class="sd">            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.</span>
-<span class="sd">        valuation_date : str or datetime-like, optional</span>
-<span class="sd">            Valuation date. Defaults to issue date.</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
+<span class="sd">            Settlement date. Defaults to issue date.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -684,10 +681,10 @@
 <span class="sd">        &gt;&gt;&gt; bond.modified_duration(yield_to_maturity=0.05)</span>
 <span class="sd">        4.2</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">valuation_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_date</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
+        <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
 
         <span class="n">ytm</span><span class="p">,</span> <span class="n">time_to_payments</span><span class="p">,</span> <span class="n">price_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ytm_payments_price</span><span class="p">(</span>
-            <span class="n">yield_to_maturity</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">,</span> <span class="n">valuation_date</span>
+            <span class="n">yield_to_maturity</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">,</span> <span class="n">settlement_date</span>
         <span class="p">)</span>
         <span class="n">duration</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
             <span class="p">[</span><span class="n">t</span> <span class="o">*</span> <span class="n">cf</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">cf</span> <span class="ow">in</span> <span class="n">time_to_payments</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
@@ -701,7 +698,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the convexity of the bond.</span>
@@ -723,8 +720,8 @@
 <span class="sd">            Yield to maturity as a decimal. If not provided, will be calculated from price if given.</span>
 <span class="sd">        bond_price : float, optional</span>
 <span class="sd">            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.</span>
-<span class="sd">        valuation_date : str or datetime-like, optional</span>
-<span class="sd">            Valuation date. Defaults to issue date.</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
+<span class="sd">            Settlement date. Defaults to issue date.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -737,10 +734,10 @@
 <span class="sd">        &gt;&gt;&gt; bond.convexity(yield_to_maturity=0.05)</span>
 <span class="sd">        18.7</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">valuation_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_date</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
+        <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
 
         <span class="n">ytm</span><span class="p">,</span> <span class="n">time_to_payments</span><span class="p">,</span> <span class="n">price_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ytm_payments_price</span><span class="p">(</span>
-            <span class="n">yield_to_maturity</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">,</span> <span class="n">valuation_date</span>
+            <span class="n">yield_to_maturity</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">,</span> <span class="n">settlement_date</span>
         <span class="p">)</span>
         <span class="n">convexity</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
             <span class="p">[</span>
@@ -754,7 +751,7 @@
 <div class="viewcode-block" id="BulletBond.accrued_interest">
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.accrued_interest">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">accrued_interest</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate accrued interest since last coupon payment.</span>
@@ -776,11 +773,7 @@
 <span class="sd">        &gt;&gt;&gt; bond.accrued_interest(&#39;2023-06-01&#39;)</span>
 <span class="sd">        2.5</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">valuation_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_date</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
-
-        <span class="n">settlement_date</span> <span class="o">=</span> <span class="n">valuation_date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">settlement_convention_t_plus</span>
-        <span class="p">)</span>
+        <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpn_freq</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpn</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">0.0</span>
@@ -789,16 +782,18 @@
         <span class="n">next_coupon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_coupon_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="n">coupon</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cpn</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpn_freq</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">notional</span> <span class="o">/</span> <span class="mi">100</span>
         <span class="c1"># If before first coupon, accrue from issue date</span>
-        <span class="k">if</span> <span class="n">next_coupon</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="mf">0.0</span>
         <span class="k">if</span> <span class="n">prev_coupon</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">next_coupon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">days_between</span> <span class="o">=</span> <span class="p">(</span><span class="n">next_coupon</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_dt</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
             <span class="n">days_accrued</span> <span class="o">=</span> <span class="p">(</span><span class="n">settlement_date</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_dt</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
             <span class="k">return</span> <span class="n">coupon</span> <span class="o">*</span> <span class="n">days_accrued</span> <span class="o">/</span> <span class="n">days_between</span> <span class="k">if</span> <span class="n">days_between</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
-
-        <span class="n">days_between</span> <span class="o">=</span> <span class="p">(</span><span class="n">next_coupon</span> <span class="o">-</span> <span class="n">prev_coupon</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
-        <span class="n">days_accrued</span> <span class="o">=</span> <span class="p">(</span><span class="n">settlement_date</span> <span class="o">-</span> <span class="n">prev_coupon</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
-        <span class="k">return</span> <span class="n">coupon</span> <span class="o">*</span> <span class="n">days_accrued</span> <span class="o">/</span> <span class="n">days_between</span> <span class="k">if</span> <span class="n">days_between</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span></div>
+        <span class="c1"># If between coupons, accrue from previous coupon</span>
+        <span class="k">elif</span> <span class="n">prev_coupon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">next_coupon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">days_between</span> <span class="o">=</span> <span class="p">(</span><span class="n">next_coupon</span> <span class="o">-</span> <span class="n">prev_coupon</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
+            <span class="n">days_accrued</span> <span class="o">=</span> <span class="p">(</span><span class="n">settlement_date</span> <span class="o">-</span> <span class="n">prev_coupon</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
+            <span class="k">return</span> <span class="n">coupon</span> <span class="o">*</span> <span class="n">days_accrued</span> <span class="o">/</span> <span class="n">days_between</span> <span class="k">if</span> <span class="n">days_between</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If no previous or next coupon, return 0</span>
+            <span class="k">return</span> <span class="mf">0.0</span></div>
 
 
 <div class="viewcode-block" id="BulletBond.clean_price">
@@ -868,7 +863,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">price_from_yield</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the price of the bond given a yield to maturity (YTM).</span>
@@ -885,8 +880,8 @@
 <span class="sd">        ----------</span>
 <span class="sd">        yield_to_maturity : float</span>
 <span class="sd">            Yield to maturity as a decimal.</span>
-<span class="sd">        valuation_date : str or datetime-like, optional</span>
-<span class="sd">            Valuation date. Defaults to issue date.</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
+<span class="sd">            Settlement date. Defaults to issue date.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -899,7 +894,7 @@
 <span class="sd">        &gt;&gt;&gt; bond.price_from_yield(0.05)</span>
 <span class="sd">        100.0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">time_to_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_time_to_payments</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
+        <span class="n">time_to_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_time_to_payments</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="n">price</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_price_from_yield</span><span class="p">(</span><span class="n">time_to_payments</span><span class="p">,</span> <span class="n">yield_to_maturity</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">price</span></div>
 
@@ -907,14 +902,14 @@
 <div class="viewcode-block" id="BulletBond.cash_flows">
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.cash_flows">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">cash_flows</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a list of all future cash flows (coupons + principal at maturity).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        valuation_date : str or datetime-like, optional</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
 <span class="sd">            Date from which to consider future payments. Defaults to issue date.</span>
 
 <span class="sd">        Returns</span>
@@ -928,21 +923,21 @@
 <span class="sd">        &gt;&gt;&gt; bond.cash_flows(&#39;2022-01-01&#39;)</span>
 <span class="sd">        [5.0, 5.0, 105.0]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
+        <span class="n">flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">flows</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="BulletBond.next_coupon_date">
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.next_coupon_date">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">next_coupon_date</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the next coupon payment date from a given date.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        valuation_date : str or datetime-like, optional</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
 <span class="sd">            Date from which to search. Defaults to today. Adjusts to settlement date.</span>
 
 <span class="sd">        Returns</span>
@@ -956,11 +951,8 @@
 <span class="sd">        &gt;&gt;&gt; bond.next_coupon_date(&#39;2023-06-01&#39;)</span>
 <span class="sd">        Timestamp(&#39;2024-01-01 00:00:00&#39;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">valuation_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_date</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
+        <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
 
-        <span class="n">settlement_date</span> <span class="o">=</span> <span class="n">valuation_date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">settlement_convention_t_plus</span>
-        <span class="p">)</span>
         <span class="n">future_dates</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">coupon_flow</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="n">settlement_date</span><span class="p">]</span>
         <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">future_dates</span><span class="p">)</span> <span class="k">if</span> <span class="n">future_dates</span> <span class="k">else</span> <span class="kc">None</span></div>
 
@@ -968,14 +960,14 @@
 <div class="viewcode-block" id="BulletBond.previous_coupon_date">
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.previous_coupon_date">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">previous_coupon_date</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the previous coupon payment date from a given date.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        valuation_date : str or datetime-like, optional</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
 <span class="sd">            Date from which to search. Defaults to today. Adjusts to settlement date.</span>
 
 <span class="sd">        Returns</span>
@@ -989,11 +981,7 @@
 <span class="sd">        &gt;&gt;&gt; bond.previous_coupon_date(&#39;2023-06-01&#39;)</span>
 <span class="sd">        Timestamp(&#39;2023-01-01 00:00:00&#39;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">valuation_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_date</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
-
-        <span class="n">settlement_date</span> <span class="o">=</span> <span class="n">valuation_date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">offsets</span><span class="o">.</span><span class="n">BDay</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">settlement_convention_t_plus</span>
-        <span class="p">)</span>
+        <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
 
         <span class="n">past_dates</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">coupon_flow</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;=</span> <span class="n">settlement_date</span><span class="p">]</span>
 
@@ -1004,7 +992,7 @@
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.to_dataframe">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dataframe</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1012,7 +1000,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        valuation_date : str or datetime-like, optional</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
 <span class="sd">            Date from which to consider future payments. Defaults to issue date.</span>
 <span class="sd">        bond_price : float, optional</span>
 <span class="sd">            If provided, includes bond price as a negative cash flow.</span>
@@ -1031,16 +1019,16 @@
 <span class="sd">        1 2024-01-01    5.0</span>
 <span class="sd">        2 2025-01-01    105.0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">valuation_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_date</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
+        <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
 
         <span class="n">ytm</span><span class="p">,</span> <span class="n">time_to_payments</span><span class="p">,</span> <span class="n">price_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ytm_payments_price</span><span class="p">(</span>
-            <span class="kc">None</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">,</span> <span class="n">valuation_date</span>
+            <span class="kc">None</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">,</span> <span class="n">settlement_date</span>
         <span class="p">)</span>
 
-        <span class="n">flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">,</span> <span class="n">price_calc</span><span class="p">)</span>
-        <span class="n">coupon_flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coupon_flow</span><span class="p">)</span>
+        <span class="n">flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">,</span> <span class="n">price_calc</span><span class="p">)</span>
+        <span class="n">coupon_flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coupon_flow</span><span class="p">)</span>
         <span class="n">amortization_flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span>
-            <span class="n">valuation_date</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amortization_flow</span>
+            <span class="n">settlement_date</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amortization_flow</span>
         <span class="p">)</span>
         <span class="c1"># Concat coupon_flows and amortization_flows in a single dataframe</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
@@ -1062,7 +1050,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the DV01 (Dollar Value of a 1 basis point) for the bond.</span>
@@ -1074,8 +1062,8 @@
 <span class="sd">            Yield to maturity as a decimal (e.g., 0.05 for 5%).</span>
 <span class="sd">        bond_price : float, optional</span>
 <span class="sd">            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.</span>
-<span class="sd">        valuation_date : str or datetime-like, optional</span>
-<span class="sd">            Valuation date. Defaults to issue date.</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
+<span class="sd">            Settlement date. Defaults to issue date.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1088,12 +1076,12 @@
 <span class="sd">        &gt;&gt;&gt; bond.dv01(0.05)</span>
 <span class="sd">        -0.42</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">valuation_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_date</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
+        <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="c1"># Resolve yield to maturity and bond price</span>
         <span class="n">ytm</span><span class="p">,</span> <span class="n">time_to_payments</span><span class="p">,</span> <span class="n">price_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ytm_payments_price</span><span class="p">(</span>
-            <span class="n">yield_to_maturity</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">,</span> <span class="n">valuation_date</span>
+            <span class="n">yield_to_maturity</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">,</span> <span class="n">settlement_date</span>
         <span class="p">)</span>
-        <span class="n">price_up</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">price_from_yield</span><span class="p">(</span><span class="n">ytm</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="n">valuation_date</span><span class="p">)</span>
+        <span class="n">price_up</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">price_from_yield</span><span class="p">(</span><span class="n">ytm</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="n">settlement_date</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">price_up</span> <span class="o">-</span> <span class="n">price_calc</span></div>
 
 
@@ -1101,7 +1089,7 @@
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.plot_cash_flows">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_cash_flows</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1109,7 +1097,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        valuation_date : str or datetime-like, optional</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
 <span class="sd">            Date from which to consider future payments. Defaults to issue date.</span>
 <span class="sd">        bond_price : float, optional</span>
 <span class="sd">            If provided, includes bond price as a negative cash flow.</span>
@@ -1121,7 +1109,7 @@
 <span class="sd">        # Shows a plot</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">)</span>
         <span class="n">x_labels</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">cost</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Cost&quot;</span><span class="p">]</span>
         <span class="n">coupon</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Coupon&quot;</span><span class="p">]</span>
@@ -1199,25 +1187,25 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
         <span class="n">price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]],</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper to resolve yield_to_maturity from direct input, price, or default to notional.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">price</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">yield_to_maturity</span><span class="p">(</span>
-                <span class="n">bond_price</span><span class="o">=</span><span class="n">price</span><span class="p">,</span> <span class="n">valuation_date</span><span class="o">=</span><span class="n">valuation_date</span>
+                <span class="n">bond_price</span><span class="o">=</span><span class="n">price</span><span class="p">,</span> <span class="n">settlement_date</span><span class="o">=</span><span class="n">settlement_date</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">yield_to_maturity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">yield_to_maturity</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valuation_date</span> <span class="o">==</span> <span class="n">valuation_date</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span> <span class="o">==</span> <span class="n">settlement_date</span>
         <span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">yield_to_maturity</span><span class="p">(</span>
-            <span class="n">bond_price</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dirty_price</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">notional</span><span class="p">,</span> <span class="n">valuation_date</span><span class="p">),</span>
-            <span class="n">valuation_date</span><span class="o">=</span><span class="n">valuation_date</span><span class="p">,</span>
+            <span class="n">bond_price</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dirty_price</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">notional</span><span class="p">,</span> <span class="n">settlement_date</span><span class="p">),</span>
+            <span class="n">settlement_date</span><span class="o">=</span><span class="n">settlement_date</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
@@ -1227,32 +1215,32 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
         <span class="n">price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
-        <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]],</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper to resolve ytm, time_to_payments, and price_calc for DRY.</span>
 <span class="sd">        Returns (ytm, time_to_payments, price_calc)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ytm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_ytm</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="n">valuation_date</span><span class="p">)</span>
-        <span class="n">time_to_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_time_to_payments</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
+        <span class="n">ytm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_ytm</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="p">,</span> <span class="n">price</span><span class="p">,</span> <span class="n">settlement_date</span><span class="p">)</span>
+        <span class="n">time_to_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_time_to_payments</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="n">price_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_price_from_yield</span><span class="p">(</span><span class="n">time_to_payments</span><span class="p">,</span> <span class="n">ytm</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ytm</span><span class="p">,</span> <span class="n">time_to_payments</span><span class="p">,</span> <span class="n">price_calc</span></div>
 
 
-<div class="viewcode-block" id="BulletBond._resolve_valuation_date">
-<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond._resolve_valuation_date">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_valuation_date</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">valuation_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span>
+<div class="viewcode-block" id="BulletBond._resolve_settlement_date">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond._resolve_settlement_date">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_settlement_date</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Helper to resolve the valuation date for the bond.</span>
-<span class="sd">        If valuation_date is provided, converts to pd.Timestamp.</span>
-<span class="sd">        Otherwise, uses self._valuation_date or self.issue_dt.</span>
+<span class="sd">        Helper to resolve the settlement date for the bond.</span>
+<span class="sd">        If settlement_date is provided, converts to pd.Timestamp.</span>
+<span class="sd">        Otherwise, uses self._settlement_date or self.issue_dt.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">valuation_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">valuation_date</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valuation_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valuation_date</span>
+        <span class="k">if</span> <span class="n">settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_dt</span></div>
 </div>
 
