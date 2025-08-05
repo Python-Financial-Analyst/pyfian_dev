@@ -35,16 +35,15 @@ poetry run pre-commit run --all-files
 
 ## 💡 3. Coding Guidelines
 
+
 We use the following tools to enforce code quality:
 
-| Tool         | Purpose                         |
-|--------------|---------------------------------|
-| `black`      | Code formatting                 |
-| `isort`      | Import sorting                  |
-| `flake8`     | Style and linting               |
-| `mypy`       | Static type checking            |
-| `pyupgrade`  | Upgrade to modern Python syntax |
-| `detect-secrets` | Prevent secret leaks       |
+| Tool             | Purpose                              |
+|------------------|--------------------------------------|
+| `ruff`           | Linting and code formatting          |
+| `mypy`           | Static type checking                 |
+| `pyupgrade`      | Upgrade to modern Python syntax      |
+| `detect-secrets` | Prevent secret leaks                 |
 
 Other guidelines:
 
