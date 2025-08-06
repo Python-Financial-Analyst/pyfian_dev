@@ -58,6 +58,7 @@ def future_value_annuity_annual(
         FV = P \\times (1 + r)^{N} \\times \\frac{1 - \\frac{1}{(1 + r)^{N}}}{r}
 
     where:
+        - :math:`FV` is the future value
         - :math:`P` is the payment per period
         - :math:`r` is the periodic interest rate (annual_rate / payments_per_year)
         - :math:`N` is the total number of periods,
@@ -98,6 +99,8 @@ def future_value_growing_annuity(
     """
     Calculate the future value of a growing annuity.
 
+    The future value of a growing annuity accounts for payments that grow at a constant rate over time for a specified number of periods.
+
     The future value is calculated as:
 
     .. math::
@@ -110,21 +113,14 @@ def future_value_growing_annuity(
         - :math:`g` is the growth rate per period
         - :math:`N` is the total number of periods
 
-    Note
-    ----
-        {\\left(\frac{1 + r}{1 + g}\right) - 1}
-
-    where:
-        - :math:`P` is the payment at time t=0
-        - :math:`r` is the interest rate per period
-        - :math:`g` is the growth rate per period
-        - :math:`n` is the total number of periods
+    This formula accounts for the growth of payments over time,
+    where each payment grows by the growth rate in each period.
 
     Note
     ----
     The `payment` parameter corresponds to the payment at time t=0.
     Growth is applied in the first period as well, so the payment at time t=k is:
-        payment * (1 + growth)^(k+1)
+        :math:`P * (1 + g)^{(k+1)}`
     for each period k.
 
     Parameters

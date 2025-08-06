@@ -108,7 +108,7 @@ def present_value_growing_annuity(
     ----
     The `payment` parameter corresponds to the payment at time t=0.
     Growth is applied in the first period as well, so the payment at time t=k is:
-        payment * (1 + growth)^(k+1)
+        :math:`P * (1 + g)^{(k+1)}`
     for each period k.
 
     Parameters
@@ -158,7 +158,7 @@ def present_value_growing_perpetuity(
     ----
     The `payment` parameter corresponds to the payment at time t=0.
     Growth is applied in the first period as well, so the payment at time t=k is:
-        payment * (1 + growth)^(k+1)
+        :math:`P * (1 + g)^{(k+1)}`
     for each period k.
 
 
@@ -214,7 +214,7 @@ def present_value_two_stage_annuity(
     ----
     The `payment` parameter corresponds to the payment at time t=0.
     Growth is applied in the first period as well, so the payment at time t=k is:
-        payment * (1 + growth)^(k+1)
+        :math:`P * (1 + g)^{(k+1)}`
     for each period k.
 
     Parameters
@@ -275,7 +275,7 @@ def present_value_two_stage_annuity_perpetuity(
     ----
     The `payment` parameter corresponds to the payment at time t=0.
     Growth is applied in the first period as well, so the payment at time t=k is:
-        payment * (1 + growth)^(k+1)
+        :math:`P * (1 + g)^{(k+1)}`
     for each period k.
 
     Parameters

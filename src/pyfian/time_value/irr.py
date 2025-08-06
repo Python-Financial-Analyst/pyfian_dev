@@ -250,13 +250,18 @@ def xirr(
 
     This function adjusts the cash flows based on the number of days between each cash flow
     and the first cash flow date.
+
     If `cash_flows` is a dictionary, keys must be dates (datetime or string
     convertible to datetime), and values are cash flows.
+
     If `cash_flows` is a pandas Series, the index must be dates.
+
     If `cash_flows` is a list/sequence, `dates` must be provided as a sequence of
     datetime or string.
+
     If `dates` is not provided, it assumes `cash_flows` is a dictionary or Series
     with dates as keys/index.
+
     This function handles NaNs and works with NumPy arrays and pandas Series/DataFrames.
 
     Parameters

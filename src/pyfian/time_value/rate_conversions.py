@@ -51,7 +51,7 @@ def continuous_to_effective(rate: float) -> float:
     """
     Convert a continuously compounded rate to an effective annual rate.
 
-    Theory & Institutional Context:
+    About this rates:
 
     * Continuously compounded rates (also called "force of interest") are a mathematical idealization where interest is compounded at every instant. This is common in theoretical finance, derivatives pricing, and some institutional contexts (e.g., certain bond math, Black-Scholes model).
     * Effective annual rate (EAR) is the real-world annualized return, accounting for compounding. It is the standard for comparing investments or loans with different compounding conventions.
@@ -88,7 +88,7 @@ def effective_to_continuous(effective_rate: float) -> float:
     """
     Convert an effective annual rate to a continuously compounded rate.
 
-    Theory & Institutional Context:
+    About this rates:
 
     * Effective annual rate (EAR) is the standard for comparing interest rates across products and institutions, as it reflects the true annualized return or cost.
     * Continuously compounded rates are used in advanced financial mathematics, fixed income analytics, and some institutional contracts (e.g., certain swaps, derivatives, and bond pricing models).
@@ -122,7 +122,7 @@ def nominal_periods_to_effective(nominal_rate: float, periods_per_year: int) -> 
     """
     Convert a nominal rate that refers to periods (e.g., monthly, quarterly, semiannual) to an effective annual rate (EAR).
 
-    Theory & Institutional Context:
+    About this rates:
 
     * Nominal rates ("APR" in some contexts) are often quoted by banks and financial institutions for loans, mortgages, and deposits, but do not account for intra-year compounding.
     * Effective annual rate (EAR) is required for true comparability, as it incorporates the effect of compounding within the year.
@@ -167,7 +167,7 @@ def effective_to_nominal_periods(effective_rate: float, periods_per_year: int) -
     """
     Convert an effective annual rate (EAR) to a nominal rate that refers to periods (e.g., monthly, quarterly, semiannual).
 
-    Theory & Institutional Context:
+    About this rates:
 
     * Effective annual rate (EAR) is the true annualized return or cost, accounting for compounding, and is the regulatory standard for disclosure.
     * Nominal rates are often used in contracts, advertisements, and loan agreements, but may mislead if compounding is not considered.
@@ -214,7 +214,7 @@ def nominal_days_to_effective(
     """
     Convert a nominal rate for a period of given days to an effective annual rate.
 
-    Theory & Institutional Context:
+    About this rates:
 
     * Nominal rates for non-standard periods (e.g., 30, 90, 180 days) are common in money markets,
       commercial paper, and short-term lending.
@@ -265,7 +265,7 @@ def effective_to_nominal_days(
     """
     Convert an effective annual rate to a nominal rate for a period of given days.
 
-    Theory & Institutional Context:
+    About this rates:
 
     * Effective annual rate (EAR) is the standard for comparability, but many money market and short-term
       instruments are quoted on a non-annual basis (e.g., 30, 90, 180 days).
@@ -314,7 +314,7 @@ def single_period_to_effective(period_rate: float, periods: int) -> float:
     """
     Convert a periodic rate to an effective annual rate.
 
-    Theory & Institutional Context:
+    About this rates:
 
     * Periodic rates (e.g., monthly, quarterly) are used in most consumer and institutional loan and
       deposit products.
@@ -360,7 +360,7 @@ def effective_to_single_period(effective_rate: float, periods: int) -> float:
     """
     Convert an effective annual rate to a periodic rate.
 
-    Theory & Institutional Context:
+    About this rates:
 
     * Effective annual rate (EAR) is the regulatory and economic standard for comparability.
     * Periodic rates are used for payment calculations, amortization, and contract terms in loans,
@@ -404,7 +404,7 @@ def money_market_rate_to_effective(
     """
     Convert a Money Market Rate (MMR, actual/360) to effective annual rate (EAR).
 
-    Theory & Institutional Context:
+    About this rates:
 
     * Money Market Rates (MMR) are quoted on a 360-day basis and may be add-on (interest-bearing) or discount rates. These conventions are standard in interbank markets, T-bills, and commercial paper.
     * Effective annual rate (EAR) is required for comparability across instruments and regulatory reporting.
@@ -459,7 +459,7 @@ def effective_to_money_market_rate(
     """
     Convert an effective annual rate (EAR) to a Money Market Rate (actual/360).
 
-    Theory & Institutional Context:
+    About this rates:
 
     * Effective annual rate (EAR) is the standard for comparability, but money market instruments are quoted using market conventions (actual/360, add-on or discount).
     * This conversion is required for quoting, pricing, and regulatory reporting of T-bills, commercial paper, and interbank loans.
@@ -516,7 +516,7 @@ def bey_to_effective_annual(bey: float) -> float:
     """
     Convert Bond Equivalent Yield (BEY) to effective annual rate (EAR).
 
-    Theory & Institutional Context:
+    About this rates:
 
     * Bond Equivalent Yield (BEY) is a convention used in US bond markets to annualize yields on semiannual-pay bonds, making them comparable to other investments.
     * BEY is not compounded; it simply doubles the semiannual rate. Effective annual rate (EAR) compounds the semiannual rate, providing a true annualized return.
@@ -550,7 +550,7 @@ def effective_annual_to_bey(effective_rate: float) -> float:
     """
     Convert effective annual rate (EAR) to Bond Equivalent Yield (BEY).
 
-    Theory & Institutional Context:
+    About this rates:
 
     * Effective annual rate (EAR) is the true annualized return, accounting for compounding, and is the standard for comparability.
     * Bond Equivalent Yield (BEY) is a market convention for quoting yields on semiannual-pay bonds, used for comparability in US fixed income markets.
