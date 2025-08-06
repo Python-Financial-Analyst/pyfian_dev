@@ -145,11 +145,35 @@
         <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Input validation</span>
+        <span class="k">if</span> <span class="n">cpn_freq</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Coupon frequency must be greater or equal to zero.&quot;</span><span class="p">)</span>
         <span class="c1"># If coupon is positive, the coupon frequency must be greater than 0</span>
         <span class="k">if</span> <span class="n">cpn</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">cpn_freq</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Coupon frequency must be greater than zero for positive coupons.&quot;</span>
             <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">notional</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Notional (face value) cannot be negative.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cpn</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Coupon rate cannot be negative.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">settlement_convention_t_plus</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Settlement convention (T+) cannot be negative.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">record_date_t_minus</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Record date (T-) cannot be negative.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Convert dates for validation</span>
+        <span class="n">_issue_dt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">issue_dt</span><span class="p">)</span>
+        <span class="n">_maturity</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">maturity</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_maturity</span> <span class="o">&lt;</span> <span class="n">_issue_dt</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Maturity date cannot be before issue date.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_settlement_date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_settlement_date</span> <span class="o">&lt;</span> <span class="n">_issue_dt</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Settlement date cannot be before issue date.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bond_price</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">bond_price</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bond price cannot be negative.&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">issue_dt</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">issue_dt</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">maturity</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">maturity</span><span class="p">)</span>
@@ -204,7 +228,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]],</span>
         <span class="n">reset_yield_to_maturity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the default settlement date for the bond.</span>
 <span class="sd">        If reset_yield_to_maturity is True, resets the yield to maturity and bond price.</span>
@@ -217,7 +241,7 @@
 <span class="sd">            Whether to reset the yield to maturity and bond price.</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Optional[pd.Timestamp]</span>
+<span class="sd">        pd.Timestamp</span>
 <span class="sd">            The updated settlement date.</span>
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -229,6 +253,8 @@
 
         <span class="k">if</span> <span class="n">settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">settlement_date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">settlement_date</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_dt</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Settlement date cannot be before issue date.&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span>
                 <span class="n">old_settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="ow">and</span> <span class="n">settlement_date</span> <span class="o">!=</span> <span class="n">old_settlement_date</span>
@@ -262,12 +288,14 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the default yield to maturity for the bond. Updates bond price accordingly.</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        ytm : float, optional</span>
 <span class="sd">            The yield to maturity to set.</span>
 <span class="sd">        settlement_date : Union[str, pd.Timestamp], optional</span>
 <span class="sd">            The settlement date to set.</span>
+
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
@@ -321,6 +349,8 @@
             <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="c1"># Since price is set, update yield to maturity</span>
         <span class="k">if</span> <span class="n">price</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">price</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bond price cannot be negative.&quot;</span><span class="p">)</span>
             <span class="n">vdate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span>
             <span class="k">if</span> <span class="n">vdate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -382,9 +412,10 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate the payment flow (cash flows) for the bond.</span>
 <span class="sd">        Returns a tuple of dictionaries:</span>
-<span class="sd">        - dict_payments: Payment dates as keys and cash flow amounts as values.</span>
-<span class="sd">        - dict_coupons: Coupon payment dates as keys and coupon amounts as values.</span>
-<span class="sd">        - dict_amortization: Amortization payment dates as keys and amortization amounts as values.</span>
+
+<span class="sd">        * dict_payments: Payment dates as keys and cash flow amounts as values.</span>
+<span class="sd">        * dict_coupons: Coupon payment dates as keys and coupon amounts as values.</span>
+<span class="sd">        * dict_amortization: Amortization payment dates as keys and amortization amounts as values.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -394,6 +425,7 @@
 <span class="sd">            Dictionary with coupon payment dates as keys and coupon amounts as values.</span>
 <span class="sd">        dict_amortization : dict</span>
 <span class="sd">            Dictionary with amortization payment dates as keys and amortization amounts as values.</span>
+
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
@@ -453,6 +485,13 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Filter the payment flow to include only payments after the settlement date.</span>
+
+<span class="sd">        If a bond price is provided, it is added as a negative cash flow at the settlement date.</span>
+
+<span class="sd">        The settlement date is resolved to a pd.Timestamp, and if it is not provided, it defaults to the issue date.</span>
+
+<span class="sd">        The function returns a dictionary of payment dates and cash flows that occur after the settlement date,</span>
+<span class="sd">        adjusting the cash flows to business days.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -516,12 +555,23 @@
 <span class="sd">        Calculate the time to each payment from the settlement date.</span>
 <span class="sd">        The time is expressed in years.</span>
 
+<span class="sd">        .. math::</span>
+<span class="sd">            T = \\frac{D - S}{365}</span>
+
+<span class="sd">        for each payment :math:`D` and settlement date :math:`S`</span>
+
+<span class="sd">        where:</span>
+
+<span class="sd">        - :math:`T` is the time to payment (in years)</span>
+<span class="sd">        - :math:`D` is the payment date</span>
+<span class="sd">        - :math:`S` is the settlement date</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        settlement_date : str or datetime-like, optional</span>
 <span class="sd">            Date from which to calculate time to payments. Defaults to issue date.</span>
 <span class="sd">        bond_price : float, optional</span>
-<span class="sd">            If provided, includes bond price as a negative cash flow.</span>
+<span class="sd">            If provided, adds bond price as a negative cash flow.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -560,6 +610,35 @@
 <span class="sd">        If a bond price is provided, it is included as a negative cash flow, and the</span>
 <span class="sd">        present value would be equivalent to a Net Present Value (NPV) calculation, useful for</span>
 <span class="sd">        comparing the bond&#39;s market price against its theoretical value based on the discount curve.</span>
+
+<span class="sd">        The curve should have a method `discount_t(t)` that returns the discount factor for a given time `t` expressed in years from the settlement date.</span>
+
+<span class="sd">        The discount factor is typically calculated as:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            discount_t(t) = \\frac{1}{(1 + r(t))^t}</span>
+
+<span class="sd">        where:</span>
+
+<span class="sd">        - :math:`r(t)` is the discount rate at time :math:`t`.</span>
+
+<span class="sd">        The discount factor brings the future value back to the present. Using this discount factor, we can calculate the present value of future cash flows by discounting them back to the settlement date.</span>
+
+<span class="sd">        For a set of cash flows :math:`C(t)` at times :math:`t`, the present value (PV) is calculated as:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            PV = \\sum_{i}^{N} C(t_i) * discount_t(t_i)</span>
+
+<span class="sd">        for each (:math:`t_i`, :math:`C(t_i)`) cash flow, where :math:`i = 1, ..., N`</span>
+
+<span class="sd">        where:</span>
+
+<span class="sd">        - :math:`PV` is the present value of the cash flows</span>
+<span class="sd">        - :math:`C(t)` is the cash flow at time :math:`t`</span>
+<span class="sd">        - :math:`N` is the total number of cash flows</span>
+<span class="sd">        - :math:`r(t)` is the discount rate at time :math:`t`.</span>
+
+<span class="sd">        The discount rate for a cash flow at time :math:`t` is obtained from the discount curve using `curve.discount_t(t)`.</span>
 
 <span class="sd">        This can be used to optimize the yield curve fitting process.</span>
 
@@ -607,6 +686,22 @@
 
 <span class="sd">        The YTM is the internal rate of return (IRR) of the bond&#39;s cash flows, assuming the bond is held to maturity.</span>
 
+<span class="sd">        It is the discount rate that makes the present value of the bond&#39;s cash flows equal to its price for a given set of cash flows and settlement date.</span>
+
+<span class="sd">        The YTM is calculated by solving the equation:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            P = \\sum_{t=1}^{T} \\frac{C_t}{(1 + YTM)^{(t+1)}}</span>
+
+<span class="sd">        where:</span>
+
+<span class="sd">        - :math:`P` is the price of the bond</span>
+<span class="sd">        - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date</span>
+<span class="sd">        - :math:`YTM` is the yield to maturity</span>
+<span class="sd">        - :math:`T` is the total number of periods</span>
+
+<span class="sd">        The times to payments are calculated from the settlement date to each payment date and need not be integer values.</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        bond_price : float</span>
@@ -631,7 +726,7 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; bond = BulletBond(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
-<span class="sd">        &gt;&gt;&gt; bond.yield_to_maturity(price=95)</span>
+<span class="sd">        &gt;&gt;&gt; bond.yield_to_maturity(bond_price=95)</span>
 <span class="sd">        0.06189544078</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Prepare cash flows and dates</span>
@@ -657,9 +752,11 @@
 <span class="sd">        where:</span>
 
 <span class="sd">        - :math:`P` is the price of the bond</span>
-<span class="sd">        - :math:`C_t` is the cash flow at time t</span>
+<span class="sd">        - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date</span>
 <span class="sd">        - :math:`YTM` is the yield to maturity</span>
 <span class="sd">        - :math:`T` is the total number of periods</span>
+
+<span class="sd">        The times to payments are calculated from the settlement date to each payment date and need not be integer values.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -710,9 +807,11 @@
 <span class="sd">        where:</span>
 
 <span class="sd">        - :math:`P` is the price of the bond</span>
-<span class="sd">        - :math:`C_t` is the cash flow at time t</span>
+<span class="sd">        - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date</span>
 <span class="sd">        - :math:`YTM` is the yield to maturity</span>
 <span class="sd">        - :math:`T` is the total number of periods</span>
+
+<span class="sd">        The times to payments are calculated from the settlement date to each payment date and need not be integer values.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -756,6 +855,22 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate accrued interest since last coupon payment.</span>
 <span class="sd">        This is the interest that has accumulated on the bond since the last coupon payment date</span>
+<span class="sd">        or issue date if no coupon payments have been made.</span>
+
+<span class="sd">        The accrued interest is calculated on an actual/actual basis, which means it considers</span>
+<span class="sd">        the actual number of days between the last coupon payment date and the settlement date.</span>
+
+<span class="sd">        The formula is as follows:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            Accrued = C \\cdot \\frac{SettlementDate - CouponDate_{prev}}{CouponDate_{next} - CouponDate_{prev}}</span>
+
+<span class="sd">        where:</span>
+
+<span class="sd">        - :math:`C` is the coupon payment amount</span>
+<span class="sd">        - :math:`SettlementDate` is the date for which to calculate accrued interest</span>
+<span class="sd">        - :math:`CouponDate_{prev}` is the last coupon payment date before the settlement or issue date if no previous coupon</span>
+<span class="sd">        - :math:`CouponDate_{next}` is the next coupon payment date after the settlement</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -770,7 +885,7 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; bond = BulletBond(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
-<span class="sd">        &gt;&gt;&gt; bond.accrued_interest(&#39;2023-06-01&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; bond.accrued_interest(&#39;2024-07-02&#39;)</span>
 <span class="sd">        2.5</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
@@ -803,6 +918,13 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert dirty price to clean price.</span>
 
+<span class="sd">        The clean price is the price of the bond excluding any accrued interest.</span>
+
+<span class="sd">        The formula is as follows:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            CleanPrice = DirtyPrice - AccruedInterest</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        dirty_price : float</span>
@@ -818,7 +940,7 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; bond = BulletBond(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
-<span class="sd">        &gt;&gt;&gt; bond.clean_price(102.5, &#39;2023-06-01&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; bond.clean_price(102.5, &#39;2024-07-02&#39;)</span>
 <span class="sd">        100.0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">dirty_price</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">accrued_interest</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span></div>
@@ -834,6 +956,13 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert clean price to dirty price.</span>
 
+<span class="sd">        The dirty price is the price of the bond including accrued interest.</span>
+
+<span class="sd">        The formula is as follows:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            DirtyPrice = CleanPrice + AccruedInterest</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        clean_price : float</span>
@@ -849,7 +978,7 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; bond = BulletBond(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
-<span class="sd">        &gt;&gt;&gt; bond.dirty_price(100.0, &#39;2023-06-01&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; bond.dirty_price(100.0, &#39;2024-07-02&#39;)</span>
 <span class="sd">        102.5</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">clean_price</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">accrued_interest</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span></div>
@@ -932,6 +1061,9 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the next coupon payment date from a given date.</span>
 
+<span class="sd">        This method finds the next coupon payment date after the specified settlement date.</span>
+<span class="sd">        If no future coupon payments exist, it returns None.</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        settlement_date : str or datetime-like, optional</span>
@@ -962,6 +1094,9 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the previous coupon payment date from a given date.</span>
 
+<span class="sd">        This method finds the last coupon payment date before the specified settlement date.</span>
+<span class="sd">        If no past coupon payments exist, it returns None.</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        settlement_date : str or datetime-like, optional</span>
@@ -990,15 +1125,33 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dataframe</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Export the bond’s cash flow schedule as a pandas DataFrame.</span>
 
+<span class="sd">        The DataFrame will contain the dates of cash flows and their corresponding amounts.</span>
+
+<span class="sd">        The cash flows include:</span>
+<span class="sd">        - Principal repayment at maturity</span>
+<span class="sd">        - Coupon payments</span>
+<span class="sd">        - Amortization payments (if applicable)</span>
+<span class="sd">        - Bond price as a negative cash flow if provided</span>
+
+<span class="sd">        The Dataframe will have the following columns:</span>
+<span class="sd">        - &#39;date&#39;: The date of the cash flow.</span>
+<span class="sd">        - &#39;Flows&#39;: The amount of the total cash flow.</span>
+<span class="sd">        - &#39;Coupon&#39;: The coupon payment amount.</span>
+<span class="sd">        - &#39;Amortization&#39;: The amortization payment amount.</span>
+<span class="sd">        - &#39;Cost&#39;: The net cash flow after subtracting coupon and amortization payments.</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        settlement_date : str or datetime-like, optional</span>
 <span class="sd">            Date from which to consider future payments. Defaults to issue date.</span>
+<span class="sd">        yield_to_maturity : float, optional</span>
+<span class="sd">            Yield to maturity as a decimal. If provided, it will be used to calculate the cash flows.</span>
 <span class="sd">        bond_price : float, optional</span>
 <span class="sd">            If provided, includes bond price as a negative cash flow.</span>
 
@@ -1011,18 +1164,27 @@
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; bond = BulletBond(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
 <span class="sd">        &gt;&gt;&gt; bond.to_dataframe(&#39;2022-01-01&#39;)</span>
-<span class="sd">        date        cash_flow</span>
-<span class="sd">        0 2023-01-01    5.0</span>
-<span class="sd">        1 2024-01-01    5.0</span>
-<span class="sd">        2 2025-01-01    105.0</span>
+<span class="sd">        date        Flows  Coupon  Amortization  Cost</span>
+<span class="sd">        2022-01-03  5.0    5.0          0.0           0.0</span>
+<span class="sd">        2023-01-02  5.0    5.0          0.0           0.0</span>
+<span class="sd">        2024-01-01  5.0    5.0          0.0           0.0</span>
+<span class="sd">        2025-01-01  105.0  5.0        100.0           0.0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
 
         <span class="n">ytm</span><span class="p">,</span> <span class="n">time_to_payments</span><span class="p">,</span> <span class="n">price_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ytm_payments_price</span><span class="p">(</span>
-            <span class="kc">None</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">,</span> <span class="n">settlement_date</span>
+            <span class="n">yield_to_maturity</span><span class="p">,</span> <span class="n">bond_price</span><span class="p">,</span> <span class="n">settlement_date</span>
         <span class="p">)</span>
 
-        <span class="n">flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">,</span> <span class="n">price_calc</span><span class="p">)</span>
+        <span class="c1"># If neither yield_to_maturity nor bond_price is provided, make price calculation None</span>
+        <span class="k">if</span> <span class="n">yield_to_maturity</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">bond_price</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">valid_price_calc</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">valid_price_calc</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span>
+            <span class="n">settlement_date</span><span class="p">,</span> <span class="n">price_calc</span> <span class="k">if</span> <span class="n">valid_price_calc</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
         <span class="n">coupon_flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coupon_flow</span><span class="p">)</span>
         <span class="n">amortization_flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span>
             <span class="n">settlement_date</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amortization_flow</span>
@@ -1178,6 +1340,26 @@
         <span class="k">return</span> <span class="n">price</span></div>
 
 
+<div class="viewcode-block" id="BulletBond._resolve_settlement_date">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond._resolve_settlement_date">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_settlement_date</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Helper to resolve the settlement date for the bond.</span>
+<span class="sd">        If settlement_date is provided, converts to pd.Timestamp.</span>
+<span class="sd">        Otherwise, uses self._settlement_date or self.issue_dt.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dt</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_dt</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Settlement date cannot be before issue date.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">dt</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_dt</span></div>
+
+
 <div class="viewcode-block" id="BulletBond._resolve_ytm">
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond._resolve_ytm">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_ytm</span><span class="p">(</span>
@@ -1190,6 +1372,8 @@
 <span class="sd">        Helper to resolve yield_to_maturity from direct input, price, or default to notional.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">price</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">price</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bond price cannot be negative.&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">yield_to_maturity</span><span class="p">(</span>
                 <span class="n">bond_price</span><span class="o">=</span><span class="n">price</span><span class="p">,</span> <span class="n">settlement_date</span><span class="o">=</span><span class="n">settlement_date</span>
             <span class="p">)</span>
@@ -1222,168 +1406,8 @@
         <span class="n">time_to_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_time_to_payments</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="n">price_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_price_from_yield</span><span class="p">(</span><span class="n">time_to_payments</span><span class="p">,</span> <span class="n">ytm</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ytm</span><span class="p">,</span> <span class="n">time_to_payments</span><span class="p">,</span> <span class="n">price_calc</span></div>
-
-
-<div class="viewcode-block" id="BulletBond._resolve_settlement_date">
-<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond._resolve_settlement_date">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_settlement_date</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Helper to resolve the settlement date for the bond.</span>
-<span class="sd">        If settlement_date is provided, converts to pd.Timestamp.</span>
-<span class="sd">        Otherwise, uses self._settlement_date or self.issue_dt.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">issue_dt</span></div>
 </div>
 
-
-
-<span class="c1"># class BulletBond:</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
-<span class="c1">#     Bullet Bond class representing a standard fixed-income security.</span>
-
-<span class="c1">#     Parameters</span>
-<span class="c1">#     ----------</span>
-<span class="c1">#     face_value : float</span>
-<span class="c1">#         The nominal value of the bond (par value).</span>
-<span class="c1">#     coupon_rate : float</span>
-<span class="c1">#         Annual coupon rate as a decimal (e.g., 0.05 for 5%).</span>
-<span class="c1">#     maturity : int</span>
-<span class="c1">#         Number of years until maturity.</span>
-<span class="c1">#     price : float, optional</span>
-<span class="c1">#         Current market price of the bond. Defaults to face value.</span>
-<span class="c1">#     frequency : int, optional</span>
-<span class="c1">#         Number of coupon payments per year. Defaults to 1.</span>
-<span class="c1">#     &quot;&quot;&quot;</span>
-<span class="c1">#     def __init__(self, face_value: float, coupon_rate: float, maturity: int,</span>
-<span class="c1">#                   price: float = None, frequency: int = 1):</span>
-<span class="c1">#         self.face_value = face_value</span>
-<span class="c1">#         self.coupon_rate = coupon_rate</span>
-<span class="c1">#         self.maturity = maturity</span>
-<span class="c1">#         self.price = price if price is not None else face_value</span>
-<span class="c1">#         self.frequency = frequency</span>
-
-<span class="c1">#     def coupon_payment(self) -&gt; float:</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         Return the coupon payment per period.</span>
-
-<span class="c1">#         Returns</span>
-<span class="c1">#         -------</span>
-<span class="c1">#         payment : float</span>
-<span class="c1">#             Coupon payment per period.</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         return self.face_value * self.coupon_rate / self.frequency</span>
-
-<span class="c1">#     def cash_flows(self) -&gt; list:</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         Return a list of all cash flows (coupons + principal at maturity).</span>
-
-<span class="c1">#         Returns</span>
-<span class="c1">#         -------</span>
-<span class="c1">#         flows : list of float</span>
-<span class="c1">#             List of cash flows for each period.</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         flows = [self.coupon_payment()] * (self.maturity * self.frequency)</span>
-<span class="c1">#         flows[-1] += self.face_value</span>
-<span class="c1">#         return flows</span>
-
-<span class="c1">#     def price_from_yield(self, yield_to_maturity: float) -&gt; float:</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         Calculate the price of the bond given a yield to maturity (YTM).</span>
-
-<span class="c1">#         Parameters</span>
-<span class="c1">#         ----------</span>
-<span class="c1">#         yield_to_maturity : float</span>
-<span class="c1">#             Yield to maturity as a decimal (e.g., 0.05 for 5%).</span>
-
-<span class="c1">#         Returns</span>
-<span class="c1">#         -------</span>
-<span class="c1">#         price : float</span>
-<span class="c1">#             Price of the bond.</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         ytm = yield_to_maturity / self.frequency</span>
-<span class="c1">#         n = self.maturity * self.frequency</span>
-<span class="c1">#         c = self.coupon_payment()</span>
-<span class="c1">#         price = sum([c / (1 + ytm) ** t for t in range(1, n + 1)])</span>
-<span class="c1">#         price += self.face_value / (1 + ytm) ** n</span>
-<span class="c1">#         return price</span>
-
-<span class="c1">#     def yield_to_maturity(self) -&gt; float:</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         Estimate the yield to maturity (YTM) using Newton-Raphson method.</span>
-
-<span class="c1">#         Returns</span>
-<span class="c1">#         -------</span>
-<span class="c1">#         ytm : float</span>
-<span class="c1">#             Estimated yield to maturity as a decimal.</span>
-
-<span class="c1">#         Raises</span>
-<span class="c1">#         ------</span>
-<span class="c1">#         ValueError</span>
-<span class="c1">#             If bond price is not set.</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         if self.price is None:</span>
-<span class="c1">#             raise ValueError(&quot;Bond price must be set to calculate YTM.&quot;)</span>
-<span class="c1">#         n = self.maturity * self.frequency</span>
-<span class="c1">#         c = self.coupon_payment()</span>
-<span class="c1">#         price = self.price</span>
-<span class="c1">#         ytm = self.coupon_rate  # initial guess</span>
-<span class="c1">#         for _ in range(100):</span>
-<span class="c1">#             f = sum([c / (1 + ytm / self.frequency) ** t for t in range(1, n + 1)])</span>
-<span class="c1">#             f += self.face_value / (1 + ytm / self.frequency) ** n</span>
-<span class="c1">#             f -= price</span>
-<span class="c1">#             # Derivative</span>
-<span class="c1">#             df = sum([-t * c / self.frequency / (1 + ytm / self.frequency) ** (t + 1)</span>
-<span class="c1">#                       for t in range(1, n + 1)])</span>
-<span class="c1">#             df += -n * self.face_value / self.frequency / (1 + ytm / self.frequency) ** (n + 1)</span>
-<span class="c1">#             if abs(df) &lt; 1e-8:</span>
-<span class="c1">#                 break</span>
-<span class="c1">#             ytm -= f / df</span>
-<span class="c1">#             if abs(f) &lt; 1e-8:</span>
-<span class="c1">#                 break</span>
-<span class="c1">#         return ytm</span>
-
-<span class="c1">#     def duration(self, yield_to_maturity: float = None) -&gt; float:</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         Calculate Macaulay duration of the bond.</span>
-
-<span class="c1">#         Parameters</span>
-<span class="c1">#         ----------</span>
-<span class="c1">#         yield_to_maturity : float, optional</span>
-<span class="c1">#             Yield to maturity as a decimal. Defaults to coupon rate.</span>
-
-<span class="c1">#         Returns</span>
-<span class="c1">#         -------</span>
-<span class="c1">#         duration : float</span>
-<span class="c1">#             Macaulay duration in years.</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         if yield_to_maturity is None:</span>
-<span class="c1">#             yield_to_maturity = self.coupon_rate</span>
-<span class="c1">#         ytm = yield_to_maturity / self.frequency</span>
-<span class="c1">#         n = self.maturity * self.frequency</span>
-<span class="c1">#         c = self.coupon_payment()</span>
-<span class="c1">#         price = self.price_from_yield(yield_to_maturity)</span>
-<span class="c1">#         duration = sum([t * c / (1 + ytm) ** t for t in range(1, n + 1)])</span>
-<span class="c1">#         duration += n * self.face_value / (1 + ytm) ** n</span>
-<span class="c1">#         duration /= price</span>
-<span class="c1">#         return duration / self.frequency</span>
-
-<span class="c1">#     def __repr__(self):</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         Return string representation of the Bond object.</span>
-
-<span class="c1">#         Returns</span>
-<span class="c1">#         -------</span>
-<span class="c1">#         repr : str</span>
-<span class="c1">#             String representation.</span>
-<span class="c1">#         &quot;&quot;&quot;</span>
-<span class="c1">#         return (f&quot;Bond(face_value={self.face_value}, coupon_rate={self.coupon_rate}, &quot;</span>
-<span class="c1">#                 f&quot;maturity={self.maturity}, price={self.price}, frequency={self.frequency})&quot;)</span>
 </pre></div>
 
            </div>

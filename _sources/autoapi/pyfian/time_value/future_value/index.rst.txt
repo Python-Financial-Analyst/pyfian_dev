@@ -59,6 +59,7 @@ Module Contents
        FV = P \times (1 + r)^{N} \times \frac{1 - \frac{1}{(1 + r)^{N}}}{r}
 
    where:
+       - :math:`FV` is the future value
        - :math:`P` is the payment per period
        - :math:`r` is the periodic interest rate (annual_rate / payments_per_year)
        - :math:`N` is the total number of periods,
@@ -87,61 +88,49 @@ Module Contents
 
 .. py:function:: future_value_growing_annuity(payment: float, rate: float, periods: int, growth: float = 0.0) -> float
 
-       Calculate the future value of a growing annuity.
+   Calculate the future value of a growing annuity.
 
-       The future value is calculated as:
+   The future value of a growing annuity accounts for payments that grow at a constant rate over time for a specified number of periods.
 
-       .. math::
-           FV = P \times \frac{(1 + r)^{N} - (1 + g)^{N}}{r - g}
+   The future value is calculated as:
 
-       where:
-           - :math:`FV` is the future value
-           - :math:`P` is the payment at time t=0
-           - :math:`r` is the interest rate per period
-           - :math:`g` is the growth rate per period
-           - :math:`N` is the total number of periods
+   .. math::
+       FV = P \times \frac{(1 + r)^{N} - (1 + g)^{N}}{r - g}
 
-       Note
-       ----
-           {\left(
-   rac{1 + r}{1 + g}
-   ight) - 1}
+   where:
+       - :math:`FV` is the future value
+       - :math:`P` is the payment at time t=0
+       - :math:`r` is the interest rate per period
+       - :math:`g` is the growth rate per period
+       - :math:`N` is the total number of periods
 
-       where:
-           - :math:`P` is the payment at time t=0
-           - :math:`r` is the interest rate per period
-           - :math:`g` is the growth rate per period
-           - :math:`n` is the total number of periods
+   This formula accounts for the growth of payments over time,
+   where each payment grows by the growth rate in each period.
 
-       Note
-       ----
-       The `payment` parameter corresponds to the payment at time t=0.
-       Growth is applied in the first period as well, so the payment at time t=k is:
-           payment * (1 + growth)^(k+1)
-       for each period k.
+   .. note::
 
-       Parameters
-       ----------
-       payment : float
-           The initial payment amount per period.
-       rate : float
-           The interest rate per period (as a decimal).
-       periods : int
-           The total number of periods.
-       growth : float, optional
-           The growth rate of the payments (as a decimal). Defaults to 0.0.
+      The `payment` parameter corresponds to the payment at time t=0.
+      Growth is applied in the first period as well, so the payment at time t=k is:
+          :math:`P * (1 + g)^{(k+1)}`
+      for each period k.
 
-       Returns
-       -------
-       float
-           Future value of the growing annuity.
+   :param payment: The initial payment amount per period.
+   :type payment: float
+   :param rate: The interest rate per period (as a decimal).
+   :type rate: float
+   :param periods: The total number of periods.
+   :type periods: int
+   :param growth: The growth rate of the payments (as a decimal). Defaults to 0.0.
+   :type growth: float, optional
 
-       Examples
-       --------
-       >>> future_value_growing_annuity(100, 0.05, 10, 0.02)
-       1393.6607030611262
-       >>> future_value_growing_annuity(100, 0.05, 10, 0.05)
-       1628.894626777442
+   :returns: Future value of the growing annuity.
+   :rtype: float
 
+   .. rubric:: Examples
+
+   >>> future_value_growing_annuity(100, 0.05, 10, 0.02)
+   1393.6607030611262
+   >>> future_value_growing_annuity(100, 0.05, 10, 0.05)
+   1628.894626777442
 
 

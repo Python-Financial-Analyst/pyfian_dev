@@ -342,13 +342,18 @@
 
 <span class="sd">    This function adjusts the cash flows based on the number of days between each cash flow</span>
 <span class="sd">    and the first cash flow date.</span>
+
 <span class="sd">    If `cash_flows` is a dictionary, keys must be dates (datetime or string</span>
 <span class="sd">    convertible to datetime), and values are cash flows.</span>
+
 <span class="sd">    If `cash_flows` is a pandas Series, the index must be dates.</span>
+
 <span class="sd">    If `cash_flows` is a list/sequence, `dates` must be provided as a sequence of</span>
 <span class="sd">    datetime or string.</span>
+
 <span class="sd">    If `dates` is not provided, it assumes `cash_flows` is a dictionary or Series</span>
 <span class="sd">    with dates as keys/index.</span>
+
 <span class="sd">    This function handles NaNs and works with NumPy arrays and pandas Series/DataFrames.</span>
 
 <span class="sd">    Parameters</span>

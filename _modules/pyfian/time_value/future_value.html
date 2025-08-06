@@ -141,6 +141,7 @@
 <span class="sd">        FV = P \\times (1 + r)^{N} \\times \\frac{1 - \\frac{1}{(1 + r)^{N}}}{r}</span>
 
 <span class="sd">    where:</span>
+<span class="sd">        - :math:`FV` is the future value</span>
 <span class="sd">        - :math:`P` is the payment per period</span>
 <span class="sd">        - :math:`r` is the periodic interest rate (annual_rate / payments_per_year)</span>
 <span class="sd">        - :math:`N` is the total number of periods,</span>
@@ -184,6 +185,8 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the future value of a growing annuity.</span>
 
+<span class="sd">    The future value of a growing annuity accounts for payments that grow at a constant rate over time for a specified number of periods.</span>
+
 <span class="sd">    The future value is calculated as:</span>
 
 <span class="sd">    .. math::</span>
@@ -196,21 +199,14 @@
 <span class="sd">        - :math:`g` is the growth rate per period</span>
 <span class="sd">        - :math:`N` is the total number of periods</span>
 
-<span class="sd">    Note</span>
-<span class="sd">    ----</span>
-<span class="sd">        {\\left(\frac{1 + r}{1 + g}\right) - 1}</span>
-
-<span class="sd">    where:</span>
-<span class="sd">        - :math:`P` is the payment at time t=0</span>
-<span class="sd">        - :math:`r` is the interest rate per period</span>
-<span class="sd">        - :math:`g` is the growth rate per period</span>
-<span class="sd">        - :math:`n` is the total number of periods</span>
+<span class="sd">    This formula accounts for the growth of payments over time,</span>
+<span class="sd">    where each payment grows by the growth rate in each period.</span>
 
 <span class="sd">    Note</span>
 <span class="sd">    ----</span>
 <span class="sd">    The `payment` parameter corresponds to the payment at time t=0.</span>
 <span class="sd">    Growth is applied in the first period as well, so the payment at time t=k is:</span>
-<span class="sd">        payment * (1 + growth)^(k+1)</span>
+<span class="sd">        :math:`P * (1 + g)^{(k+1)}`</span>
 <span class="sd">    for each period k.</span>
 
 <span class="sd">    Parameters</span>

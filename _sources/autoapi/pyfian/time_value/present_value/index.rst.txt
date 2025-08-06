@@ -109,7 +109,7 @@ Module Contents
 
       The `payment` parameter corresponds to the payment at time t=0.
       Growth is applied in the first period as well, so the payment at time t=k is:
-          payment * (1 + growth)^(k+1)
+          :math:`P * (1 + g)^{(k+1)}`
       for each period k.
 
    :param payment: The initial payment amount per period.
@@ -151,7 +151,7 @@ Module Contents
 
       The `payment` parameter corresponds to the payment at time t=0.
       Growth is applied in the first period as well, so the payment at time t=k is:
-          payment * (1 + growth)^(k+1)
+          :math:`P * (1 + g)^{(k+1)}`
       for each period k.
 
    :param payment: The initial payment amount per period.
@@ -191,7 +191,7 @@ Module Contents
 
       The `payment` parameter corresponds to the payment at time t=0.
       Growth is applied in the first period as well, so the payment at time t=k is:
-          payment * (1 + growth)^(k+1)
+          :math:`P * (1 + g)^{(k+1)}`
       for each period k.
 
    :param payment: The fixed payment amount per period.
@@ -235,7 +235,7 @@ Module Contents
 
       The `payment` parameter corresponds to the payment at time t=0.
       Growth is applied in the first period as well, so the payment at time t=k is:
-          payment * (1 + growth)^(k+1)
+          :math:`P * (1 + g)^{(k+1)}`
       for each period k.
 
    :param payment: The payment amount at time t=0.

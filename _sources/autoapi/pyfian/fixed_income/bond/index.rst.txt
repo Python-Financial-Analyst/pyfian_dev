@@ -115,7 +115,7 @@ Module Contents
 
 
 
-   .. py:method:: set_settlement_date(settlement_date: Optional[Union[str, pandas.Timestamp]], reset_yield_to_maturity: bool = True) -> Optional[pandas.Timestamp]
+   .. py:method:: set_settlement_date(settlement_date: Optional[Union[str, pandas.Timestamp]], reset_yield_to_maturity: bool = True) -> pandas.Timestamp
 
       Set the default settlement date for the bond.
       If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
@@ -126,7 +126,7 @@ Module Contents
       :type reset_yield_to_maturity: bool, optional
 
       :returns: The updated settlement date.
-      :rtype: Optional[pd.Timestamp]
+      :rtype: pd.Timestamp
 
       :raises ValueError: If the settlement date is not set when the bond price is set.
       :raises If the settlement date is changed, resets the bond price and yield to maturity if reset_yield_to_maturity is True.:
@@ -136,6 +136,7 @@ Module Contents
    .. py:method:: set_yield_to_maturity(ytm: Optional[float], settlement_date: Optional[Union[str, pandas.Timestamp, None]] = None) -> None
 
       Set the default yield to maturity for the bond. Updates bond price accordingly.
+
       :param ytm: The yield to maturity to set.
       :type ytm: float, optional
       :param settlement_date: The settlement date to set.
@@ -188,9 +189,10 @@ Module Contents
 
       Generate the payment flow (cash flows) for the bond.
       Returns a tuple of dictionaries:
-      - dict_payments: Payment dates as keys and cash flow amounts as values.
-      - dict_coupons: Coupon payment dates as keys and coupon amounts as values.
-      - dict_amortization: Amortization payment dates as keys and amortization amounts as values.
+
+      * dict_payments: Payment dates as keys and cash flow amounts as values.
+      * dict_coupons: Coupon payment dates as keys and coupon amounts as values.
+      * dict_amortization: Amortization payment dates as keys and amortization amounts as values.
 
       :returns: * **dict_payments** (*dict*) -- Dictionary with payment dates as keys and cash flow amounts as values.
                 * **dict_coupons** (*dict*) -- Dictionary with coupon payment dates as keys and coupon amounts as values.
@@ -209,6 +211,13 @@ Module Contents
    .. py:method:: filter_payment_flow(settlement_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None, payment_flow: Optional[dict[pandas.Timestamp, float]] = None) -> dict[pandas.Timestamp, float]
 
       Filter the payment flow to include only payments after the settlement date.
+
+      If a bond price is provided, it is added as a negative cash flow at the settlement date.
+
+      The settlement date is resolved to a pd.Timestamp, and if it is not provided, it defaults to the issue date.
+
+      The function returns a dictionary of payment dates and cash flows that occur after the settlement date,
+      adjusting the cash flows to business days.
 
       :param settlement_date: Date from which to consider future payments. Defaults to issue date.
       :type settlement_date: str or datetime-like, optional
@@ -234,9 +243,20 @@ Module Contents
       Calculate the time to each payment from the settlement date.
       The time is expressed in years.
 
+      .. math::
+          T = \frac{D - S}{365}
+
+      for each payment :math:`D` and settlement date :math:`S`
+
+      where:
+
+      - :math:`T` is the time to payment (in years)
+      - :math:`D` is the payment date
+      - :math:`S` is the settlement date
+
       :param settlement_date: Date from which to calculate time to payments. Defaults to issue date.
       :type settlement_date: str or datetime-like, optional
-      :param bond_price: If provided, includes bond price as a negative cash flow.
+      :param bond_price: If provided, adds bond price as a negative cash flow.
       :type bond_price: float, optional
 
       :returns: Dictionary with time to payment (in years) as keys and cash flow values.
@@ -261,6 +281,35 @@ Module Contents
       If a bond price is provided, it is included as a negative cash flow, and the
       present value would be equivalent to a Net Present Value (NPV) calculation, useful for
       comparing the bond's market price against its theoretical value based on the discount curve.
+
+      The curve should have a method `discount_t(t)` that returns the discount factor for a given time `t` expressed in years from the settlement date.
+
+      The discount factor is typically calculated as:
+
+      .. math::
+          discount_t(t) = \frac{1}{(1 + r(t))^t}
+
+      where:
+
+      - :math:`r(t)` is the discount rate at time :math:`t`.
+
+      The discount factor brings the future value back to the present. Using this discount factor, we can calculate the present value of future cash flows by discounting them back to the settlement date.
+
+      For a set of cash flows :math:`C(t)` at times :math:`t`, the present value (PV) is calculated as:
+
+      .. math::
+          PV = \sum_{i}^{N} C(t_i) * discount_t(t_i)
+
+      for each (:math:`t_i`, :math:`C(t_i)`) cash flow, where :math:`i = 1, ..., N`
+
+      where:
+
+      - :math:`PV` is the present value of the cash flows
+      - :math:`C(t)` is the cash flow at time :math:`t`
+      - :math:`N` is the total number of cash flows
+      - :math:`r(t)` is the discount rate at time :math:`t`.
+
+      The discount rate for a cash flow at time :math:`t` is obtained from the discount curve using `curve.discount_t(t)`.
 
       This can be used to optimize the yield curve fitting process.
 
@@ -291,6 +340,22 @@ Module Contents
 
       The YTM is the internal rate of return (IRR) of the bond's cash flows, assuming the bond is held to maturity.
 
+      It is the discount rate that makes the present value of the bond's cash flows equal to its price for a given set of cash flows and settlement date.
+
+      The YTM is calculated by solving the equation:
+
+      .. math::
+          P = \sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{(t+1)}}
+
+      where:
+
+      - :math:`P` is the price of the bond
+      - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date
+      - :math:`YTM` is the yield to maturity
+      - :math:`T` is the total number of periods
+
+      The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
       :param bond_price: Price of the bond.
       :type bond_price: float
       :param settlement_date: Settlement date. Defaults to issue date.
@@ -308,7 +373,7 @@ Module Contents
       .. rubric:: Examples
 
       >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
-      >>> bond.yield_to_maturity(price=95)
+      >>> bond.yield_to_maturity(bond_price=95)
       0.06189544078
 
 
@@ -323,9 +388,11 @@ Module Contents
       where:
 
       - :math:`P` is the price of the bond
-      - :math:`C_t` is the cash flow at time t
+      - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date
       - :math:`YTM` is the yield to maturity
       - :math:`T` is the total number of periods
+
+      The times to payments are calculated from the settlement date to each payment date and need not be integer values.
 
       :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
       :type yield_to_maturity: float, optional
@@ -356,9 +423,11 @@ Module Contents
       where:
 
       - :math:`P` is the price of the bond
-      - :math:`C_t` is the cash flow at time t
+      - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date
       - :math:`YTM` is the yield to maturity
       - :math:`T` is the total number of periods
+
+      The times to payments are calculated from the settlement date to each payment date and need not be integer values.
 
       :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from price if given.
       :type yield_to_maturity: float, optional
@@ -382,6 +451,22 @@ Module Contents
 
       Calculate accrued interest since last coupon payment.
       This is the interest that has accumulated on the bond since the last coupon payment date
+      or issue date if no coupon payments have been made.
+
+      The accrued interest is calculated on an actual/actual basis, which means it considers
+      the actual number of days between the last coupon payment date and the settlement date.
+
+      The formula is as follows:
+
+      .. math::
+          Accrued = C \cdot \frac{SettlementDate - CouponDate_{prev}}{CouponDate_{next} - CouponDate_{prev}}
+
+      where:
+
+      - :math:`C` is the coupon payment amount
+      - :math:`SettlementDate` is the date for which to calculate accrued interest
+      - :math:`CouponDate_{prev}` is the last coupon payment date before the settlement or issue date if no previous coupon
+      - :math:`CouponDate_{next}` is the next coupon payment date after the settlement
 
       :param settlement_date: Date for which to calculate accrued interest. Defaults to today.
       :type settlement_date: str or datetime-like, optional
@@ -392,7 +477,7 @@ Module Contents
       .. rubric:: Examples
 
       >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
-      >>> bond.accrued_interest('2023-06-01')
+      >>> bond.accrued_interest('2024-07-02')
       2.5
 
 
@@ -400,6 +485,13 @@ Module Contents
    .. py:method:: clean_price(dirty_price: float, settlement_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
 
       Convert dirty price to clean price.
+
+      The clean price is the price of the bond excluding any accrued interest.
+
+      The formula is as follows:
+
+      .. math::
+          CleanPrice = DirtyPrice - AccruedInterest
 
       :param dirty_price: Dirty price of the bond.
       :type dirty_price: float
@@ -412,7 +504,7 @@ Module Contents
       .. rubric:: Examples
 
       >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
-      >>> bond.clean_price(102.5, '2023-06-01')
+      >>> bond.clean_price(102.5, '2024-07-02')
       100.0
 
 
@@ -420,6 +512,13 @@ Module Contents
    .. py:method:: dirty_price(clean_price: float, settlement_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
 
       Convert clean price to dirty price.
+
+      The dirty price is the price of the bond including accrued interest.
+
+      The formula is as follows:
+
+      .. math::
+          DirtyPrice = CleanPrice + AccruedInterest
 
       :param clean_price: Clean price of the bond.
       :type clean_price: float
@@ -432,7 +531,7 @@ Module Contents
       .. rubric:: Examples
 
       >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
-      >>> bond.dirty_price(100.0, '2023-06-01')
+      >>> bond.dirty_price(100.0, '2024-07-02')
       102.5
 
 
@@ -487,6 +586,9 @@ Module Contents
 
       Get the next coupon payment date from a given date.
 
+      This method finds the next coupon payment date after the specified settlement date.
+      If no future coupon payments exist, it returns None.
+
       :param settlement_date: Date from which to search. Defaults to today. Adjusts to settlement date.
       :type settlement_date: str or datetime-like, optional
 
@@ -505,6 +607,9 @@ Module Contents
 
       Get the previous coupon payment date from a given date.
 
+      This method finds the last coupon payment date before the specified settlement date.
+      If no past coupon payments exist, it returns None.
+
       :param settlement_date: Date from which to search. Defaults to today. Adjusts to settlement date.
       :type settlement_date: str or datetime-like, optional
 
@@ -519,12 +624,29 @@ Module Contents
 
 
 
-   .. py:method:: to_dataframe(settlement_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None) -> pandas.DataFrame
+   .. py:method:: to_dataframe(settlement_date: Optional[Union[str, pandas.Timestamp]] = None, yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None) -> pandas.DataFrame
 
       Export the bond’s cash flow schedule as a pandas DataFrame.
 
+      The DataFrame will contain the dates of cash flows and their corresponding amounts.
+
+      The cash flows include:
+      - Principal repayment at maturity
+      - Coupon payments
+      - Amortization payments (if applicable)
+      - Bond price as a negative cash flow if provided
+
+      The Dataframe will have the following columns:
+      - 'date': The date of the cash flow.
+      - 'Flows': The amount of the total cash flow.
+      - 'Coupon': The coupon payment amount.
+      - 'Amortization': The amortization payment amount.
+      - 'Cost': The net cash flow after subtracting coupon and amortization payments.
+
       :param settlement_date: Date from which to consider future payments. Defaults to issue date.
       :type settlement_date: str or datetime-like, optional
+      :param yield_to_maturity: Yield to maturity as a decimal. If provided, it will be used to calculate the cash flows.
+      :type yield_to_maturity: float, optional
       :param bond_price: If provided, includes bond price as a negative cash flow.
       :type bond_price: float, optional
 
@@ -535,10 +657,11 @@ Module Contents
 
       >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
       >>> bond.to_dataframe('2022-01-01')
-      date        cash_flow
-      0 2023-01-01    5.0
-      1 2024-01-01    5.0
-      2 2025-01-01    105.0
+      date        Flows  Coupon  Amortization  Cost
+      2022-01-03  5.0    5.0          0.0           0.0
+      2023-01-02  5.0    5.0          0.0           0.0
+      2024-01-01  5.0    5.0          0.0           0.0
+      2025-01-01  105.0  5.0        100.0           0.0
 
 
 
@@ -610,6 +733,14 @@ Module Contents
 
 
 
+   .. py:method:: _resolve_settlement_date(settlement_date: Optional[Union[str, pandas.Timestamp]]) -> pandas.Timestamp
+
+      Helper to resolve the settlement date for the bond.
+      If settlement_date is provided, converts to pd.Timestamp.
+      Otherwise, uses self._settlement_date or self.issue_dt.
+
+
+
    .. py:method:: _resolve_ytm(yield_to_maturity: Optional[float], price: Optional[float], settlement_date: Optional[Union[str, pandas.Timestamp]]) -> float
 
       Helper to resolve yield_to_maturity from direct input, price, or default to notional.
@@ -620,14 +751,6 @@ Module Contents
 
       Helper to resolve ytm, time_to_payments, and price_calc for DRY.
       Returns (ytm, time_to_payments, price_calc)
-
-
-
-   .. py:method:: _resolve_settlement_date(settlement_date: Optional[Union[str, pandas.Timestamp]]) -> pandas.Timestamp
-
-      Helper to resolve the settlement date for the bond.
-      If settlement_date is provided, converts to pd.Timestamp.
-      Otherwise, uses self._settlement_date or self.issue_dt.
 
 
 

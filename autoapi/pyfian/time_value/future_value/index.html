@@ -174,6 +174,7 @@ and a specified number of payments per year.</p>
 \[FV = P \times (1 + r)^{N} \times \frac{1 - \frac{1}{(1 + r)^{N}}}{r}\]</div>
 <dl>
 <dt>where:</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(FV\)</span> is the future value</p></li>
 <li><p><span class="math notranslate nohighlight">\(P\)</span> is the payment per period</p></li>
 <li><p><span class="math notranslate nohighlight">\(r\)</span> is the periodic interest rate (annual_rate / payments_per_year)</p></li>
 <li><p><span class="math notranslate nohighlight">\(N\)</span> is the total number of periods,</p></li>
@@ -209,8 +210,8 @@ for non-annual payment frequencies.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyfian.time_value.future_value.future_value_growing_annuity">
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.future_value.</span></span><span class="sig-name descname"><span class="pre">future_value_growing_annuity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periods</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">growth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/future_value.html#future_value_growing_annuity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.future_value.future_value_growing_annuity" title="Link to this definition"></a></dt>
-<dd><blockquote>
-<div><p>Calculate the future value of a growing annuity.</p>
+<dd><p>Calculate the future value of a growing annuity.</p>
+<p>The future value of a growing annuity accounts for payments that grow at a constant rate over time for a specified number of periods.</p>
 <p>The future value is calculated as:</p>
 <div class="math notranslate nohighlight">
 \[FV = P \times \frac{(1 + r)^{N} - (1 + g)^{N}}{r - g}\]</div>
@@ -224,49 +225,40 @@ for non-annual payment frequencies.</p>
 </ul>
 </dd>
 </dl>
-<blockquote>
-<div><p>{left(</p>
-</div></blockquote>
-</div></blockquote>
-<p>rac{1 + r}{1 + g}
-ight) - 1}</p>
-<blockquote>
-<div><dl class="simple">
-<dt>where:</dt><dd><ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(P\)</span> is the payment at time t=0</p></li>
-<li><p><span class="math notranslate nohighlight">\(r\)</span> is the interest rate per period</p></li>
-<li><p><span class="math notranslate nohighlight">\(g\)</span> is the growth rate per period</p></li>
-<li><p><span class="math notranslate nohighlight">\(n\)</span> is the total number of periods</p></li>
-</ul>
-</dd>
-</dl>
+<p>This formula accounts for the growth of payments over time,
+where each payment grows by the growth rate in each period.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>The <cite>payment</cite> parameter corresponds to the payment at time t=0.
 Growth is applied in the first period as well, so the payment at time t=k is:</p>
 <blockquote>
-<div><p>payment * (1 + growth)^(k+1)</p>
+<div><p><span class="math notranslate nohighlight">\(P * (1 + g)^{(k+1)}\)</span></p>
 </div></blockquote>
 <p>for each period k.</p>
-<dl class="simple">
-<dt>payment<span class="classifier">float</span></dt><dd><p>The initial payment amount per period.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>payment</strong> (<em>float</em>) – The initial payment amount per period.</p></li>
+<li><p><strong>rate</strong> (<em>float</em>) – The interest rate per period (as a decimal).</p></li>
+<li><p><strong>periods</strong> (<em>int</em>) – The total number of periods.</p></li>
+<li><p><strong>growth</strong> (<em>float</em><em>, </em><em>optional</em>) – The growth rate of the payments (as a decimal). Defaults to 0.0.</p></li>
+</ul>
 </dd>
-<dt>rate<span class="classifier">float</span></dt><dd><p>The interest rate per period (as a decimal).</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Future value of the growing annuity.</p>
 </dd>
-<dt>periods<span class="classifier">int</span></dt><dd><p>The total number of periods.</p>
-</dd>
-<dt>growth<span class="classifier">float, optional</span></dt><dd><p>The growth rate of the payments (as a decimal). Defaults to 0.0.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
-<dl class="simple">
-<dt>float</dt><dd><p>Future value of the growing annuity.</p>
-</dd>
-</dl>
+<p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">future_value_growing_annuity</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span>
 <span class="go">1393.6607030611262</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">future_value_growing_annuity</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
 <span class="go">1628.894626777442</span>
 </pre></div>
 </div>
-</div></blockquote>
 </dd></dl>
 
 </section>
