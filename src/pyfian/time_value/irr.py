@@ -145,6 +145,71 @@ def np_irr(cash_flows: list[float]) -> float:
 
 def xirr_base(
     cash_flows: Sequence[float],
+    times: Sequence[float],
+    guess: float = 0.1,
+    tol: float = 1e-6,
+    max_iter: int = 100,
+) -> float:
+    """
+    Calculate the IRR (Yield) for non-periodic cash flows (XIRR).
+
+    This function computes the IRR for a series of cash flows that occur at irregular intervals.
+    It uses the Newton-Raphson method to find the rate that makes the NPV
+    of the cash flows equal to zero.
+
+    The formula is:
+
+    .. math::
+        0 = \\sum_{i=0}^{n} \\frac{CF_i}{(1 + IRR)^{t_i}}
+
+    where:
+        - :math:`IRR` is the internal rate of return
+        - :math:`CF_i` is the cash flow at time `i`
+        - :math:`t_i` is the time in years from the first cash flow
+        - :math:`n` is the total number of cash flows
+
+    Parameters
+    ----------
+    cash_flows : Sequence[float]
+        Cash flow values, where each value corresponds to a time in `times`.
+    times : Sequence[float]
+        Time in years corresponding to each cash flow.
+    guess : float, optional
+        Initial guess for the IRR (default is 0.1, i.e. 10%).
+    tol : float, optional
+        Tolerance for convergence (default is 1e-6).
+    max_iter : int, optional
+        Maximum number of iterations (default is 100).
+
+    Returns
+    -------
+    float
+        Estimated IRR as a decimal.
+
+    Raises
+    ------
+    ValueError
+        If the IRR calculation does not converge.
+
+    Examples
+    --------
+    >>> xirr_base([-1000, 300, 400, 500, 600], [0, 0.5, 1.0, 1.5, 2.0])
+    0.5831820341312749  # Example output
+    """
+
+    def npv_xirr(rate: float) -> float:
+        return sum(cf / (1 + rate) ** t for cf, t in zip(cash_flows, times))
+
+    try:
+        result = newton(npv_xirr, guess, tol=tol, maxiter=max_iter)
+    except RuntimeError:
+        raise ValueError("XIRR calculation did not converge")
+
+    return result
+
+
+def xirr_dates(
+    cash_flows: Sequence[float],
     dates: Sequence[datetime],
     guess: float = 0.1,
     tol: float = 1e-6,
@@ -210,17 +275,16 @@ def xirr_base(
 
     # Convert all dates to number of days from the first date
     t0 = dates[0]
-    days = [(d - t0).days for d in dates]
+    times = [(d - t0).days / 365.0 for d in dates]
 
-    def npv_xirr(rate: float) -> float:
-        return sum(
-            cf / (1 + rate) ** (day / 365.0) for cf, day in zip(cash_flows, days)
-        )
+    result = xirr_base(
+        cash_flows,
+        times,
+        guess=guess,
+        tol=tol,
+        max_iter=max_iter,
+    )
 
-    try:
-        result = newton(npv_xirr, guess, tol=tol, maxiter=max_iter)
-    except RuntimeError:
-        raise ValueError("XIRR calculation did not converge")
     return result
 
 
@@ -304,4 +368,4 @@ def xirr(
 
     # Convert pandas Timestamps to datetime
     dates = [d.to_pydatetime() if hasattr(d, "to_pydatetime") else d for d in dates]
-    return xirr_base(cash_flows, dates, guess=guess, tol=tol, max_iter=max_iter)
+    return xirr_dates(cash_flows, dates, guess=guess, tol=tol, max_iter=max_iter)
