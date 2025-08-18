@@ -3,8 +3,15 @@ import pytest
 import numpy as np
 
 from pyfian.fixed_income.bond import BulletBond
-from pyfian.time_value.irr import xirr_base
+from pyfian.time_value.irr import xirr_dates
 from pyfian.yield_curves.flat_curve import FlatCurveLog
+
+TRUE_TIME_PARAMS = {
+    "day_count_convention": "actual/actual-Bond",
+    "yield_calculation_convention": "annual",
+    "following_coupons_day_count": "actual/365",
+    "adjust_to_business_days": True,
+}
 
 
 class TestBulletBond:
@@ -55,7 +62,28 @@ class TestBulletBond:
         price = bond.price_from_yield(yield_to_maturity=0.05)
 
         # Calculate effective duration using a small epsilon
-        epsilon = 0.000000001
+        epsilon = 0.0000001
+        price_plus_epsilon = bond.price_from_yield(yield_to_maturity=0.05 + epsilon)
+        price_minus_epsilon = bond.price_from_yield(yield_to_maturity=0.05 - epsilon)
+
+        expected_duration = (
+            -1 * (price_plus_epsilon - price_minus_epsilon) / (2 * epsilon * price)
+        )
+
+        assert isinstance(duration, float)
+        assert abs(duration - expected_duration) < 1e-6, (
+            f"Expected duration: {expected_duration}, but got: {duration}"
+        )
+
+    def test_modified_duration_with_annual(self):
+        bond = BulletBond(
+            "2020-01-01", "2025-01-01", 5, 1, yield_calculation_convention="annual"
+        )
+        duration = bond.modified_duration(yield_to_maturity=0.05)
+        price = bond.price_from_yield(yield_to_maturity=0.05)
+
+        # Calculate effective duration using a small epsilon
+        epsilon = 0.0000001
         price_plus_epsilon = bond.price_from_yield(yield_to_maturity=0.05 + epsilon)
         price_minus_epsilon = bond.price_from_yield(yield_to_maturity=0.05 - epsilon)
 
@@ -69,7 +97,30 @@ class TestBulletBond:
         )
 
     def test_convexity(self):
-        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1, **TRUE_TIME_PARAMS)
+        conv = bond.convexity(yield_to_maturity=0.05, **TRUE_TIME_PARAMS)
+        price = bond.price_from_yield(yield_to_maturity=0.05, **TRUE_TIME_PARAMS)
+        assert isinstance(conv, float)
+        # Calculate effective convexity using a small epsilon
+        epsilon = 0.0001
+        price_plus_epsilon = bond.price_from_yield(
+            yield_to_maturity=0.05 + epsilon, **TRUE_TIME_PARAMS
+        )
+        price_minus_epsilon = bond.price_from_yield(
+            yield_to_maturity=0.05 - epsilon, **TRUE_TIME_PARAMS
+        )
+        expected_convexity = (price_plus_epsilon + price_minus_epsilon - 2 * price) / (
+            epsilon**2 * price
+        )
+        # Same value up to 5 significant digits, starting from the first digit
+        expected_convexity = round(expected_convexity, 5)
+        conv = round(conv, 5)
+        assert np.isclose(conv, expected_convexity, rtol=1e-5), (
+            f"Expected convexity: {expected_convexity}, but got: {conv}"
+        )
+
+    def test_convexity_with_BEY(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 2)
         conv = bond.convexity(yield_to_maturity=0.05)
         price = bond.price_from_yield(yield_to_maturity=0.05)
         assert isinstance(conv, float)
@@ -80,7 +131,10 @@ class TestBulletBond:
         expected_convexity = (price_plus_epsilon + price_minus_epsilon - 2 * price) / (
             epsilon**2 * price
         )
-        assert abs(conv - expected_convexity) < 1e-6, (
+        # Same value up to 5 significant digits, starting from the first digit
+        expected_convexity = round(expected_convexity, 5)
+        conv = round(conv, 5)
+        assert np.isclose(conv, expected_convexity, rtol=1e-5), (
             f"Expected convexity: {expected_convexity}, but got: {conv}"
         )
 
@@ -156,12 +210,18 @@ class TestBulletBond:
 
     def test_yield_to_maturity(self):
         bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
-        ytm = bond.yield_to_maturity(bond_price=95)
+        ytm = bond.yield_to_maturity(bond_price=95, **TRUE_TIME_PARAMS)
 
         dates, cash_flows = list(
-            zip(*list(bond.filter_payment_flow("2020-01-01", bond_price=95).items()))
+            zip(
+                *list(
+                    bond.filter_payment_flow(
+                        "2020-01-01", bond_price=95, **TRUE_TIME_PARAMS
+                    ).items()
+                )
+            )
         )
-        ytm_expected = xirr_base(
+        ytm_expected = xirr_dates(
             cash_flows=cash_flows,
             dates=dates,
         )
@@ -230,6 +290,56 @@ class TestBulletBond:
         )
         assert df["Flows"].iloc[-1] == 500 + (5 / 1) * 500 / 100
 
+    def test_to_dataframe_no_price_yield(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1, notional=500)
+        df = bond.to_dataframe()
+        assert (
+            "Cost" in df.columns
+            and "Amortization" in df.columns
+            and "Coupon" in df.columns
+        )
+        assert (df["Cost"] == 0).all(), (
+            "Expected cost to be zero when no price or yield is set"
+        )
+
+    def test_to_dataframe_price(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1, notional=100)
+        df = bond.to_dataframe(bond_price=100)
+        assert (
+            "Cost" in df.columns
+            and "Amortization" in df.columns
+            and "Coupon" in df.columns
+        )
+        assert df["Cost"].iloc[0] == 100.0, (
+            "Expected cost to be -100 when bond price is set at 100"
+        )
+
+    # test to_dataframe with inconsistent yield and price
+    def test_to_dataframe_inconsistent_yield_price(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1, notional=100)
+        with pytest.raises(
+            ValueError,
+            match="Bond price calculated by yield to maturity does not match the given bond price.",
+        ):
+            bond.to_dataframe(bond_price=95, yield_to_maturity=0.05)
+
+    # test to_dataframe with consistent yield and price
+    def test_to_dataframe_consistent_yield_price(self):
+        bond = BulletBond(
+            "2020-01-01", "2025-01-01", 5, 1, notional=100, **TRUE_TIME_PARAMS
+        )
+        df = bond.to_dataframe(
+            bond_price=99.9738493726302, yield_to_maturity=0.05, **TRUE_TIME_PARAMS
+        )
+        assert (
+            "Cost" in df.columns
+            and "Amortization" in df.columns
+            and "Coupon" in df.columns
+        )
+        assert df["Cost"].iloc[0] == 99.9738493726302, (
+            "Expected cost to match the bond price"
+        )
+
     def test_next_previous_coupon(self):
         bond = BulletBond("2020-01-01", "2025-01-01", 5, 1, notional=100)
         d = pd.Timestamp("2023-06-01")
@@ -242,13 +352,15 @@ class TestBulletBond:
         bond = BulletBond("2020-01-01", "2025-01-01", 5, 1, notional=1000)
         ytm = 0.05
         dv01 = bond.dv01(ytm)
-        dv01_expected = bond.price_from_yield(ytm + 0.0001) - bond.price_from_yield(ytm)
+        dv01_expected = (
+            bond.price_from_yield(ytm + 0.0001) - bond.price_from_yield(ytm - 0.0001)
+        ) / 2
 
         # DV01 should be negative for a standard bond (price decreases as yield increases)
         assert dv01 < 0
         # Should be a small value in magnitude
         assert abs(dv01) < 5
-        assert abs(dv01 - dv01_expected) < 1e-4, (
+        assert np.isclose(dv01, dv01_expected, rtol=1e-4), (
             f"Expected DV01: {dv01_expected}, but got: {dv01}"
         )
 
@@ -328,6 +440,26 @@ class TestBulletBond:
             settlement_date="2020-01-01",
             yield_to_maturity=0.05,
             bond_price=99.9738493726302,
+            **TRUE_TIME_PARAMS,
+        )
+        BulletBond(
+            "2020-01-01",
+            "2025-01-01",
+            5,
+            2,
+            settlement_date="2020-01-01",
+            yield_to_maturity=0.05,
+            bond_price=100.0,
+        )
+
+        BulletBond(
+            "2020-01-01",
+            "2025-01-01",
+            5,
+            1,
+            settlement_date="2020-01-01",
+            yield_to_maturity=((1 + 0.05) ** 0.5 - 1) * 2,
+            bond_price=100.0,
         )
 
     # Test set a new settlement date
@@ -496,9 +628,55 @@ class TestBulletBond:
         ):
             bond._resolve_settlement_date("2019-12-31")
 
-    def test_resolve_ytm_negative_price(self):
-        bond = BulletBond(
-            "2020-01-01", "2025-01-01", 5, 1, settlement_date="2022-01-01"
-        )
+    def test_resolve_ytm_negative_bond_price(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
         with pytest.raises(ValueError, match="Bond price cannot be negative."):
-            bond._resolve_ytm(None, -100, "2022-01-01")
+            bond._resolve_ytm(None, -100, "2022-01-01", **TRUE_TIME_PARAMS)
+
+    def test_invalid_following_coupons_day_count(self):
+        # Should raise ValueError for unsupported day count convention
+        with pytest.raises(
+            ValueError, match="Unknown day count convention: unsupported_convention"
+        ):
+            BulletBond(
+                "2020-01-01",
+                "2025-01-01",
+                5,
+                1,
+                following_coupons_day_count="unsupported_convention",
+            )
+
+    def test_invalid_following_coupons_day_count_actual_actual(self):
+        # Should raise ValueError for unsupported day count convention
+        with pytest.raises(
+            ValueError, match="Unsupported following coupons day count convention"
+        ):
+            BulletBond(
+                "2020-01-01",
+                "2025-01-01",
+                5,
+                1,
+                following_coupons_day_count="actual/actual-Bond",
+            )
+
+    def test_negative_bond_price_in_ytm(self):
+        bond = BulletBond(
+            "2020-01-01", "2025-01-01", 5, 1, settlement_date="2021-01-01"
+        )
+        with pytest.raises(ValueError, match="Bond price cannot be negative"):
+            bond._resolve_ytm(
+                None,
+                -100,
+                "2021-01-01",
+                False,
+                bond.following_coupons_day_count,
+                bond.yield_calculation_convention,
+                bond.day_count_convention,
+            )
+
+    def test_set_bond_price_with_negative_value(self):
+        bond = BulletBond(
+            "2020-01-01", "2025-01-01", 5, 1, settlement_date="2021-01-01"
+        )
+        with pytest.raises(ValueError, match="Bond price cannot be negative"):
+            bond.set_bond_price(-100, "2021-01-01")

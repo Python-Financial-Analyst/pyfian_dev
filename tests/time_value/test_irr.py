@@ -9,7 +9,7 @@ from datetime import datetime
 import pandas as pd
 import pytest
 
-from pyfian.time_value.irr import irr, np_irr, npv, xirr, xirr_base
+from pyfian.time_value.irr import irr, np_irr, npv, xirr, xirr_dates
 
 
 class TestNPV:
@@ -74,7 +74,7 @@ class TestXIRR:
             datetime(2021, 6, 1),
             datetime(2022, 1, 1),
         ]
-        result = xirr_base(cf, dates)
+        result = xirr_dates(cf, dates)
         assert abs(result - 0.5831820341312749) < 1e-3
 
     def test_xirr_dict(self):
