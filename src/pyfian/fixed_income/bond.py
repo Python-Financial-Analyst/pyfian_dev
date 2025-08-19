@@ -46,12 +46,12 @@ class BulletBond:
         Yield to maturity of the bond. Set in decimal, e.g., 0.05 for 5%. Defaults to None.
     bond_price : float, optional
         Market price of the bond. Defaults to None.
+    adjust_to_business_days : bool, optional
+        Whether to adjust dates to business days. Defaults to False.
     day_count_convention : str, optional
         Day count convention for the bond. Defaults to 'actual/actual-Bond'.
         It is used to calculate the day count fraction for accrued interests and time to payments.
         Supported conventions: '30/360', '30e/360', 'actual/actual', 'actual/360', 'actual/365', '30/365', 'actual/actual-Bond'.
-    adjust_to_business_days : bool, optional
-        Whether to adjust dates to business days. Defaults to False.
     following_coupons_day_count : str, optional
         Day count convention for the following coupons. Defaults to '30/360', to match the common convention for bonds.
         Convention "actual/365" might be the more relevant for Effective Annual Yield or Continuous Compounding.
@@ -92,11 +92,11 @@ class BulletBond:
         Coupon payment schedule for the bond.
     amortization_flow : dict[pd.Timestamp, float]
         Amortization payment schedule for the bond.
-    day_count_convention : DayCountBase
-        Day count convention function for the bond.
     adjust_to_business_days : bool
         Whether to adjust dates to business days by default.
         If True, dates will be adjusted to the nearest business day.
+    day_count_convention : DayCountBase
+        Day count convention function for the bond.
     following_coupons_day_count : DayCountBase
         Day count convention for the following coupons. Defaults to '30/360', to match the common convention for bonds.
         Convention "actual/365" might be the more relevant for Effective Annual Yield or Continuous Compounding.
@@ -123,8 +123,8 @@ class BulletBond:
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         yield_to_maturity: Optional[float] = None,
         bond_price: Optional[float] = None,
-        day_count_convention: str | DayCountBase = "actual/actual-Bond",
         adjust_to_business_days: bool = False,
+        day_count_convention: str | DayCountBase = "actual/actual-Bond",
         following_coupons_day_count: str | DayCountBase = "30/360",
         yield_calculation_convention: str = "BEY",
     ) -> None:
@@ -190,7 +190,13 @@ class BulletBond:
         self._validate_bond_price(bond_price=bond_price)
 
         if settlement_date is not None:
-            self.set_settlement_date(settlement_date)
+            self.set_settlement_date(
+                settlement_date,
+                adjust_to_business_days=adjust_to_business_days,
+                day_count_convention=day_count_convention,
+                following_coupons_day_count=following_coupons_day_count,
+                yield_calculation_convention=yield_calculation_convention,
+            )
 
         if yield_to_maturity is not None:
             # Throw error if yield_to_maturity is not None and settlement_date is None
@@ -202,6 +208,7 @@ class BulletBond:
                 yield_to_maturity,
                 settlement_date,
                 adjust_to_business_days=adjust_to_business_days,
+                day_count_convention=day_count_convention,
                 following_coupons_day_count=following_coupons_day_count,
                 yield_calculation_convention=yield_calculation_convention,
             )
@@ -259,10 +266,10 @@ class BulletBond:
     def _resolve_valuation_parameters(
         self,
         adjust_to_business_days: Optional[bool],
+        day_count_convention: Optional[str | DayCountBase],
         following_coupons_day_count: Optional[str | DayCountBase],
         yield_calculation_convention: Optional[str],
-        day_count_convention: Optional[str | DayCountBase],
-    ) -> tuple[bool, DayCountBase, str, DayCountBase]:
+    ) -> tuple[bool, DayCountBase, DayCountBase, str]:
         if adjust_to_business_days is None:
             adjust_to_business_days = self.adjust_to_business_days
         if following_coupons_day_count is None:
@@ -280,9 +287,9 @@ class BulletBond:
 
         return (
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         )
 
     def set_settlement_date(
@@ -290,9 +297,9 @@ class BulletBond:
         settlement_date: Optional[Union[str, pd.Timestamp]],
         reset_yield_to_maturity: bool = True,
         adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
         yield_calculation_convention: Optional[str] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
     ) -> pd.Timestamp:
         """
         Set the default settlement date for the bond.
@@ -304,6 +311,14 @@ class BulletBond:
             The settlement date to set.
         reset_yield_to_maturity : bool, optional
             Whether to reset the yield to maturity and bond price.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
 
         Returns
         -------
@@ -319,14 +334,14 @@ class BulletBond:
         old_settlement_date = self._settlement_date
         (
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         ) = self._resolve_valuation_parameters(
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         )
 
         if settlement_date is not None:
@@ -348,9 +363,9 @@ class BulletBond:
                             self._yield_to_maturity,
                             settlement_date,
                             adjust_to_business_days=adjust_to_business_days,
+                            day_count_convention=day_count_convention,
                             following_coupons_day_count=following_coupons_day_count,
                             yield_calculation_convention=yield_calculation_convention,
-                            day_count_convention=day_count_convention,
                         )
 
             self._settlement_date = pd.to_datetime(settlement_date)
@@ -366,9 +381,9 @@ class BulletBond:
         ytm: Optional[float],
         settlement_date: Optional[Union[str, pd.Timestamp, None]] = None,
         adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
         yield_calculation_convention: Optional[str] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
     ) -> None:
         """
         Set the default yield to maturity for the bond. Updates bond price accordingly.
@@ -379,6 +394,14 @@ class BulletBond:
             The yield to maturity to set.
         settlement_date : Union[str, pd.Timestamp], optional
             The settlement date to set.
+        adjust_to_business_days : bool, optional
+            Whether to adjust the settlement date to the next business day.
+        day_count_convention : str or DayCountBase, optional
+            The day count convention to use.
+        following_coupons_day_count : str or DayCountBase, optional
+            The following coupons day count convention to use.
+        yield_calculation_convention : str, optional
+            The yield calculation convention to use.
 
         Raises
         ------
@@ -388,26 +411,25 @@ class BulletBond:
         If the yield to maturity is set, it will also update the bond price based on the yield.
         """
         self._yield_to_maturity = ytm
-
         (
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         ) = self._resolve_valuation_parameters(
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         )
 
         if settlement_date is not None:
             settlement_date = self.set_settlement_date(
                 settlement_date,
                 adjust_to_business_days=adjust_to_business_days,
+                day_count_convention=day_count_convention,
                 following_coupons_day_count=following_coupons_day_count,
                 yield_calculation_convention=yield_calculation_convention,
-                day_count_convention=day_count_convention,
             )
         # Since ytm is set, update bond price
         if ytm is not None:
@@ -442,9 +464,9 @@ class BulletBond:
         bond_price: Optional[float],
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
         yield_calculation_convention: Optional[str] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
     ) -> None:
         """
         Set the default bond price for the bond. Updates yield to maturity accordingly.
@@ -455,6 +477,15 @@ class BulletBond:
             The bond price to set.
         settlement_date : Union[str, pd.Timestamp], optional
             The settlement date to set.
+        adjust_to_business_days : bool, optional
+            Whether to adjust the settlement date to the next business day.
+        day_count_convention : str or DayCountBase, optional
+            The day count convention to use.
+        following_coupons_day_count : str or DayCountBase, optional
+            The following coupons day count convention to use.
+        yield_calculation_convention : str, optional
+            The yield calculation convention to use.
+
         Raises
         ------
         ValueError
@@ -466,14 +497,14 @@ class BulletBond:
         self._bond_price = bond_price
         (
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         ) = self._resolve_valuation_parameters(
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         )
 
         if settlement_date is not None:
@@ -611,9 +642,9 @@ class BulletBond:
         bond_price: Optional[float] = None,
         payment_flow: Optional[dict[pd.Timestamp, float]] = None,
         adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
         yield_calculation_convention: Optional[str] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
     ) -> dict[pd.Timestamp, float]:
         """
         Filter the payment flow to include only payments after the settlement date.
@@ -635,12 +666,12 @@ class BulletBond:
             Dictionary of payment dates and cash flows. If not provided, uses the bond's payment flow.
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
         following_coupons_day_count : str or DayCountBase, optional
             Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
         yield_calculation_convention : str, optional
             Yield calculation convention. Defaults to value of self.yield_calculation_convention.
-        day_count_convention : str or DayCountBase, optional
-            Day count convention. Defaults to value of self.day_count_convention.
 
         Returns
         -------
@@ -657,14 +688,14 @@ class BulletBond:
         maturity = self.maturity
         (
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         ) = self._resolve_valuation_parameters(
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         )
 
         if payment_flow is None:
@@ -711,9 +742,9 @@ class BulletBond:
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         bond_price: Optional[float] = None,
         adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
         yield_calculation_convention: Optional[str] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
     ) -> dict[float, float]:
         """
         Calculate the time to each payment from the settlement date.
@@ -738,12 +769,12 @@ class BulletBond:
             If provided, adds bond price as a negative cash flow.
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
         following_coupons_day_count : str or DayCountBase, optional
             Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
         yield_calculation_convention : str, optional
             Yield calculation convention. Defaults to value of self.yield_calculation_convention.
-        day_count_convention : str or DayCountBase, optional
-            Day count convention. Defaults to value of self.day_count_convention.
 
         Returns
         -------
@@ -759,14 +790,14 @@ class BulletBond:
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         ) = self._resolve_valuation_parameters(
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         )
 
         flujos = self.filter_payment_flow(
@@ -816,9 +847,9 @@ class BulletBond:
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         bond_price: Optional[float] = None,
         adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
         yield_calculation_convention: Optional[str] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
     ) -> tuple[float, dict[float, float]]:
         """
         Value the bond using a discount curve.
@@ -872,12 +903,12 @@ class BulletBond:
             If provided, includes bond price as a negative cash flow.
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
         following_coupons_day_count : str or DayCountBase, optional
             Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
         yield_calculation_convention : str, optional
             Yield calculation convention. Defaults to value of self.yield_calculation_convention.
-        day_count_convention : str or DayCountBase, optional
-            Day count convention. Defaults to value of self.day_count_convention.
 
         Returns
         -------
@@ -897,14 +928,14 @@ class BulletBond:
         """
         (
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         ) = self._resolve_valuation_parameters(
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         )
 
         time_to_payments = self.calculate_time_to_payments(
@@ -925,9 +956,9 @@ class BulletBond:
         tol: float = 1e-6,
         max_iter: int = 100,
         adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
         yield_calculation_convention: Optional[str] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
     ) -> float:
         """
         Estimate the yield to maturity (YTM) using the xirr function from pyfian.time_value.irr.
@@ -962,12 +993,12 @@ class BulletBond:
             Maximum number of iterations (default is 100).
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
         following_coupons_day_count : str or DayCountBase, optional
             Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
         yield_calculation_convention : str, optional
             Yield calculation convention. Defaults to value of self.yield_calculation_convention.
-        day_count_convention : str or DayCountBase, optional
-            Day count convention. Defaults to value of self.day_count_convention.
 
         Returns
         -------
@@ -988,14 +1019,14 @@ class BulletBond:
         # Prepare cash flows and dates
         (
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         ) = self._resolve_valuation_parameters(
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         )
         times_cashflows = self.calculate_time_to_payments(
             settlement_date,
@@ -1038,9 +1069,9 @@ class BulletBond:
         bond_price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
         yield_calculation_convention: Optional[str] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
     ) -> float:
         """
         Calculate modified duration of the bond.
@@ -1067,12 +1098,12 @@ class BulletBond:
             Settlement date. Defaults to issue date.
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
         following_coupons_day_count : str or DayCountBase, optional
             Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
         yield_calculation_convention : str, optional
             Yield calculation convention. Defaults to value of self.yield_calculation_convention.
-        day_count_convention : str or DayCountBase, optional
-            Day count convention. Defaults to value of self.day_count_convention.
 
         Returns
         -------
@@ -1088,14 +1119,14 @@ class BulletBond:
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         ) = self._resolve_valuation_parameters(
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         )
 
         ytm, time_to_payments, price_calc = self._get_ytm_payments_price(
@@ -1126,9 +1157,9 @@ class BulletBond:
         bond_price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
         yield_calculation_convention: Optional[str] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
     ) -> float:
         """
         Calculate the convexity of the bond.
@@ -1156,12 +1187,12 @@ class BulletBond:
             Settlement date. Defaults to issue date.
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
         following_coupons_day_count : str or DayCountBase, optional
             Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
         yield_calculation_convention : str, optional
             Yield calculation convention. Defaults to value of self.yield_calculation_convention.
-        day_count_convention : str or DayCountBase, optional
-            Day count convention. Defaults to value of self.day_count_convention.
 
         Returns
         -------
@@ -1177,14 +1208,14 @@ class BulletBond:
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         ) = self._resolve_valuation_parameters(
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         )
         ytm, time_to_payments, price_calc = self._get_ytm_payments_price(
             yield_to_maturity,
@@ -1365,9 +1396,9 @@ class BulletBond:
         yield_to_maturity: float,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
         yield_calculation_convention: Optional[str] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
     ) -> float:
         """
         Calculate the price of the bond given a yield to maturity (YTM).
@@ -1388,12 +1419,12 @@ class BulletBond:
             Settlement date. Defaults to issue date.
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
         following_coupons_day_count : str or DayCountBase, optional
             Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
         yield_calculation_convention : str, optional
             Yield calculation convention. Defaults to value of self.yield_calculation_convention.
-        day_count_convention : str or DayCountBase, optional
-            Day count convention. Defaults to value of self.day_count_convention.
 
         Returns
         -------
@@ -1408,14 +1439,14 @@ class BulletBond:
         """
         (
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         ) = self._resolve_valuation_parameters(
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         )
 
         time_to_payments = self.calculate_time_to_payments(
@@ -1438,9 +1469,9 @@ class BulletBond:
         self,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
         yield_calculation_convention: Optional[str] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
     ) -> list[float]:
         """
         Return a list of all future cash flows (coupons + principal at maturity).
@@ -1451,12 +1482,12 @@ class BulletBond:
             Date from which to consider future payments. Defaults to issue date.
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
         following_coupons_day_count : str or DayCountBase, optional
             Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
         yield_calculation_convention : str, optional
             Yield calculation convention. Defaults to value of self.yield_calculation_convention.
-        day_count_convention : str or DayCountBase, optional
-            Day count convention. Defaults to value of self.day_count_convention.
 
         Returns
         -------
@@ -1471,14 +1502,14 @@ class BulletBond:
         """
         (
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         ) = self._resolve_valuation_parameters(
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         )
 
         flows = self.filter_payment_flow(
@@ -1565,9 +1596,9 @@ class BulletBond:
         yield_to_maturity: Optional[float] = None,
         bond_price: Optional[float] = None,
         adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
         yield_calculation_convention: Optional[str] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
     ) -> pd.DataFrame:
         """
         Export the bond’s cash flow schedule as a pandas DataFrame.
@@ -1597,12 +1628,12 @@ class BulletBond:
             If provided, includes bond price as a negative cash flow.
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
         following_coupons_day_count : str or DayCountBase, optional
             Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
         yield_calculation_convention : str, optional
             Yield calculation convention. Defaults to value of self.yield_calculation_convention.
-        day_count_convention : str or DayCountBase, optional
-            Day count convention. Defaults to value of self.day_count_convention.
 
         Returns
         -------
@@ -1622,14 +1653,14 @@ class BulletBond:
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         ) = self._resolve_valuation_parameters(
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         )
 
         ytm, time_to_payments, price_calc = self._get_ytm_payments_price(
@@ -1652,6 +1683,7 @@ class BulletBond:
             settlement_date,
             price_calc if valid_price_calc else None,
             adjust_to_business_days=adjust_to_business_days,
+            day_count_convention=day_count_convention,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
         )
@@ -1663,6 +1695,7 @@ class BulletBond:
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
         )
         amortization_flows = self.filter_payment_flow(
             settlement_date,
@@ -1671,6 +1704,7 @@ class BulletBond:
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
         )
         # Concat coupon_flows and amortization_flows in a single dataframe
         df = pd.concat(
@@ -1691,9 +1725,9 @@ class BulletBond:
         bond_price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
         yield_calculation_convention: Optional[str] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
     ) -> float:
         """
         Calculate the DV01 (Dollar Value of a 1 basis point) for the bond.
@@ -1709,6 +1743,12 @@ class BulletBond:
             Settlement date. Defaults to issue date.
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
 
         Returns
         -------
@@ -1724,14 +1764,14 @@ class BulletBond:
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         ) = self._resolve_valuation_parameters(
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         )
         # Resolve yield to maturity and bond price
         ytm, time_to_payments, price_calc = self._get_ytm_payments_price(
@@ -1766,9 +1806,9 @@ class BulletBond:
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         bond_price: Optional[float] = None,
         adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
         yield_calculation_convention: Optional[str] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
     ) -> None:
         """
         Visualize the cash flow schedule using matplotlib as stacked bars.
@@ -1779,6 +1819,14 @@ class BulletBond:
             Date from which to consider future payments. Defaults to issue date.
         bond_price : float, optional
             If provided, includes bond price as a negative cash flow.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
 
         Examples
         --------
@@ -1788,14 +1836,14 @@ class BulletBond:
         """
         (
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         ) = self._resolve_valuation_parameters(
             adjust_to_business_days,
+            day_count_convention,
             following_coupons_day_count,
             yield_calculation_convention,
-            day_count_convention,
         )
         df = self.to_dataframe(
             settlement_date,
@@ -1862,6 +1910,9 @@ class BulletBond:
             Dictionary with time to payment (in years) as keys and cash flow values.
         yield_to_maturity : float
             Yield to maturity as a decimal (e.g., 0.05 for 5%).
+        yield_calculation_convention : str
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+
         Returns
         -------
         float
@@ -1903,9 +1954,9 @@ class BulletBond:
         bond_price: Optional[float],
         settlement_date: Optional[Union[str, pd.Timestamp]],
         adjust_to_business_days: bool,
+        day_count_convention: DayCountBase,
         following_coupons_day_count: DayCountBase,
         yield_calculation_convention: str,
-        day_count_convention: DayCountBase,
     ) -> float:
         """
         Helper to resolve yield_to_maturity from direct input, price, or default to notional.
@@ -1964,9 +2015,9 @@ class BulletBond:
         bond_price: Optional[float],
         settlement_date: Optional[Union[str, pd.Timestamp]],
         adjust_to_business_days: bool,
+        day_count_convention: DayCountBase,
         following_coupons_day_count: DayCountBase,
         yield_calculation_convention: str,
-        day_count_convention: DayCountBase,
     ) -> tuple[float, dict[float, float], float]:
         """
         Helper to resolve ytm, time_to_payments, and price_calc for DRY.
