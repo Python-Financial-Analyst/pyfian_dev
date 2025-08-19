@@ -23,7 +23,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: BulletBond(issue_dt: Union[str, pandas.Timestamp], maturity: Union[str, pandas.Timestamp], cpn: float, cpn_freq: int, notional: float = 100, settlement_convention_t_plus: int = 1, record_date_t_minus: int = 1, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/actual-Bond', adjust_to_business_days: bool = False, following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase = '30/360', yield_calculation_convention: str = 'BEY')
+.. py:class:: BulletBond(issue_dt: Union[str, pandas.Timestamp], maturity: Union[str, pandas.Timestamp], cpn: float, cpn_freq: int, notional: float = 100, settlement_convention_t_plus: int = 1, record_date_t_minus: int = 1, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, adjust_to_business_days: bool = False, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/actual-Bond', following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase = '30/360', yield_calculation_convention: str = 'BEY')
 
    BulletBond represents a bullet bond with fixed coupon payments and principal at maturity.
    It allows for payment flow generation, valuation, yield calculations, and other bond analytics.
@@ -51,12 +51,12 @@ Module Contents
    :type yield_to_maturity: float, optional
    :param bond_price: Market price of the bond. Defaults to None.
    :type bond_price: float, optional
+   :param adjust_to_business_days: Whether to adjust dates to business days. Defaults to False.
+   :type adjust_to_business_days: bool, optional
    :param day_count_convention: Day count convention for the bond. Defaults to 'actual/actual-Bond'.
                                 It is used to calculate the day count fraction for accrued interests and time to payments.
                                 Supported conventions: '30/360', '30e/360', 'actual/actual', 'actual/360', 'actual/365', '30/365', 'actual/actual-Bond'.
    :type day_count_convention: str, optional
-   :param adjust_to_business_days: Whether to adjust dates to business days. Defaults to False.
-   :type adjust_to_business_days: bool, optional
    :param following_coupons_day_count: Day count convention for the following coupons. Defaults to '30/360', to match the common convention for bonds.
                                        Convention "actual/365" might be the more relevant for Effective Annual Yield or Continuous Compounding.
    :type following_coupons_day_count: str, optional
@@ -144,18 +144,18 @@ Module Contents
 
       :type: dict[pd.Timestamp, float]
 
-   .. attribute:: day_count_convention
-
-      Day count convention function for the bond.
-
-      :type: DayCountBase
-
    .. attribute:: adjust_to_business_days
 
       Whether to adjust dates to business days by default.
       If True, dates will be adjusted to the nearest business day.
 
       :type: bool
+
+   .. attribute:: day_count_convention
+
+      Day count convention function for the bond.
+
+      :type: DayCountBase
 
    .. attribute:: following_coupons_day_count
 
@@ -261,10 +261,10 @@ Module Contents
 
 
 
-   .. py:method:: _resolve_valuation_parameters(adjust_to_business_days: Optional[bool], following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase], yield_calculation_convention: Optional[str], day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase]) -> tuple[bool, pyfian.utils.day_count.DayCountBase, str, pyfian.utils.day_count.DayCountBase]
+   .. py:method:: _resolve_valuation_parameters(adjust_to_business_days: Optional[bool], day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase], following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase], yield_calculation_convention: Optional[str]) -> tuple[bool, pyfian.utils.day_count.DayCountBase, pyfian.utils.day_count.DayCountBase, str]
 
 
-   .. py:method:: set_settlement_date(settlement_date: Optional[Union[str, pandas.Timestamp]], reset_yield_to_maturity: bool = True, adjust_to_business_days: Optional[bool] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None) -> pandas.Timestamp
+   .. py:method:: set_settlement_date(settlement_date: Optional[Union[str, pandas.Timestamp]], reset_yield_to_maturity: bool = True, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> pandas.Timestamp
 
       Set the default settlement date for the bond.
       If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
@@ -273,6 +273,14 @@ Module Contents
       :type settlement_date: Union[str, pd.Timestamp], optional
       :param reset_yield_to_maturity: Whether to reset the yield to maturity and bond price.
       :type reset_yield_to_maturity: bool, optional
+      :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+      :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
+      :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+      :type following_coupons_day_count: str or DayCountBase, optional
+      :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+      :type yield_calculation_convention: str, optional
 
       :returns: The updated settlement date.
       :rtype: pd.Timestamp
@@ -282,7 +290,7 @@ Module Contents
 
 
 
-   .. py:method:: set_yield_to_maturity(ytm: Optional[float], settlement_date: Optional[Union[str, pandas.Timestamp, None]] = None, adjust_to_business_days: Optional[bool] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None) -> None
+   .. py:method:: set_yield_to_maturity(ytm: Optional[float], settlement_date: Optional[Union[str, pandas.Timestamp, None]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> None
 
       Set the default yield to maturity for the bond. Updates bond price accordingly.
 
@@ -290,6 +298,14 @@ Module Contents
       :type ytm: float, optional
       :param settlement_date: The settlement date to set.
       :type settlement_date: Union[str, pd.Timestamp], optional
+      :param adjust_to_business_days: Whether to adjust the settlement date to the next business day.
+      :type adjust_to_business_days: bool, optional
+      :param day_count_convention: The day count convention to use.
+      :type day_count_convention: str or DayCountBase, optional
+      :param following_coupons_day_count: The following coupons day count convention to use.
+      :type following_coupons_day_count: str or DayCountBase, optional
+      :param yield_calculation_convention: The yield calculation convention to use.
+      :type yield_calculation_convention: str, optional
 
       :raises ValueError: If the settlement date is not set when the yield to maturity is set.
       :raises If the yield to maturity is set, it will also update the bond price based on the yield.:
@@ -303,7 +319,7 @@ Module Contents
 
 
 
-   .. py:method:: set_bond_price(bond_price: Optional[float], settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None) -> None
+   .. py:method:: set_bond_price(bond_price: Optional[float], settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> None
 
       Set the default bond price for the bond. Updates yield to maturity accordingly.
 
@@ -311,6 +327,14 @@ Module Contents
       :type bond_price: float, optional
       :param settlement_date: The settlement date to set.
       :type settlement_date: Union[str, pd.Timestamp], optional
+      :param adjust_to_business_days: Whether to adjust the settlement date to the next business day.
+      :type adjust_to_business_days: bool, optional
+      :param day_count_convention: The day count convention to use.
+      :type day_count_convention: str or DayCountBase, optional
+      :param following_coupons_day_count: The following coupons day count convention to use.
+      :type following_coupons_day_count: str or DayCountBase, optional
+      :param yield_calculation_convention: The yield calculation convention to use.
+      :type yield_calculation_convention: str, optional
 
       :raises ValueError: If the settlement date is not set when the bond price is set.
       :raises If the bond price is set, it will also update the yield to maturity based on the bond price.:
@@ -364,7 +388,7 @@ Module Contents
 
 
 
-   .. py:method:: filter_payment_flow(settlement_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None, payment_flow: Optional[dict[pandas.Timestamp, float]] = None, adjust_to_business_days: Optional[bool] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None) -> dict[pandas.Timestamp, float]
+   .. py:method:: filter_payment_flow(settlement_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None, payment_flow: Optional[dict[pandas.Timestamp, float]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> dict[pandas.Timestamp, float]
 
       Filter the payment flow to include only payments after the settlement date.
 
@@ -383,12 +407,12 @@ Module Contents
       :type payment_flow: dict, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
       :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
       :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
       :type following_coupons_day_count: str or DayCountBase, optional
       :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
       :type yield_calculation_convention: str, optional
-      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
-      :type day_count_convention: str or DayCountBase, optional
 
       :returns: **cash_flows** -- Dictionary of filtered payment dates and cash flows.
       :rtype: dict
@@ -402,7 +426,7 @@ Module Contents
 
 
 
-   .. py:method:: calculate_time_to_payments(settlement_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None, adjust_to_business_days: Optional[bool] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None) -> dict[float, float]
+   .. py:method:: calculate_time_to_payments(settlement_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> dict[float, float]
 
       Calculate the time to each payment from the settlement date.
       The time is expressed in years.
@@ -424,12 +448,12 @@ Module Contents
       :type bond_price: float, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
       :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
       :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
       :type following_coupons_day_count: str or DayCountBase, optional
       :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
       :type yield_calculation_convention: str, optional
-      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
-      :type day_count_convention: str or DayCountBase, optional
 
       :returns: Dictionary with time to payment (in years) as keys and cash flow values.
       :rtype: dict
@@ -442,7 +466,7 @@ Module Contents
 
 
 
-   .. py:method:: value_with_curve(curve: Any, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None, adjust_to_business_days: Optional[bool] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None) -> tuple[float, dict[float, float]]
+   .. py:method:: value_with_curve(curve: Any, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> tuple[float, dict[float, float]]
 
       Value the bond using a discount curve.
 
@@ -493,12 +517,12 @@ Module Contents
       :type bond_price: float, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
       :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
       :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
       :type following_coupons_day_count: str or DayCountBase, optional
       :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
       :type yield_calculation_convention: str, optional
-      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
-      :type day_count_convention: str or DayCountBase, optional
 
       :returns: * **total_value** (*float*) -- Present value of the bond.
                 * **pv** (*dict*) -- Dictionary of present values for each payment.
@@ -514,7 +538,7 @@ Module Contents
 
 
 
-   .. py:method:: yield_to_maturity(bond_price: float, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, tol: float = 1e-06, max_iter: int = 100, adjust_to_business_days: Optional[bool] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None) -> float
+   .. py:method:: yield_to_maturity(bond_price: float, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, tol: float = 1e-06, max_iter: int = 100, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
 
       Estimate the yield to maturity (YTM) using the xirr function from pyfian.time_value.irr.
 
@@ -546,12 +570,12 @@ Module Contents
       :type max_iter: int, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
       :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
       :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
       :type following_coupons_day_count: str or DayCountBase, optional
       :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
       :type yield_calculation_convention: str, optional
-      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
-      :type day_count_convention: str or DayCountBase, optional
 
       :returns: **ytm** -- Estimated yield to maturity as a decimal.
       :rtype: float
@@ -566,7 +590,7 @@ Module Contents
 
 
 
-   .. py:method:: modified_duration(yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None) -> float
+   .. py:method:: modified_duration(yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
 
       Calculate modified duration of the bond.
       If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
@@ -590,12 +614,12 @@ Module Contents
       :type settlement_date: str or datetime-like, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
       :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
       :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
       :type following_coupons_day_count: str or DayCountBase, optional
       :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
       :type yield_calculation_convention: str, optional
-      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
-      :type day_count_convention: str or DayCountBase, optional
 
       :returns: **duration** -- Modified duration in years.
       :rtype: float
@@ -608,7 +632,7 @@ Module Contents
 
 
 
-   .. py:method:: convexity(yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None) -> float
+   .. py:method:: convexity(yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
 
       Calculate the convexity of the bond.
 
@@ -633,12 +657,12 @@ Module Contents
       :type settlement_date: str or datetime-like, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
       :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
       :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
       :type following_coupons_day_count: str or DayCountBase, optional
       :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
       :type yield_calculation_convention: str, optional
-      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
-      :type day_count_convention: str or DayCountBase, optional
 
       :returns: **convexity** -- Bond convexity.
       :rtype: float
@@ -740,7 +764,7 @@ Module Contents
 
 
 
-   .. py:method:: price_from_yield(yield_to_maturity: float, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None) -> float
+   .. py:method:: price_from_yield(yield_to_maturity: float, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
 
       Calculate the price of the bond given a yield to maturity (YTM).
 
@@ -758,12 +782,12 @@ Module Contents
       :type settlement_date: str or datetime-like, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
       :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
       :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
       :type following_coupons_day_count: str or DayCountBase, optional
       :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
       :type yield_calculation_convention: str, optional
-      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
-      :type day_count_convention: str or DayCountBase, optional
 
       :returns: **price** -- Price of the bond.
       :rtype: float
@@ -776,7 +800,7 @@ Module Contents
 
 
 
-   .. py:method:: cash_flows(settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None) -> list[float]
+   .. py:method:: cash_flows(settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> list[float]
 
       Return a list of all future cash flows (coupons + principal at maturity).
 
@@ -784,12 +808,12 @@ Module Contents
       :type settlement_date: str or datetime-like, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
       :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
       :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
       :type following_coupons_day_count: str or DayCountBase, optional
       :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
       :type yield_calculation_convention: str, optional
-      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
-      :type day_count_convention: str or DayCountBase, optional
 
       :returns: **flows** -- List of cash flows for each period.
       :rtype: list of float
@@ -844,7 +868,7 @@ Module Contents
 
 
 
-   .. py:method:: to_dataframe(settlement_date: Optional[Union[str, pandas.Timestamp]] = None, yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, adjust_to_business_days: Optional[bool] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None) -> pandas.DataFrame
+   .. py:method:: to_dataframe(settlement_date: Optional[Union[str, pandas.Timestamp]] = None, yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> pandas.DataFrame
 
       Export the bond’s cash flow schedule as a pandas DataFrame.
 
@@ -871,12 +895,12 @@ Module Contents
       :type bond_price: float, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
       :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
       :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
       :type following_coupons_day_count: str or DayCountBase, optional
       :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
       :type yield_calculation_convention: str, optional
-      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
-      :type day_count_convention: str or DayCountBase, optional
 
       :returns: **df** -- DataFrame with columns ['date', 'cash_flow']
       :rtype: pd.DataFrame
@@ -893,7 +917,7 @@ Module Contents
 
 
 
-   .. py:method:: dv01(yield_to_maturity: Optional[float], bond_price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None) -> float
+   .. py:method:: dv01(yield_to_maturity: Optional[float], bond_price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
 
       Calculate the DV01 (Dollar Value of a 1 basis point) for the bond.
       If neither yield_to_maturity nor bond_price is provided, it is assumed that the clean price is equal to the notional.
@@ -906,6 +930,12 @@ Module Contents
       :type settlement_date: str or datetime-like, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
       :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
+      :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+      :type following_coupons_day_count: str or DayCountBase, optional
+      :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+      :type yield_calculation_convention: str, optional
 
       :returns: **dv01** -- The change in price for a 1 basis point (0.0001) change in yield.
       :rtype: float
@@ -918,7 +948,7 @@ Module Contents
 
 
 
-   .. py:method:: plot_cash_flows(settlement_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None, adjust_to_business_days: Optional[bool] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None) -> None
+   .. py:method:: plot_cash_flows(settlement_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> None
 
       Visualize the cash flow schedule using matplotlib as stacked bars.
 
@@ -926,6 +956,14 @@ Module Contents
       :type settlement_date: str or datetime-like, optional
       :param bond_price: If provided, includes bond price as a negative cash flow.
       :type bond_price: float, optional
+      :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+      :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
+      :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+      :type following_coupons_day_count: str or DayCountBase, optional
+      :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+      :type yield_calculation_convention: str, optional
 
       .. rubric:: Examples
 
@@ -957,6 +995,8 @@ Module Contents
       :type time_to_payments: dict
       :param yield_to_maturity: Yield to maturity as a decimal (e.g., 0.05 for 5%).
       :type yield_to_maturity: float
+      :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+      :type yield_calculation_convention: str
 
       :returns: Price of the bond.
       :rtype: float
@@ -971,13 +1011,13 @@ Module Contents
 
 
 
-   .. py:method:: _resolve_ytm(yield_to_maturity: Optional[float], bond_price: Optional[float], settlement_date: Optional[Union[str, pandas.Timestamp]], adjust_to_business_days: bool, following_coupons_day_count: pyfian.utils.day_count.DayCountBase, yield_calculation_convention: str, day_count_convention: pyfian.utils.day_count.DayCountBase) -> float
+   .. py:method:: _resolve_ytm(yield_to_maturity: Optional[float], bond_price: Optional[float], settlement_date: Optional[Union[str, pandas.Timestamp]], adjust_to_business_days: bool, day_count_convention: pyfian.utils.day_count.DayCountBase, following_coupons_day_count: pyfian.utils.day_count.DayCountBase, yield_calculation_convention: str) -> float
 
       Helper to resolve yield_to_maturity from direct input, price, or default to notional.
 
 
 
-   .. py:method:: _get_ytm_payments_price(yield_to_maturity: Optional[float], bond_price: Optional[float], settlement_date: Optional[Union[str, pandas.Timestamp]], adjust_to_business_days: bool, following_coupons_day_count: pyfian.utils.day_count.DayCountBase, yield_calculation_convention: str, day_count_convention: pyfian.utils.day_count.DayCountBase) -> tuple[float, dict[float, float], float]
+   .. py:method:: _get_ytm_payments_price(yield_to_maturity: Optional[float], bond_price: Optional[float], settlement_date: Optional[Union[str, pandas.Timestamp]], adjust_to_business_days: bool, day_count_convention: pyfian.utils.day_count.DayCountBase, following_coupons_day_count: pyfian.utils.day_count.DayCountBase, yield_calculation_convention: str) -> tuple[float, dict[float, float], float]
 
       Helper to resolve ytm, time_to_payments, and price_calc for DRY.
       Returns (ytm, time_to_payments, price_calc)

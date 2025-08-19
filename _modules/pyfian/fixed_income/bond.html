@@ -126,12 +126,12 @@
 <span class="sd">        Yield to maturity of the bond. Set in decimal, e.g., 0.05 for 5%. Defaults to None.</span>
 <span class="sd">    bond_price : float, optional</span>
 <span class="sd">        Market price of the bond. Defaults to None.</span>
+<span class="sd">    adjust_to_business_days : bool, optional</span>
+<span class="sd">        Whether to adjust dates to business days. Defaults to False.</span>
 <span class="sd">    day_count_convention : str, optional</span>
 <span class="sd">        Day count convention for the bond. Defaults to &#39;actual/actual-Bond&#39;.</span>
 <span class="sd">        It is used to calculate the day count fraction for accrued interests and time to payments.</span>
 <span class="sd">        Supported conventions: &#39;30/360&#39;, &#39;30e/360&#39;, &#39;actual/actual&#39;, &#39;actual/360&#39;, &#39;actual/365&#39;, &#39;30/365&#39;, &#39;actual/actual-Bond&#39;.</span>
-<span class="sd">    adjust_to_business_days : bool, optional</span>
-<span class="sd">        Whether to adjust dates to business days. Defaults to False.</span>
 <span class="sd">    following_coupons_day_count : str, optional</span>
 <span class="sd">        Day count convention for the following coupons. Defaults to &#39;30/360&#39;, to match the common convention for bonds.</span>
 <span class="sd">        Convention &quot;actual/365&quot; might be the more relevant for Effective Annual Yield or Continuous Compounding.</span>
@@ -172,11 +172,11 @@
 <span class="sd">        Coupon payment schedule for the bond.</span>
 <span class="sd">    amortization_flow : dict[pd.Timestamp, float]</span>
 <span class="sd">        Amortization payment schedule for the bond.</span>
-<span class="sd">    day_count_convention : DayCountBase</span>
-<span class="sd">        Day count convention function for the bond.</span>
 <span class="sd">    adjust_to_business_days : bool</span>
 <span class="sd">        Whether to adjust dates to business days by default.</span>
 <span class="sd">        If True, dates will be adjusted to the nearest business day.</span>
+<span class="sd">    day_count_convention : DayCountBase</span>
+<span class="sd">        Day count convention function for the bond.</span>
 <span class="sd">    following_coupons_day_count : DayCountBase</span>
 <span class="sd">        Day count convention for the following coupons. Defaults to &#39;30/360&#39;, to match the common convention for bonds.</span>
 <span class="sd">        Convention &quot;actual/365&quot; might be the more relevant for Effective Annual Yield or Continuous Compounding.</span>
@@ -203,8 +203,8 @@
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span> <span class="o">=</span> <span class="s2">&quot;actual/actual-Bond&quot;</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span> <span class="o">=</span> <span class="s2">&quot;actual/actual-Bond&quot;</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span> <span class="o">=</span> <span class="s2">&quot;30/360&quot;</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;BEY&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -270,7 +270,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_bond_price</span><span class="p">(</span><span class="n">bond_price</span><span class="o">=</span><span class="n">bond_price</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_settlement_date</span><span class="p">(</span>
+                <span class="n">settlement_date</span><span class="p">,</span>
+                <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
+                <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
+                <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
+                <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">yield_to_maturity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Throw error if yield_to_maturity is not None and settlement_date is None</span>
@@ -282,6 +288,7 @@
                 <span class="n">yield_to_maturity</span><span class="p">,</span>
                 <span class="n">settlement_date</span><span class="p">,</span>
                 <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
+                <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
                 <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
                 <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
             <span class="p">)</span>
@@ -344,10 +351,10 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_valuation_parameters</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">],</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">],</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">DayCountBase</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">adjust_to_business_days</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">adjust_to_business_days</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adjust_to_business_days</span>
         <span class="k">if</span> <span class="n">following_coupons_day_count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -365,9 +372,9 @@
 
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
@@ -378,9 +385,9 @@
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]],</span>
         <span class="n">reset_yield_to_maturity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the default settlement date for the bond.</span>
@@ -392,6 +399,14 @@
 <span class="sd">            The settlement date to set.</span>
 <span class="sd">        reset_yield_to_maturity : bool, optional</span>
 <span class="sd">            Whether to reset the yield to maturity and bond price.</span>
+<span class="sd">        adjust_to_business_days : bool, optional</span>
+<span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
+<span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
+<span class="sd">        yield_calculation_convention : str, optional</span>
+<span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -407,14 +422,14 @@
         <span class="n">old_settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span>
         <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -436,9 +451,9 @@
                             <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span><span class="p">,</span>
                             <span class="n">settlement_date</span><span class="p">,</span>
                             <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
+                            <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
                             <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
                             <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
-                            <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
                         <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
@@ -457,9 +472,9 @@
         <span class="n">ytm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the default yield to maturity for the bond. Updates bond price accordingly.</span>
@@ -470,6 +485,14 @@
 <span class="sd">            The yield to maturity to set.</span>
 <span class="sd">        settlement_date : Union[str, pd.Timestamp], optional</span>
 <span class="sd">            The settlement date to set.</span>
+<span class="sd">        adjust_to_business_days : bool, optional</span>
+<span class="sd">            Whether to adjust the settlement date to the next business day.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            The day count convention to use.</span>
+<span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
+<span class="sd">            The following coupons day count convention to use.</span>
+<span class="sd">        yield_calculation_convention : str, optional</span>
+<span class="sd">            The yield calculation convention to use.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -479,26 +502,25 @@
 <span class="sd">        If the yield to maturity is set, it will also update the bond price based on the yield.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span> <span class="o">=</span> <span class="n">ytm</span>
-
         <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_settlement_date</span><span class="p">(</span>
                 <span class="n">settlement_date</span><span class="p">,</span>
                 <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
+                <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
                 <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
                 <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
-                <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="c1"># Since ytm is set, update bond price</span>
         <span class="k">if</span> <span class="n">ytm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -539,9 +561,9 @@
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the default bond price for the bond. Updates yield to maturity accordingly.</span>
@@ -552,6 +574,15 @@
 <span class="sd">            The bond price to set.</span>
 <span class="sd">        settlement_date : Union[str, pd.Timestamp], optional</span>
 <span class="sd">            The settlement date to set.</span>
+<span class="sd">        adjust_to_business_days : bool, optional</span>
+<span class="sd">            Whether to adjust the settlement date to the next business day.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            The day count convention to use.</span>
+<span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
+<span class="sd">            The following coupons day count convention to use.</span>
+<span class="sd">        yield_calculation_convention : str, optional</span>
+<span class="sd">            The yield calculation convention to use.</span>
+
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
@@ -563,14 +594,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_bond_price</span> <span class="o">=</span> <span class="n">bond_price</span>
         <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">settlement_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -723,9 +754,9 @@
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">payment_flow</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Filter the payment flow to include only payments after the settlement date.</span>
@@ -747,12 +778,12 @@
 <span class="sd">            Dictionary of payment dates and cash flows. If not provided, uses the bond&#39;s payment flow.</span>
 <span class="sd">        adjust_to_business_days : bool, optional</span>
 <span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 <span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
 <span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
 <span class="sd">        yield_calculation_convention : str, optional</span>
 <span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
-<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
-<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -769,14 +800,14 @@
         <span class="n">maturity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maturity</span>
         <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">payment_flow</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -826,9 +857,9 @@
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the time to each payment from the settlement date.</span>
@@ -853,12 +884,12 @@
 <span class="sd">            If provided, adds bond price as a negative cash flow.</span>
 <span class="sd">        adjust_to_business_days : bool, optional</span>
 <span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 <span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
 <span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
 <span class="sd">        yield_calculation_convention : str, optional</span>
 <span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
-<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
-<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -874,14 +905,14 @@
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">flujos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span>
@@ -934,9 +965,9 @@
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Value the bond using a discount curve.</span>
@@ -990,12 +1021,12 @@
 <span class="sd">            If provided, includes bond price as a negative cash flow.</span>
 <span class="sd">        adjust_to_business_days : bool, optional</span>
 <span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 <span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
 <span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
 <span class="sd">        yield_calculation_convention : str, optional</span>
 <span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
-<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
-<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1015,14 +1046,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">time_to_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_time_to_payments</span><span class="p">(</span>
@@ -1046,9 +1077,9 @@
         <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
         <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Estimate the yield to maturity (YTM) using the xirr function from pyfian.time_value.irr.</span>
@@ -1083,12 +1114,12 @@
 <span class="sd">            Maximum number of iterations (default is 100).</span>
 <span class="sd">        adjust_to_business_days : bool, optional</span>
 <span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 <span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
 <span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
 <span class="sd">        yield_calculation_convention : str, optional</span>
 <span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
-<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
-<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1109,14 +1140,14 @@
         <span class="c1"># Prepare cash flows and dates</span>
         <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">times_cashflows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_time_to_payments</span><span class="p">(</span>
             <span class="n">settlement_date</span><span class="p">,</span>
@@ -1162,9 +1193,9 @@
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate modified duration of the bond.</span>
@@ -1191,12 +1222,12 @@
 <span class="sd">            Settlement date. Defaults to issue date.</span>
 <span class="sd">        adjust_to_business_days : bool, optional</span>
 <span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 <span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
 <span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
 <span class="sd">        yield_calculation_convention : str, optional</span>
 <span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
-<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
-<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1212,14 +1243,14 @@
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">ytm</span><span class="p">,</span> <span class="n">time_to_payments</span><span class="p">,</span> <span class="n">price_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ytm_payments_price</span><span class="p">(</span>
@@ -1253,9 +1284,9 @@
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the convexity of the bond.</span>
@@ -1283,12 +1314,12 @@
 <span class="sd">            Settlement date. Defaults to issue date.</span>
 <span class="sd">        adjust_to_business_days : bool, optional</span>
 <span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 <span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
 <span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
 <span class="sd">        yield_calculation_convention : str, optional</span>
 <span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
-<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
-<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1304,14 +1335,14 @@
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">ytm</span><span class="p">,</span> <span class="n">time_to_payments</span><span class="p">,</span> <span class="n">price_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ytm_payments_price</span><span class="p">(</span>
             <span class="n">yield_to_maturity</span><span class="p">,</span>
@@ -1504,9 +1535,9 @@
         <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the price of the bond given a yield to maturity (YTM).</span>
@@ -1527,12 +1558,12 @@
 <span class="sd">            Settlement date. Defaults to issue date.</span>
 <span class="sd">        adjust_to_business_days : bool, optional</span>
 <span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 <span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
 <span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
 <span class="sd">        yield_calculation_convention : str, optional</span>
 <span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
-<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
-<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1547,14 +1578,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">time_to_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_time_to_payments</span><span class="p">(</span>
@@ -1580,9 +1611,9 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a list of all future cash flows (coupons + principal at maturity).</span>
@@ -1593,12 +1624,12 @@
 <span class="sd">            Date from which to consider future payments. Defaults to issue date.</span>
 <span class="sd">        adjust_to_business_days : bool, optional</span>
 <span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 <span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
 <span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
 <span class="sd">        yield_calculation_convention : str, optional</span>
 <span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
-<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
-<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1613,14 +1644,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span>
@@ -1716,9 +1747,9 @@
         <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Export the bond’s cash flow schedule as a pandas DataFrame.</span>
@@ -1748,12 +1779,12 @@
 <span class="sd">            If provided, includes bond price as a negative cash flow.</span>
 <span class="sd">        adjust_to_business_days : bool, optional</span>
 <span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 <span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
 <span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
 <span class="sd">        yield_calculation_convention : str, optional</span>
 <span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
-<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
-<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1773,14 +1804,14 @@
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">ytm</span><span class="p">,</span> <span class="n">time_to_payments</span><span class="p">,</span> <span class="n">price_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ytm_payments_price</span><span class="p">(</span>
@@ -1803,6 +1834,7 @@
             <span class="n">settlement_date</span><span class="p">,</span>
             <span class="n">price_calc</span> <span class="k">if</span> <span class="n">valid_price_calc</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
         <span class="p">)</span>
@@ -1814,6 +1846,7 @@
             <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">amortization_flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span>
             <span class="n">settlement_date</span><span class="p">,</span>
@@ -1822,6 +1855,7 @@
             <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="c1"># Concat coupon_flows and amortization_flows in a single dataframe</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
@@ -1845,9 +1879,9 @@
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the DV01 (Dollar Value of a 1 basis point) for the bond.</span>
@@ -1863,6 +1897,12 @@
 <span class="sd">            Settlement date. Defaults to issue date.</span>
 <span class="sd">        adjust_to_business_days : bool, optional</span>
 <span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
+<span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
+<span class="sd">        yield_calculation_convention : str, optional</span>
+<span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1878,14 +1918,14 @@
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="c1"># Resolve yield to maturity and bond price</span>
         <span class="n">ytm</span><span class="p">,</span> <span class="n">time_to_payments</span><span class="p">,</span> <span class="n">price_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ytm_payments_price</span><span class="p">(</span>
@@ -1923,9 +1963,9 @@
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Visualize the cash flow schedule using matplotlib as stacked bars.</span>
@@ -1936,6 +1976,14 @@
 <span class="sd">            Date from which to consider future payments. Defaults to issue date.</span>
 <span class="sd">        bond_price : float, optional</span>
 <span class="sd">            If provided, includes bond price as a negative cash flow.</span>
+<span class="sd">        adjust_to_business_days : bool, optional</span>
+<span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
+<span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
+<span class="sd">        yield_calculation_convention : str, optional</span>
+<span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -1945,14 +1993,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">(</span>
             <span class="n">settlement_date</span><span class="p">,</span>
@@ -2025,6 +2073,9 @@
 <span class="sd">            Dictionary with time to payment (in years) as keys and cash flow values.</span>
 <span class="sd">        yield_to_maturity : float</span>
 <span class="sd">            Yield to maturity as a decimal (e.g., 0.05 for 5%).</span>
+<span class="sd">        yield_calculation_convention : str</span>
+<span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
@@ -2072,9 +2123,9 @@
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]],</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">DayCountBase</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">DayCountBase</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">DayCountBase</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper to resolve yield_to_maturity from direct input, price, or default to notional.</span>
@@ -2136,9 +2187,9 @@
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]],</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">DayCountBase</span><span class="p">,</span>
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">DayCountBase</span><span class="p">,</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">DayCountBase</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper to resolve ytm, time_to_payments, and price_calc for DRY.</span>
