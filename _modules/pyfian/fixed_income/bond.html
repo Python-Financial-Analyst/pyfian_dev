@@ -84,14 +84,16 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dateutil.relativedelta</span><span class="w"> </span><span class="kn">import</span> <span class="n">relativedelta</span>  <span class="c1"># type: ignore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">optimize</span>  <span class="c1"># type: ignore</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.irr</span><span class="w"> </span><span class="kn">import</span> <span class="n">xirr_base</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.utils.day_count</span><span class="w"> </span><span class="kn">import</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="n">get_day_count_convention</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.base_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">YieldCurveBase</span>
 
 
 <div class="viewcode-block" id="BulletBond">
@@ -357,6 +359,10 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">adjust_to_business_days</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">adjust_to_business_days</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adjust_to_business_days</span>
+        <span class="k">if</span> <span class="n">day_count_convention</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">day_count_convention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">day_count_convention</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">day_count_convention</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">day_count_convention</span> <span class="o">=</span> <span class="n">get_day_count_convention</span><span class="p">(</span><span class="n">day_count_convention</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">following_coupons_day_count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">following_coupons_day_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">following_coupons_day_count</span>
         <span class="k">else</span><span class="p">:</span>
@@ -365,10 +371,6 @@
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">yield_calculation_convention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yield_calculation_convention</span>
-        <span class="k">if</span> <span class="n">day_count_convention</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">day_count_convention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">day_count_convention</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">day_count_convention</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">day_count_convention</span> <span class="o">=</span> <span class="n">get_day_count_convention</span><span class="p">(</span><span class="n">day_count_convention</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
@@ -961,7 +963,7 @@
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.value_with_curve">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">value_with_curve</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">curve</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">curve</span><span class="p">:</span> <span class="n">YieldCurveBase</span><span class="p">,</span>
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1066,6 +1068,285 @@
         <span class="p">)</span>
         <span class="n">pv</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="p">:</span> <span class="n">curve</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">value</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">time_to_payments</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">pv</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">pv</span></div>
+
+
+<div class="viewcode-block" id="BulletBond.g_spread">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.g_spread">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">g_spread</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">benchmark_ytm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">benchmark_curve</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">YieldCurveBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the G-spread of the bond relative to a benchmark yield.</span>
+
+<span class="sd">        The benchmark yield is the yield of a government bond that matches the maturity of the bond.</span>
+
+<span class="sd">        If a benchmark curve is provided, the benchmark yield will be derived from the curve.</span>
+
+<span class="sd">        G-spread = Bond YTM - Benchmark YTM</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        benchmark_ytm : float</span>
+<span class="sd">            Yield to maturity of the government benchmark bond (in decimal, e.g., 0.03 for 3%).</span>
+<span class="sd">        benchmark_curve : YieldCurveBase</span>
+<span class="sd">            The benchmark yield curve to use for the G-spread calculation.</span>
+<span class="sd">        yield_to_maturity : float, optional</span>
+<span class="sd">            Yield to maturity of the bond. Used to estimate YTM if not set.</span>
+<span class="sd">        bond_price : float, optional</span>
+<span class="sd">            Price of the bond. Used to estimate YTM if not set.</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
+<span class="sd">            Settlement date. Defaults to issue date.</span>
+<span class="sd">        adjust_to_business_days : bool, optional</span>
+<span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
+<span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
+<span class="sd">        yield_calculation_convention : str, optional</span>
+<span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        g_spread : float</span>
+<span class="sd">            The G-spread in decimal (e.g., 0.0125 for 1.25%).</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; bond = BulletBond(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
+<span class="sd">        &gt;&gt;&gt; bond.g_spread(benchmark_ytm=0.03, bond_price=102)</span>
+<span class="sd">        0.0185</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
+        <span class="p">(</span>
+            <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
+            <span class="n">following_coupons_day_count</span><span class="p">,</span>
+            <span class="n">yield_calculation_convention</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
+            <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
+            <span class="n">following_coupons_day_count</span><span class="p">,</span>
+            <span class="n">yield_calculation_convention</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">benchmark_ytm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">benchmark_curve</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">benchmark_ytm</span> <span class="o">=</span> <span class="n">benchmark_curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span>
+                    <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span><span class="p">,</span>
+                    <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Either benchmark_ytm or benchmark_curve must be provided.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">ytm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_ytm</span><span class="p">(</span>
+            <span class="n">yield_to_maturity</span><span class="p">,</span>
+            <span class="n">bond_price</span><span class="p">,</span>
+            <span class="n">settlement_date</span><span class="p">,</span>
+            <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
+            <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ytm</span> <span class="o">-</span> <span class="n">benchmark_ytm</span></div>
+
+
+<div class="viewcode-block" id="BulletBond.i_spread">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.i_spread">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">i_spread</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">benchmark_curve</span><span class="p">:</span> <span class="n">YieldCurveBase</span><span class="p">,</span>
+        <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the I-spread of the bond relative to a benchmark yield curve.</span>
+
+<span class="sd">        The I-spread is the difference between the bond&#39;s yield and the swap rate for the same maturity.</span>
+
+<span class="sd">        The benchmark swap curve must be provided.</span>
+
+<span class="sd">        I-spread = Bond YTM - Benchmark Swap Rate</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        benchmark_curve : YieldCurveBase, optional</span>
+<span class="sd">            The benchmark yield curve to use for the I-spread calculation.</span>
+<span class="sd">        yield_to_maturity : float, optional</span>
+<span class="sd">            Yield to maturity of the bond. Used to estimate YTM if not set.</span>
+<span class="sd">        bond_price : float, optional</span>
+<span class="sd">            Price of the bond. Used to estimate YTM if not set.</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
+<span class="sd">            Settlement date. Defaults to issue date.</span>
+<span class="sd">        adjust_to_business_days : bool, optional</span>
+<span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
+<span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
+<span class="sd">        yield_calculation_convention : str, optional</span>
+<span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        i_spread : float</span>
+<span class="sd">            The I-spread in decimal (e.g., 0.0125 for 1.25%).</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; bond = BulletBond(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
+<span class="sd">        &gt;&gt;&gt; bond.i_spread(benchmark_curve=swap_curve)</span>
+<span class="sd">        0.0185</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
+        <span class="p">(</span>
+            <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
+            <span class="n">following_coupons_day_count</span><span class="p">,</span>
+            <span class="n">yield_calculation_convention</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
+            <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
+            <span class="n">following_coupons_day_count</span><span class="p">,</span>
+            <span class="n">yield_calculation_convention</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">benchmark_ytm</span> <span class="o">=</span> <span class="n">benchmark_curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span>
+            <span class="n">date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span><span class="p">,</span>
+            <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">ytm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_ytm</span><span class="p">(</span>
+            <span class="n">yield_to_maturity</span><span class="p">,</span>
+            <span class="n">bond_price</span><span class="p">,</span>
+            <span class="n">settlement_date</span><span class="p">,</span>
+            <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
+            <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ytm</span> <span class="o">-</span> <span class="n">benchmark_ytm</span></div>
+
+
+<div class="viewcode-block" id="BulletBond.z_spread">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/bond/index.html#pyfian.fixed_income.bond.BulletBond.z_spread">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">z_spread</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">benchmark_curve</span><span class="p">:</span> <span class="n">YieldCurveBase</span><span class="p">,</span>
+        <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the Z-spread of the bond relative to a benchmark yield curve.</span>
+
+<span class="sd">        The Z-spread is the constant spread that, when added to the benchmark yield curve, makes the present value of the bond&#39;s cash flows equal to its market price.</span>
+
+<span class="sd">        The benchmark curve must be provided.</span>
+
+<span class="sd">        The Z-spread is calculated by solving the equation:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            P = \\sum_{t=1}^{T} \\frac{C_t}{(1 + YTM + Z)^{(t+1)}}</span>
+
+<span class="sd">        where:</span>
+
+<span class="sd">        - :math:`P` is the price of the bond</span>
+<span class="sd">        - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date</span>
+<span class="sd">        - :math:`YTM` is the yield to maturity</span>
+<span class="sd">        - :math:`T` is the total number of periods</span>
+<span class="sd">        - :math:`Z` is the Z-spread</span>
+
+<span class="sd">        The times to payments are calculated from the settlement date to each payment date and need not be integer values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        benchmark_curve : YieldCurveBase, optional</span>
+<span class="sd">            The benchmark yield curve to use for the Z-spread calculation.</span>
+<span class="sd">        yield_to_maturity : float, optional</span>
+<span class="sd">            Yield to maturity of the bond. Used to estimate YTM if not set.</span>
+<span class="sd">        bond_price : float, optional</span>
+<span class="sd">            Price of the bond. Used to estimate YTM if not set.</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
+<span class="sd">            Settlement date. Defaults to issue date.</span>
+<span class="sd">        adjust_to_business_days : bool, optional</span>
+<span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
+<span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
+<span class="sd">        yield_calculation_convention : str, optional</span>
+<span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        z_spread : float</span>
+<span class="sd">            The Z-spread in decimal (e.g., 0.0125 for 1.25%).</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; bond = BulletBond(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2)</span>
+<span class="sd">        &gt;&gt;&gt; bond.z_spread(benchmark_curve=FlatCurveBEY(0.05, &#39;2020-01-01&#39;))</span>
+<span class="sd">        0.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
+        <span class="p">(</span>
+            <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
+            <span class="n">following_coupons_day_count</span><span class="p">,</span>
+            <span class="n">yield_calculation_convention</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_valuation_parameters</span><span class="p">(</span>
+            <span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="p">,</span>
+            <span class="n">following_coupons_day_count</span><span class="p">,</span>
+            <span class="n">yield_calculation_convention</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># benchmark_ytm = benchmark_curve.date_rate(date=self.maturity, yield_calculation_convention=yield_calculation_convention)</span>
+        <span class="n">ytm</span><span class="p">,</span> <span class="n">time_to_payments</span><span class="p">,</span> <span class="n">price_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ytm_payments_price</span><span class="p">(</span>
+            <span class="n">yield_to_maturity</span><span class="p">,</span>
+            <span class="n">bond_price</span><span class="p">,</span>
+            <span class="n">settlement_date</span><span class="p">,</span>
+            <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
+            <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_price_difference</span><span class="p">(</span><span class="n">z_spread</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="nb">sum</span><span class="p">(</span>
+                    <span class="n">benchmark_curve</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">z_spread</span><span class="p">)</span> <span class="o">*</span> <span class="n">value</span>
+                    <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">time_to_payments</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="p">)</span>
+                <span class="o">-</span> <span class="n">price_calc</span>
+            <span class="p">)</span>
+
+        <span class="c1"># use scipy to target _price_difference equal to 0</span>
+        <span class="n">z_spread</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">root_scalar</span><span class="p">(</span><span class="n">_price_difference</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;newton&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">root</span>
+
+        <span class="k">return</span> <span class="n">z_spread</span><span class="o">.</span><span class="n">root</span></div>
 
 
 <div class="viewcode-block" id="BulletBond.yield_to_maturity">

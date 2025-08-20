@@ -1,0 +1,57 @@
+base_curve
+==========
+
+.. py:module:: base_curve
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   base_curve.YieldCurveBase
+
+
+Module Contents
+---------------
+
+.. py:class:: YieldCurveBase
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   Abstract base class for yield curves.
+
+
+   .. py:method:: discount_t(t: float, spread: float = 0) -> float
+      :abstractmethod:
+
+
+      Discount a cash flow by time t (in years).
+
+
+
+   .. py:method:: discount_date(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
+      :abstractmethod:
+
+
+      Discount a cash flow by a target date.
+
+
+
+   .. py:method:: __call__(t: float, yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+      :abstractmethod:
+
+
+      Return the rate at time horizon t (in years).
+
+
+
+   .. py:method:: date_rate(date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+      :abstractmethod:
+
+
+      Return the rate at a specified date.
+
+
+

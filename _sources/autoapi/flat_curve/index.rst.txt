@@ -19,14 +19,15 @@ Classes
 
    flat_curve.FlatCurveLog
    flat_curve.FlatCurveAER
+   flat_curve.FlatCurveBEY
 
 
 Module Contents
 ---------------
 
-.. py:class:: FlatCurveLog(log_rate: float, curve_date: Union[str, pandas.Timestamp])
+.. py:class:: FlatCurveLog(log_rate: float, curve_date: Union[str, pandas.Timestamp], yield_calculation_convention: str = 'Continuous')
 
-   Bases: :py:obj:`pyfian.visualization.mixins.YieldCurvePlotMixin`
+   Bases: :py:obj:`pyfian.visualization.mixins.YieldCurvePlotMixin`, :py:obj:`pyfian.yield_curves.base_curve.YieldCurveBase`
 
 
    FlatCurveLog represents a flat curve with continuously compounded (log) rates.
@@ -47,48 +48,78 @@ Module Contents
 
 
 
-   .. py:method:: discount_t(t: float) -> float
+   .. py:attribute:: yield_calculation_convention
+      :type:  str
+      :value: 'Continuous'
+
+
+
+   .. py:method:: discount_t(t: float, spread: float = 0) -> float
 
       Discount a cash flow by time t (in years) using log rate.
 
+      The spread is added to the yield in the original curve.
+
       :param t: Time in years.
       :type t: float
+      :param spread: Spread to add to the discount rate. Defaults to 0.
+      :type spread: float, optional
 
       :returns: Discount factor.
       :rtype: float
 
 
 
-   .. py:method:: discount_date(date: Union[str, pandas.Timestamp]) -> float
+   .. py:method:: discount_date(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
 
       Discount a cash flow by a target date using log rate.
 
+      The spread is added to the yield in the original curve.
+
       :param date: Target date for discounting.
       :type date: str or datetime-like
+      :param spread: Spread to add to the discount rate. Defaults to 0.
+      :type spread: float, optional
 
       :returns: Discount factor.
       :rtype: float
 
 
 
-   .. py:method:: __call__(t: float) -> float
+   .. py:method:: __call__(t: float, yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
 
       Return the log rate at time horizon t (in years).
 
+      The spread is added to the yield in the original curve.
+
+      yield_calculation_convention can be used to transform the yield to different conventions.
+
       :param t: Time in years.
       :type t: float
+      :param yield_calculation_convention: Yield calculation convention to use. Must be one of "Annual", "BEY", "Continuous".
+      :type yield_calculation_convention: str, optional
+      :param spread: Spread to add to the yield. Defaults to 0.
+      :type spread: float, optional
 
       :returns: Log rate (continuously compounded).
       :rtype: float
 
 
 
-   .. py:method:: date_rate(date: Union[str, pandas.Timestamp]) -> float
+   .. py:method:: date_rate(date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
 
       Return the log rate at a specified date.
 
+      The spread is added to the yield in the original curve.
+
+      yield_calculation_convention can be used to transform the yield to different conventions.
+
       :param date: Target date for rate.
       :type date: str or datetime-like
+      :param yield_calculation_convention: Yield calculation convention to use. Must be one of "Annual", "BEY", "Continuous".
+      :type yield_calculation_convention: str, optional
+      :param spread: Spread to add to the yield. Defaults to 0.
+      :type spread: float, optional
 
       :returns: Log rate (continuously compounded).
       :rtype: float
@@ -100,7 +131,7 @@ Module Contents
 
 .. py:class:: FlatCurveAER(aer: float, curve_date: Union[str, pandas.Timestamp])
 
-   Bases: :py:obj:`pyfian.visualization.mixins.YieldCurvePlotMixin`
+   Bases: :py:obj:`pyfian.visualization.mixins.YieldCurvePlotMixin`, :py:obj:`pyfian.yield_curves.base_curve.YieldCurveBase`
 
 
    FlatCurveAER represents a flat curve with annual effective rates (AER).
@@ -121,48 +152,180 @@ Module Contents
 
 
 
-   .. py:method:: discount_t(t: float) -> float
+   .. py:attribute:: yield_calculation_convention
+      :type:  str
+      :value: 'Annual'
+
+
+
+   .. py:method:: discount_t(t: float, spread: float = 0) -> float
 
       Discount a cash flow by time t (in years) using annual effective rate.
 
+      The spread is added to the yield in the original curve.
+
       :param t: Time in years.
       :type t: float
+      :param spread: Spread to add to the yield. Defaults to 0.
+      :type spread: float, optional
 
       :returns: Discount factor.
       :rtype: float
 
 
 
-   .. py:method:: discount_date(date: Union[str, pandas.Timestamp]) -> float
+   .. py:method:: discount_date(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
 
       Discount a cash flow by a target date using annual effective rate.
 
+      The spread is added to the yield in the original curve.
+
       :param date: Target date for discounting.
       :type date: str or datetime-like
+      :param spread: Spread to add to the yield. Defaults to 0.
+      :type spread: float, optional
 
       :returns: Discount factor.
       :rtype: float
 
 
 
-   .. py:method:: __call__(t: float) -> float
+   .. py:method:: __call__(t: float, yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
 
       Return the annual effective rate at time horizon t (in years).
 
+      The spread is added to the yield in the original curve.
+
+      yield_calculation_convention can be used to transform the yield to different conventions.
+
       :param t: Time in years.
       :type t: float
+      :param yield_calculation_convention: Yield calculation convention to use. Must be one of "Annual", "BEY", "Continuous".
+      :type yield_calculation_convention: str, optional
+      :param spread: Spread to add to the yield. Defaults to 0.
+      :type spread: float, optional
 
       :returns: Annual effective rate.
       :rtype: float
 
 
 
-   .. py:method:: date_rate(date: Union[str, pandas.Timestamp]) -> float
+   .. py:method:: date_rate(date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
 
       Return the annual effective rate at a specified date.
 
+      The spread is added to the yield in the original curve.
+
+      yield_calculation_convention can be used to transform the yield to different conventions.
+
       :param date: Target date for rate.
       :type date: str or datetime-like
+      :param yield_calculation_convention: Yield calculation convention to use. Must be one of "Annual", "BEY", "Continuous".
+      :type yield_calculation_convention: str, optional
+      :param spread: Spread to add to the yield. Defaults to 0.
+      :type spread: float, optional
+
+      :returns: Annual effective rate.
+      :rtype: float
+
+
+
+   .. py:method:: __repr__() -> str
+
+
+.. py:class:: FlatCurveBEY(bey: float, curve_date: Union[str, pandas.Timestamp])
+
+   Bases: :py:obj:`pyfian.visualization.mixins.YieldCurvePlotMixin`, :py:obj:`pyfian.yield_curves.base_curve.YieldCurveBase`
+
+
+   FlatCurveBEY represents a flat curve with bond equivalent yields (BEY).
+
+   :param bey: Bond equivalent yield (as decimal, e.g. 0.05 for 5%).
+   :type bey: float
+   :param curve_date: Date of the curve.
+   :type curve_date: str or datetime-like
+
+
+   .. py:attribute:: bey
+      :type:  float
+
+
+   .. py:attribute:: curve_date
+      :type:  pandas.Timestamp
+      :value: None
+
+
+
+   .. py:attribute:: yield_calculation_convention
+      :type:  str
+      :value: 'Annual'
+
+
+
+   .. py:method:: discount_t(t: float, spread: float = 0) -> float
+
+      Discount a cash flow by time t (in years) using annual effective rate.
+
+      The spread is added to the yield in the original curve.
+
+      :param t: Time in years.
+      :type t: float
+      :param spread: Spread to add to the discount rate. Defaults to 0.
+      :type spread: float, optional
+
+      :returns: Discount factor.
+      :rtype: float
+
+
+
+   .. py:method:: discount_date(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
+
+      Discount a cash flow by a target date using annual effective rate.
+
+      The spread is added to the yield in the original curve.
+
+      :param date: Target date for discounting.
+      :type date: str or datetime-like
+      :param spread: Spread to add to the discount rate. Defaults to 0.
+      :type spread: float, optional
+
+      :returns: Discount factor.
+      :rtype: float
+
+
+
+   .. py:method:: __call__(t: float, yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+
+      Return the annual effective rate at time horizon t (in years).
+
+      The spread is added to the yield in the original curve.
+
+      yield_calculation_convention can be used to transform the yield to different conventions.
+
+      :param t: Time in years.
+      :type t: float
+      :param yield_calculation_convention: Yield calculation convention to use. Must be one of "Annual", "BEY", "Continuous".
+      :type yield_calculation_convention: str, optional
+      :param spread: Spread to add to the yield. Defaults to 0.
+      :type spread: float, optional
+
+      :returns: Annual effective rate.
+      :rtype: float
+
+
+
+   .. py:method:: date_rate(date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+
+      Return the annual effective rate at a specified date.
+
+      The spread is added to the yield in the original curve.
+
+      yield_calculation_convention can be used to transform the yield to different conventions.
+
+      :param date: Target date for rate.
+      :type date: str or datetime-like
+      :param yield_calculation_convention: Yield calculation convention to use. Must be one of "Annual", "BEY", "Continuous".
+      :type yield_calculation_convention: str, optional
 
       :returns: Annual effective rate.
       :rtype: float
