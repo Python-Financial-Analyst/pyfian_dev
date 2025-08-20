@@ -6,14 +6,16 @@ valuation, and yield calculations.
 """
 
 from collections import defaultdict
-from typing import Any, Optional, Union
+from typing import Optional, Union
 
 import pandas as pd
 import matplotlib.pyplot as plt
 from dateutil.relativedelta import relativedelta  # type: ignore
+from scipy import optimize  # type: ignore
 
 from pyfian.time_value.irr import xirr_base
 from pyfian.utils.day_count import DayCountBase, get_day_count_convention
+from pyfian.yield_curves.base_curve import YieldCurveBase
 
 
 class BulletBond:
@@ -272,6 +274,10 @@ class BulletBond:
     ) -> tuple[bool, DayCountBase, DayCountBase, str]:
         if adjust_to_business_days is None:
             adjust_to_business_days = self.adjust_to_business_days
+        if day_count_convention is None:
+            day_count_convention = self.day_count_convention
+        elif isinstance(day_count_convention, str):
+            day_count_convention = get_day_count_convention(day_count_convention)
         if following_coupons_day_count is None:
             following_coupons_day_count = self.following_coupons_day_count
         else:
@@ -280,10 +286,6 @@ class BulletBond:
             )
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
-        if day_count_convention is None:
-            day_count_convention = self.day_count_convention
-        elif isinstance(day_count_convention, str):
-            day_count_convention = get_day_count_convention(day_count_convention)
 
         return (
             adjust_to_business_days,
@@ -843,7 +845,7 @@ class BulletBond:
 
     def value_with_curve(
         self,
-        curve: Any,
+        curve: YieldCurveBase,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         bond_price: Optional[float] = None,
         adjust_to_business_days: Optional[bool] = None,
@@ -948,6 +950,276 @@ class BulletBond:
         )
         pv = {t: curve.discount_t(t) * value for t, value in time_to_payments.items()}
         return sum(pv.values()), pv
+
+    def g_spread(
+        self,
+        benchmark_ytm: Optional[float] = None,
+        benchmark_curve: Optional[YieldCurveBase] = None,
+        yield_to_maturity: Optional[float] = None,
+        bond_price: Optional[float] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+    ) -> float:
+        """
+        Calculate the G-spread of the bond relative to a benchmark yield.
+
+        The benchmark yield is the yield of a government bond that matches the maturity of the bond.
+
+        If a benchmark curve is provided, the benchmark yield will be derived from the curve.
+
+        G-spread = Bond YTM - Benchmark YTM
+
+        Parameters
+        ----------
+        benchmark_ytm : float
+            Yield to maturity of the government benchmark bond (in decimal, e.g., 0.03 for 3%).
+        benchmark_curve : YieldCurveBase
+            The benchmark yield curve to use for the G-spread calculation.
+        yield_to_maturity : float, optional
+            Yield to maturity of the bond. Used to estimate YTM if not set.
+        bond_price : float, optional
+            Price of the bond. Used to estimate YTM if not set.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+
+        Returns
+        -------
+        g_spread : float
+            The G-spread in decimal (e.g., 0.0125 for 1.25%).
+
+        Examples
+        --------
+        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond.g_spread(benchmark_ytm=0.03, bond_price=102)
+        0.0185
+        """
+        settlement_date = self._resolve_settlement_date(settlement_date)
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = self._resolve_valuation_parameters(
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
+
+        if benchmark_ytm is None:
+            if benchmark_curve is not None:
+                benchmark_ytm = benchmark_curve.date_rate(
+                    date=self.maturity,
+                    yield_calculation_convention=yield_calculation_convention,
+                )
+            else:
+                raise ValueError(
+                    "Either benchmark_ytm or benchmark_curve must be provided."
+                )
+
+        ytm = self._resolve_ytm(
+            yield_to_maturity,
+            bond_price,
+            settlement_date,
+            adjust_to_business_days=adjust_to_business_days,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
+        )
+
+        return ytm - benchmark_ytm
+
+    def i_spread(
+        self,
+        benchmark_curve: YieldCurveBase,
+        yield_to_maturity: Optional[float] = None,
+        bond_price: Optional[float] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+    ) -> float:
+        """
+        Calculate the I-spread of the bond relative to a benchmark yield curve.
+
+        The I-spread is the difference between the bond's yield and the swap rate for the same maturity.
+
+        The benchmark swap curve must be provided.
+
+        I-spread = Bond YTM - Benchmark Swap Rate
+
+        Parameters
+        ----------
+        benchmark_curve : YieldCurveBase, optional
+            The benchmark yield curve to use for the I-spread calculation.
+        yield_to_maturity : float, optional
+            Yield to maturity of the bond. Used to estimate YTM if not set.
+        bond_price : float, optional
+            Price of the bond. Used to estimate YTM if not set.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+
+        Returns
+        -------
+        i_spread : float
+            The I-spread in decimal (e.g., 0.0125 for 1.25%).
+
+        Examples
+        --------
+        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond.i_spread(benchmark_curve=swap_curve)
+        0.0185
+        """
+        settlement_date = self._resolve_settlement_date(settlement_date)
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = self._resolve_valuation_parameters(
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
+
+        benchmark_ytm = benchmark_curve.date_rate(
+            date=self.maturity,
+            yield_calculation_convention=yield_calculation_convention,
+        )
+
+        ytm = self._resolve_ytm(
+            yield_to_maturity,
+            bond_price,
+            settlement_date,
+            adjust_to_business_days=adjust_to_business_days,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
+        )
+
+        return ytm - benchmark_ytm
+
+    def z_spread(
+        self,
+        benchmark_curve: YieldCurveBase,
+        yield_to_maturity: Optional[float] = None,
+        bond_price: Optional[float] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+    ) -> float:
+        """
+        Calculate the Z-spread of the bond relative to a benchmark yield curve.
+
+        The Z-spread is the constant spread that, when added to the benchmark yield curve, makes the present value of the bond's cash flows equal to its market price.
+
+        The benchmark curve must be provided.
+
+        The Z-spread is calculated by solving the equation:
+
+        .. math::
+            P = \\sum_{t=1}^{T} \\frac{C_t}{(1 + YTM + Z)^{(t+1)}}
+
+        where:
+
+        - :math:`P` is the price of the bond
+        - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date
+        - :math:`YTM` is the yield to maturity
+        - :math:`T` is the total number of periods
+        - :math:`Z` is the Z-spread
+
+        The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+        Parameters
+        ----------
+        benchmark_curve : YieldCurveBase, optional
+            The benchmark yield curve to use for the Z-spread calculation.
+        yield_to_maturity : float, optional
+            Yield to maturity of the bond. Used to estimate YTM if not set.
+        bond_price : float, optional
+            Price of the bond. Used to estimate YTM if not set.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+
+        Returns
+        -------
+        z_spread : float
+            The Z-spread in decimal (e.g., 0.0125 for 1.25%).
+
+        Examples
+        --------
+        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 2)
+        >>> bond.z_spread(benchmark_curve=FlatCurveBEY(0.05, '2020-01-01'))
+        0.0
+        """
+        settlement_date = self._resolve_settlement_date(settlement_date)
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = self._resolve_valuation_parameters(
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
+
+        # benchmark_ytm = benchmark_curve.date_rate(date=self.maturity, yield_calculation_convention=yield_calculation_convention)
+        ytm, time_to_payments, price_calc = self._get_ytm_payments_price(
+            yield_to_maturity,
+            bond_price,
+            settlement_date,
+            adjust_to_business_days=adjust_to_business_days,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
+        )
+
+        def _price_difference(z_spread):
+            return (
+                sum(
+                    benchmark_curve.discount_t(t, z_spread) * value
+                    for t, value in time_to_payments.items()
+                )
+                - price_calc
+            )
+
+        # use scipy to target _price_difference equal to 0
+        z_spread = optimize.root_scalar(_price_difference, x0=0, method="newton").root
+
+        return z_spread.root
 
     def yield_to_maturity(
         self,
