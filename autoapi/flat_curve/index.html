@@ -95,8 +95,63 @@
   <section id="module-flat_curve">
 <span id="flat-curve"></span><h1>flat_curve<a class="headerlink" href="#module-flat_curve" title="Link to this heading"></a></h1>
 <p>flat_curve.py</p>
-<p>Module for flat yield curve models. Includes FlatCurveLog (log/continuous rates) and
-FlatCurveAER (annual effective rates).</p>
+<p>Module for flat yield curve models. Includes FlatCurveLog (log/continuous rates),
+FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields).</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.flat_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlatCurveLog</span><span class="p">,</span> <span class="n">FlatCurveAER</span><span class="p">,</span> <span class="n">FlatCurveBEY</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_log</span> <span class="o">=</span> <span class="n">FlatCurveLog</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_log</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">0.951229424500714</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_log</span><span class="o">.</span><span class="n">discount_date</span><span class="p">(</span><span class="s2">&quot;2021-01-01&quot;</span><span class="p">)</span>
+<span class="go">0.951229424500714</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_log</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_log</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
+<span class="go">0.05127109637602412</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_log</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
+<span class="go">0.05128205128205128</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_log</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_log</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve_aer</span> <span class="o">=</span> <span class="n">FlatCurveAER</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_aer</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">0.9523809523809523</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_aer</span><span class="o">.</span><span class="n">discount_date</span><span class="p">(</span><span class="s2">&quot;2021-01-01&quot;</span><span class="p">)</span>
+<span class="go">0.9523809523809523</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_aer</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_aer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
+<span class="go">0.04999999999999999</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_aer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
+<span class="go">0.04879016416943205</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_aer</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve_bey</span> <span class="o">=</span> <span class="n">FlatCurveBEY</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_bey</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">0.975609756097561</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_bey</span><span class="o">.</span><span class="n">discount_date</span><span class="p">(</span><span class="s2">&quot;2021-01-01&quot;</span><span class="p">)</span>
+<span class="go">0.975609756097561</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_bey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">0.05061728395061728</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_bey</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_bey</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
+<span class="go">0.04939702358655452</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_bey</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+</pre></div>
+</div>
 <section id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
@@ -162,6 +217,13 @@ FlatCurveAER (annual effective rates).</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveLog</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">0.951229424500714</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Equivalent to: assert curve.discount_t(1) == pytest.approx(np.exp(-0.05))</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -183,6 +245,12 @@ FlatCurveAER (annual effective rates).</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveLog</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">discount_date</span><span class="p">(</span><span class="s2">&quot;2021-01-01&quot;</span><span class="p">)</span>
+<span class="go">0.951229424500714</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -206,6 +274,22 @@ FlatCurveAER (annual effective rates).</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveLog</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
+<span class="go">np.expm1(0.05)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
+<span class="go">2 * ((1 + np.expm1(0.05)) ** 0.5 - 1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -229,6 +313,22 @@ FlatCurveAER (annual effective rates).</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveLog</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
+<span class="go">np.expm1(0.05)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
+<span class="go">2 * ((1 + np.expm1(0.05)) ** 0.5 - 1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -285,6 +385,12 @@ FlatCurveAER (annual effective rates).</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveAER</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">0.9523809523809523</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -296,7 +402,7 @@ FlatCurveAER (annual effective rates).</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>date</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – Target date for discounting.</p></li>
-<li><p><strong>spread</strong> (<em>float</em><em>, </em><em>optional</em>) – Spread to add to the yield. Defaults to 0.</p></li>
+<li><p><strong>spread</strong> (<em>float</em><em>, </em><em>optional</em>) – Spread to add to the discount rate. Defaults to 0.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -306,6 +412,12 @@ FlatCurveAER (annual effective rates).</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveAER</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">discount_date</span><span class="p">(</span><span class="s2">&quot;2021-01-01&quot;</span><span class="p">)</span>
+<span class="go">0.9523809523809523</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -329,6 +441,20 @@ FlatCurveAER (annual effective rates).</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveAER</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
+<span class="go">2 * ((1 + 0.05) ** 0.5 - 1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
+<span class="go">np.log(1 + 0.05)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -352,6 +478,20 @@ FlatCurveAER (annual effective rates).</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveAER</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
+<span class="go">2 * ((1 + 0.05) ** 0.5 - 1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
+<span class="go">np.log(1 + 0.05)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -408,6 +548,12 @@ FlatCurveAER (annual effective rates).</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveBEY</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">0.975609756097561</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -429,6 +575,12 @@ FlatCurveAER (annual effective rates).</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveBEY</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">discount_date</span><span class="p">(</span><span class="s2">&quot;2021-01-01&quot;</span><span class="p">)</span>
+<span class="go">0.975609756097561</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -452,6 +604,22 @@ FlatCurveAER (annual effective rates).</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveBEY</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">(1 + 0.05 / 2) ** 2 - 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
+<span class="go">(1 + 0.05 / 2) ** 2 - 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
+<span class="go">np.log(1 + ((1 + 0.05 / 2) ** 2 - 1))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -474,6 +642,22 @@ FlatCurveAER (annual effective rates).</p>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveBEY</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">)</span>
+<span class="go">(1 + 0.05 / 2) ** 2 - 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
+<span class="go">(1 + 0.05 / 2) ** 2 - 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
+<span class="go">np.log(1 + ((1 + 0.05 / 2) ** 2 - 1))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">

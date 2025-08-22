@@ -7,8 +7,61 @@ flat_curve
 
    flat_curve.py
 
-   Module for flat yield curve models. Includes FlatCurveLog (log/continuous rates) and
-   FlatCurveAER (annual effective rates).
+   Module for flat yield curve models. Includes FlatCurveLog (log/continuous rates),
+   FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields).
+
+   .. rubric:: Examples
+
+   >>> from pyfian.yield_curves.flat_curve import FlatCurveLog, FlatCurveAER, FlatCurveBEY
+   >>> curve_log = FlatCurveLog(0.05, "2020-01-01")
+   >>> curve_log.discount_t(1)
+   0.951229424500714
+   >>> curve_log.discount_date("2021-01-01")
+   0.951229424500714
+   >>> curve_log(1)
+   0.05
+   >>> curve_log(1, yield_calculation_convention="Annual")
+   0.05127109637602412
+   >>> curve_log(1, yield_calculation_convention="BEY")
+   0.05128205128205128
+   >>> curve_log(1, yield_calculation_convention="Continuous")
+   0.05
+   >>> curve_log(1, yield_calculation_convention="Unknown")
+   Traceback (most recent call last):
+       ...
+   ValueError: Unknown yield calculation convention: Unknown
+
+   >>> curve_aer = FlatCurveAER(0.05, "2020-01-01")
+   >>> curve_aer.discount_t(1)
+   0.9523809523809523
+   >>> curve_aer.discount_date("2021-01-01")
+   0.9523809523809523
+   >>> curve_aer(1)
+   0.05
+   >>> curve_aer(1, yield_calculation_convention="BEY")
+   0.04999999999999999
+   >>> curve_aer(1, yield_calculation_convention="Continuous")
+   0.04879016416943205
+   >>> curve_aer(1, yield_calculation_convention="Unknown")
+   Traceback (most recent call last):
+       ...
+   ValueError: Unknown yield calculation convention: Unknown
+
+   >>> curve_bey = FlatCurveBEY(0.05, "2020-01-01")
+   >>> curve_bey.discount_t(1)
+   0.975609756097561
+   >>> curve_bey.discount_date("2021-01-01")
+   0.975609756097561
+   >>> curve_bey(1)
+   0.05061728395061728
+   >>> curve_bey(1, yield_calculation_convention="BEY")
+   0.05
+   >>> curve_bey(1, yield_calculation_convention="Continuous")
+   0.04939702358655452
+   >>> curve_bey(1, yield_calculation_convention="Unknown")
+   Traceback (most recent call last):
+       ...
+   ValueError: Unknown yield calculation convention: Unknown
 
 
 
@@ -68,6 +121,13 @@ Module Contents
       :returns: Discount factor.
       :rtype: float
 
+      .. rubric:: Examples
+
+      >>> curve = FlatCurveLog(0.05, "2020-01-01")
+      >>> curve.discount_t(1)
+      0.951229424500714
+      >>> # Equivalent to: assert curve.discount_t(1) == pytest.approx(np.exp(-0.05))
+
 
 
    .. py:method:: discount_date(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
@@ -83,6 +143,12 @@ Module Contents
 
       :returns: Discount factor.
       :rtype: float
+
+      .. rubric:: Examples
+
+      >>> curve = FlatCurveLog(0.05, "2020-01-01")
+      >>> curve.discount_date("2021-01-01")
+      0.951229424500714
 
 
 
@@ -104,6 +170,22 @@ Module Contents
       :returns: Log rate (continuously compounded).
       :rtype: float
 
+      .. rubric:: Examples
+
+      >>> curve = FlatCurveLog(0.05, "2020-01-01")
+      >>> curve(1)
+      0.05
+      >>> curve(1, yield_calculation_convention="Annual")
+      np.expm1(0.05)
+      >>> curve(1, yield_calculation_convention="BEY")
+      2 * ((1 + np.expm1(0.05)) ** 0.5 - 1)
+      >>> curve(1, yield_calculation_convention="Continuous")
+      0.05
+      >>> curve(1, yield_calculation_convention="Unknown")
+      Traceback (most recent call last):
+          ...
+      ValueError: Unknown yield calculation convention: Unknown
+
 
 
    .. py:method:: date_rate(date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
@@ -123,6 +205,22 @@ Module Contents
 
       :returns: Log rate (continuously compounded).
       :rtype: float
+
+      .. rubric:: Examples
+
+      >>> curve = FlatCurveLog(0.05, "2020-01-01")
+      >>> curve.date_rate("2022-01-01")
+      0.05
+      >>> curve.date_rate("2022-01-01", yield_calculation_convention="Annual")
+      np.expm1(0.05)
+      >>> curve.date_rate("2022-01-01", yield_calculation_convention="BEY")
+      2 * ((1 + np.expm1(0.05)) ** 0.5 - 1)
+      >>> curve.date_rate("2022-01-01", yield_calculation_convention="Continuous")
+      0.05
+      >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
+      Traceback (most recent call last):
+          ...
+      ValueError: Unknown yield calculation convention: Unknown
 
 
 
@@ -172,6 +270,12 @@ Module Contents
       :returns: Discount factor.
       :rtype: float
 
+      .. rubric:: Examples
+
+      >>> curve = FlatCurveAER(0.05, "2020-01-01")
+      >>> curve.discount_t(1)
+      0.9523809523809523
+
 
 
    .. py:method:: discount_date(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
@@ -182,11 +286,17 @@ Module Contents
 
       :param date: Target date for discounting.
       :type date: str or datetime-like
-      :param spread: Spread to add to the yield. Defaults to 0.
+      :param spread: Spread to add to the discount rate. Defaults to 0.
       :type spread: float, optional
 
       :returns: Discount factor.
       :rtype: float
+
+      .. rubric:: Examples
+
+      >>> curve = FlatCurveAER(0.05, "2020-01-01")
+      >>> curve.discount_date("2021-01-01")
+      0.9523809523809523
 
 
 
@@ -208,6 +318,20 @@ Module Contents
       :returns: Annual effective rate.
       :rtype: float
 
+      .. rubric:: Examples
+
+      >>> curve = FlatCurveAER(0.05, "2020-01-01")
+      >>> curve(1)
+      0.05
+      >>> curve(1, yield_calculation_convention="BEY")
+      2 * ((1 + 0.05) ** 0.5 - 1)
+      >>> curve(1, yield_calculation_convention="Continuous")
+      np.log(1 + 0.05)
+      >>> curve(1, yield_calculation_convention="Unknown")
+      Traceback (most recent call last):
+          ...
+      ValueError: Unknown yield calculation convention: Unknown
+
 
 
    .. py:method:: date_rate(date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
@@ -227,6 +351,20 @@ Module Contents
 
       :returns: Annual effective rate.
       :rtype: float
+
+      .. rubric:: Examples
+
+      >>> curve = FlatCurveAER(0.05, "2020-01-01")
+      >>> curve.date_rate("2022-01-01")
+      0.05
+      >>> curve.date_rate("2022-01-01", yield_calculation_convention="BEY")
+      2 * ((1 + 0.05) ** 0.5 - 1)
+      >>> curve.date_rate("2022-01-01", yield_calculation_convention="Continuous")
+      np.log(1 + 0.05)
+      >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
+      Traceback (most recent call last):
+          ...
+      ValueError: Unknown yield calculation convention: Unknown
 
 
 
@@ -276,6 +414,12 @@ Module Contents
       :returns: Discount factor.
       :rtype: float
 
+      .. rubric:: Examples
+
+      >>> curve = FlatCurveBEY(0.05, "2020-01-01")
+      >>> curve.discount_t(1)
+      0.975609756097561
+
 
 
    .. py:method:: discount_date(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
@@ -291,6 +435,12 @@ Module Contents
 
       :returns: Discount factor.
       :rtype: float
+
+      .. rubric:: Examples
+
+      >>> curve = FlatCurveBEY(0.05, "2020-01-01")
+      >>> curve.discount_date("2021-01-01")
+      0.975609756097561
 
 
 
@@ -312,6 +462,22 @@ Module Contents
       :returns: Annual effective rate.
       :rtype: float
 
+      .. rubric:: Examples
+
+      >>> curve = FlatCurveBEY(0.05, "2020-01-01")
+      >>> curve(1)
+      (1 + 0.05 / 2) ** 2 - 1
+      >>> curve(1, yield_calculation_convention="Annual")
+      (1 + 0.05 / 2) ** 2 - 1
+      >>> curve(1, yield_calculation_convention="BEY")
+      0.05
+      >>> curve(1, yield_calculation_convention="Continuous")
+      np.log(1 + ((1 + 0.05 / 2) ** 2 - 1))
+      >>> curve(1, yield_calculation_convention="Unknown")
+      Traceback (most recent call last):
+          ...
+      ValueError: Unknown yield calculation convention: Unknown
+
 
 
    .. py:method:: date_rate(date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
@@ -329,6 +495,22 @@ Module Contents
 
       :returns: Annual effective rate.
       :rtype: float
+
+      .. rubric:: Examples
+
+      >>> curve = FlatCurveBEY(0.05, "2020-01-01")
+      >>> curve.date_rate("2022-01-01")
+      (1 + 0.05 / 2) ** 2 - 1
+      >>> curve.date_rate("2022-01-01", yield_calculation_convention="Annual")
+      (1 + 0.05 / 2) ** 2 - 1
+      >>> curve.date_rate("2022-01-01", yield_calculation_convention="BEY")
+      0.05
+      >>> curve.date_rate("2022-01-01", yield_calculation_convention="Continuous")
+      np.log(1 + ((1 + 0.05 / 2) ** 2 - 1))
+      >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
+      Traceback (most recent call last):
+          ...
+      ValueError: Unknown yield calculation convention: Unknown
 
 
 
