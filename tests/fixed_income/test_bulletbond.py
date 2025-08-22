@@ -27,7 +27,7 @@ class TestBulletBond:
         assert bond.get_settlement_date() == pd.to_datetime("2022-01-01")
 
         # Set yield to maturity and check get method
-        bond.set_yield_to_maturity(0.05, "2022-01-01")
+        bond.set_yield_to_maturity(yield_to_maturity=0.05, settlement_date="2022-01-01")
         assert bond.get_yield_to_maturity() == pytest.approx(0.05)
         assert isinstance(bond.get_bond_price(), float)
 
@@ -119,6 +119,12 @@ class TestBulletBond:
             f"Expected convexity: {expected_convexity}, but got: {conv}"
         )
 
+    # call convexity without yield or bond price should raise ValueError
+    def test_convexity_without_yield_or_price(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 2)
+        with pytest.raises(ValueError):
+            bond.convexity()
+
     def test_convexity_with_BEY(self):
         bond = BulletBond("2020-01-01", "2025-01-01", 5, 2)
         conv = bond.convexity(yield_to_maturity=0.05)
@@ -179,7 +185,7 @@ class TestBulletBond:
         matplotlib.use("Agg")  # Use non-interactive backend for test
         bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
         # Should not raise
-        bond.plot_cash_flows("2022-01-01")
+        bond.plot_cash_flows(settlement_date="2022-01-01")
 
     def test_filter_payment_flow(self):
         bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
@@ -196,7 +202,9 @@ class TestBulletBond:
         curve = FlatCurveLog(0.05, "2020-01-01")
         pv_expected = {
             t: np.exp(-0.05 * t) * cash_flow
-            for t, cash_flow in bond.calculate_time_to_payments("2020-01-01").items()
+            for t, cash_flow in bond.calculate_time_to_payments(
+                settlement_date="2020-01-01"
+            ).items()
         }
         value_expected = sum(pv_expected.values())
         value, pv = bond.value_with_curve(curve)
@@ -363,6 +371,80 @@ class TestBulletBond:
         assert np.isclose(dv01, dv01_expected, rtol=1e-4), (
             f"Expected DV01: {dv01_expected}, but got: {dv01}"
         )
+
+    # call dv01 without yield or bond price should raise ValueError
+    def test_dv01_without_yield_or_price(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
+        with pytest.raises(ValueError):
+            bond.dv01()
+
+    def test_g_spread_with_benchmark_ytm(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
+        spread = bond.g_spread(
+            benchmark_ytm=0.04, settlement_date="2022-01-01", bond_price=100
+        )
+        assert isinstance(spread, float)
+
+    def test_g_spread_with_benchmark_curve(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
+        curve = FlatCurveLog(0.04, "2020-01-01")
+        spread = bond.g_spread(
+            benchmark_curve=curve, settlement_date="2022-01-01", bond_price=100
+        )
+        assert isinstance(spread, float)
+
+    def test_g_spread_with_both_none(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
+        with pytest.raises(ValueError):
+            bond.g_spread(
+                benchmark_ytm=None, benchmark_curve=None, settlement_date="2022-01-01"
+            )
+
+    # call g_spread without yield_to_maturity or bond_price should raise ValueError
+    def test_g_spread_without_price_or_yield(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
+        with pytest.raises(ValueError):
+            bond.g_spread(
+                benchmark_ytm=0.04, benchmark_curve=None, settlement_date="2022-01-01"
+            )
+
+    def test_i_spread_with_benchmark_curve(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
+        curve = FlatCurveLog(0.04, "2020-01-01")
+        spread = bond.i_spread(
+            benchmark_curve=curve, settlement_date="2022-01-01", bond_price=100
+        )
+        assert isinstance(spread, float)
+
+    # call i_spread without yield_to_maturity or bond_price should raise ValueError
+    def test_i_spread_without_price_or_yield(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
+        curve = FlatCurveLog(0.04, "2020-01-01")
+        with pytest.raises(ValueError):
+            bond.i_spread(benchmark_curve=curve, settlement_date="2022-01-01")
+
+    def test_z_spread_with_benchmark_curve(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
+        curve = FlatCurveLog(0.04, "2020-01-01")
+        spread = bond.z_spread(benchmark_curve=curve, yield_to_maturity=0.05)
+        bond_price = bond.price_from_yield(0.05)
+        assert isinstance(spread, float)
+        time_to_payments = bond.calculate_time_to_payments()
+        price_from_curve = sum(
+            [
+                curve.discount_t(t, spread=spread) * value
+                for t, value in time_to_payments.items()
+            ]
+        )
+        assert price_from_curve == pytest.approx(bond_price, rel=1e-6), (
+            f"Expected price from curve: {bond_price}, but got: {price_from_curve}"
+        )
+
+    # call z_spread without yield_to_maturity or bond_price should raise ValueError
+    def test_z_spread_without_price_or_yield(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
+        with pytest.raises(ValueError):
+            bond.z_spread(benchmark_curve=None, yield_to_maturity=None, bond_price=None)
 
     # Test error for positive coupon with zero frequency
     def test_positive_coupon_zero_frequency(self):
@@ -556,6 +638,14 @@ class TestBulletBond:
         )
         bond.modified_duration(bond_price=100)
 
+    # call modified duration without yield or bond price should raise ValueError
+    def test_modified_duration_without_yield_or_price(self):
+        bond = BulletBond(
+            "2020-01-01", "2025-01-01", 5, 1, settlement_date="2022-01-01"
+        )
+        with pytest.raises(ValueError):
+            bond.modified_duration()
+
     def test_negative_notional_raises(self):
         with pytest.raises(
             ValueError, match=r"Notional \(face value\) cannot be negative."
@@ -631,7 +721,16 @@ class TestBulletBond:
     def test_resolve_ytm_negative_bond_price(self):
         bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
         with pytest.raises(ValueError, match="Bond price cannot be negative."):
-            bond._resolve_ytm(None, -100, "2022-01-01", **TRUE_TIME_PARAMS)
+            bond._resolve_ytm_and_bond_price(
+                None, -100, "2022-01-01", **TRUE_TIME_PARAMS
+            )
+
+    def test_resolve_ytm_negative_bond_price_and_yield(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
+        with pytest.raises(ValueError, match="Bond price cannot be negative."):
+            bond._resolve_ytm_and_bond_price(
+                0.05, -100, "2022-01-01", **TRUE_TIME_PARAMS
+            )
 
     def test_invalid_following_coupons_day_count(self):
         # Should raise ValueError for unsupported day count convention
@@ -664,7 +763,7 @@ class TestBulletBond:
             "2020-01-01", "2025-01-01", 5, 1, settlement_date="2021-01-01"
         )
         with pytest.raises(ValueError, match="Bond price cannot be negative"):
-            bond._resolve_ytm(
+            bond._resolve_ytm_and_bond_price(
                 None,
                 -100,
                 "2021-01-01",

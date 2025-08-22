@@ -1,8 +1,61 @@
 """
 flat_curve.py
 
-Module for flat yield curve models. Includes FlatCurveLog (log/continuous rates) and
-FlatCurveAER (annual effective rates).
+Module for flat yield curve models. Includes FlatCurveLog (log/continuous rates),
+FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields).
+
+Examples
+--------
+>>> from pyfian.yield_curves.flat_curve import FlatCurveLog, FlatCurveAER, FlatCurveBEY
+>>> curve_log = FlatCurveLog(0.05, "2020-01-01")
+>>> curve_log.discount_t(1)
+0.951229424500714
+>>> curve_log.discount_date("2021-01-01")
+0.951229424500714
+>>> curve_log(1)
+0.05
+>>> curve_log(1, yield_calculation_convention="Annual")
+0.05127109637602412
+>>> curve_log(1, yield_calculation_convention="BEY")
+0.05128205128205128
+>>> curve_log(1, yield_calculation_convention="Continuous")
+0.05
+>>> curve_log(1, yield_calculation_convention="Unknown")
+Traceback (most recent call last):
+    ...
+ValueError: Unknown yield calculation convention: Unknown
+
+>>> curve_aer = FlatCurveAER(0.05, "2020-01-01")
+>>> curve_aer.discount_t(1)
+0.9523809523809523
+>>> curve_aer.discount_date("2021-01-01")
+0.9523809523809523
+>>> curve_aer(1)
+0.05
+>>> curve_aer(1, yield_calculation_convention="BEY")
+0.04999999999999999
+>>> curve_aer(1, yield_calculation_convention="Continuous")
+0.04879016416943205
+>>> curve_aer(1, yield_calculation_convention="Unknown")
+Traceback (most recent call last):
+    ...
+ValueError: Unknown yield calculation convention: Unknown
+
+>>> curve_bey = FlatCurveBEY(0.05, "2020-01-01")
+>>> curve_bey.discount_t(1)
+0.975609756097561
+>>> curve_bey.discount_date("2021-01-01")
+0.975609756097561
+>>> curve_bey(1)
+0.05061728395061728
+>>> curve_bey(1, yield_calculation_convention="BEY")
+0.05
+>>> curve_bey(1, yield_calculation_convention="Continuous")
+0.04939702358655452
+>>> curve_bey(1, yield_calculation_convention="Unknown")
+Traceback (most recent call last):
+    ...
+ValueError: Unknown yield calculation convention: Unknown
 """
 
 from typing import Optional, Union
@@ -52,6 +105,13 @@ class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
         -------
         float
             Discount factor.
+
+        Examples
+        --------
+        >>> curve = FlatCurveLog(0.05, "2020-01-01")
+        >>> curve.discount_t(1)
+        0.951229424500714
+        >>> # Equivalent to: assert curve.discount_t(1) == pytest.approx(np.exp(-0.05))
         """
         return np.exp(-(self.log_rate + spread) * t)
 
@@ -72,6 +132,12 @@ class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
         -------
         float
             Discount factor.
+
+        Examples
+        --------
+        >>> curve = FlatCurveLog(0.05, "2020-01-01")
+        >>> curve.discount_date("2021-01-01")
+        0.951229424500714
         """
         t = (pd.to_datetime(date) - self.curve_date).days / 365
         return self.discount_t(t, spread)
@@ -102,6 +168,22 @@ class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
         -------
         float
             Log rate (continuously compounded).
+
+        Examples
+        --------
+        >>> curve = FlatCurveLog(0.05, "2020-01-01")
+        >>> curve(1)
+        0.05
+        >>> curve(1, yield_calculation_convention="Annual")
+        np.expm1(0.05)
+        >>> curve(1, yield_calculation_convention="BEY")
+        2 * ((1 + np.expm1(0.05)) ** 0.5 - 1)
+        >>> curve(1, yield_calculation_convention="Continuous")
+        0.05
+        >>> curve(1, yield_calculation_convention="Unknown")
+        Traceback (most recent call last):
+            ...
+        ValueError: Unknown yield calculation convention: Unknown
         """
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
@@ -146,6 +228,22 @@ class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
         -------
         float
             Log rate (continuously compounded).
+
+        Examples
+        --------
+        >>> curve = FlatCurveLog(0.05, "2020-01-01")
+        >>> curve.date_rate("2022-01-01")
+        0.05
+        >>> curve.date_rate("2022-01-01", yield_calculation_convention="Annual")
+        np.expm1(0.05)
+        >>> curve.date_rate("2022-01-01", yield_calculation_convention="BEY")
+        2 * ((1 + np.expm1(0.05)) ** 0.5 - 1)
+        >>> curve.date_rate("2022-01-01", yield_calculation_convention="Continuous")
+        0.05
+        >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
+        Traceback (most recent call last):
+            ...
+        ValueError: Unknown yield calculation convention: Unknown
         """
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
@@ -204,6 +302,12 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
         -------
         float
             Discount factor.
+
+        Examples
+        --------
+        >>> curve = FlatCurveAER(0.05, "2020-01-01")
+        >>> curve.discount_t(1)
+        0.9523809523809523
         """
         return 1 / (1 + self.aer + spread) ** t
 
@@ -218,12 +322,18 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
         date : str or datetime-like
             Target date for discounting.
         spread : float, optional
-            Spread to add to the yield. Defaults to 0.
+            Spread to add to the discount rate. Defaults to 0.
 
         Returns
         -------
         float
             Discount factor.
+
+        Examples
+        --------
+        >>> curve = FlatCurveAER(0.05, "2020-01-01")
+        >>> curve.discount_date("2021-01-01")
+        0.9523809523809523
         """
         t = (pd.to_datetime(date) - self.curve_date).days / 365
         return self.discount_t(t, spread)
@@ -254,6 +364,20 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
         -------
         float
             Annual effective rate.
+
+        Examples
+        --------
+        >>> curve = FlatCurveAER(0.05, "2020-01-01")
+        >>> curve(1)
+        0.05
+        >>> curve(1, yield_calculation_convention="BEY")
+        2 * ((1 + 0.05) ** 0.5 - 1)
+        >>> curve(1, yield_calculation_convention="Continuous")
+        np.log(1 + 0.05)
+        >>> curve(1, yield_calculation_convention="Unknown")
+        Traceback (most recent call last):
+            ...
+        ValueError: Unknown yield calculation convention: Unknown
         """
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
@@ -295,6 +419,20 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
         -------
         float
             Annual effective rate.
+
+        Examples
+        --------
+        >>> curve = FlatCurveAER(0.05, "2020-01-01")
+        >>> curve.date_rate("2022-01-01")
+        0.05
+        >>> curve.date_rate("2022-01-01", yield_calculation_convention="BEY")
+        2 * ((1 + 0.05) ** 0.5 - 1)
+        >>> curve.date_rate("2022-01-01", yield_calculation_convention="Continuous")
+        np.log(1 + 0.05)
+        >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
+        Traceback (most recent call last):
+            ...
+        ValueError: Unknown yield calculation convention: Unknown
         """
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
@@ -351,6 +489,12 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
         -------
         float
             Discount factor.
+
+        Examples
+        --------
+        >>> curve = FlatCurveBEY(0.05, "2020-01-01")
+        >>> curve.discount_t(1)
+        0.975609756097561
         """
         return 1 / (1 + (self.bey + spread) / 2) ** (t * 2)
 
@@ -371,6 +515,12 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
         -------
         float
             Discount factor.
+
+        Examples
+        --------
+        >>> curve = FlatCurveBEY(0.05, "2020-01-01")
+        >>> curve.discount_date("2021-01-01")
+        0.975609756097561
         """
         t = (pd.to_datetime(date) - self.curve_date).days / 365
         return self.discount_t(t, spread=spread)
@@ -401,6 +551,22 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
         -------
         float
             Annual effective rate.
+
+        Examples
+        --------
+        >>> curve = FlatCurveBEY(0.05, "2020-01-01")
+        >>> curve(1)
+        (1 + 0.05 / 2) ** 2 - 1
+        >>> curve(1, yield_calculation_convention="Annual")
+        (1 + 0.05 / 2) ** 2 - 1
+        >>> curve(1, yield_calculation_convention="BEY")
+        0.05
+        >>> curve(1, yield_calculation_convention="Continuous")
+        np.log(1 + ((1 + 0.05 / 2) ** 2 - 1))
+        >>> curve(1, yield_calculation_convention="Unknown")
+        Traceback (most recent call last):
+            ...
+        ValueError: Unknown yield calculation convention: Unknown
         """
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
@@ -442,6 +608,22 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
         -------
         float
             Annual effective rate.
+
+        Examples
+        --------
+        >>> curve = FlatCurveBEY(0.05, "2020-01-01")
+        >>> curve.date_rate("2022-01-01")
+        (1 + 0.05 / 2) ** 2 - 1
+        >>> curve.date_rate("2022-01-01", yield_calculation_convention="Annual")
+        (1 + 0.05 / 2) ** 2 - 1
+        >>> curve.date_rate("2022-01-01", yield_calculation_convention="BEY")
+        0.05
+        >>> curve.date_rate("2022-01-01", yield_calculation_convention="Continuous")
+        np.log(1 + ((1 + 0.05 / 2) ** 2 - 1))
+        >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
+        Traceback (most recent call last):
+            ...
+        ValueError: Unknown yield calculation convention: Unknown
         """
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention

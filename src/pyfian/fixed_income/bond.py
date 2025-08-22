@@ -380,7 +380,7 @@ class BulletBond:
 
     def set_yield_to_maturity(
         self,
-        ytm: Optional[float],
+        yield_to_maturity: Optional[float],
         settlement_date: Optional[Union[str, pd.Timestamp, None]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -392,7 +392,7 @@ class BulletBond:
 
         Parameters
         ----------
-        ytm : float, optional
+        yield_to_maturity : float, optional
             The yield to maturity to set.
         settlement_date : Union[str, pd.Timestamp], optional
             The settlement date to set.
@@ -412,7 +412,7 @@ class BulletBond:
 
         If the yield to maturity is set, it will also update the bond price based on the yield.
         """
-        self._yield_to_maturity = ytm
+        self._yield_to_maturity = yield_to_maturity
         (
             adjust_to_business_days,
             day_count_convention,
@@ -433,20 +433,25 @@ class BulletBond:
                 following_coupons_day_count=following_coupons_day_count,
                 yield_calculation_convention=yield_calculation_convention,
             )
-        # Since ytm is set, update bond price
-        if ytm is not None:
-            vdate = self._settlement_date
-            if vdate is None:
+        # Since yield_to_maturity is set, update bond price
+        if yield_to_maturity is not None:
+            settlement_date = self._settlement_date
+            if settlement_date is None:
                 raise ValueError(
                     "Settlement date must be set since there is no default settlement_date for the bond."
                 )
-            self._bond_price = self.price_from_yield(
-                ytm,
-                vdate,
+            time_to_payments = self._calculate_time_to_payments(
+                settlement_date,
+                bond_price=None,
                 adjust_to_business_days=adjust_to_business_days,
                 following_coupons_day_count=following_coupons_day_count,
                 yield_calculation_convention=yield_calculation_convention,
                 day_count_convention=day_count_convention,
+            )
+            self._bond_price = self._price_from_yield(
+                yield_to_maturity=yield_to_maturity,
+                time_to_payments=time_to_payments,
+                yield_calculation_convention=yield_calculation_convention,
             )
         else:
             # If no yield to maturity is set, reset bond price and yield to maturity
@@ -687,7 +692,6 @@ class BulletBond:
         {Timestamp('2023-01-01 00:00:00'): 5.0, Timestamp('2024-01-01 00:00:00'): 5.0,
         Timestamp('2025-01-01 00:00:00'): 105.0}
         """
-        maturity = self.maturity
         (
             adjust_to_business_days,
             day_count_convention,
@@ -707,6 +711,28 @@ class BulletBond:
 
         self._validate_bond_price(bond_price)
 
+        return self._filter_payment_flow(
+            settlement_date,
+            bond_price,
+            payment_flow,
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
+
+    def _filter_payment_flow(
+        self,
+        settlement_date,
+        bond_price,
+        payment_flow,
+        adjust_to_business_days,
+        day_count_convention,
+        following_coupons_day_count,
+        yield_calculation_convention,
+    ):
+        """Filter the payment flow based on the settlement date and other parameters."""
+        maturity = self.maturity
         if adjust_to_business_days:
 
             def business_days_adjustment(x):
@@ -737,6 +763,7 @@ class BulletBond:
                 or (pd.to_datetime(key) == maturity and (settlement_date <= key))
             }
         )
+
         return cash_flows
 
     def calculate_time_to_payments(
@@ -802,9 +829,29 @@ class BulletBond:
             yield_calculation_convention,
         )
 
-        flujos = self.filter_payment_flow(
+        return self._calculate_time_to_payments(
             settlement_date,
             bond_price,
+            adjust_to_business_days,
+            following_coupons_day_count,
+            yield_calculation_convention,
+            day_count_convention,
+        )
+
+    def _calculate_time_to_payments(
+        self,
+        settlement_date,
+        bond_price,
+        adjust_to_business_days,
+        following_coupons_day_count,
+        yield_calculation_convention,
+        day_count_convention,
+    ) -> dict[float, float]:
+        """Calculate the time to each payment from the settlement date."""
+        flujos = self._filter_payment_flow(
+            settlement_date,
+            bond_price,
+            self.payment_flow,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -928,6 +975,7 @@ class BulletBond:
         >>> bond.value_with_curve(DummyCurve())
         (value, {t1: pv1, t2: pv2, ...})
         """
+        settlement_date = self._resolve_settlement_date(settlement_date)
         (
             adjust_to_business_days,
             day_count_convention,
@@ -940,7 +988,7 @@ class BulletBond:
             yield_calculation_convention,
         )
 
-        time_to_payments = self.calculate_time_to_payments(
+        time_to_payments = self._calculate_time_to_payments(
             settlement_date,
             bond_price,
             adjust_to_business_days=adjust_to_business_days,
@@ -1028,7 +1076,7 @@ class BulletBond:
                     "Either benchmark_ytm or benchmark_curve must be provided."
                 )
 
-        ytm = self._resolve_ytm(
+        ytm, bond_price = self._resolve_ytm_and_bond_price(
             yield_to_maturity,
             bond_price,
             settlement_date,
@@ -1037,6 +1085,10 @@ class BulletBond:
             yield_calculation_convention=yield_calculation_convention,
             day_count_convention=day_count_convention,
         )
+        if ytm is None:
+            raise ValueError(
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+            )
 
         return ytm - benchmark_ytm
 
@@ -1108,7 +1160,7 @@ class BulletBond:
             yield_calculation_convention=yield_calculation_convention,
         )
 
-        ytm = self._resolve_ytm(
+        ytm, bond_price = self._resolve_ytm_and_bond_price(
             yield_to_maturity,
             bond_price,
             settlement_date,
@@ -1117,6 +1169,10 @@ class BulletBond:
             yield_calculation_convention=yield_calculation_convention,
             day_count_convention=day_count_convention,
         )
+        if ytm is None:
+            raise ValueError(
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+            )
 
         return ytm - benchmark_ytm
 
@@ -1207,6 +1263,16 @@ class BulletBond:
             day_count_convention=day_count_convention,
         )
 
+        if price_calc is None:
+            raise ValueError(
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+            )
+
+        # remove price_calc from time_to_payments
+        time_to_payments = {
+            t: value for t, value in time_to_payments.items() if value != -price_calc
+        }
+
         def _price_difference(z_spread):
             return (
                 sum(
@@ -1219,7 +1285,7 @@ class BulletBond:
         # use scipy to target _price_difference equal to 0
         z_spread = optimize.root_scalar(_price_difference, x0=0, method="newton").root
 
-        return z_spread.root
+        return z_spread
 
     def yield_to_maturity(
         self,
@@ -1289,6 +1355,7 @@ class BulletBond:
         0.06189544078
         """
         # Prepare cash flows and dates
+        settlement_date = self._resolve_settlement_date(settlement_date)
         (
             adjust_to_business_days,
             day_count_convention,
@@ -1300,7 +1367,7 @@ class BulletBond:
             following_coupons_day_count,
             yield_calculation_convention,
         )
-        times_cashflows = self.calculate_time_to_payments(
+        times_cashflows = self._calculate_time_to_payments(
             settlement_date,
             bond_price,
             adjust_to_business_days=adjust_to_business_days,
@@ -1415,6 +1482,11 @@ class BulletBond:
         else:
             time_adjustment = 1
 
+        if ytm is None or price_calc is None:
+            raise ValueError(
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+            )
+
         duration = sum(
             [
                 t * cf / (1 + ytm / time_adjustment) ** (t * time_adjustment + 1)
@@ -1502,6 +1574,11 @@ class BulletBond:
             time_adjustment = 2
         else:
             time_adjustment = 1
+
+        if ytm is None or price_calc is None:
+            raise ValueError(
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+            )
 
         convexity = sum(
             [
@@ -1709,6 +1786,7 @@ class BulletBond:
         >>> bond.price_from_yield(0.05)
         100.0
         """
+        settlement_date = self._resolve_settlement_date(settlement_date)
         (
             adjust_to_business_days,
             day_count_convention,
@@ -1721,8 +1799,9 @@ class BulletBond:
             yield_calculation_convention,
         )
 
-        time_to_payments = self.calculate_time_to_payments(
+        time_to_payments = self._calculate_time_to_payments(
             settlement_date,
+            bond_price=None,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -1993,7 +2072,7 @@ class BulletBond:
 
     def dv01(
         self,
-        yield_to_maturity: Optional[float],
+        yield_to_maturity: Optional[float] = None,
         bond_price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
@@ -2007,7 +2086,7 @@ class BulletBond:
 
         Parameters
         ----------
-        yield_to_maturity : float
+        yield_to_maturity : float, optional
             Yield to maturity as a decimal (e.g., 0.05 for 5%).
         bond_price : float, optional
             Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
@@ -2055,6 +2134,12 @@ class BulletBond:
             yield_calculation_convention=yield_calculation_convention,
             day_count_convention=day_count_convention,
         )
+
+        if ytm is None:
+            raise ValueError(
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+            )
+
         price_up = self.price_from_yield(
             ytm + 0.0001,
             settlement_date,
@@ -2075,8 +2160,9 @@ class BulletBond:
 
     def plot_cash_flows(
         self,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        yield_to_maturity: Optional[float] = None,
         bond_price: Optional[float] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
@@ -2118,7 +2204,8 @@ class BulletBond:
             yield_calculation_convention,
         )
         df = self.to_dataframe(
-            settlement_date,
+            settlement_date=settlement_date,
+            yield_to_maturity=yield_to_maturity,
             bond_price=bond_price,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -2220,7 +2307,7 @@ class BulletBond:
             return self._settlement_date
         return self.issue_dt
 
-    def _resolve_ytm(
+    def _resolve_ytm_and_bond_price(
         self,
         yield_to_maturity: Optional[float],
         bond_price: Optional[float],
@@ -2229,14 +2316,16 @@ class BulletBond:
         day_count_convention: DayCountBase,
         following_coupons_day_count: DayCountBase,
         yield_calculation_convention: str,
-    ) -> float:
+    ) -> tuple[Optional[float], Optional[float]]:
         """
-        Helper to resolve yield_to_maturity from direct input, price, or default to notional.
+        Helper to resolve yield_to_maturity and bond_price from direct input, price, or default to notional.
+        Returns a tuple (ytm, price_calc), both float or None.
         """
+        # Case 1: bond_price is provided, ytm is None
         if bond_price is not None and yield_to_maturity is None:
             if bond_price < 0:
                 raise ValueError("Bond price cannot be negative.")
-            return self.yield_to_maturity(
+            ytm = self.yield_to_maturity(
                 bond_price=bond_price,
                 settlement_date=settlement_date,
                 adjust_to_business_days=adjust_to_business_days,
@@ -2244,9 +2333,12 @@ class BulletBond:
                 yield_calculation_convention=yield_calculation_convention,
                 day_count_convention=day_count_convention,
             )
+            return ytm, bond_price
 
+        # Case 2: both bond_price and ytm are provided
         if bond_price is not None and yield_to_maturity is not None:
-            # If bond price provided is very different as a percent from calculated bond price, raise exception
+            if bond_price < 0:
+                raise ValueError("Bond price cannot be negative.")
             price_calc = self.price_from_yield(
                 yield_to_maturity,
                 settlement_date,
@@ -2262,24 +2354,35 @@ class BulletBond:
                         bond_price, price_calc
                     )
                 )
-            price_calc = bond_price
+            return yield_to_maturity, bond_price
 
+        # Case 3: only ytm is provided
         if yield_to_maturity is not None:
-            return yield_to_maturity
+            time_to_payments = self._calculate_time_to_payments(
+                settlement_date,
+                bond_price=None,
+                adjust_to_business_days=adjust_to_business_days,
+                following_coupons_day_count=following_coupons_day_count,
+                yield_calculation_convention=yield_calculation_convention,
+                day_count_convention=day_count_convention,
+            )
+
+            price = self._price_from_yield(
+                time_to_payments,
+                yield_to_maturity,
+                yield_calculation_convention=yield_calculation_convention,
+            )
+            return yield_to_maturity, price
+
+        # Case 4: use stored values if available and settlement date matches
         if (
             self._yield_to_maturity is not None
             and self._settlement_date == settlement_date
         ):
-            return self._yield_to_maturity
+            return self._yield_to_maturity, self._bond_price
 
-        return self.yield_to_maturity(
-            bond_price=self.dirty_price(self.notional, settlement_date),
-            settlement_date=settlement_date,
-            adjust_to_business_days=adjust_to_business_days,
-            following_coupons_day_count=following_coupons_day_count,
-            yield_calculation_convention=yield_calculation_convention,
-            day_count_convention=day_count_convention,
-        )
+        # Case 5: cannot determine, return None, None
+        return None, None
 
     def _get_ytm_payments_price(
         self,
@@ -2290,13 +2393,13 @@ class BulletBond:
         day_count_convention: DayCountBase,
         following_coupons_day_count: DayCountBase,
         yield_calculation_convention: str,
-    ) -> tuple[float, dict[float, float], float]:
+    ) -> tuple[float | None, dict[float, float], float | None]:
         """
         Helper to resolve ytm, time_to_payments, and price_calc for DRY.
         Returns (ytm, time_to_payments, price_calc)
         """
 
-        ytm = self._resolve_ytm(
+        ytm, price_calc = self._resolve_ytm_and_bond_price(
             yield_to_maturity,
             bond_price,
             settlement_date,
@@ -2305,22 +2408,13 @@ class BulletBond:
             yield_calculation_convention=yield_calculation_convention,
             day_count_convention=day_count_convention,
         )
-        time_to_payments = self.calculate_time_to_payments(
+        time_to_payments = self._calculate_time_to_payments(
             settlement_date,
+            bond_price=price_calc,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
             day_count_convention=day_count_convention,
         )
-        if bond_price is None:
-            price_calc = self.price_from_yield(
-                ytm,
-                settlement_date,
-                adjust_to_business_days=adjust_to_business_days,
-                following_coupons_day_count=following_coupons_day_count,
-                yield_calculation_convention=yield_calculation_convention,
-                day_count_convention=day_count_convention,
-            )
-        else:
-            price_calc = bond_price
+
         return ytm, time_to_payments, price_calc
