@@ -75,6 +75,25 @@ class TestBulletBond:
             f"Expected duration: {expected_duration}, but got: {duration}"
         )
 
+    def test_macauley_duration(self):
+        bond = BulletBond("2020-01-01", "2025-01-01", 5, 1)
+        duration = bond.macaulay_duration(yield_to_maturity=0.05)
+        price = bond.price_from_yield(yield_to_maturity=0.05)
+
+        # Calculate effective duration using a small epsilon
+        epsilon = 0.0000001
+        price_plus_epsilon = bond.price_from_yield(yield_to_maturity=0.05 + epsilon)
+        price_minus_epsilon = bond.price_from_yield(yield_to_maturity=0.05 - epsilon)
+
+        expected_duration = (
+            -1 * (price_plus_epsilon - price_minus_epsilon) / (2 * epsilon * price)
+        ) * (1 + 0.05 / 2)
+
+        assert isinstance(duration, float)
+        assert abs(duration - expected_duration) < 1e-6, (
+            f"Expected duration: {expected_duration}, but got: {duration}"
+        )
+
     def test_modified_duration_with_annual(self):
         bond = BulletBond(
             "2020-01-01", "2025-01-01", 5, 1, yield_calculation_convention="annual"
@@ -90,6 +109,27 @@ class TestBulletBond:
         expected_duration = (
             -1 * (price_plus_epsilon - price_minus_epsilon) / (2 * epsilon * price)
         )
+
+        assert isinstance(duration, float)
+        assert abs(duration - expected_duration) < 1e-6, (
+            f"Expected duration: {expected_duration}, but got: {duration}"
+        )
+
+    def test_macaulay_duration_with_annual(self):
+        bond = BulletBond(
+            "2020-01-01", "2025-01-01", 5, 1, yield_calculation_convention="annual"
+        )
+        duration = bond.macaulay_duration(yield_to_maturity=0.05)
+        price = bond.price_from_yield(yield_to_maturity=0.05)
+
+        # Calculate effective duration using a small epsilon
+        epsilon = 0.0000001
+        price_plus_epsilon = bond.price_from_yield(yield_to_maturity=0.05 + epsilon)
+        price_minus_epsilon = bond.price_from_yield(yield_to_maturity=0.05 - epsilon)
+
+        expected_duration = (
+            -1 * (price_plus_epsilon - price_minus_epsilon) / (2 * epsilon * price)
+        ) * (1 + 0.05)
 
         assert isinstance(duration, float)
         assert abs(duration - expected_duration) < 1e-6, (
@@ -645,6 +685,13 @@ class TestBulletBond:
         )
         with pytest.raises(ValueError):
             bond.modified_duration()
+
+    def test_macaulay_duration_without_yield_or_price(self):
+        bond = BulletBond(
+            "2020-01-01", "2025-01-01", 5, 1, settlement_date="2022-01-01"
+        )
+        with pytest.raises(ValueError):
+            bond.macaulay_duration()
 
     def test_negative_notional_raises(self):
         with pytest.raises(
