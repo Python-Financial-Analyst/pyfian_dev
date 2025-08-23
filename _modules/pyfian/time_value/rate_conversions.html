@@ -136,6 +136,60 @@
 
 
 
+<div class="viewcode-block" id="convert_yield">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.convert_yield">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_yield</span><span class="p">(</span><span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">from_convention</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">to_convention</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a yield from one convention to another.</span>
+
+<span class="sd">    This is useful for comparing yields across different financial products and conventions.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    rate : float</span>
+<span class="sd">        The interest rate to convert, expressed as a decimal (e.g., 0.05 for 5%).</span>
+<span class="sd">    from_convention : str</span>
+<span class="sd">        The current yield calculation convention of the rate. Must be one of &quot;Annual&quot;, &quot;BEY&quot;, &quot;Continuous&quot;.</span>
+<span class="sd">    to_convention : str</span>
+<span class="sd">        The target yield calculation convention to convert the rate to. Must be one of &quot;Annual&quot;, &quot;BEY&quot;, &quot;Continuous&quot;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The converted interest rate, expressed as a decimal.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; convert_yield(0.05, &quot;BEY&quot;, &quot;Annual&quot;)</span>
+<span class="sd">    0.050625</span>
+<span class="sd">    &gt;&gt;&gt; convert_yield(0.05, &quot;BEY&quot;, &quot;Continuous&quot;)</span>
+<span class="sd">    0.04938523</span>
+<span class="sd">    &gt;&gt;&gt; convert_yield(0.05, &quot;Continuous&quot;, &quot;Annual&quot;)</span>
+<span class="sd">    0.051271096376024</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">from_convention</span> <span class="o">==</span> <span class="n">to_convention</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rate</span>
+    <span class="c1"># Convert to effective annual as intermediate</span>
+    <span class="k">if</span> <span class="n">from_convention</span> <span class="o">==</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">:</span>
+        <span class="n">eff</span> <span class="o">=</span> <span class="n">continuous_to_effective</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">from_convention</span> <span class="o">==</span> <span class="s2">&quot;Annual&quot;</span><span class="p">:</span>
+        <span class="n">eff</span> <span class="o">=</span> <span class="n">rate</span>
+    <span class="k">elif</span> <span class="n">from_convention</span> <span class="o">==</span> <span class="s2">&quot;BEY&quot;</span><span class="p">:</span>
+        <span class="n">eff</span> <span class="o">=</span> <span class="n">bey_to_effective_annual</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">from_convention</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">to_convention</span> <span class="o">==</span> <span class="s2">&quot;Annual&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">eff</span>
+    <span class="k">elif</span> <span class="n">to_convention</span> <span class="o">==</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">effective_to_continuous</span><span class="p">(</span><span class="n">eff</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">to_convention</span> <span class="o">==</span> <span class="s2">&quot;BEY&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">effective_annual_to_bey</span><span class="p">(</span><span class="n">eff</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">to_convention</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
 <span class="c1"># continuous_to_effective &lt;-&gt; effective_to_continuous conversions</span>
 <div class="viewcode-block" id="continuous_to_effective">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.continuous_to_effective">[docs]</a>
