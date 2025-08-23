@@ -1,7 +1,7 @@
 """
 bond.py
 
-Module for fixed income bond analytics, including BulletBond class for payment flows,
+Module for fixed income bond analytics, including FixedRateBullet class for payment flows,
 valuation, and yield calculations.
 """
 
@@ -18,9 +18,9 @@ from pyfian.utils.day_count import DayCountBase, get_day_count_convention
 from pyfian.yield_curves.base_curve import YieldCurveBase
 
 
-class BulletBond:
+class FixedRateBullet:
     """
-    BulletBond represents a bullet bond with fixed coupon payments and principal at maturity.
+    FixedRateBullet represents a bullet bond with fixed coupon payments and principal at maturity.
     It allows for payment flow generation, valuation, yield calculations, and other bond analytics.
 
     Parameters
@@ -108,7 +108,7 @@ class BulletBond:
 
     Examples
     --------
-    >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1, notional=1000)
+    >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1, notional=1000)
     >>> bond.payment_flow
     {Timestamp('2025-01-01 00:00:00'): 1050.0, Timestamp('2024-01-01 00:00:00'): 50.0, ...}
     """
@@ -602,7 +602,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1, notional=1000)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1, notional=1000)
         >>> bond.make_payment_flow()
         {Timestamp('2025-01-01 00:00:00'): 1050.0, Timestamp('2024-01-01 00:00:00'): 50.0, ...}
         """
@@ -687,7 +687,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.filter_payment_flow('2022-01-01')
         {Timestamp('2023-01-01 00:00:00'): 5.0, Timestamp('2024-01-01 00:00:00'): 5.0,
         Timestamp('2025-01-01 00:00:00'): 105.0}
@@ -812,7 +812,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 2)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.calculate_time_to_payments('2022-01-01')
         {1.0: 5.0, 2.0: 5.0, 3.0: 105.0}
         """
@@ -971,7 +971,7 @@ class BulletBond:
         >>> class DummyCurve:
         ...     def discount_t(self, t):
         ...         return 1 / (1 + 0.05 * t)
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.value_with_curve(DummyCurve())
         (value, {t1: pv1, t2: pv2, ...})
         """
@@ -1048,7 +1048,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.g_spread(benchmark_ytm=0.03, bond_price=102)
         0.0185
         """
@@ -1138,7 +1138,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.i_spread(benchmark_curve=swap_curve)
         0.0185
         """
@@ -1235,7 +1235,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 2)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.z_spread(benchmark_curve=FlatCurveBEY(0.05, '2020-01-01'))
         0.0
         """
@@ -1354,7 +1354,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.yield_to_maturity(bond_price=95)
         0.06189544078
         """
@@ -1455,7 +1455,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.modified_duration(yield_to_maturity=0.05)
         4.2
         """
@@ -1558,7 +1558,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.macaulay_duration(yield_to_maturity=0.05)
         4.545249
         """
@@ -1662,7 +1662,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.convexity(yield_to_maturity=0.05)
         18.7
         """
@@ -1755,7 +1755,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.accrued_interest('2024-07-02')
         2.5
         """
@@ -1827,7 +1827,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.clean_price(102.5, '2024-07-02')
         100.0
         """
@@ -1862,7 +1862,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.dirty_price(100.0, '2024-07-02')
         102.5
         """
@@ -1910,7 +1910,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.price_from_yield(0.05)
         100.0
         """
@@ -1975,7 +1975,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.cash_flows('2022-01-01')
         [5.0, 5.0, 105.0]
         """
@@ -2021,7 +2021,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.next_coupon_date('2023-06-01')
         Timestamp('2024-01-01 00:00:00')
         """
@@ -2055,7 +2055,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.previous_coupon_date('2023-06-01')
         Timestamp('2023-01-01 00:00:00')
         """
@@ -2121,7 +2121,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.to_dataframe('2022-01-01')
         date        Flows  Coupon  Amortization  Cost
         2022-01-03  5.0    5.0          0.0           0.0
@@ -2236,7 +2236,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.dv01(0.05)
         -0.42
         """
@@ -2316,7 +2316,7 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.plot_cash_flows('2022-01-01')
         # Shows a plot
         """
@@ -2365,7 +2365,7 @@ class BulletBond:
 
     def __repr__(self) -> str:
         """
-        Return string representation of the BulletBond object.
+        Return string representation of the FixedRateBullet object.
 
         Returns
         -------
@@ -2374,12 +2374,12 @@ class BulletBond:
 
         Examples
         --------
-        >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> print(bond)
-        BulletBond(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, cpn=5, cpn_freq=1)
+        FixedRateBullet(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, cpn=5, cpn_freq=1)
         """
         return (
-            f"BulletBond(issue_dt={self.issue_dt}, maturity={self.maturity}, "
+            f"FixedRateBullet(issue_dt={self.issue_dt}, maturity={self.maturity}, "
             f"cpn={self.cpn}, cpn_freq={self.cpn_freq})"
         )
 

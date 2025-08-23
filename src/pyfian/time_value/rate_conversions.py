@@ -46,6 +46,57 @@ def _validate_effective_rate(effective_rate):
         raise ValueError("effective_rate must be greater than -1.")
 
 
+def convert_yield(rate: float, from_convention: str, to_convention: str) -> float:
+    """
+    Convert a yield from one convention to another.
+
+    This is useful for comparing yields across different financial products and conventions.
+
+    Parameters:
+    -----------
+    rate : float
+        The interest rate to convert, expressed as a decimal (e.g., 0.05 for 5%).
+    from_convention : str
+        The current yield calculation convention of the rate. Must be one of "Annual", "BEY", "Continuous".
+    to_convention : str
+        The target yield calculation convention to convert the rate to. Must be one of "Annual", "BEY", "Continuous".
+
+    Returns
+    -------
+    float
+        The converted interest rate, expressed as a decimal.
+
+    Examples
+    --------
+    >>> convert_yield(0.05, "BEY", "Annual")
+    0.050625
+    >>> convert_yield(0.05, "BEY", "Continuous")
+    0.04938523
+    >>> convert_yield(0.05, "Continuous", "Annual")
+    0.051271096376024
+    """
+    if from_convention == to_convention:
+        return rate
+    # Convert to effective annual as intermediate
+    if from_convention == "Continuous":
+        eff = continuous_to_effective(rate)
+    elif from_convention == "Annual":
+        eff = rate
+    elif from_convention == "BEY":
+        eff = bey_to_effective_annual(rate)
+    else:
+        raise ValueError(f"Unknown yield calculation convention: {from_convention}")
+
+    if to_convention == "Annual":
+        return eff
+    elif to_convention == "Continuous":
+        return effective_to_continuous(eff)
+    elif to_convention == "BEY":
+        return effective_annual_to_bey(eff)
+    else:
+        raise ValueError(f"Unknown yield calculation convention: {to_convention}")
+
+
 # continuous_to_effective <-> effective_to_continuous conversions
 def continuous_to_effective(rate: float) -> float:
     """

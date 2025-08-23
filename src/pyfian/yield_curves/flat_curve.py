@@ -189,18 +189,9 @@ class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
             yield_calculation_convention = self.yield_calculation_convention
 
         # Use the appropriate yield calculation convention
-        if yield_calculation_convention == "Annual":
-            return rc.continuous_to_effective(self.log_rate + spread)
-        elif yield_calculation_convention == "BEY":
-            return rc.effective_annual_to_bey(
-                rc.continuous_to_effective(self.log_rate + spread)
-            )
-        elif yield_calculation_convention == "Continuous":
-            return self.log_rate + spread
-        else:
-            raise ValueError(
-                f"Unknown yield calculation convention: {yield_calculation_convention}"
-            )
+        return rc.convert_yield(
+            self.log_rate + spread, "Continuous", yield_calculation_convention
+        )
 
     def date_rate(
         self,
@@ -248,18 +239,9 @@ class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
 
-        if yield_calculation_convention == "Annual":
-            return rc.continuous_to_effective(self.log_rate + spread)
-        elif yield_calculation_convention == "BEY":
-            return rc.effective_annual_to_bey(
-                rc.continuous_to_effective(self.log_rate + spread)
-            )
-        elif yield_calculation_convention == "Continuous":
-            return self.log_rate + spread
-        else:
-            raise ValueError(
-                f"Unknown yield calculation convention: {yield_calculation_convention}"
-            )
+        return rc.convert_yield(
+            self.log_rate + spread, "Continuous", yield_calculation_convention
+        )
 
     def __repr__(self) -> str:
         return (
@@ -382,16 +364,9 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
 
-        if yield_calculation_convention == "Annual":
-            return self.aer + spread
-        elif yield_calculation_convention == "BEY":
-            return rc.effective_annual_to_bey(self.aer + spread)
-        elif yield_calculation_convention == "Continuous":
-            return rc.effective_to_continuous(self.aer + spread)
-        else:
-            raise ValueError(
-                f"Unknown yield calculation convention: {yield_calculation_convention}"
-            )
+        return rc.convert_yield(
+            self.aer + spread, "Annual", yield_calculation_convention
+        )
 
     def date_rate(
         self,
@@ -437,16 +412,9 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
 
-        if yield_calculation_convention == "Annual":
-            return self.aer + spread
-        elif yield_calculation_convention == "BEY":
-            return rc.effective_annual_to_bey(self.aer + spread)
-        elif yield_calculation_convention == "Continuous":
-            return rc.effective_to_continuous(self.aer + spread)
-        else:
-            raise ValueError(
-                f"Unknown yield calculation convention: {yield_calculation_convention}"
-            )
+        return rc.convert_yield(
+            self.aer + spread, "Annual", yield_calculation_convention
+        )
 
     def __repr__(self) -> str:
         return (
@@ -571,18 +539,7 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
 
-        if yield_calculation_convention == "Annual":
-            return rc.bey_to_effective_annual(self.bey + spread)
-        elif yield_calculation_convention == "BEY":
-            return self.bey + spread
-        elif yield_calculation_convention == "Continuous":
-            return rc.effective_to_continuous(
-                rc.bey_to_effective_annual(self.bey + spread)
-            )
-        else:
-            raise ValueError(
-                f"Unknown yield calculation convention: {yield_calculation_convention}"
-            )
+        return rc.convert_yield(self.bey + spread, "BEY", yield_calculation_convention)
 
     def date_rate(
         self,
@@ -628,18 +585,7 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
 
-        if yield_calculation_convention == "Annual":
-            return rc.bey_to_effective_annual(self.bey + spread)
-        elif yield_calculation_convention == "BEY":
-            return self.bey + spread
-        elif yield_calculation_convention == "Continuous":
-            return rc.effective_to_continuous(
-                rc.bey_to_effective_annual(self.bey + spread)
-            )
-        else:
-            raise ValueError(
-                f"Unknown yield calculation convention: {yield_calculation_convention}"
-            )
+        return rc.convert_yield(self.bey + spread, "BEY", yield_calculation_convention)
 
     def __repr__(self) -> str:
         return (

@@ -73,3 +73,32 @@ class TestRateConversions:
             rc.nominal_days_to_effective(0.01, "bad")
         with pytest.raises(ValueError):
             rc.nominal_days_to_effective(0.01, -1)
+
+
+# Separate class for convert_yield tests
+class TestConvertYield:
+    @pytest.mark.parametrize(
+        "rate,from_conv,to_conv,expected",
+        [
+            (0.05, "BEY", "Annual", 0.050625),
+            (0.05, "BEY", "Continuous", 0.04938523625299368),
+            (0.05, "Continuous", "Annual", 0.05127109637602411),
+            (0.05, "Annual", "Continuous", 0.04879016416943205),
+            (0.05, "Annual", "BEY", 0.0493901532),
+            (0.05, "Continuous", "BEY", 0.05063),
+            (0.05, "BEY", "BEY", 0.05),
+            (0.05, "Annual", "Annual", 0.05),
+            (0.05, "Continuous", "Continuous", 0.05),
+        ],
+    )
+    def test_convert_yield_conventions(self, rate, from_conv, to_conv, expected):
+        result = rc.convert_yield(rate, from_conv, to_conv)
+        assert np.isclose(result, expected, atol=1e-7), (
+            f"Failed: {rate}, {from_conv} -> {to_conv}, Expected: {expected}, Got: {result}"
+        )
+
+    def test_convert_yield_invalid_convention(self):
+        with pytest.raises(ValueError):
+            rc.convert_yield(0.05, "BAD", "Annual")
+        with pytest.raises(ValueError):
+            rc.convert_yield(0.05, "Annual", "BAD")
