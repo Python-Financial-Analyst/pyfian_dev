@@ -773,6 +773,48 @@ Module Contents
 
 
 
+   .. py:method:: macaulay_duration(yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
+
+      Calculate macaulay duration of the bond.
+      If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
+
+      .. math::
+          Macaulay Duration = \frac{1}{P} \sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{(t)}} \cdot t
+      where:
+
+      - :math:`P` is the price of the bond
+      - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date
+      - :math:`YTM` is the yield to maturity
+      - :math:`T` is the total number of periods
+
+      The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+      :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
+      :type yield_to_maturity: float, optional
+      :param bond_price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+      :type bond_price: float, optional
+      :param settlement_date: Settlement date. Defaults to issue date.
+      :type settlement_date: str or datetime-like, optional
+      :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+      :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
+      :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+      :type following_coupons_day_count: str or DayCountBase, optional
+      :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+      :type yield_calculation_convention: str, optional
+
+      :returns: **duration** -- Macaulay duration in years.
+      :rtype: float
+
+      .. rubric:: Examples
+
+      >>> bond = BulletBond('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond.macaulay_duration(yield_to_maturity=0.05)
+      4.545249
+
+
+
    .. py:method:: convexity(yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
 
       Calculate the convexity of the bond.
