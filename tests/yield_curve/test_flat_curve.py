@@ -126,7 +126,7 @@ class TestFlatCurveLog:
     def test_forward_dt(self):
         # Forward rate from date '2020-07-01' for dt=0.5
         fwd = self.curve.forward_dt("2020-07-01", 0.5)
-        t_start = self.curve.day_count.fraction(
+        t_start = self.curve.day_count_convention.fraction(
             start=self.curve.curve_date, current=pd.to_datetime("2020-07-01")
         )
         d0 = self.curve.discount_t(t_start)
@@ -137,10 +137,10 @@ class TestFlatCurveLog:
     def test_forward_dates(self):
         # Forward rate between two dates
         fwd = self.curve.forward_dates("2020-07-01", "2021-01-01")
-        t_start = self.curve.day_count.fraction(
+        t_start = self.curve.day_count_convention.fraction(
             start=self.curve.curve_date, current=pd.to_datetime("2020-07-01")
         )
-        t_end = self.curve.day_count.fraction(
+        t_end = self.curve.day_count_convention.fraction(
             start=self.curve.curve_date, current=pd.to_datetime("2021-01-01")
         )
         dt = t_end - t_start
@@ -247,6 +247,10 @@ class TestFlatCurveAER:
 
     @pytest.mark.filterwarnings("ignore::UserWarning")
     def test_plot_curve(self):
+        # Test plotting the curve. Use the appropriate backend so it doesn't graph
+        import matplotlib.pyplot as plt
+
+        plt.switch_backend("Agg")
         self.curve.plot_curve([0.5, 1, 2])
 
     def test_forward_t_start_t_end(self):
@@ -265,7 +269,7 @@ class TestFlatCurveAER:
 
     def test_forward_dt(self):
         fwd = self.curve.forward_dt("2020-07-01", 0.5)
-        t_start = self.curve.day_count.fraction(
+        t_start = self.curve.day_count_convention.fraction(
             start=self.curve.curve_date, current=pd.to_datetime("2020-07-01")
         )
         d0 = self.curve.discount_t(t_start)
@@ -275,10 +279,10 @@ class TestFlatCurveAER:
 
     def test_forward_dates(self):
         fwd = self.curve.forward_dates("2020-07-01", "2021-01-01")
-        t_start = self.curve.day_count.fraction(
+        t_start = self.curve.day_count_convention.fraction(
             start=self.curve.curve_date, current=pd.to_datetime("2020-07-01")
         )
-        t_end = self.curve.day_count.fraction(
+        t_end = self.curve.day_count_convention.fraction(
             start=self.curve.curve_date, current=pd.to_datetime("2021-01-01")
         )
         dt = t_end - t_start
@@ -317,6 +321,13 @@ class TestFlatCurveBEY:
             "2022-01-01", yield_calculation_convention="Annual"
         ) == pytest.approx(eff)
 
+    def test_date_rate_BEY(self):
+        # Default yield_calculation_convention is "BEY"
+        bey = 0.05
+        assert self.curve.date_rate(
+            "2022-01-01", yield_calculation_convention="BEY"
+        ) == pytest.approx(bey)
+
     def test_call_annual(self):
         eff = (1 + 0.05 / 2) ** 2 - 1
         assert self.curve(1, yield_calculation_convention="Annual") == pytest.approx(
@@ -346,10 +357,7 @@ class TestFlatCurveBEY:
         ) == pytest.approx(eff)
 
     def test_date_rate_bey(self):
-        assert (
-            self.curve.date_rate("2022-01-01", yield_calculation_convention="BEY")
-            == 0.05
-        )
+        assert self.curve.date_rate("2022-01-01") == 0.05
 
     def test_date_rate_continuous(self):
         eff = (1 + 0.05 / 2) ** 2 - 1
@@ -415,7 +423,7 @@ class TestFlatCurveBEY:
 
     def test_forward_dt(self):
         fwd = self.curve.forward_dt("2020-07-01", 0.5)
-        t_start = self.curve.day_count.fraction(
+        t_start = self.curve.day_count_convention.fraction(
             start=self.curve.curve_date, current=pd.to_datetime("2020-07-01")
         )
         d0 = self.curve.discount_t(t_start)
@@ -425,10 +433,10 @@ class TestFlatCurveBEY:
 
     def test_forward_dates(self):
         fwd = self.curve.forward_dates("2020-07-01", "2021-01-01")
-        t_start = self.curve.day_count.fraction(
+        t_start = self.curve.day_count_convention.fraction(
             start=self.curve.curve_date, current=pd.to_datetime("2020-07-01")
         )
-        t_end = self.curve.day_count.fraction(
+        t_end = self.curve.day_count_convention.fraction(
             start=self.curve.curve_date, current=pd.to_datetime("2021-01-01")
         )
         dt = t_end - t_start

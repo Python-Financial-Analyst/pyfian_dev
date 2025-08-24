@@ -36,6 +36,11 @@ class TestFixedRateBullet:
         assert bond.get_bond_price() == pytest.approx(100)
         assert isinstance(bond.get_yield_to_maturity(), float)
 
+    # Test to create bond with invalid day_count_convention, neither str nor DayCountBase
+    def test_create_bond_with_invalid_day_count_convention(self):
+        with pytest.raises(TypeError):
+            FixedRateBullet("2020-01-01", "2025-01-01", 5, 1, day_count_convention=123)
+
     def test_make_payment_flow(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         dict_payments, dict_coupons, dict_amortization = bond.make_payment_flow()

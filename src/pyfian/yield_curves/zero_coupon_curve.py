@@ -6,7 +6,7 @@ Implements ZeroCouponCurve for zero-coupon rates.
 
 from typing import Optional, Union
 import pandas as pd
-from pyfian.time_value.rate_conversions import _validate_yield_calculation_convention
+from pyfian.time_value.rate_conversions import validate_yield_calculation_convention
 from pyfian.utils.day_count import DayCountBase, get_day_count_convention
 from pyfian.yield_curves.base_curve import YieldCurveBase
 from pyfian.time_value import rate_conversions as rc
@@ -53,9 +53,18 @@ class ZeroCouponCurve(YieldCurveBase):
         self.yield_calculation_convention: str = (
             "Annual"
             if yield_calculation_convention is None
-            else _validate_yield_calculation_convention(yield_calculation_convention)
+            else validate_yield_calculation_convention(yield_calculation_convention)
         )
         self.zero_rates = self._prepare_zero_rates(zero_rates)
+
+    def as_dict(self):
+        """Convert the curve to a dictionary."""
+        return {
+            "zero_rates": self.zero_rates,
+            "curve_date": self.curve_date,
+            "day_count_convention": self.day_count_convention,
+            "yield_calculation_convention": self.yield_calculation_convention,
+        }
 
     def _prepare_zero_rates(self, zero_rates):
         """Prepare zero rates for the curve sorted by time and with time fractions."""
@@ -236,7 +245,7 @@ class ZeroCouponCurve(YieldCurveBase):
     def _get_rate(self, t: float) -> float:
         # Simple linear interpolation between known maturities
         assert t >= 0, "Maturity must be non-negative"
-        maturities = self.zero_rates.keys()
+        maturities = list(self.zero_rates.keys())
         if t <= maturities[0]:
             return self.zero_rates[maturities[0]]
         if t >= maturities[-1]:
@@ -288,7 +297,7 @@ class ZeroCouponCurveByDate(ZeroCouponCurve):
         self.yield_calculation_convention: str = (
             "Annual"
             if yield_calculation_convention is None
-            else _validate_yield_calculation_convention(yield_calculation_convention)
+            else validate_yield_calculation_convention(yield_calculation_convention)
         )
 
         # Raise if day_count_convention is neither str nor DayCountBase
@@ -307,6 +316,14 @@ class ZeroCouponCurveByDate(ZeroCouponCurve):
             pd.to_datetime(k): v for k, v in zero_rates_dates.items()
         }
         self.zero_rates = self._prepare_zero_rates(self.zero_rates_date)
+
+    def as_dict(self):
+        return {
+            "zero_rates_dates": self.zero_rates_date,
+            "curve_date": self.curve_date,
+            "day_count_convention": self.day_count_convention,
+            "yield_calculation_convention": self.yield_calculation_convention,
+        }
 
     def _prepare_zero_rates(self, zero_rates_date: dict[pd.Timestamp, float]):
         # Convert the zero rates to a format that uses dates instead of times using the day count convention
