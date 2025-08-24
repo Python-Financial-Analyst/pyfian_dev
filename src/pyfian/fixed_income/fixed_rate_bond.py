@@ -170,6 +170,12 @@ class FixedRateBullet:
         self.coupon_flow: dict[pd.Timestamp, float] = dict_coupons
         self.amortization_flow: dict[pd.Timestamp, float] = dict_amortization
 
+        # Raise if day_count_convention is neither str nor DayCountBase
+        if not isinstance(day_count_convention, (str, DayCountBase)):
+            raise TypeError(
+                "day_count_convention must be either a string or a DayCountBase instance."
+            )
+
         # Initialize day count convention, defaulting to 'actual/actual-Bond'
         self.day_count_convention: DayCountBase = (
             get_day_count_convention(day_count_convention)
