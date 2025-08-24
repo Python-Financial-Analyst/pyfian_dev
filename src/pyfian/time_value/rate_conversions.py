@@ -16,6 +16,7 @@ These conversions are essential for comparing, quoting, and reporting interest r
 """
 
 import numpy as np
+from pyparsing import Optional
 
 
 # --- Internal helpers for exponentiation logic ---
@@ -44,6 +45,13 @@ def _validate_effective_rate(effective_rate):
     _validate_numeric(effective_rate, "effective_rate")
     if np.any(np.less_equal(effective_rate, -1)):
         raise ValueError("effective_rate must be greater than -1.")
+
+
+def _validate_yield_calculation_convention(convention: Optional[str]) -> str:
+    valid_conventions = ["Annual", "BEY", "Continuous"]
+    if convention not in valid_conventions:
+        raise ValueError(f"Unknown yield calculation convention: {convention}")
+    return convention
 
 
 def convert_yield(rate: float, from_convention: str, to_convention: str) -> float:

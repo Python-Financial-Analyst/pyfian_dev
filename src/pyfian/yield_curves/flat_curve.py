@@ -76,7 +76,7 @@ class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
     log_rate : float
         Continuously compounded rate (as decimal, e.g. 0.05 for 5%).
     curve_date : str or datetime-like
-        Date of the curve.
+        The curve settlement date.
     """
 
     def __init__(
@@ -331,7 +331,7 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
     aer : float
         Annual effective rate (as decimal, e.g. 0.05 for 5%).
     curve_date : str or datetime-like
-        Date of the curve.
+        The curve settlement date.
     """
 
     def __init__(self, aer: float, curve_date: Union[str, pd.Timestamp]) -> None:
@@ -576,7 +576,7 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
     bey : float
         Bond equivalent yield (as decimal, e.g. 0.05 for 5%).
     curve_date : str or datetime-like
-        Date of the curve.
+        The curve settlement date.
     """
 
     def __init__(self, bey: float, curve_date: Union[str, pd.Timestamp]) -> None:

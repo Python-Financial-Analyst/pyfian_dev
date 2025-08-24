@@ -156,7 +156,7 @@ class YieldCurveBase(ABC):
 
     def forward_dt(
         self,
-        fecha_tasa: Union[str, pd.Timestamp],
+        date: Union[str, pd.Timestamp],
         dt: float,
         spread_start: float = 0,
         spread_end: float = 0,
@@ -172,7 +172,7 @@ class YieldCurveBase(ABC):
 
         Parameters
         ----------
-        fecha_tasa : Union[str, pd.Timestamp]
+        date : Union[str, pd.Timestamp]
             Start date for the forward rate calculation.
         dt : float
             Time increment in years.
@@ -186,14 +186,14 @@ class YieldCurveBase(ABC):
         Returns
         -------
         float
-            Forward rate from fecha_tasa over dt years.
+            Forward rate from date over dt years.
 
         Notes
         -----
         This method converts the start date to a time fraction and delegates to `forward_t_start_dt`.
         """
         t_start = self.day_count_convention.fraction(
-            start=self.curve_date, current=pd.to_datetime(fecha_tasa)
+            start=self.curve_date, current=pd.to_datetime(date)
         )
         return self.forward_t_start_dt(
             t_start, dt, spread_start, spread_end, spread_forward
