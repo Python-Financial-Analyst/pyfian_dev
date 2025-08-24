@@ -250,24 +250,21 @@ class ZeroCouponCurve(YieldCurveBase):
             return self.zero_rates[maturities[0]]
         if t >= maturities[-1]:
             return self.zero_rates[maturities[-1]]
-        for i in range(len(maturities) - 1):
-            if maturities[i] <= t <= maturities[i + 1]:
-                r1, r2 = (
-                    self.zero_rates[maturities[i]],
-                    self.zero_rates[maturities[i + 1]],
-                )
-                t1, t2 = maturities[i], maturities[i + 1]
-                return r1 + (r2 - r1) * (t - t1) / (t2 - t1)
-        return self.zero_rates[maturities[0]]
+        else:
+            for i in range(len(maturities) - 1):
+                if maturities[i] <= t <= maturities[i + 1]:
+                    r1, r2 = (
+                        self.zero_rates[maturities[i]],
+                        self.zero_rates[maturities[i + 1]],
+                    )
+                    t1, t2 = maturities[i], maturities[i + 1]
+                    break
+            return r1 + (r2 - r1) * (t - t1) / (t2 - t1)
 
     def __repr__(self):
         return f"ZeroCouponCurve(zero_rates={self.zero_rates}, curve_date={self.curve_date.strftime('%Y-%m-%d')})"
 
 
-# Class for zero_coupon_curve where the input is a dictionary with dates and rates, instead of the time. It inherits from ZeroCouponCurve but overrides the _prepare_data method.
-# The self.zero_rates will still be the same, substracting the curve_date from these dates using the day_count_convention
-# The original input zero_rates_date will be a dictionary with dates as keys and rates as values and it will be kept.
-# The init method should be overrided also
 class ZeroCouponCurveByDate(ZeroCouponCurve):
     """
     ZeroCouponCurveByDate is a subclass of ZeroCouponCurve that allows for the input of zero rates as a function of dates.
@@ -312,14 +309,14 @@ class ZeroCouponCurveByDate(ZeroCouponCurve):
             else day_count_convention
         )
 
-        self.zero_rates_date = {
+        self.zero_rates_dates = {
             pd.to_datetime(k): v for k, v in zero_rates_dates.items()
         }
-        self.zero_rates = self._prepare_zero_rates(self.zero_rates_date)
+        self.zero_rates = self._prepare_zero_rates(self.zero_rates_dates)
 
     def as_dict(self):
         return {
-            "zero_rates_dates": self.zero_rates_date,
+            "zero_rates_dates": self.zero_rates_dates,
             "curve_date": self.curve_date,
             "day_count_convention": self.day_count_convention,
             "yield_calculation_convention": self.yield_calculation_convention,

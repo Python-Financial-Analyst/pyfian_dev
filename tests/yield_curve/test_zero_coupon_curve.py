@@ -14,6 +14,28 @@ class TestZeroCouponCurve:
             yield_calculation_convention="Annual",
         )
 
+    def test_as_dict(self):
+        expected = {
+            "zero_rates": self.curve.zero_rates,
+            "curve_date": self.curve.curve_date,
+            "day_count_convention": self.curve.day_count_convention,
+            "yield_calculation_convention": self.curve.yield_calculation_convention,
+        }
+        assert self.curve.as_dict() == expected
+
+    # Test making a zero coupon curve without a valid day_count_convention, neither str nor DayCountBase
+    def test_invalid_day_count_convention(self):
+        with pytest.raises(
+            TypeError,
+            match="day_count_convention must be either a string or a DayCountBase instance",
+        ):
+            ZeroCouponCurve(
+                zero_rates=self.zero_rates,
+                curve_date=self.curve_date,
+                day_count_convention=None,
+                yield_calculation_convention="Annual",
+            )
+
     def test_discount_t(self):
         pv = self.curve.discount_t(2.0)
         expected = 1 / (1 + 0.025) ** 2.0
@@ -47,6 +69,16 @@ class TestZeroCouponCurve:
         rate = self.curve(t)
         assert pytest.approx(rate, rel=1e-6) == expected
 
+    def test_date_below(self):
+        date = pd.Timestamp("2025-08-24")
+        rate = self.curve.date_rate(date)
+        assert pytest.approx(rate, rel=1e-6) == 0.02
+
+    def test_date_above(self):
+        date = pd.Timestamp("2029-08-24")
+        rate = self.curve.date_rate(date)
+        assert pytest.approx(rate, rel=1e-6) == 0.03
+
 
 class TestZeroCouponCurveByDate:
     def setup_method(self):
@@ -62,6 +94,18 @@ class TestZeroCouponCurveByDate:
             day_count_convention="actual/365",
             yield_calculation_convention="Annual",
         )
+
+    def test_invalid_day_count_convention(self):
+        with pytest.raises(
+            TypeError,
+            match="day_count_convention must be either a string or a DayCountBase instance.",
+        ):
+            ZeroCouponCurveByDate(
+                zero_rates_dates=self.zero_rates_dates,
+                curve_date=self.curve_date,
+                day_count_convention=None,
+                yield_calculation_convention="Annual",
+            )
 
     def test_discount_date(self):
         date = pd.Timestamp("2027-08-24")
@@ -95,3 +139,12 @@ class TestZeroCouponCurveByDate:
 
     def test_repr(self):
         assert "ZeroCouponCurve" in repr(self.curve)
+
+    def test_as_dict(self):
+        expected = {
+            "zero_rates_dates": self.curve.zero_rates_dates,
+            "curve_date": self.curve.curve_date,
+            "day_count_convention": self.curve.day_count_convention,
+            "yield_calculation_convention": self.curve.yield_calculation_convention,
+        }
+        assert self.curve.as_dict() == expected
