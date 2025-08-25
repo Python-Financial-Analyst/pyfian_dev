@@ -16,16 +16,16 @@ from pyfian.yield_curves.zero_coupon_curve import ZeroCouponCurve
 from pyfian.time_value import rate_conversions as rc
 
 
-class SpotCurve(ZeroCouponCurve):
+class ParCurve(ZeroCouponCurve):
     """
-    SpotCurve bootstraps zero-coupon rates from a series of bonds.
+    ParCurve bootstraps par rates from a series of bonds.
 
     Parameters
     ----------
     curve_date : str or datetime-like
         Date of the curve.
-    bonds : list of Bonds
-        Each bond must have keys: 'get_bond_price', 'calculate_time_to_payments', 'get_settlement_date'
+    par_rates : dict
+        Dictionary of time (in years) and a dict with inputs to create a FixedRateBullet for each par Bond.
     zero_rates : dict
         Zero-coupon rates, keyed by maturity (in years).
     day_count_convention : str or DayCountBase, optional
@@ -37,20 +37,20 @@ class SpotCurve(ZeroCouponCurve):
     def __init__(
         self,
         curve_date: pd.Timestamp,
-        bonds: Optional[
-            list[FixedRateBullet] | tuple[FixedRateBullet]
-        ] = None,  # TODO: With future custom bonds add FixedRateBullet base Class
+        par_rates: Optional[dict[float, dict]] = None,
         zero_rates: Optional[dict[float, float]] = None,
         day_count_convention: str | DayCountBase = "actual/365",
         yield_calculation_convention: Optional[str] = None,
     ):
-        if bonds is None and zero_rates is None:
-            raise ValueError("Either bonds or zero_rates must be provided")
+        if par_rates is None and zero_rates is None:
+            raise ValueError("Either par_rates or zero_rates must be provided")
 
-        self.bonds = (
-            sorted(bonds, key=lambda x: x.maturity) if bonds is not None else None
-        )
         self.curve_date = pd.to_datetime(curve_date)
+        self.par_rates = (
+            sorted(par_rates.items(), key=lambda x: x[0] + self.curve_date)
+            if par_rates is not None
+            else None
+        )
 
         # Raise if day_count_convention is neither str nor DayCountBase
         if not isinstance(day_count_convention, (str, DayCountBase)):
@@ -79,14 +79,21 @@ class SpotCurve(ZeroCouponCurve):
     def as_dict(self):
         return {
             "curve_date": self.curve_date,
-            "bonds": self.bonds,
+            "par_rates": self.par_rates,
             "zero_rates": self.zero_rates,
         }
 
     def _bootstrap_spot_rates(self):
         zero_rates = self.zero_rates
 
-        for bond in self.bonds:
+        for maturity, bond_params in self.par_rates:
+            maturity_date = self.curve_date + maturity
+            bond = FixedRateBullet(
+                settlement_date=self.curve_date,
+                issue_dt=self.curve_date,
+                maturity=maturity_date,
+                **bond_params,
+            )
             price = bond.get_bond_price()
             payment_flow = bond.calculate_time_to_payments(bond_price=price)
             maturity = max(payment_flow)
@@ -189,7 +196,7 @@ if __name__ == "__main__":
     # 10-year	 4.33
     # 20-year	 4.89
     # 30-year	 4.92
-    # Make FixedRateBullet instances for each bond
+    # Make dict of t and rates instances for each bond
     list_maturities_rates = [
         (pd.DateOffset(months=1), 4.49),
         (pd.DateOffset(months=3), 4.32),
@@ -205,21 +212,20 @@ if __name__ == "__main__":
     ]
     date = pd.Timestamp("2025-08-22")
     one_year_offset = date + pd.DateOffset(years=1)
-    bonds = []
+    par_rates = {}
+
     for offset, cpn in list_maturities_rates:
         not_zero_coupon = date + offset > one_year_offset
-        bond = FixedRateBullet(
-            issue_dt=date,
-            maturity=date + offset,
-            cpn_freq=2 if not_zero_coupon else 0,  # Less than a year
-            cpn=cpn if not_zero_coupon else 0,
-            bond_price=100 if not_zero_coupon else None,
-            yield_to_maturity=None if not_zero_coupon else cpn / 100,
-            settlement_date=date,
-        )
+
+        bond = {
+            "cpn_freq": 2 if not_zero_coupon else 0,
+            "cpn": cpn if not_zero_coupon else 0,
+            "bond_price": 100 if not_zero_coupon else None,
+            "yield_to_maturity": None if not_zero_coupon else cpn / 100,
+        }
         # self = bond
-        bonds.append(bond)
-    curve = SpotCurve(curve_date="2025-08-22", bonds=bonds)
+        par_rates[offset] = bond
+    curve = ParCurve(curve_date="2025-08-22", par_rates=par_rates)
     # self = curve
     print(curve)
     print(curve.as_dict())
