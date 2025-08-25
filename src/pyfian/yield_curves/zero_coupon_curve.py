@@ -8,11 +8,12 @@ from typing import Optional, Union
 import pandas as pd
 from pyfian.time_value.rate_conversions import validate_yield_calculation_convention
 from pyfian.utils.day_count import DayCountBase, get_day_count_convention
+from pyfian.visualization.mixins import YieldCurvePlotMixin
 from pyfian.yield_curves.base_curve import YieldCurveBase
 from pyfian.time_value import rate_conversions as rc
 
 
-class ZeroCouponCurve(YieldCurveBase):
+class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
     """
     ZeroCouponCurve represents a yield curve for zero-coupon rates at different maturities.
 

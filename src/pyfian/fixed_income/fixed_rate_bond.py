@@ -884,13 +884,15 @@ class FixedRateBullet:
 
         times: defaultdict[float, float] = defaultdict(float)
 
+        cpn_freq = max(1, self.cpn_freq)  # Avoid division by zero
+
         for key in time_to_payments_keys:
             times_key = (
                 following_coupons_day_count.fraction(
                     start=start,
                     current=key,
                 )
-                - time_to_first_non_negative_key / self.cpn_freq
+                - time_to_first_non_negative_key / cpn_freq
             )
             times[times_key] += flujos[key]
 
