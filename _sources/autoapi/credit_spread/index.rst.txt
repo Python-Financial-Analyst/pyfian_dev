@@ -54,7 +54,7 @@ Module Contents
 
 
 
-   .. py:method:: _get_rate(t: float, spread: float = 0) -> float
+   .. py:method:: _get_t(t: float, spread: float = 0) -> float
       :abstractmethod:
 
 
@@ -178,7 +178,51 @@ Module Contents
 
 
 
-   .. py:method:: _get_rate(t: float, spread: float = 0) -> float
+   .. py:method:: get_rate(t: float, yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+
+      Get the rate for a cash flow by time t (in years) if there is a benchmark curve.
+
+      Returns the rate for the cash flow including the spread curve.
+
+      If a spread is input, the spread is added to the yield in the original curve.
+
+      yield_calculation_convention can be used to transform the yield to different conventions.
+
+      :param t: Time in years to discount.
+      :type t: float
+      :param spread: Spread to add to the discount rate.
+      :type spread: float
+      :param yield_calculation_convention: Yield calculation convention to use (default is None).
+      :type yield_calculation_convention: Optional[str]
+
+      :returns: Rate for the cash flow.
+      :rtype: float
+
+
+
+   .. py:method:: date_rate(date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+
+      Get the rate for a cash flow by time t (in years) if there is a benchmark curve.
+
+      Returns the rate for the cash flow including the spread curve.
+
+      If a spread is input, the spread is added to the yield in the original curve.
+
+      yield_calculation_convention can be used to transform the yield to different conventions.
+
+      :param date: Date to get the rate for.
+      :type date: Union[str, pd.Timestamp]
+      :param yield_calculation_convention: Yield calculation convention to use (default is None).
+      :type yield_calculation_convention: Optional[str]
+      :param spread: Spread to add to the rate.
+      :type spread: float
+
+      :returns: Rate for the cash flow.
+      :rtype: float
+
+
+
+   .. py:method:: _get_t(t: float, spread: float = 0) -> float
 
       Get the rate for a cash flow by time t (in years).
 
@@ -287,7 +331,7 @@ Module Contents
 
 
 
-   .. py:method:: _get_rate(t: float, spread: float = 0) -> float
+   .. py:method:: _get_t(t: float, spread: float = 0) -> float
 
       Get the spread for a given maturity.
 

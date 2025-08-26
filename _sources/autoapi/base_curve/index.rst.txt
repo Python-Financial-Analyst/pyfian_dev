@@ -40,7 +40,7 @@ Module Contents
       :type:  pandas.Timestamp
 
 
-   .. py:method:: _get_rate(t: float, spread: float = 0) -> float
+   .. py:method:: _get_t(t: float, spread: float = 0) -> float
       :abstractmethod:
 
 

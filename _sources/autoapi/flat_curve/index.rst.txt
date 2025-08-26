@@ -18,15 +18,15 @@ flat_curve
    0.951229424500714
    >>> curve_log.discount_date("2021-01-01")
    0.951229424500714
-   >>> curve_log(1)
+   >>> curve_log.get_rate(1)
    0.05
-   >>> curve_log(1, yield_calculation_convention="Annual")
+   >>> curve_log.get_rate(1, yield_calculation_convention="Annual")
    0.05127109637602412
-   >>> curve_log(1, yield_calculation_convention="BEY")
+   >>> curve_log.get_rate(1, yield_calculation_convention="BEY")
    0.05128205128205128
-   >>> curve_log(1, yield_calculation_convention="Continuous")
+   >>> curve_log.get_rate(1, yield_calculation_convention="Continuous")
    0.05
-   >>> curve_log(1, yield_calculation_convention="Unknown")
+   >>> curve_log.get_rate(1, yield_calculation_convention="Unknown")
    Traceback (most recent call last):
        ...
    ValueError: Unknown yield calculation convention: Unknown
@@ -36,29 +36,29 @@ flat_curve
    0.9523809523809523
    >>> curve_aer.discount_date("2021-01-01")
    0.9523809523809523
-   >>> curve_aer(1)
+   >>> curve_aer.get_rate(1)
    0.05
-   >>> curve_aer(1, yield_calculation_convention="BEY")
+   >>> curve_aer.get_rate(1, yield_calculation_convention="BEY")
    0.04999999999999999
-   >>> curve_aer(1, yield_calculation_convention="Continuous")
+   >>> curve_aer.get_rate(1, yield_calculation_convention="Continuous")
    0.04879016416943205
-   >>> curve_aer(1, yield_calculation_convention="Unknown")
+   >>> curve_aer.get_rate(1, yield_calculation_convention="Unknown")
    Traceback (most recent call last):
        ...
    ValueError: Unknown yield calculation convention: Unknown
 
    >>> curve_bey = FlatCurveBEY(0.05, "2020-01-01")
    >>> curve_bey.discount_t(1)
-   0.975609756097561
+   0.9518143961927424
    >>> curve_bey.discount_date("2021-01-01")
-   0.975609756097561
-   >>> curve_bey(1)
-   0.05061728395061728
-   >>> curve_bey(1, yield_calculation_convention="BEY")
+   0.9518143961927424
+   >>> curve_bey.get_rate(1, yield_calculation_convention="Annual")
+   0.050625
+   >>> curve_bey.get_rate(1, yield_calculation_convention="BEY")
    0.05
-   >>> curve_bey(1, yield_calculation_convention="Continuous")
-   0.04939702358655452
-   >>> curve_bey(1, yield_calculation_convention="Unknown")
+   >>> curve_bey.get_rate(1, yield_calculation_convention="Continuous")
+   0.049385225180742925
+   >>> curve_bey.get_rate(1, yield_calculation_convention="Unknown")
    Traceback (most recent call last):
        ...
    ValueError: Unknown yield calculation convention: Unknown
@@ -78,7 +78,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: FlatCurveLog(log_rate: float, curve_date: Union[str, pandas.Timestamp])
+.. py:class:: FlatCurveLog(log_rate: float, curve_date: Union[str, pandas.Timestamp], day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = 'actual/365')
 
    Bases: :py:obj:`pyfian.visualization.mixins.YieldCurvePlotMixin`, :py:obj:`pyfian.yield_curves.base_curve.YieldCurveBase`
 
@@ -89,6 +89,8 @@ Module Contents
    :type log_rate: float
    :param curve_date: The curve settlement date.
    :type curve_date: str or datetime-like
+   :param day_count_convention: The day count convention to use. Defaults to "actual/365".
+   :type day_count_convention: str or DayCountBase, optional
 
 
    .. py:attribute:: log_rate
@@ -244,7 +246,7 @@ Module Contents
 
 
 
-   .. py:method:: _get_rate(t, spread=0)
+   .. py:method:: _get_t(t, spread=0)
 
       Get the rate for a cash flow by time t (in years).
 
@@ -299,7 +301,7 @@ Module Contents
    .. py:method:: __repr__() -> str
 
 
-.. py:class:: FlatCurveAER(aer: float, curve_date: Union[str, pandas.Timestamp])
+.. py:class:: FlatCurveAER(aer: float, curve_date: Union[str, pandas.Timestamp], day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = 'actual/365')
 
    Bases: :py:obj:`pyfian.visualization.mixins.YieldCurvePlotMixin`, :py:obj:`pyfian.yield_curves.base_curve.YieldCurveBase`
 
@@ -310,6 +312,8 @@ Module Contents
    :type aer: float
    :param curve_date: The curve settlement date.
    :type curve_date: str or datetime-like
+   :param day_count_convention: The day count convention to use. Defaults to "actual/365".
+   :type day_count_convention: str or DayCountBase, optional
 
 
    .. py:attribute:: aer
@@ -462,7 +466,7 @@ Module Contents
 
 
 
-   .. py:method:: _get_rate(t, spread=0)
+   .. py:method:: _get_t(t, spread=0)
 
       Get the rate for a cash flow by time t (in years).
 
@@ -515,7 +519,7 @@ Module Contents
    .. py:method:: __repr__() -> str
 
 
-.. py:class:: FlatCurveBEY(bey: float, curve_date: Union[str, pandas.Timestamp])
+.. py:class:: FlatCurveBEY(bey: float, curve_date: Union[str, pandas.Timestamp], day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = '30/360')
 
    Bases: :py:obj:`pyfian.visualization.mixins.YieldCurvePlotMixin`, :py:obj:`pyfian.yield_curves.base_curve.YieldCurveBase`
 
@@ -526,6 +530,8 @@ Module Contents
    :type bey: float
    :param curve_date: The curve settlement date.
    :type curve_date: str or datetime-like
+   :param day_count_convention: The day count convention to use. Defaults to "30/360".
+   :type day_count_convention: str or DayCountBase, optional
 
 
    .. py:attribute:: bey
@@ -666,13 +672,13 @@ Module Contents
 
       >>> curve = FlatCurveBEY(0.05, "2020-01-01")
       >>> curve.get_rate(1)
-      (1 + 0.05 / 2) ** 2 - 1
+      0.05
       >>> curve.get_rate(1, yield_calculation_convention="Annual")
-      (1 + 0.05 / 2) ** 2 - 1
+      0.050625
       >>> curve.get_rate(1, yield_calculation_convention="BEY")
       0.05
       >>> curve.get_rate(1, yield_calculation_convention="Continuous")
-      np.log(1 + ((1 + 0.05 / 2) ** 2 - 1))
+      0.049385225180742925
       >>> curve.get_rate(1, yield_calculation_convention="Unknown")
       Traceback (most recent call last):
           ...
@@ -680,7 +686,7 @@ Module Contents
 
 
 
-   .. py:method:: _get_rate(t, spread=0)
+   .. py:method:: _get_t(t, spread=0)
 
       Get the rate for a cash flow by time t (in years).
 
@@ -716,13 +722,13 @@ Module Contents
 
       >>> curve = FlatCurveBEY(0.05, "2020-01-01")
       >>> curve.date_rate("2022-01-01")
-      (1 + 0.05 / 2) ** 2 - 1
+      0.05
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="Annual")
-      (1 + 0.05 / 2) ** 2 - 1
+      0.050625
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="BEY")
       0.05
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="Continuous")
-      np.log(1 + ((1 + 0.05 / 2) ** 2 - 1))
+      0.049385225180742925
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
       Traceback (most recent call last):
           ...

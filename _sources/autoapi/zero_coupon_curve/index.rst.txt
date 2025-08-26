@@ -181,7 +181,7 @@ Module Contents
 
 
 
-   .. py:method:: _get_rate(t: float, spread: float = 0) -> float
+   .. py:method:: _get_t(t: float, spread: float = 0) -> float
 
       Get the rate for a cash flow by time t (in years).
 
