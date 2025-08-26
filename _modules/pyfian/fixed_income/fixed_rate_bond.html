@@ -250,6 +250,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">coupon_flow</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_coupons</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">amortization_flow</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_amortization</span>
 
+        <span class="c1"># Raise if day_count_convention is neither str nor DayCountBase</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">day_count_convention</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">DayCountBase</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;day_count_convention must be either a string or a DayCountBase instance.&quot;</span>
+            <span class="p">)</span>
+
         <span class="c1"># Initialize day count convention, defaulting to &#39;actual/actual-Bond&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">day_count_convention</span><span class="p">:</span> <span class="n">DayCountBase</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">get_day_count_convention</span><span class="p">(</span><span class="n">day_count_convention</span><span class="p">)</span>
@@ -999,13 +1005,15 @@
 
         <span class="n">times</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
 
+        <span class="n">cpn_freq</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpn_freq</span><span class="p">)</span>  <span class="c1"># Avoid division by zero</span>
+
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">time_to_payments_keys</span><span class="p">:</span>
             <span class="n">times_key</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">following_coupons_day_count</span><span class="o">.</span><span class="n">fraction</span><span class="p">(</span>
                     <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
                     <span class="n">current</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="o">-</span> <span class="n">time_to_first_non_negative_key</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpn_freq</span>
+                <span class="o">-</span> <span class="n">time_to_first_non_negative_key</span> <span class="o">/</span> <span class="n">cpn_freq</span>
             <span class="p">)</span>
             <span class="n">times</span><span class="p">[</span><span class="n">times_key</span><span class="p">]</span> <span class="o">+=</span> <span class="n">flujos</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
@@ -1017,6 +1025,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">value_with_curve</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">curve</span><span class="p">:</span> <span class="n">YieldCurveBase</span><span class="p">,</span>
+        <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">bond_price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1035,41 +1044,42 @@
 <span class="sd">        present value would be equivalent to a Net Present Value (NPV) calculation, useful for</span>
 <span class="sd">        comparing the bond&#39;s market price against its theoretical value based on the discount curve.</span>
 
-<span class="sd">        The curve should have a method `discount_t(t)` that returns the discount factor for a given time `t` expressed in years from the settlement date.</span>
+<span class="sd">        The curve should have a method `discount_date(d)` that returns the discount factor for a given date `d`.</span>
 
 <span class="sd">        The discount factor is typically calculated as:</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            discount_t(t) = \\frac{1}{(1 + r(t))^t}</span>
+<span class="sd">            discount_date(d) = \\frac{1}{(1 + r(d))^t}</span>
 
 <span class="sd">        where:</span>
 
-<span class="sd">        - :math:`r(t)` is the discount rate at time :math:`t`.</span>
+<span class="sd">        - :math:`r(d)` is the discount rate at date :math:`d`.</span>
+<span class="sd">        - :math:`t` is the time in years from the settlement date to date :math:`d`.</span>
 
 <span class="sd">        The discount factor brings the future value back to the present. Using this discount factor, we can calculate the present value of future cash flows by discounting them back to the settlement date.</span>
 
 <span class="sd">        For a set of cash flows :math:`C(t)` at times :math:`t`, the present value (PV) is calculated as:</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            PV = \\sum_{i}^{N} C(t_i) * discount_t(t_i)</span>
+<span class="sd">            PV = \\sum_{i}^{N} C(d_i) * discount_date(d_i)</span>
 
-<span class="sd">        for each (:math:`t_i`, :math:`C(t_i)`) cash flow, where :math:`i = 1, ..., N`</span>
+<span class="sd">        for each (:math:`d_i`, :math:`C(d_i)`) cash flow, where :math:`i = 1, ..., N`</span>
 
 <span class="sd">        where:</span>
 
 <span class="sd">        - :math:`PV` is the present value of the cash flows</span>
-<span class="sd">        - :math:`C(t)` is the cash flow at time :math:`t`</span>
+<span class="sd">        - :math:`C(d)` is the cash flow at date :math:`d`</span>
 <span class="sd">        - :math:`N` is the total number of cash flows</span>
-<span class="sd">        - :math:`r(t)` is the discount rate at time :math:`t`.</span>
+<span class="sd">        - :math:`r(d)` is the discount rate at date :math:`d`.</span>
 
-<span class="sd">        The discount rate for a cash flow at time :math:`t` is obtained from the discount curve using `curve.discount_t(t)`.</span>
+<span class="sd">        The discount rate for a cash flow at date :math:`d` is obtained from the discount curve using `curve.discount_date(d)`.</span>
 
 <span class="sd">        This can be used to optimize the yield curve fitting process.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        curve : object</span>
-<span class="sd">            Discount curve object with a discount_t(t) method.</span>
+<span class="sd">            Discount curve object with a discount_date(d) method.</span>
 <span class="sd">        settlement_date : str or datetime-like, optional</span>
 <span class="sd">            Settlement date. Defaults to issue date.</span>
 <span class="sd">        bond_price : float, optional</span>
@@ -1093,8 +1103,8 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; class DummyCurve:</span>
-<span class="sd">        ...     def discount_t(self, t):</span>
-<span class="sd">        ...         return 1 / (1 + 0.05 * t)</span>
+<span class="sd">        ...     def discount_date(self, d):</span>
+<span class="sd">        ...         return 1 / (1 + 0.05 * (d - pd.Timestamp(&#39;2020-01-01&#39;)).days / 365)</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
 <span class="sd">        &gt;&gt;&gt; bond.value_with_curve(DummyCurve())</span>
 <span class="sd">        (value, {t1: pv1, t2: pv2, ...})</span>
@@ -1112,15 +1122,20 @@
             <span class="n">yield_calculation_convention</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">time_to_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_time_to_payments</span><span class="p">(</span>
+        <span class="n">date_of_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_payment_flow</span><span class="p">(</span>
             <span class="n">settlement_date</span><span class="p">,</span>
             <span class="n">bond_price</span><span class="p">,</span>
+            <span class="n">payment_flow</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">payment_flow</span><span class="p">,</span>
             <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
             <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">pv</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="p">:</span> <span class="n">curve</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">value</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">time_to_payments</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="n">pv</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">d</span><span class="p">:</span> <span class="n">curve</span><span class="o">.</span><span class="n">discount_date</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">spread</span><span class="p">)</span> <span class="o">*</span> <span class="n">value</span>
+            <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">date_of_payments</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">pv</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">pv</span></div>
 
 
@@ -1396,9 +1411,10 @@
             <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">time_to_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_time_to_payments</span><span class="p">(</span>
+        <span class="n">date_of_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_payment_flow</span><span class="p">(</span>
             <span class="n">settlement_date</span><span class="p">,</span>
-            <span class="n">bond_price</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">bond_price</span><span class="p">,</span>
+            <span class="n">payment_flow</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">payment_flow</span><span class="p">,</span>
             <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
@@ -1413,8 +1429,8 @@
         <span class="k">def</span><span class="w"> </span><span class="nf">_price_difference</span><span class="p">(</span><span class="n">z_spread</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="nb">sum</span><span class="p">(</span>
-                    <span class="n">benchmark_curve</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">z_spread</span><span class="p">)</span> <span class="o">*</span> <span class="n">value</span>
-                    <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">time_to_payments</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="n">benchmark_curve</span><span class="o">.</span><span class="n">discount_date</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">z_spread</span><span class="p">)</span> <span class="o">*</span> <span class="n">value</span>
+                    <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">date_of_payments</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                 <span class="p">)</span>
                 <span class="o">-</span> <span class="n">price_calc</span>
             <span class="p">)</span>

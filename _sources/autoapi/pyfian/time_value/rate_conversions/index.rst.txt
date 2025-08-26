@@ -31,6 +31,7 @@ Functions
    pyfian.time_value.rate_conversions._validate_numeric
    pyfian.time_value.rate_conversions._validate_positive_number
    pyfian.time_value.rate_conversions._validate_effective_rate
+   pyfian.time_value.rate_conversions.validate_yield_calculation_convention
    pyfian.time_value.rate_conversions.convert_yield
    pyfian.time_value.rate_conversions.continuous_to_effective
    pyfian.time_value.rate_conversions.effective_to_continuous
@@ -60,6 +61,8 @@ Module Contents
 .. py:function:: _validate_positive_number(x, name='value')
 
 .. py:function:: _validate_effective_rate(effective_rate)
+
+.. py:function:: validate_yield_calculation_convention(convention: str) -> str
 
 .. py:function:: convert_yield(rate: float, from_convention: str, to_convention: str) -> float
 

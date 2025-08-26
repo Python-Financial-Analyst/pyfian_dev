@@ -18,10 +18,14 @@
       <script src="../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="prev" title="base_curve" href="../base_curve/index.html" /> 
+    <link rel="next" title="credit_spread" href="../credit_spread/index.html" />
+    <link rel="prev" title="spot_curve" href="../spot_curve/index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -52,7 +56,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../pyfian/index.html">pyfian</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../par_curve/index.html">par_curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../base_curve/index.html">base_curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spot_curve/index.html">spot_curve</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">flat_curve</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#classes">Classes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-contents">Module Contents</a><ul>
@@ -63,6 +69,9 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../credit_spread/index.html">credit_spread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../curve_combination/index.html">curve_combination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../zero_coupon_curve/index.html">zero_coupon_curve</a></li>
 </ul>
 </li>
 </ul>
@@ -172,14 +181,14 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="flat_curve.FlatCurveLog">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flat_curve.</span></span><span class="sig-name descname"><span class="pre">FlatCurveLog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curve_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Continuous'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flat_curve.FlatCurveLog" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">flat_curve.</span></span><span class="sig-name descname"><span class="pre">FlatCurveLog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curve_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flat_curve.FlatCurveLog" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="../pyfian/visualization/mixins/index.html#pyfian.visualization.mixins.YieldCurvePlotMixin" title="pyfian.visualization.mixins.YieldCurvePlotMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyfian.visualization.mixins.YieldCurvePlotMixin</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">pyfian.yield_curves.base_curve.YieldCurveBase</span></code></p>
 <p>FlatCurveLog represents a flat curve with continuously compounded (log) rates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>log_rate</strong> (<em>float</em>) – Continuously compounded rate (as decimal, e.g. 0.05 for 5%).</p></li>
-<li><p><strong>curve_date</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – Date of the curve.</p></li>
+<li><p><strong>curve_date</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – The curve settlement date.</p></li>
 </ul>
 </dd>
 </dl>
@@ -198,11 +207,29 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
 <span class="sig-name descname"><span class="pre">yield_calculation_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Continuous'</span></em><a class="headerlink" href="#flat_curve.FlatCurveLog.yield_calculation_convention" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flat_curve.FlatCurveLog.day_count_convention">
+<span class="sig-name descname"><span class="pre">day_count_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></em><a class="headerlink" href="#flat_curve.FlatCurveLog.day_count_convention" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flat_curve.FlatCurveLog.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#flat_curve.FlatCurveLog.as_dict" title="Link to this definition"></a></dt>
+<dd><p>Return curve parameters and metadata as a dictionary.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="flat_curve.FlatCurveLog.discount_t">
 <span class="sig-name descname"><span class="pre">discount_t</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#flat_curve.FlatCurveLog.discount_t" title="Link to this definition"></a></dt>
 <dd><p>Discount a cash flow by time t (in years) using log rate.</p>
 <p>The spread is added to the yield in the original curve.</p>
+<p>The formula used is:</p>
+<div class="math notranslate nohighlight">
+\[D(t) = e^{-(r + s) t}\]</div>
+<p>where:
+- D(t) is the discount factor at time t
+- r is the continuously compounded rate for the period
+- s is the spread</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -222,6 +249,42 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0.951229424500714</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Equivalent to: assert curve.discount_t(1) == pytest.approx(np.exp(-0.05))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flat_curve.FlatCurveLog.discount_to_rate">
+<span class="sig-name descname"><span class="pre">discount_to_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discount_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#flat_curve.FlatCurveLog.discount_to_rate" title="Link to this definition"></a></dt>
+<dd><p>Convert a discount factor for a period t to a rate.</p>
+<p>The formula used is:</p>
+<div class="math notranslate nohighlight">
+\[r = -\frac{\log(D(t))}{t} - s\]</div>
+<p>where:
+- D(t) is the discount factor at time t
+- r is the Bond Equivalent Yield (BEY) for the period
+- s is the spread</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>discount_factor</strong> (<em>float</em>) – Discount factor to convert.</p></li>
+<li><p><strong>t</strong> (<em>float</em>) – Time period (in years).</p></li>
+<li><p><strong>spread</strong> (<em>float</em><em>, </em><em>optional</em>) – Spread to subtract from the rate to get a Risk Free rate. Defaults to 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Continuously compounded rate (as decimal).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveLog</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">discount_to_rate</span><span class="p">(</span><span class="mf">0.951229424500714</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">discount_to_rate</span><span class="p">(</span><span class="mf">0.951229424500714</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="go">0.04</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -254,8 +317,8 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="flat_curve.FlatCurveLog.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#flat_curve.FlatCurveLog.__call__" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="flat_curve.FlatCurveLog.get_rate">
+<span class="sig-name descname"><span class="pre">get_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#flat_curve.FlatCurveLog.get_rate" title="Link to this definition"></a></dt>
 <dd><p>Return the log rate at time horizon t (in years).</p>
 <p>The spread is added to the yield in the original curve.</p>
 <p>yield_calculation_convention can be used to transform the yield to different conventions.</p>
@@ -276,20 +339,41 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveLog</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0.05</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
 <span class="go">np.expm1(0.05)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
 <span class="go">2 * ((1 + np.expm1(0.05)) ** 0.5 - 1)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
 <span class="go">0.05</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
 <span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flat_curve.FlatCurveLog._get_rate">
+<span class="sig-name descname"><span class="pre">_get_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flat_curve.FlatCurveLog._get_rate" title="Link to this definition"></a></dt>
+<dd><p>Get the rate for a cash flow by time t (in years).</p>
+<p>The spread is added to the yield in the original curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – Time in years to discount.</p></li>
+<li><p><strong>spread</strong> (<em>float</em>) – Spread to add to the discount rate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rate for the cash flow.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -347,7 +431,7 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>aer</strong> (<em>float</em>) – Annual effective rate (as decimal, e.g. 0.05 for 5%).</p></li>
-<li><p><strong>curve_date</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – Date of the curve.</p></li>
+<li><p><strong>curve_date</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – The curve settlement date.</p></li>
 </ul>
 </dd>
 </dl>
@@ -366,11 +450,29 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
 <span class="sig-name descname"><span class="pre">yield_calculation_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Annual'</span></em><a class="headerlink" href="#flat_curve.FlatCurveAER.yield_calculation_convention" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flat_curve.FlatCurveAER.day_count_convention">
+<span class="sig-name descname"><span class="pre">day_count_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></em><a class="headerlink" href="#flat_curve.FlatCurveAER.day_count_convention" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flat_curve.FlatCurveAER.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#flat_curve.FlatCurveAER.as_dict" title="Link to this definition"></a></dt>
+<dd><p>Return curve parameters and metadata as a dictionary.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="flat_curve.FlatCurveAER.discount_t">
 <span class="sig-name descname"><span class="pre">discount_t</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#flat_curve.FlatCurveAER.discount_t" title="Link to this definition"></a></dt>
 <dd><p>Discount a cash flow by time t (in years) using annual effective rate.</p>
 <p>The spread is added to the yield in the original curve.</p>
+<p>The formula used is</p>
+<div class="math notranslate nohighlight">
+\[D(t) = (1 + r + s)^{-t}\]</div>
+<p>where
+- D(t) is the discount factor at time t
+- r is the annual effective rate (AER) for the period
+- s is the spread</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -389,6 +491,42 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveAER</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0.9523809523809523</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flat_curve.FlatCurveAER.discount_to_rate">
+<span class="sig-name descname"><span class="pre">discount_to_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discount_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#flat_curve.FlatCurveAER.discount_to_rate" title="Link to this definition"></a></dt>
+<dd><p>Convert a discount factor for a period t to a rate.</p>
+<p>The formula used is:</p>
+<div class="math notranslate nohighlight">
+\[r = (\frac{1}{D(t)})^{\frac{1}{t}} - 1 - s\]</div>
+<p>where:
+- D(t) is the discount factor at time t
+- r is the Bond Equivalent Yield (BEY) for the period
+- s is the spread</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>discount_factor</strong> (<em>float</em>) – Discount factor.</p></li>
+<li><p><strong>t</strong> (<em>float</em>) – Time in years.</p></li>
+<li><p><strong>spread</strong> (<em>float</em><em>, </em><em>optional</em>) – Spread to subtract from the yield to get a Risk Free rate. Defaults to 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Annual effective rate (AER).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveAER</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">discount_to_rate</span><span class="p">(</span><span class="mf">0.9523809523809523</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">discount_to_rate</span><span class="p">(</span><span class="mf">0.9523809523809523</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="go">0.04</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -421,8 +559,8 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="flat_curve.FlatCurveAER.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#flat_curve.FlatCurveAER.__call__" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="flat_curve.FlatCurveAER.get_rate">
+<span class="sig-name descname"><span class="pre">get_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#flat_curve.FlatCurveAER.get_rate" title="Link to this definition"></a></dt>
 <dd><p>Return the annual effective rate at time horizon t (in years).</p>
 <p>The spread is added to the yield in the original curve.</p>
 <p>yield_calculation_convention can be used to transform the yield to different conventions.</p>
@@ -443,18 +581,39 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveAER</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0.05</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
 <span class="go">2 * ((1 + 0.05) ** 0.5 - 1)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
 <span class="go">np.log(1 + 0.05)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
 <span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flat_curve.FlatCurveAER._get_rate">
+<span class="sig-name descname"><span class="pre">_get_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flat_curve.FlatCurveAER._get_rate" title="Link to this definition"></a></dt>
+<dd><p>Get the rate for a cash flow by time t (in years).</p>
+<p>The spread is added to the yield in the original curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – Time in years to discount.</p></li>
+<li><p><strong>spread</strong> (<em>float</em>) – Spread to add to the discount rate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rate for the cash flow.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -510,7 +669,7 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>bey</strong> (<em>float</em>) – Bond equivalent yield (as decimal, e.g. 0.05 for 5%).</p></li>
-<li><p><strong>curve_date</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – Date of the curve.</p></li>
+<li><p><strong>curve_date</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – The curve settlement date.</p></li>
 </ul>
 </dd>
 </dl>
@@ -526,14 +685,32 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="flat_curve.FlatCurveBEY.yield_calculation_convention">
-<span class="sig-name descname"><span class="pre">yield_calculation_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Annual'</span></em><a class="headerlink" href="#flat_curve.FlatCurveBEY.yield_calculation_convention" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">yield_calculation_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'BEY'</span></em><a class="headerlink" href="#flat_curve.FlatCurveBEY.yield_calculation_convention" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="flat_curve.FlatCurveBEY.day_count_convention">
+<span class="sig-name descname"><span class="pre">day_count_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></em><a class="headerlink" href="#flat_curve.FlatCurveBEY.day_count_convention" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flat_curve.FlatCurveBEY.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#flat_curve.FlatCurveBEY.as_dict" title="Link to this definition"></a></dt>
+<dd><p>Return curve parameters and metadata as a dictionary.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="flat_curve.FlatCurveBEY.discount_t">
 <span class="sig-name descname"><span class="pre">discount_t</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#flat_curve.FlatCurveBEY.discount_t" title="Link to this definition"></a></dt>
 <dd><p>Discount a cash flow by time t (in years) using annual effective rate.</p>
 <p>The spread is added to the yield in the original curve.</p>
+<p>The formula used is</p>
+<div class="math notranslate nohighlight">
+\[D(t) = (1 + (r + s) / 2 )^{-t * 2}\]</div>
+<p>where
+- D(t) is the discount factor at time t
+- r is the Bond Equivalent Yield (BEY) for the period
+- s is the spread</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -551,7 +728,43 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveBEY</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="go">0.975609756097561</span>
+<span class="go">0.9518143961927424</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flat_curve.FlatCurveBEY.discount_to_rate">
+<span class="sig-name descname"><span class="pre">discount_to_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discount_factor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#flat_curve.FlatCurveBEY.discount_to_rate" title="Link to this definition"></a></dt>
+<dd><p>Convert a discount factor for a period t to a rate.</p>
+<p>The formula used is:</p>
+<div class="math notranslate nohighlight">
+\[r = 2 * ((\frac{1}{D(t)})^{\frac{1}{t * 2}} - 1) - s\]</div>
+<p>where:
+- D(t) is the discount factor at time t
+- r is the Bond Equivalent Yield (BEY) for the period
+- s is the spread</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>discount_factor</strong> (<em>float</em>) – Discount factor.</p></li>
+<li><p><strong>t</strong> (<em>float</em>) – Time in years.</p></li>
+<li><p><strong>spread</strong> (<em>float</em><em>, </em><em>optional</em>) – Spread to subtract from the yield to get a Risk Free rate. Defaults to 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Bond Equivalent Yield (BEY).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveAER</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">discount_to_rate</span><span class="p">(</span><span class="mf">0.975609756097561</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="go">0.05</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">discount_to_rate</span><span class="p">(</span><span class="mf">0.9523809523809523</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="go">0.04</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -584,8 +797,8 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="flat_curve.FlatCurveBEY.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#flat_curve.FlatCurveBEY.__call__" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="flat_curve.FlatCurveBEY.get_rate">
+<span class="sig-name descname"><span class="pre">get_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#flat_curve.FlatCurveBEY.get_rate" title="Link to this definition"></a></dt>
 <dd><p>Return the annual effective rate at time horizon t (in years).</p>
 <p>The spread is added to the yield in the original curve.</p>
 <p>yield_calculation_convention can be used to transform the yield to different conventions.</p>
@@ -606,20 +819,41 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">FlatCurveBEY</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">(1 + 0.05 / 2) ** 2 - 1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
 <span class="go">(1 + 0.05 / 2) ** 2 - 1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
 <span class="go">0.05</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
 <span class="go">np.log(1 + ((1 + 0.05 / 2) ** 2 - 1))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
 <span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="flat_curve.FlatCurveBEY._get_rate">
+<span class="sig-name descname"><span class="pre">_get_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#flat_curve.FlatCurveBEY._get_rate" title="Link to this definition"></a></dt>
+<dd><p>Get the rate for a cash flow by time t (in years).</p>
+<p>The spread is added to the yield in the original curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – Time in years to discount.</p></li>
+<li><p><strong>spread</strong> (<em>float</em>) – Spread to add to the discount rate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rate for the cash flow.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -674,7 +908,8 @@ FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields)
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../base_curve/index.html" class="btn btn-neutral float-left" title="base_curve" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../spot_curve/index.html" class="btn btn-neutral float-left" title="spot_curve" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../credit_spread/index.html" class="btn btn-neutral float-right" title="credit_spread" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -136,6 +136,16 @@
 
 
 
+<div class="viewcode-block" id="validate_yield_calculation_convention">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.validate_yield_calculation_convention">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_yield_calculation_convention</span><span class="p">(</span><span class="n">convention</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">valid_conventions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Annual&quot;</span><span class="p">,</span> <span class="s2">&quot;BEY&quot;</span><span class="p">,</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">convention</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_conventions</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">convention</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">convention</span></div>
+
+
+
 <div class="viewcode-block" id="convert_yield">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.convert_yield">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_yield</span><span class="p">(</span><span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">from_convention</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">to_convention</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>

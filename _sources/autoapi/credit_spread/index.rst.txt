@@ -1,0 +1,322 @@
+credit_spread
+=============
+
+.. py:module:: credit_spread
+
+.. autoapi-nested-parse::
+
+   credit_spread.py
+
+   Implements CreditSpreadCurve for credit spreads at different maturities.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   credit_spread.list_maturities_rates
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   credit_spread.CreditSpreadCurveBase
+   credit_spread.CreditSpreadCurve
+   credit_spread.FlatCreditSpreadCurve
+
+
+Module Contents
+---------------
+
+.. py:class:: CreditSpreadCurveBase
+
+   Bases: :py:obj:`pyfian.visualization.mixins.YieldCurvePlotMixin`, :py:obj:`pyfian.yield_curves.base_curve.CurveBase`
+
+
+   Abstract base class for all curves.
+
+
+   .. py:attribute:: yield_calculation_convention
+      :type:  str
+
+      CreditSpreadCurveBase is an abstract base class for credit spread curves.
+
+
+   .. py:method:: date_spread(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
+      :abstractmethod:
+
+
+      Get the spread for a given date.
+
+
+
+   .. py:method:: _get_rate(t: float, spread: float = 0) -> float
+      :abstractmethod:
+
+
+      Get the spread for a given maturity.
+
+
+
+.. py:class:: CreditSpreadCurve(curve_date: Union[str, pandas.Timestamp], benchmark_curve: Optional[pyfian.yield_curves.base_curve.YieldCurveBase] = None, bonds: Optional[list[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet] | tuple[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet]] = None, spreads: Optional[dict[float, float]] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = 'actual/365', yield_calculation_convention: Optional[str] = None)
+
+   Bases: :py:obj:`CreditSpreadCurveBase`
+
+
+   CreditSpreadCurve represents a curve of credit spreads (in decimals) at different maturities.
+
+   :param curve_date: Date of the curve.
+   :type curve_date: str or datetime-like
+   :param benchmark_curve: The benchmark yield curve to compare against (e.g., risk-free curve).
+   :type benchmark_curve: YieldCurveBase, optional
+   :param bonds: List or tuple of FixedRateBullet bond objects to bootstrap the spread curve from.
+   :type bonds: list[FixedRateBullet] or tuple[FixedRateBullet], optional
+   :param spreads: Dictionary mapping maturities (in years) to credit spreads (as decimals).
+   :type spreads: dict[float, float], optional
+   :param day_count_convention: Day count convention to use (default is "actual/365").
+   :type day_count_convention: str or DayCountBase, optional
+   :param yield_calculation_convention: Yield calculation convention to use (default is "Annual"). Supported: "Annual", "BEY", "Continuous".
+   :type yield_calculation_convention: str, optional
+
+   .. attribute:: spreads
+
+      Dictionary of credit spreads by maturity (in years).
+
+      :type: dict[float, float]
+
+   .. attribute:: curve_date
+
+      Date of the curve.
+
+      :type: pd.Timestamp
+
+   .. attribute:: bonds
+
+      List of bonds used for bootstrapping, if provided.
+
+      :type: list[FixedRateBullet] or None
+
+   .. attribute:: benchmark_curve
+
+      Benchmark yield curve.
+
+      :type: YieldCurveBase or None
+
+   .. attribute:: day_count_convention
+
+      Day count convention used for time calculations.
+
+      :type: DayCountBase
+
+   .. attribute:: yield_calculation_convention
+
+      Yield calculation convention used for rate conversions.
+
+      :type: str
+
+   .. method:: as_dict()
+
+      Convert the curve to a dictionary.
+
+   .. method:: __call__(t, spread=0)
+
+      Get the spread for a given maturity (in years), optionally adding a spread.
+
+   .. method:: date_spread(date, spread=0)
+
+      Get the spread for a given date, optionally adding a spread.
+
+   .. method:: spread_from_bonds(benchmark_curve, bonds)
+
+      Class method to derive the spread curve from bond data and a benchmark curve.
+
+
+
+   .. py:attribute:: bonds
+
+
+   .. py:attribute:: benchmark_curve
+      :value: None
+
+
+
+   .. py:attribute:: curve_date
+      :value: None
+
+
+
+   .. py:attribute:: day_count_convention
+      :type:  pyfian.utils.day_count.DayCountBase
+
+
+   .. py:attribute:: yield_calculation_convention
+      :type:  str
+      :value: 'Annual'
+
+
+      CreditSpreadCurveBase is an abstract base class for credit spread curves.
+
+
+   .. py:attribute:: maturities
+      :value: []
+
+
+
+   .. py:method:: as_dict()
+
+      Convert the curve to a dictionary.
+
+
+
+   .. py:method:: _prepare_spreads(spreads)
+
+      Prepare spreads for the curve sorted by time and with time fractions.
+
+
+
+   .. py:method:: _get_rate(t: float, spread: float = 0) -> float
+
+      Get the rate for a cash flow by time t (in years).
+
+      The spread is added to the yield in the original curve.
+
+      :param t: Time in years to discount.
+      :type t: float
+      :param spread: Spread to add to the discount rate.
+      :type spread: float
+
+      :returns: Rate for the cash flow.
+      :rtype: float
+
+
+
+   .. py:method:: date_spread(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
+
+      Get the spread for a given date.
+
+
+
+   .. py:method:: _get_spread(t: float) -> float
+
+
+   .. py:method:: spread_from_bonds(benchmark_curve: pyfian.yield_curves.base_curve.YieldCurveBase, bonds: list[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet] | tuple[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet])
+      :classmethod:
+
+
+
+   .. py:method:: _bootstrap_spreads()
+
+
+   .. py:method:: _get_optimal_spread(next_date, non_valued_payments)
+
+
+   .. py:method:: __repr__()
+
+
+.. py:class:: FlatCreditSpreadCurve(spread: float, curve_date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None)
+
+   Bases: :py:obj:`CreditSpreadCurveBase`
+
+
+   FlatCreditSpreadCurve represents a flat (constant) credit spread curve.
+
+   :param spread: Credit spread (as decimal, e.g. 0.01 for 100bps).
+   :type spread: float
+   :param curve_date: The curve settlement date.
+   :type curve_date: str or datetime-like
+   :param yield_calculation_convention: Yield calculation convention to use (default is "Annual"). Supported: "Annual", "BEY", "Continuous".
+   :type yield_calculation_convention: str, optional
+
+   .. attribute:: spread
+
+      The constant credit spread.
+
+      :type: float
+
+   .. attribute:: curve_date
+
+      Date of the curve.
+
+      :type: pd.Timestamp
+
+   .. attribute:: yield_calculation_convention
+
+      Yield calculation convention used for rate conversions.
+
+      :type: str
+
+   .. method:: as_dict()
+
+      Convert the curve to a dictionary.
+
+   .. method:: __call__(t, spread=0)
+
+      Get the spread for a given maturity (always returns the constant spread).
+
+   .. method:: date_spread(date, spread=0)
+
+      Get the spread for a given date (always returns the constant spread).
+
+
+
+   .. py:attribute:: spread
+      :type:  float
+
+
+   .. py:attribute:: curve_date
+      :type:  pandas.Timestamp
+      :value: None
+
+
+
+   .. py:attribute:: yield_calculation_convention
+      :type:  str
+      :value: 'Annual'
+
+
+      CreditSpreadCurveBase is an abstract base class for credit spread curves.
+
+
+   .. py:method:: as_dict() -> dict
+
+      Convert the curve to a dictionary.
+
+
+
+   .. py:method:: _get_rate(t: float, spread: float = 0) -> float
+
+      Get the spread for a given maturity.
+
+      :param t: The maturity (in years).
+      :type t: float
+      :param spread: An additional spread to add (default is 0).
+      :type spread: float, optional
+
+      :returns: The spread for the given maturity.
+      :rtype: float
+
+
+
+   .. py:method:: date_spread(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
+
+      Get the spread for a given date.
+
+      :param date: The date to get the spread for.
+      :type date: Union[str, pd.Timestamp]
+      :param spread: An additional spread to add (default is 0).
+      :type spread: float, optional
+
+      :returns: The spread for the given date.
+      :rtype: float
+
+
+
+   .. py:method:: __repr__() -> str
+
+
+.. py:data:: list_maturities_rates
+

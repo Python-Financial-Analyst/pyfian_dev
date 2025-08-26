@@ -1,0 +1,89 @@
+par_curve
+=========
+
+.. py:module:: par_curve
+
+.. autoapi-nested-parse::
+
+   spot_curve.py
+
+   Implements SpotCurve for bootstrapping zero-coupon rates from a series of bonds.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   par_curve.list_maturities_rates
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   par_curve.ParCurve
+
+
+Module Contents
+---------------
+
+.. py:class:: ParCurve(curve_date: pandas.Timestamp, par_rates: Optional[dict[float, dict]] = None, zero_rates: Optional[dict[float, float]] = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/365', yield_calculation_convention: Optional[str] = None)
+
+   Bases: :py:obj:`pyfian.yield_curves.zero_coupon_curve.ZeroCouponCurve`
+
+
+   ParCurve bootstraps par rates from a series of bonds.
+
+   :param curve_date: Date of the curve.
+   :type curve_date: str or datetime-like
+   :param par_rates: Dictionary of time (in years) and a dict with inputs to create a FixedRateBullet for each par Bond.
+   :type par_rates: dict
+   :param zero_rates: Zero-coupon rates, keyed by maturity (in years).
+   :type zero_rates: dict
+   :param day_count_convention: Day count convention to use (default is "actual/365").
+   :type day_count_convention: str or DayCountBase, optional
+   :param yield_calculation_convention: Yield calculation convention to use (default is None). If not specified, "Annual" will be used.
+   :type yield_calculation_convention: str, optional
+
+
+   .. py:attribute:: curve_date
+      :value: None
+
+
+
+   .. py:attribute:: par_rates
+
+
+   .. py:attribute:: day_count_convention
+      :type:  pyfian.utils.day_count.DayCountBase
+
+
+   .. py:attribute:: yield_calculation_convention
+      :type:  str
+      :value: 'Annual'
+
+
+
+   .. py:attribute:: maturities
+
+
+   .. py:method:: as_dict()
+
+      Convert the curve to a dictionary.
+
+
+
+   .. py:method:: _bootstrap_spot_rates()
+
+
+   .. py:method:: _get_optimal_rate(next_t, non_valued_payments)
+
+
+   .. py:method:: __repr__()
+
+
+.. py:data:: list_maturities_rates
+

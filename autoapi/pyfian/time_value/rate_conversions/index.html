@@ -74,8 +74,13 @@
 <li class="toctree-l3"><a class="reference internal" href="../../index.html#package-contents">Package Contents</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../../par_curve/index.html">par_curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../base_curve/index.html">base_curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../spot_curve/index.html">spot_curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../flat_curve/index.html">flat_curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../credit_spread/index.html">credit_spread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../curve_combination/index.html">curve_combination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../zero_coupon_curve/index.html">zero_coupon_curve</a></li>
 </ul>
 </li>
 </ul>
@@ -137,43 +142,46 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions._validate_effective_rate" title="pyfian.time_value.rate_conversions._validate_effective_rate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_effective_rate</span></code></a>(effective_rate)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.convert_yield" title="pyfian.time_value.rate_conversions.convert_yield"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_yield</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.validate_yield_calculation_convention" title="pyfian.time_value.rate_conversions.validate_yield_calculation_convention"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_yield_calculation_convention</span></code></a>(→ str)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.convert_yield" title="pyfian.time_value.rate_conversions.convert_yield"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_yield</span></code></a>(→ float)</p></td>
 <td><p>Convert a yield from one convention to another.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.continuous_to_effective" title="pyfian.time_value.rate_conversions.continuous_to_effective"><code class="xref py py-obj docutils literal notranslate"><span class="pre">continuous_to_effective</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.continuous_to_effective" title="pyfian.time_value.rate_conversions.continuous_to_effective"><code class="xref py py-obj docutils literal notranslate"><span class="pre">continuous_to_effective</span></code></a>(→ float)</p></td>
 <td><p>Convert a continuously compounded rate to an effective annual rate.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.effective_to_continuous" title="pyfian.time_value.rate_conversions.effective_to_continuous"><code class="xref py py-obj docutils literal notranslate"><span class="pre">effective_to_continuous</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.effective_to_continuous" title="pyfian.time_value.rate_conversions.effective_to_continuous"><code class="xref py py-obj docutils literal notranslate"><span class="pre">effective_to_continuous</span></code></a>(→ float)</p></td>
 <td><p>Convert an effective annual rate to a continuously compounded rate.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.nominal_periods_to_effective" title="pyfian.time_value.rate_conversions.nominal_periods_to_effective"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nominal_periods_to_effective</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.nominal_periods_to_effective" title="pyfian.time_value.rate_conversions.nominal_periods_to_effective"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nominal_periods_to_effective</span></code></a>(→ float)</p></td>
 <td><p>Convert a nominal rate that refers to periods (e.g., monthly, quarterly, semiannual) to an effective annual rate (EAR).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.effective_to_nominal_periods" title="pyfian.time_value.rate_conversions.effective_to_nominal_periods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">effective_to_nominal_periods</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.effective_to_nominal_periods" title="pyfian.time_value.rate_conversions.effective_to_nominal_periods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">effective_to_nominal_periods</span></code></a>(→ float)</p></td>
 <td><p>Convert an effective annual rate (EAR) to a nominal rate that refers to periods (e.g., monthly, quarterly, semiannual).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.nominal_days_to_effective" title="pyfian.time_value.rate_conversions.nominal_days_to_effective"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nominal_days_to_effective</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.nominal_days_to_effective" title="pyfian.time_value.rate_conversions.nominal_days_to_effective"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nominal_days_to_effective</span></code></a>(→ float)</p></td>
 <td><p>Convert a nominal rate for a period of given days to an effective annual rate.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.effective_to_nominal_days" title="pyfian.time_value.rate_conversions.effective_to_nominal_days"><code class="xref py py-obj docutils literal notranslate"><span class="pre">effective_to_nominal_days</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.effective_to_nominal_days" title="pyfian.time_value.rate_conversions.effective_to_nominal_days"><code class="xref py py-obj docutils literal notranslate"><span class="pre">effective_to_nominal_days</span></code></a>(→ float)</p></td>
 <td><p>Convert an effective annual rate to a nominal rate for a period of given days.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.single_period_to_effective" title="pyfian.time_value.rate_conversions.single_period_to_effective"><code class="xref py py-obj docutils literal notranslate"><span class="pre">single_period_to_effective</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.single_period_to_effective" title="pyfian.time_value.rate_conversions.single_period_to_effective"><code class="xref py py-obj docutils literal notranslate"><span class="pre">single_period_to_effective</span></code></a>(→ float)</p></td>
 <td><p>Convert a periodic rate to an effective annual rate.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.effective_to_single_period" title="pyfian.time_value.rate_conversions.effective_to_single_period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">effective_to_single_period</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.effective_to_single_period" title="pyfian.time_value.rate_conversions.effective_to_single_period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">effective_to_single_period</span></code></a>(→ float)</p></td>
 <td><p>Convert an effective annual rate to a periodic rate.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.money_market_rate_to_effective" title="pyfian.time_value.rate_conversions.money_market_rate_to_effective"><code class="xref py py-obj docutils literal notranslate"><span class="pre">money_market_rate_to_effective</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.money_market_rate_to_effective" title="pyfian.time_value.rate_conversions.money_market_rate_to_effective"><code class="xref py py-obj docutils literal notranslate"><span class="pre">money_market_rate_to_effective</span></code></a>(→ float)</p></td>
 <td><p>Convert a Money Market Rate (MMR, actual/360) to effective annual rate (EAR).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.effective_to_money_market_rate" title="pyfian.time_value.rate_conversions.effective_to_money_market_rate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">effective_to_money_market_rate</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.effective_to_money_market_rate" title="pyfian.time_value.rate_conversions.effective_to_money_market_rate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">effective_to_money_market_rate</span></code></a>(→ float)</p></td>
 <td><p>Convert an effective annual rate (EAR) to a Money Market Rate (actual/360).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.bey_to_effective_annual" title="pyfian.time_value.rate_conversions.bey_to_effective_annual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bey_to_effective_annual</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.bey_to_effective_annual" title="pyfian.time_value.rate_conversions.bey_to_effective_annual"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bey_to_effective_annual</span></code></a>(→ float)</p></td>
 <td><p>Convert Bond Equivalent Yield (BEY) to effective annual rate (EAR).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.effective_annual_to_bey" title="pyfian.time_value.rate_conversions.effective_annual_to_bey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">effective_annual_to_bey</span></code></a>(→ float)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.effective_annual_to_bey" title="pyfian.time_value.rate_conversions.effective_annual_to_bey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">effective_annual_to_bey</span></code></a>(→ float)</p></td>
 <td><p>Convert effective annual rate (EAR) to Bond Equivalent Yield (BEY).</p></td>
 </tr>
 </tbody>
@@ -201,6 +209,11 @@ Returns <span class="math notranslate nohighlight">\(base^n - 1\)</span></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyfian.time_value.rate_conversions._validate_effective_rate">
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">_validate_effective_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">effective_rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/time_value/rate_conversions.html#_validate_effective_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.rate_conversions._validate_effective_rate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.time_value.rate_conversions.validate_yield_calculation_convention">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">validate_yield_calculation_convention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/rate_conversions.html#validate_yield_calculation_convention"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.rate_conversions.validate_yield_calculation_convention" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">

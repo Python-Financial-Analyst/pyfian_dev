@@ -1,0 +1,136 @@
+curve_combination
+=================
+
+.. py:module:: curve_combination
+
+.. autoapi-nested-parse::
+
+   curve_combination.py
+
+   Implements CombinedCurve for combining a benchmark curve and a spread curve.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   curve_combination.curve_date
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   curve_combination.CombinedCurve
+
+
+Module Contents
+---------------
+
+.. py:class:: CombinedCurve(benchmark_curve: pyfian.yield_curves.base_curve.YieldCurveBase, spread_curve: pyfian.yield_curves.credit_spread.CreditSpreadCurveBase, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/365', yield_calculation_convention: Optional[str] = None)
+
+   Bases: :py:obj:`pyfian.yield_curves.zero_coupon_curve.ZeroCouponCurve`
+
+
+   CombinedCurve combines a benchmark curve and a spread curve.
+
+   :param benchmark_curve: The base yield curve (e.g., ZeroCouponCurve, FlatCurveAER).
+   :type benchmark_curve: object
+   :param spread_curve: The credit spread curve (e.g., CreditSpreadCurve, FlatCreditSpreadCurve).
+   :type spread_curve: object
+   :param day_count_convention: The day count convention to use (default is "actual/365").
+   :type day_count_convention: str | DayCountBase
+   :param yield_calculation_convention: The yield calculation convention to use (default is None). Supported: "Annual", "BEY", "Continuous". If None, "Annual" will be used.
+   :type yield_calculation_convention: str, optional
+
+
+   .. py:attribute:: benchmark_curve
+
+
+   .. py:attribute:: spread_curve
+
+
+   .. py:attribute:: curve_date
+
+
+   .. py:attribute:: benchmark_yield_calculation_convention
+
+
+   .. py:attribute:: spread_yield_calculation_convention
+
+
+   .. py:attribute:: day_count_convention
+      :type:  pyfian.utils.day_count.DayCountBase
+
+
+   .. py:attribute:: yield_calculation_convention
+      :type:  str
+      :value: 'Annual'
+
+
+
+   .. py:attribute:: maturities
+
+
+   .. py:method:: as_dict()
+
+      Convert the curve to a dictionary.
+
+
+
+   .. py:method:: from_dict(data: dict) -> CombinedCurve
+      :classmethod:
+
+
+      Instantiate a curve from a dictionary.
+
+
+
+   .. py:method:: get_rate(t: float, yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+
+      Get the combined rate (benchmark + spread) for a cash flow by time t (in years).
+
+      The spread is added to the yield in the original curve.
+
+      yield_calculation_convention can be used to transform the yield to different conventions.
+
+      :param t: Time in years to discount.
+      :type t: float
+      :param spread: Spread to add to the discount rate.
+      :type spread: float
+      :param yield_calculation_convention: Yield calculation convention to use (default is None).
+      :type yield_calculation_convention: Optional[str]
+
+      :returns: Rate for the cash flow.
+      :rtype: float
+
+
+
+   .. py:method:: date_rate(date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+
+      Get the combined rate (benchmark + spread) for a cash flow by date.
+
+      The spread is added to the yield in the original curve.
+
+      yield_calculation_convention can be used to transform the yield to different conventions.
+
+      :param date: Date to get the rate for.
+      :type date: Union[str, pd.Timestamp]
+      :param yield_calculation_convention: Yield calculation convention to use (default is None).
+      :type yield_calculation_convention: Optional[str]
+      :param spread: Spread to add to the rate.
+      :type spread: float
+
+      :returns: Rate for the cash flow.
+      :rtype: float
+
+
+
+   .. py:method:: __repr__()
+
+
+.. py:data:: curve_date
+

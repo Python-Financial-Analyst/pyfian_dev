@@ -1,0 +1,537 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>credit_spread &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="curve_combination" href="../curve_combination/index.html" />
+    <link rel="prev" title="flat_curve" href="../flat_curve/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Topics/fixed_income/index.html">Fixed Income</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../pyfian/index.html">pyfian</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../par_curve/index.html">par_curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../base_curve/index.html">base_curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spot_curve/index.html">spot_curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../flat_curve/index.html">flat_curve</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">credit_spread</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#attributes">Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#credit_spread.CreditSpreadCurveBase"><code class="docutils literal notranslate"><span class="pre">CreditSpreadCurveBase</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#credit_spread.CreditSpreadCurve"><code class="docutils literal notranslate"><span class="pre">CreditSpreadCurve</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#credit_spread.FlatCreditSpreadCurve"><code class="docutils literal notranslate"><span class="pre">FlatCreditSpreadCurve</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#credit_spread.list_maturities_rates"><code class="docutils literal notranslate"><span class="pre">list_maturities_rates</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../curve_combination/index.html">curve_combination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../zero_coupon_curve/index.html">zero_coupon_curve</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+      <li class="breadcrumb-item active">credit_spread</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/autoapi/credit_spread/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-credit_spread">
+<span id="credit-spread"></span><h1>credit_spread<a class="headerlink" href="#module-credit_spread" title="Link to this heading"></a></h1>
+<p>credit_spread.py</p>
+<p>Implements CreditSpreadCurve for credit spreads at different maturities.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#credit_spread.list_maturities_rates" title="credit_spread.list_maturities_rates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_maturities_rates</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#credit_spread.CreditSpreadCurveBase" title="credit_spread.CreditSpreadCurveBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CreditSpreadCurveBase</span></code></a></p></td>
+<td><p>Abstract base class for all curves.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#credit_spread.CreditSpreadCurve" title="credit_spread.CreditSpreadCurve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CreditSpreadCurve</span></code></a></p></td>
+<td><p>CreditSpreadCurve represents a curve of credit spreads (in decimals) at different maturities.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#credit_spread.FlatCreditSpreadCurve" title="credit_spread.FlatCreditSpreadCurve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FlatCreditSpreadCurve</span></code></a></p></td>
+<td><p>FlatCreditSpreadCurve represents a flat (constant) credit spread curve.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurveBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">credit_spread.</span></span><span class="sig-name descname"><span class="pre">CreditSpreadCurveBase</span></span><a class="headerlink" href="#credit_spread.CreditSpreadCurveBase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../pyfian/visualization/mixins/index.html#pyfian.visualization.mixins.YieldCurvePlotMixin" title="pyfian.visualization.mixins.YieldCurvePlotMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyfian.visualization.mixins.YieldCurvePlotMixin</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">pyfian.yield_curves.base_curve.CurveBase</span></code></p>
+<p>Abstract base class for all curves.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurveBase.yield_calculation_convention">
+<span class="sig-name descname"><span class="pre">yield_calculation_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#credit_spread.CreditSpreadCurveBase.yield_calculation_convention" title="Link to this definition"></a></dt>
+<dd><p>CreditSpreadCurveBase is an abstract base class for credit spread curves.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurveBase.date_spread">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">date_spread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#credit_spread.CreditSpreadCurveBase.date_spread" title="Link to this definition"></a></dt>
+<dd><p>Get the spread for a given date.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurveBase._get_rate">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_get_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#credit_spread.CreditSpreadCurveBase._get_rate" title="Link to this definition"></a></dt>
+<dd><p>Get the spread for a given maturity.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">credit_spread.</span></span><span class="sig-name descname"><span class="pre">CreditSpreadCurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">benchmark_curve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pyfian.yield_curves.base_curve.YieldCurveBase</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bonds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../pyfian/fixed_income/fixed_rate_bond/index.html#pyfian.fixed_income.fixed_rate_bond.FixedRateBullet" title="pyfian.fixed_income.fixed_rate_bond.FixedRateBullet"><span class="pre">pyfian.fixed_income.fixed_rate_bond.FixedRateBullet</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../pyfian/fixed_income/fixed_rate_bond/index.html#pyfian.fixed_income.fixed_rate_bond.FixedRateBullet" title="pyfian.fixed_income.fixed_rate_bond.FixedRateBullet"><span class="pre">pyfian.fixed_income.fixed_rate_bond.FixedRateBullet</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spreads</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'actual/365'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#credit_spread.CreditSpreadCurve" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#credit_spread.CreditSpreadCurveBase" title="credit_spread.CreditSpreadCurveBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CreditSpreadCurveBase</span></code></a></p>
+<p>CreditSpreadCurve represents a curve of credit spreads (in decimals) at different maturities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>curve_date</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – Date of the curve.</p></li>
+<li><p><strong>benchmark_curve</strong> (<a class="reference internal" href="../base_curve/index.html#base_curve.YieldCurveBase" title="base_curve.YieldCurveBase"><em>YieldCurveBase</em></a><em>, </em><em>optional</em>) – The benchmark yield curve to compare against (e.g., risk-free curve).</p></li>
+<li><p><strong>bonds</strong> (<em>list</em><em>[</em><a class="reference internal" href="../pyfian/fixed_income/fixed_rate_bond/index.html#pyfian.fixed_income.fixed_rate_bond.FixedRateBullet" title="pyfian.fixed_income.fixed_rate_bond.FixedRateBullet"><em>FixedRateBullet</em></a><em>] or </em><em>tuple</em><em>[</em><a class="reference internal" href="../pyfian/fixed_income/fixed_rate_bond/index.html#pyfian.fixed_income.fixed_rate_bond.FixedRateBullet" title="pyfian.fixed_income.fixed_rate_bond.FixedRateBullet"><em>FixedRateBullet</em></a><em>]</em><em>, </em><em>optional</em>) – List or tuple of FixedRateBullet bond objects to bootstrap the spread curve from.</p></li>
+<li><p><strong>spreads</strong> (<em>dict</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Dictionary mapping maturities (in years) to credit spreads (as decimals).</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em> or </em><a class="reference internal" href="../pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention to use (default is “actual/365”).</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention to use (default is “Annual”). Supported: “Annual”, “BEY”, “Continuous”.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve.spreads">
+<span class="sig-name descname"><span class="pre">spreads</span></span><a class="headerlink" href="#credit_spread.CreditSpreadCurve.spreads" title="Link to this definition"></a></dt>
+<dd><p>Dictionary of credit spreads by maturity (in years).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[float, float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve.curve_date">
+<span class="sig-name descname"><span class="pre">curve_date</span></span><a class="headerlink" href="#credit_spread.CreditSpreadCurve.curve_date" title="Link to this definition"></a></dt>
+<dd><p>Date of the curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Timestamp</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve.bonds">
+<span class="sig-name descname"><span class="pre">bonds</span></span><a class="headerlink" href="#credit_spread.CreditSpreadCurve.bonds" title="Link to this definition"></a></dt>
+<dd><p>List of bonds used for bootstrapping, if provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[<a class="reference internal" href="../pyfian/fixed_income/fixed_rate_bond/index.html#pyfian.fixed_income.fixed_rate_bond.FixedRateBullet" title="pyfian.fixed_income.fixed_rate_bond.FixedRateBullet">FixedRateBullet</a>] or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve.benchmark_curve">
+<span class="sig-name descname"><span class="pre">benchmark_curve</span></span><a class="headerlink" href="#credit_spread.CreditSpreadCurve.benchmark_curve" title="Link to this definition"></a></dt>
+<dd><p>Benchmark yield curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../base_curve/index.html#base_curve.YieldCurveBase" title="base_curve.YieldCurveBase">YieldCurveBase</a> or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve.day_count_convention">
+<span class="sig-name descname"><span class="pre">day_count_convention</span></span><a class="headerlink" href="#credit_spread.CreditSpreadCurve.day_count_convention" title="Link to this definition"></a></dt>
+<dd><p>Day count convention used for time calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase">DayCountBase</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve.yield_calculation_convention">
+<span class="sig-name descname"><span class="pre">yield_calculation_convention</span></span><a class="headerlink" href="#credit_spread.CreditSpreadCurve.yield_calculation_convention" title="Link to this definition"></a></dt>
+<dd><p>Yield calculation convention used for rate conversions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#credit_spread.CreditSpreadCurve.as_dict" title="Link to this definition"></a></dt>
+<dd><p>Convert the curve to a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#credit_spread.CreditSpreadCurve.__call__" title="Link to this definition"></a></dt>
+<dd><p>Get the spread for a given maturity (in years), optionally adding a spread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve.date_spread">
+<span class="sig-name descname"><span class="pre">date_spread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#credit_spread.CreditSpreadCurve.date_spread" title="Link to this definition"></a></dt>
+<dd><p>Get the spread for a given date, optionally adding a spread.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve.spread_from_bonds">
+<span class="sig-name descname"><span class="pre">spread_from_bonds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">benchmark_curve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bonds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#credit_spread.CreditSpreadCurve.spread_from_bonds" title="Link to this definition"></a></dt>
+<dd><p>Class method to derive the spread curve from bond data and a benchmark curve.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">bonds</span></span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">benchmark_curve</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">curve_date</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">day_count_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></em><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">yield_calculation_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Annual'</span></em><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd><p>CreditSpreadCurveBase is an abstract base class for credit spread curves.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve.maturities">
+<span class="sig-name descname"><span class="pre">maturities</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#credit_spread.CreditSpreadCurve.maturities" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd><p>Convert the curve to a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve._prepare_spreads">
+<span class="sig-name descname"><span class="pre">_prepare_spreads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spreads</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#credit_spread.CreditSpreadCurve._prepare_spreads" title="Link to this definition"></a></dt>
+<dd><p>Prepare spreads for the curve sorted by time and with time fractions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve._get_rate">
+<span class="sig-name descname"><span class="pre">_get_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#credit_spread.CreditSpreadCurve._get_rate" title="Link to this definition"></a></dt>
+<dd><p>Get the rate for a cash flow by time t (in years).</p>
+<p>The spread is added to the yield in the original curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – Time in years to discount.</p></li>
+<li><p><strong>spread</strong> (<em>float</em>) – Spread to add to the discount rate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rate for the cash flow.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">date_spread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dd><p>Get the spread for a given date.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve._get_spread">
+<span class="sig-name descname"><span class="pre">_get_spread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#credit_spread.CreditSpreadCurve._get_spread" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id7">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">spread_from_bonds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">benchmark_curve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pyfian.yield_curves.base_curve.YieldCurveBase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bonds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../pyfian/fixed_income/fixed_rate_bond/index.html#pyfian.fixed_income.fixed_rate_bond.FixedRateBullet" title="pyfian.fixed_income.fixed_rate_bond.FixedRateBullet"><span class="pre">pyfian.fixed_income.fixed_rate_bond.FixedRateBullet</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../pyfian/fixed_income/fixed_rate_bond/index.html#pyfian.fixed_income.fixed_rate_bond.FixedRateBullet" title="pyfian.fixed_income.fixed_rate_bond.FixedRateBullet"><span class="pre">pyfian.fixed_income.fixed_rate_bond.FixedRateBullet</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve._bootstrap_spreads">
+<span class="sig-name descname"><span class="pre">_bootstrap_spreads</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#credit_spread.CreditSpreadCurve._bootstrap_spreads" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve._get_optimal_spread">
+<span class="sig-name descname"><span class="pre">_get_optimal_spread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">next_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_valued_payments</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#credit_spread.CreditSpreadCurve._get_optimal_spread" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.CreditSpreadCurve.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#credit_spread.CreditSpreadCurve.__repr__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="credit_spread.FlatCreditSpreadCurve">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">credit_spread.</span></span><span class="sig-name descname"><span class="pre">FlatCreditSpreadCurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curve_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#credit_spread.FlatCreditSpreadCurve" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#credit_spread.CreditSpreadCurveBase" title="credit_spread.CreditSpreadCurveBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CreditSpreadCurveBase</span></code></a></p>
+<p>FlatCreditSpreadCurve represents a flat (constant) credit spread curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spread</strong> (<em>float</em>) – Credit spread (as decimal, e.g. 0.01 for 100bps).</p></li>
+<li><p><strong>curve_date</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – The curve settlement date.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention to use (default is “Annual”). Supported: “Annual”, “BEY”, “Continuous”.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="credit_spread.FlatCreditSpreadCurve.spread">
+<span class="sig-name descname"><span class="pre">spread</span></span><a class="headerlink" href="#credit_spread.FlatCreditSpreadCurve.spread" title="Link to this definition"></a></dt>
+<dd><p>The constant credit spread.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="credit_spread.FlatCreditSpreadCurve.curve_date">
+<span class="sig-name descname"><span class="pre">curve_date</span></span><a class="headerlink" href="#credit_spread.FlatCreditSpreadCurve.curve_date" title="Link to this definition"></a></dt>
+<dd><p>Date of the curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Timestamp</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="credit_spread.FlatCreditSpreadCurve.yield_calculation_convention">
+<span class="sig-name descname"><span class="pre">yield_calculation_convention</span></span><a class="headerlink" href="#credit_spread.FlatCreditSpreadCurve.yield_calculation_convention" title="Link to this definition"></a></dt>
+<dd><p>Yield calculation convention used for rate conversions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.FlatCreditSpreadCurve.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#credit_spread.FlatCreditSpreadCurve.as_dict" title="Link to this definition"></a></dt>
+<dd><p>Convert the curve to a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.FlatCreditSpreadCurve.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#credit_spread.FlatCreditSpreadCurve.__call__" title="Link to this definition"></a></dt>
+<dd><p>Get the spread for a given maturity (always returns the constant spread).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.FlatCreditSpreadCurve.date_spread">
+<span class="sig-name descname"><span class="pre">date_spread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#credit_spread.FlatCreditSpreadCurve.date_spread" title="Link to this definition"></a></dt>
+<dd><p>Get the spread for a given date (always returns the constant spread).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">spread</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">curve_date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">yield_calculation_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Annual'</span></em><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<dd><p>CreditSpreadCurveBase is an abstract base class for credit spread curves.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<dd><p>Convert the curve to a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.FlatCreditSpreadCurve._get_rate">
+<span class="sig-name descname"><span class="pre">_get_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#credit_spread.FlatCreditSpreadCurve._get_rate" title="Link to this definition"></a></dt>
+<dd><p>Get the spread for a given maturity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – The maturity (in years).</p></li>
+<li><p><strong>spread</strong> (<em>float</em><em>, </em><em>optional</em>) – An additional spread to add (default is 0).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The spread for the given maturity.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">date_spread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
+<dd><p>Get the spread for a given date.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>date</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pd.Timestamp</em><em>]</em>) – The date to get the spread for.</p></li>
+<li><p><strong>spread</strong> (<em>float</em><em>, </em><em>optional</em>) – An additional spread to add (default is 0).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The spread for the given date.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="credit_spread.FlatCreditSpreadCurve.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#credit_spread.FlatCreditSpreadCurve.__repr__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="credit_spread.list_maturities_rates">
+<span class="sig-prename descclassname"><span class="pre">credit_spread.</span></span><span class="sig-name descname"><span class="pre">list_maturities_rates</span></span><a class="headerlink" href="#credit_spread.list_maturities_rates" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../flat_curve/index.html" class="btn btn-neutral float-left" title="flat_curve" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../curve_combination/index.html" class="btn btn-neutral float-right" title="curve_combination" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

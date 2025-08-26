@@ -1,0 +1,89 @@
+spot_curve
+==========
+
+.. py:module:: spot_curve
+
+.. autoapi-nested-parse::
+
+   spot_curve.py
+
+   Implements SpotCurve for bootstrapping zero-coupon rates from a series of bonds.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   spot_curve.list_maturities_rates
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   spot_curve.SpotCurve
+
+
+Module Contents
+---------------
+
+.. py:class:: SpotCurve(curve_date: pandas.Timestamp, bonds: Optional[list[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet] | tuple[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet]] = None, zero_rates: Optional[dict[float, float]] = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/365', yield_calculation_convention: Optional[str] = None)
+
+   Bases: :py:obj:`pyfian.yield_curves.zero_coupon_curve.ZeroCouponCurve`
+
+
+   SpotCurve bootstraps zero-coupon rates from a series of bonds.
+
+   :param curve_date: Date of the curve.
+   :type curve_date: str or datetime-like
+   :param bonds: Each bond must have keys: 'get_bond_price', 'calculate_time_to_payments', 'get_settlement_date'
+   :type bonds: list of Bonds
+   :param zero_rates: Zero-coupon rates, keyed by maturity (in years).
+   :type zero_rates: dict
+   :param day_count_convention: Day count convention to use (default is "actual/365").
+   :type day_count_convention: str or DayCountBase, optional
+   :param yield_calculation_convention: Yield calculation convention to use (default is None). If not specified, "Annual" will be used.
+   :type yield_calculation_convention: str, optional
+
+
+   .. py:attribute:: bonds
+
+
+   .. py:attribute:: curve_date
+      :value: None
+
+
+
+   .. py:attribute:: day_count_convention
+      :type:  pyfian.utils.day_count.DayCountBase
+
+
+   .. py:attribute:: yield_calculation_convention
+      :type:  str
+      :value: 'Annual'
+
+
+
+   .. py:attribute:: maturities
+
+
+   .. py:method:: as_dict()
+
+      Convert the curve to a dictionary.
+
+
+
+   .. py:method:: _bootstrap_spot_rates()
+
+
+   .. py:method:: _get_optimal_rate(next_t, non_valued_payments)
+
+
+   .. py:method:: __repr__()
+
+
+.. py:data:: list_maturities_rates
+
