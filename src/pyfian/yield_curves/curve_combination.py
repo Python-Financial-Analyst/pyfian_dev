@@ -1,7 +1,9 @@
 """
 curve_combination.py
 
-Implements CombinedCurve for combining a benchmark curve and a spread curve.
+Module for combining yield curves. Implements:
+
+- CombinedCurve: Combines a benchmark yield curve and a spread curve to produce a total yield curve.
 """
 
 import pandas as pd
@@ -23,6 +25,8 @@ from pyfian.yield_curves.zero_coupon_curve import ZeroCouponCurve
 class CombinedCurve(ZeroCouponCurve):
     """
     CombinedCurve combines a benchmark curve and a spread curve.
+
+    This class provides a mechanism for constructing a total yield curve by combining a base curve (e.g., risk-free) and a spread curve (e.g., credit spread), which is essential for pricing, discounting, and risk management in fixed income analytics.
 
     Parameters
     ----------

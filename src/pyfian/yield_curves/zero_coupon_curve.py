@@ -1,7 +1,12 @@
 """
 zero_coupon_curve.py
 
-Implements ZeroCouponCurve for zero-coupon rates.
+Module for zero-coupon yield curve models. Implements:
+
+- ZeroCouponCurve: Yield curve for zero-coupon rates at different maturities.
+- ZeroCouponCurveByDate: Yield curve for zero-coupon rates indexed by date.
+
+Each class provides a different convention for representing zero-coupon yield curves, useful for pricing, discounting, and rate conversions in fixed income analytics.
 """
 
 from typing import Optional, Union
@@ -247,9 +252,9 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
         assert t >= 0, "Maturity must be non-negative"
         maturities = list(self.zero_rates.keys())
         if t <= maturities[0]:
-            return self.zero_rates[maturities[0]]
+            return self.zero_rates[maturities[0]] + spread
         if t >= maturities[-1]:
-            return self.zero_rates[maturities[-1]]
+            return self.zero_rates[maturities[-1]] + spread
         else:
             for i in range(len(maturities) - 1):
                 if maturities[i] <= t <= maturities[i + 1]:
@@ -259,7 +264,7 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
                     )
                     t1, t2 = maturities[i], maturities[i + 1]
                     break
-            return r1 + (r2 - r1) * (t - t1) / (t2 - t1)
+            return r1 + (r2 - r1) * (t - t1) / (t2 - t1) + spread
 
     def __repr__(self):
         return f"ZeroCouponCurve(zero_rates={self.zero_rates}, curve_date={self.curve_date.strftime('%Y-%m-%d')})"

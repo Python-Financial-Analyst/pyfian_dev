@@ -1,7 +1,13 @@
 """
 credit_spread.py
 
-Implements CreditSpreadCurve for credit spreads at different maturities.
+Module for credit spread curve models. Implements:
+
+- CreditSpreadCurveBase: Abstract base class for credit spread curves.
+- CreditSpreadCurve: Bootstraps credit spreads from bonds and a benchmark curve.
+- FlatCreditSpreadCurve: Flat (constant) credit spread curve.
+
+Each class provides a different convention for representing credit spread curves, useful for pricing, discounting, and risk management in fixed income analytics.
 """
 
 from abc import abstractmethod

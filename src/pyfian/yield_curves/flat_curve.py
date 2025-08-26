@@ -1,8 +1,13 @@
 """
 flat_curve.py
 
-Module for flat yield curve models. Includes FlatCurveLog (log/continuous rates),
-FlatCurveAER (annual effective rates), and FlatCurveBEY (bond equivalent yields).
+Module for flat yield curve models. Implements:
+
+- FlatCurveLog: Flat curve with continuously compounded (log) rates.
+- FlatCurveAER: Flat curve with annual effective rates (AER).
+- FlatCurveBEY: Flat curve with bond equivalent yields (BEY).
+
+Each class provides a different convention for representing flat yield curves, useful for pricing, discounting, and rate conversions in fixed income analytics.
 
 Examples
 --------
@@ -70,6 +75,8 @@ from pyfian.time_value import rate_conversions as rc
 class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
     """
     FlatCurveLog represents a flat curve with continuously compounded (log) rates.
+
+    This class is implemented to model a yield curve where the rate is constant and compounded continuously. It is useful for pricing and discounting cash flows under the continuous compounding convention, which is common in quantitative finance.
 
     Parameters
     ----------
@@ -341,6 +348,8 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
     """
     FlatCurveAER represents a flat curve with annual effective rates (AER).
 
+    This class is implemented to model a yield curve where the rate is constant and compounded annually. It is useful for pricing and discounting cash flows under the annual effective rate convention, which is standard in many fixed income markets.
+
     Parameters
     ----------
     aer : float
@@ -604,6 +613,8 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
 class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
     """
     FlatCurveBEY represents a flat curve with bond equivalent yields (BEY).
+
+    This class is implemented to model a yield curve where the rate is constant and quoted as a bond equivalent yield. BEY is a market convention for quoting yields on semiannual coupon bonds.
 
     Parameters
     ----------

@@ -1,7 +1,18 @@
 """
-spot_curve.py
+par_curve.py
 
-Implements SpotCurve for bootstrapping zero-coupon rates from a series of bonds.
+Module for bootstrapping par rates and zero-coupon rates from a series of bonds. Implements:
+
+- ParCurve: Bootstraps par rates and zero-coupon rates from a series of bonds using their prices and cash flows.
+
+Examples
+--------
+>>> from pyfian.yield_curves.par_curve import ParCurve
+>>> curve = ParCurve(curve_date="2025-08-22", par_rates=par_rates)
+>>> curve.discount_t(1)
+... # returns discount factor for 1 year
+>>> curve.get_rate(1)
+... # returns par rate for 1 year
 """
 
 import pandas as pd
@@ -18,7 +29,13 @@ from pyfian.time_value import rate_conversions as rc
 
 class ParCurve(ZeroCouponCurve):
     """
-    ParCurve bootstraps par rates from a series of bonds.
+    ParCurve.
+
+    This class provides a mechanism for constructing a par rate curve and extracting zero-coupon rates from market bond prices, which is essential for fixed income analytics, pricing, and risk management.
+
+    Par rates are the rates that make a Bond's present value equal to its face value.
+
+    From a series of par rates, zero rates are obtained.
 
     Parameters
     ----------
@@ -79,6 +96,14 @@ class ParCurve(ZeroCouponCurve):
         self.maturities = list(self.zero_rates.keys())
 
     def as_dict(self):
+        """
+        Convert the curve to a dictionary.
+
+        Returns
+        -------
+        dict
+            Dictionary containing curve parameters and metadata.
+        """
         return {
             "curve_date": self.curve_date,
             "par_rates": self.par_rates,
@@ -86,6 +111,11 @@ class ParCurve(ZeroCouponCurve):
         }
 
     def _bootstrap_spot_rates(self):
+        """
+        Bootstrap spot rates from the provided par rates.
+
+        Populates self.zero_rates with calculated spot rates for each bond maturity.
+        """
         zero_rates = self.zero_rates
 
         for maturity, bond_params in self.par_rates:
@@ -146,6 +176,21 @@ class ParCurve(ZeroCouponCurve):
         next_t,
         non_valued_payments,
     ):
+        """
+        Find the optimal spot rate for a given maturity using non-valued payments.
+
+        Parameters
+        ----------
+        next_t : float
+            Maturity for which to solve the spot rate.
+        non_valued_payments : dict
+            Payments not valued by previous spot rates.
+
+        Returns
+        -------
+        float
+            Optimal spot rate for the given maturity.
+        """
         if next_t is None:
             raise ValueError("Invalid input parameters")
         # start_guess = (last_rate + non_valued_payments[next_t]) / 2
@@ -181,6 +226,14 @@ class ParCurve(ZeroCouponCurve):
         return root
 
     def __repr__(self):
+        """
+        Return string representation of the ParCurve.
+
+        Returns
+        -------
+        str
+            String representation of the curve.
+        """
         return f"SpotCurve(zero_rates={self.zero_rates}, curve_date={self.curve_date.strftime('%Y-%m-%d')})"
 
 

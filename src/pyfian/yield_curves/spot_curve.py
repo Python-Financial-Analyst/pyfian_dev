@@ -1,7 +1,18 @@
 """
 spot_curve.py
 
-Implements SpotCurve for bootstrapping zero-coupon rates from a series of bonds.
+Module for bootstrapping zero-coupon rates from a series of bonds. Implements:
+
+- SpotCurve: Bootstraps zero-coupon rates from a series of bonds using their prices and cash flows.
+
+Examples
+--------
+>>> from pyfian.yield_curves.spot_curve import SpotCurve
+>>> curve = SpotCurve(curve_date="2025-08-22", bonds=bonds)
+>>> curve.discount_t(1)
+... # returns discount factor for 1 year
+>>> curve.get_rate(1)
+... # returns spot rate for 1 year
 """
 
 import pandas as pd
@@ -18,6 +29,8 @@ from pyfian.time_value import rate_conversions as rc
 class SpotCurve(ZeroCouponCurve):
     """
     SpotCurve bootstraps zero-coupon rates from a series of bonds.
+
+    This class provides a mechanism for constructing a spot rate curve from market bond prices, which is essential for fixed income analytics, pricing, and risk management.
 
     Parameters
     ----------
@@ -80,6 +93,11 @@ class SpotCurve(ZeroCouponCurve):
     def as_dict(self):
         """
         Convert the curve to a dictionary.
+
+        Returns
+        -------
+        dict
+            Dictionary containing curve parameters and metadata.
         """
         return {
             "curve_date": self.curve_date,
@@ -88,6 +106,11 @@ class SpotCurve(ZeroCouponCurve):
         }
 
     def _bootstrap_spot_rates(self):
+        """
+        Bootstrap spot rates from the provided bonds.
+
+        Populates self.zero_rates with calculated spot rates for each bond maturity.
+        """
         zero_rates = self.zero_rates
 
         for bond in self.bonds:
@@ -137,6 +160,21 @@ class SpotCurve(ZeroCouponCurve):
         next_t,
         non_valued_payments,
     ):
+        """
+        Find the optimal spot rate for a given maturity using non-valued payments.
+
+        Parameters
+        ----------
+        next_t : float
+            Maturity for which to solve the spot rate.
+        non_valued_payments : dict
+            Payments not valued by previous spot rates.
+
+        Returns
+        -------
+        float
+            Optimal spot rate for the given maturity.
+        """
         if next_t is None:
             raise ValueError("Invalid input parameters")
 
@@ -172,6 +210,14 @@ class SpotCurve(ZeroCouponCurve):
         return root
 
     def __repr__(self):
+        """
+        Return string representation of the SpotCurve.
+
+        Returns
+        -------
+        str
+            String representation of the curve.
+        """
         return f"SpotCurve(zero_rates={self.zero_rates}, curve_date={self.curve_date.strftime('%Y-%m-%d')})"
 
 
