@@ -12,15 +12,15 @@ Examples
 0.951229424500714
 >>> curve_log.discount_date("2021-01-01")
 0.951229424500714
->>> curve_log(1)
+>>> curve_log.get_rate(1)
 0.05
->>> curve_log(1, yield_calculation_convention="Annual")
+>>> curve_log.get_rate(1, yield_calculation_convention="Annual")
 0.05127109637602412
->>> curve_log(1, yield_calculation_convention="BEY")
+>>> curve_log.get_rate(1, yield_calculation_convention="BEY")
 0.05128205128205128
->>> curve_log(1, yield_calculation_convention="Continuous")
+>>> curve_log.get_rate(1, yield_calculation_convention="Continuous")
 0.05
->>> curve_log(1, yield_calculation_convention="Unknown")
+>>> curve_log.get_rate(1, yield_calculation_convention="Unknown")
 Traceback (most recent call last):
     ...
 ValueError: Unknown yield calculation convention: Unknown
@@ -30,29 +30,29 @@ ValueError: Unknown yield calculation convention: Unknown
 0.9523809523809523
 >>> curve_aer.discount_date("2021-01-01")
 0.9523809523809523
->>> curve_aer(1)
+>>> curve_aer.get_rate(1)
 0.05
->>> curve_aer(1, yield_calculation_convention="BEY")
+>>> curve_aer.get_rate(1, yield_calculation_convention="BEY")
 0.04999999999999999
->>> curve_aer(1, yield_calculation_convention="Continuous")
+>>> curve_aer.get_rate(1, yield_calculation_convention="Continuous")
 0.04879016416943205
->>> curve_aer(1, yield_calculation_convention="Unknown")
+>>> curve_aer.get_rate(1, yield_calculation_convention="Unknown")
 Traceback (most recent call last):
     ...
 ValueError: Unknown yield calculation convention: Unknown
 
 >>> curve_bey = FlatCurveBEY(0.05, "2020-01-01")
 >>> curve_bey.discount_t(1)
-0.975609756097561
+0.9518143961927424
 >>> curve_bey.discount_date("2021-01-01")
-0.975609756097561
->>> curve_bey(1)
-0.05061728395061728
->>> curve_bey(1, yield_calculation_convention="BEY")
+0.9518143961927424
+>>> curve_bey.get_rate(1, yield_calculation_convention="Annual")
+0.050625
+>>> curve_bey.get_rate(1, yield_calculation_convention="BEY")
 0.05
->>> curve_bey(1, yield_calculation_convention="Continuous")
-0.04939702358655452
->>> curve_bey(1, yield_calculation_convention="Unknown")
+>>> curve_bey.get_rate(1, yield_calculation_convention="Continuous")
+0.049385225180742925
+>>> curve_bey.get_rate(1, yield_calculation_convention="Unknown")
 Traceback (most recent call last):
     ...
 ValueError: Unknown yield calculation convention: Unknown
@@ -77,17 +77,29 @@ class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
         Continuously compounded rate (as decimal, e.g. 0.05 for 5%).
     curve_date : str or datetime-like
         The curve settlement date.
+    day_count_convention : str or DayCountBase, optional
+        The day count convention to use. Defaults to "actual/365".
     """
 
     def __init__(
         self,
         log_rate: float,
         curve_date: Union[str, pd.Timestamp],
+        day_count_convention: Optional[str | DayCountBase] = "actual/365",
     ) -> None:
         self.log_rate: float = log_rate
         self.curve_date: pd.Timestamp = pd.to_datetime(curve_date)
         self.yield_calculation_convention: str = "Continuous"
-        self.day_count_convention: DayCountBase = get_day_count_convention("actual/365")
+        # Raise if day_count_convention is neither str nor DayCountBase
+        if not isinstance(day_count_convention, (str, DayCountBase)):
+            raise TypeError(
+                "day_count_convention must be either a string or a DayCountBase instance."
+            )
+        self.day_count_convention: DayCountBase = (
+            get_day_count_convention(day_count_convention)
+            if isinstance(day_count_convention, str)
+            else day_count_convention
+        )
 
     def as_dict(self) -> dict:
         """
@@ -265,7 +277,7 @@ class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
             self.log_rate + spread, "Continuous", yield_calculation_convention
         )
 
-    def _get_rate(self, t, spread=0):
+    def _get_t(self, t, spread=0):
         return self.log_rate + spread
 
     def date_rate(
@@ -335,13 +347,29 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
         Annual effective rate (as decimal, e.g. 0.05 for 5%).
     curve_date : str or datetime-like
         The curve settlement date.
+    day_count_convention : str or DayCountBase, optional
+        The day count convention to use. Defaults to "actual/365".
     """
 
-    def __init__(self, aer: float, curve_date: Union[str, pd.Timestamp]) -> None:
+    def __init__(
+        self,
+        aer: float,
+        curve_date: Union[str, pd.Timestamp],
+        day_count_convention: Optional[str | DayCountBase] = "actual/365",
+    ) -> None:
         self.aer: float = aer
         self.curve_date: pd.Timestamp = pd.to_datetime(curve_date)
         self.yield_calculation_convention: str = "Annual"
-        self.day_count_convention: DayCountBase = get_day_count_convention("actual/365")
+        # Raise if day_count_convention is neither str nor DayCountBase
+        if not isinstance(day_count_convention, (str, DayCountBase)):
+            raise TypeError(
+                "day_count_convention must be either a string or a DayCountBase instance."
+            )
+        self.day_count_convention: DayCountBase = (
+            get_day_count_convention(day_count_convention)
+            if isinstance(day_count_convention, str)
+            else day_count_convention
+        )
 
     def as_dict(self) -> dict:
         """
@@ -515,7 +543,7 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
             self.aer + spread, "Annual", yield_calculation_convention
         )
 
-    def _get_rate(self, t, spread=0):
+    def _get_t(self, t, spread=0):
         return self.aer + spread
 
     def date_rate(
@@ -583,13 +611,29 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
         Bond equivalent yield (as decimal, e.g. 0.05 for 5%).
     curve_date : str or datetime-like
         The curve settlement date.
+    day_count_convention : str or DayCountBase, optional
+        The day count convention to use. Defaults to "30/360".
     """
 
-    def __init__(self, bey: float, curve_date: Union[str, pd.Timestamp]) -> None:
+    def __init__(
+        self,
+        bey: float,
+        curve_date: Union[str, pd.Timestamp],
+        day_count_convention: Optional[str | DayCountBase] = "30/360",
+    ) -> None:
         self.bey: float = bey
         self.curve_date: pd.Timestamp = pd.to_datetime(curve_date)
         self.yield_calculation_convention: str = "BEY"
-        self.day_count_convention: DayCountBase = get_day_count_convention("actual/365")
+        # Raise if day_count_convention is neither str nor DayCountBase
+        if not isinstance(day_count_convention, (str, DayCountBase)):
+            raise TypeError(
+                "day_count_convention must be either a string or a DayCountBase instance."
+            )
+        self.day_count_convention: DayCountBase = (
+            get_day_count_convention(day_count_convention)
+            if isinstance(day_count_convention, str)
+            else day_count_convention
+        )
 
     def as_dict(self) -> dict:
         """
@@ -746,13 +790,13 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
         --------
         >>> curve = FlatCurveBEY(0.05, "2020-01-01")
         >>> curve.get_rate(1)
-        (1 + 0.05 / 2) ** 2 - 1
+        0.05
         >>> curve.get_rate(1, yield_calculation_convention="Annual")
-        (1 + 0.05 / 2) ** 2 - 1
+        0.050625
         >>> curve.get_rate(1, yield_calculation_convention="BEY")
         0.05
         >>> curve.get_rate(1, yield_calculation_convention="Continuous")
-        np.log(1 + ((1 + 0.05 / 2) ** 2 - 1))
+        0.049385225180742925
         >>> curve.get_rate(1, yield_calculation_convention="Unknown")
         Traceback (most recent call last):
             ...
@@ -763,7 +807,7 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
 
         return rc.convert_yield(self.bey + spread, "BEY", yield_calculation_convention)
 
-    def _get_rate(self, t, spread=0):
+    def _get_t(self, t, spread=0):
         return self.bey + spread
 
     def date_rate(
@@ -795,13 +839,13 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
         --------
         >>> curve = FlatCurveBEY(0.05, "2020-01-01")
         >>> curve.date_rate("2022-01-01")
-        (1 + 0.05 / 2) ** 2 - 1
+        0.05
         >>> curve.date_rate("2022-01-01", yield_calculation_convention="Annual")
-        (1 + 0.05 / 2) ** 2 - 1
+        0.050625
         >>> curve.date_rate("2022-01-01", yield_calculation_convention="BEY")
         0.05
         >>> curve.date_rate("2022-01-01", yield_calculation_convention="Continuous")
-        np.log(1 + ((1 + 0.05 / 2) ** 2 - 1))
+        0.049385225180742925
         >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
         Traceback (most recent call last):
             ...

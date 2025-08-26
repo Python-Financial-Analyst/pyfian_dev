@@ -134,7 +134,7 @@ class CombinedCurve(ZeroCouponCurve):
 
         # Get the base and spread rates
         base_rate = self.benchmark_curve.get_rate(t, spread=spread)
-        spread_rate = self.spread_curve._get_rate(t)
+        spread_rate = self.spread_curve._get_t(t)
 
         # Convert the base_rate to the self.spread_curve_yield_curve_convention
         base_rate = rc.convert_yield(

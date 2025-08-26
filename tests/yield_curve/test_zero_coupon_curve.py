@@ -53,8 +53,8 @@ class TestZeroCouponCurve:
         expected = 1 / (1 + 0.025) ** t
         assert pytest.approx(pv, rel=1e-6) == expected
 
-    def test__get_rate(self):
-        rate = self.curve._get_rate(2.0)
+    def test__get_t(self):
+        rate = self.curve._get_t(2.0)
         assert pytest.approx(rate, rel=1e-6) == 0.025
 
     def test_date_rate(self):
@@ -78,6 +78,31 @@ class TestZeroCouponCurve:
         date = pd.Timestamp("2029-08-24")
         rate = self.curve.date_rate(date)
         assert pytest.approx(rate, rel=1e-6) == 0.03
+
+    # test to_dataframe without setting maturities.
+    def test_to_dataframe_no_maturities(self):
+        df = self.curve.to_dataframe()
+        assert df.shape == (len(self.curve.zero_rates), 1)  # 7 default maturities
+        assert df.index.tolist() == list(self.curve.zero_rates.keys())
+
+    # test clone_with_new_date
+    def test_clone_with_new_date(self):
+        new_date = pd.Timestamp("2026-08-24")
+        cloned_curve = self.curve.clone_with_new_date(new_date)
+        assert cloned_curve.curve_date == new_date
+        assert cloned_curve.zero_rates == self.curve.zero_rates
+        assert cloned_curve.zero_rates is not self.curve.zero_rates
+
+    def test_compare_to(self):
+        other_curve = ZeroCouponCurve(
+            zero_rates=self.curve.zero_rates,
+            curve_date=pd.Timestamp("2025-08-24"),
+            day_count_convention="actual/365",
+            yield_calculation_convention="Annual",
+        )
+        # All values from column "Spread" are close to 0
+        df = self.curve.compare_to(other_curve)
+        assert df["Spread"].abs().max() < 1e-10
 
 
 class TestZeroCouponCurveByDate:

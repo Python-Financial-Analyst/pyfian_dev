@@ -19,11 +19,11 @@ class CurveBase(ABC):
     curve_date: pd.Timestamp
 
     @abstractmethod
-    def _get_rate(
+    def _get_t(
         self,
         t: float,
         spread: float = 0,
-    ) -> float:
+    ) -> float:  # pragma: no cover
         """
         Get the rate for a cash flow by time t (in years).
 
@@ -53,7 +53,7 @@ class CurveBase(ABC):
                 maturities = self.maturities
             else:
                 maturities = [0.25, 0.5, 1, 2, 5, 7, 10]
-        data = {"Maturity": maturities, "Rate": [self._get_rate(m) for m in maturities]}
+        data = {"Maturity": maturities, "Rate": [self._get_t(m) for m in maturities]}
         return pd.DataFrame(data).set_index("Maturity")
 
     @abstractmethod
@@ -327,7 +327,7 @@ class YieldCurveBase(CurveBase):
                 maturities = self.maturities
             else:
                 maturities = [0.25, 0.5, 1, 2, 5, 10]
-        current_rates = [self._get_rate(m) for m in maturities]
+        current_rates = [self._get_t(m) for m in maturities]
         compared_rates = [
             self.discount_to_rate(other.discount_t(m), m, spread=0) for m in maturities
         ]

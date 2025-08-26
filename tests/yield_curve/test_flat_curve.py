@@ -1,3 +1,4 @@
+import matplotlib
 import numpy as np
 import pandas as pd
 import pytest
@@ -19,25 +20,25 @@ class TestFlatCurveLog:
             np.exp(-0.05 * days / 365)
         )
 
-    def test_call_default(self):
+    def test_get_rate_default(self):
         assert self.curve.get_rate(1) == 0.05
 
-    def test_call_annual(self):
+    def test_get_rate_annual(self):
         assert self.curve.get_rate(
             1, yield_calculation_convention="Annual"
         ) == pytest.approx(np.expm1(0.05))
 
-    def test_call_bey(self):
+    def test_get_rate_bey(self):
         eff = np.expm1(0.05)
         bey = 2 * ((1 + eff) ** 0.5 - 1)
         assert self.curve.get_rate(
             1, yield_calculation_convention="BEY"
         ) == pytest.approx(bey)
 
-    def test_call_continuous(self):
+    def test_get_rate_continuous(self):
         assert self.curve.get_rate(1, yield_calculation_convention="Continuous") == 0.05
 
-    def test_call_invalid(self):
+    def test_get_rate_invalid(self):
         with pytest.raises(
             ValueError, match="Unknown yield calculation convention: Unknown"
         ):
@@ -109,6 +110,7 @@ class TestFlatCurveLog:
 
     @pytest.mark.filterwarnings("ignore::UserWarning")
     def test_plot_curve(self):
+        matplotlib.pyplot.switch_backend("Agg")
         self.curve.plot_curve([0.5, 1, 2])
 
     def test_forward_t_start_t_end(self):
@@ -169,22 +171,22 @@ class TestFlatCurveAER:
             1 / (1 + 0.05) ** (days / 365)
         )
 
-    def test_call_default(self):
+    def test_get_rate_default(self):
         assert self.curve.get_rate(1) == 0.05
 
-    def test_call_bey(self):
+    def test_get_rate_bey(self):
         bey = 2 * ((1 + 0.05) ** 0.5 - 1)
         assert self.curve.get_rate(
             1, yield_calculation_convention="BEY"
         ) == pytest.approx(bey)
 
-    def test_call_continuous(self):
+    def test_get_rate_continuous(self):
         cont = np.log(1 + 0.05)
         assert self.curve.get_rate(
             1, yield_calculation_convention="Continuous"
         ) == pytest.approx(cont)
 
-    def test_call_invalid(self):
+    def test_get_rate_invalid(self):
         with pytest.raises(
             ValueError, match="Unknown yield calculation convention: Unknown"
         ):
@@ -256,9 +258,7 @@ class TestFlatCurveAER:
     @pytest.mark.filterwarnings("ignore::UserWarning")
     def test_plot_curve(self):
         # Test plotting the curve. Use the appropriate backend so it doesn't graph
-        import matplotlib.pyplot as plt
-
-        plt.switch_backend("Agg")
+        matplotlib.pyplot.switch_backend("Agg")
         self.curve.plot_curve([0.5, 1, 2])
 
     def test_forward_t_start_t_end(self):
@@ -309,13 +309,14 @@ class TestFlatCurveBEY:
 
     def test_discount_date(self):
         # Calculate days from the start date to '2021-01-01'
-        days = (pd.to_datetime("2021-01-01") - pd.to_datetime("2020-01-01")).days
-        t = days / 365
+        t = self.curve.day_count_convention.fraction(
+            start=self.curve.curve_date, current=pd.to_datetime("2021-01-01")
+        )
         assert self.curve.discount_date("2021-01-01") == pytest.approx(
             1 / (1 + 0.05 / 2) ** (t * 2)
         )
 
-    def test_call_default(self):
+    def test_get_rate_default(self):
         # Default yield_calculation_convention is "BEY"
         eff = (1 + 0.05 / 2) ** 2 - 1
         assert self.curve.get_rate(
@@ -336,23 +337,23 @@ class TestFlatCurveBEY:
             "2022-01-01", yield_calculation_convention="BEY"
         ) == pytest.approx(bey)
 
-    def test_call_annual(self):
+    def test_get_rate_annual(self):
         eff = (1 + 0.05 / 2) ** 2 - 1
         assert self.curve.get_rate(
             1, yield_calculation_convention="Annual"
         ) == pytest.approx(eff)
 
-    def test_call_bey(self):
+    def test_get_rate_bey(self):
         assert self.curve.get_rate(1, yield_calculation_convention="BEY") == 0.05
 
-    def test_call_continuous(self):
+    def test_get_rate_continuous(self):
         eff = (1 + 0.05 / 2) ** 2 - 1
         cont = np.log(1 + eff)
         assert self.curve.get_rate(
             1, yield_calculation_convention="Continuous"
         ) == pytest.approx(cont)
 
-    def test_call_invalid(self):
+    def test_get_rate_invalid(self):
         with pytest.raises(
             ValueError, match="Unknown yield calculation convention: Unknown"
         ):
@@ -416,6 +417,7 @@ class TestFlatCurveBEY:
 
     @pytest.mark.filterwarnings("ignore::UserWarning")
     def test_plot_curve(self):
+        matplotlib.pyplot.switch_backend("Agg")
         self.curve.plot_curve([0.5, 1, 2])
 
     def test_forward_t_start_t_end(self):

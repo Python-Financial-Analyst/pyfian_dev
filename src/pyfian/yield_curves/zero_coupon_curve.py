@@ -202,7 +202,7 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
         return rc.convert_yield(
-            self._get_rate(t, spread),
+            self._get_t(t, spread),
             self.yield_calculation_convention,
             yield_calculation_convention,
         )
@@ -242,7 +242,7 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
         )
         return self.get_rate(t, yield_calculation_convention, spread)
 
-    def _get_rate(self, t: float, spread: float = 0) -> float:
+    def _get_t(self, t: float, spread: float = 0) -> float:
         # Simple linear interpolation between known maturities
         assert t >= 0, "Maturity must be non-negative"
         maturities = list(self.zero_rates.keys())

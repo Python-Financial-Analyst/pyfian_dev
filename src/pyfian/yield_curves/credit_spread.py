@@ -7,6 +7,7 @@ Implements CreditSpreadCurve for credit spreads at different maturities.
 from abc import abstractmethod
 from typing import Optional, Union
 import pandas as pd
+from yaml import warnings  # type: ignore
 from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
 from pyfian.utils.day_count import DayCountBase, get_day_count_convention
 from pyfian.visualization.mixins import YieldCurvePlotMixin
@@ -25,14 +26,16 @@ class CreditSpreadCurveBase(YieldCurvePlotMixin, CurveBase):
     """
 
     @abstractmethod
-    def date_spread(self, date: Union[str, pd.Timestamp], spread: float = 0) -> float:
+    def date_spread(
+        self, date: Union[str, pd.Timestamp], spread: float = 0
+    ) -> float:  # pragma: no cover
         """
         Get the spread for a given date.
         """
         pass
 
     @abstractmethod
-    def _get_rate(self, t: float, spread: float = 0) -> float:
+    def _get_t(self, t: float, spread: float = 0) -> float:  # pragma: no cover
         """
         Get the spread for a given maturity.
         """
@@ -147,7 +150,105 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
         spreads = dict(sorted(spreads.items()))
         return spreads
 
-    def _get_rate(self, t: float, spread: float = 0) -> float:
+    def get_rate(
+        self,
+        t: float,
+        yield_calculation_convention: Optional[str] = None,
+        spread: float = 0,
+    ) -> float:
+        """
+        Get the rate for a cash flow by time t (in years) if there is a benchmark curve.
+
+        Returns the rate for the cash flow including the spread curve.
+
+        If a spread is input, the spread is added to the yield in the original curve.
+
+        yield_calculation_convention can be used to transform the yield to different conventions.
+
+        Parameters
+        ----------
+        t : float
+            Time in years to discount.
+        spread : float
+            Spread to add to the discount rate.
+        yield_calculation_convention : Optional[str]
+            Yield calculation convention to use (default is None).
+
+        Returns
+        -------
+        float
+            Rate for the cash flow.
+        """
+        if self.benchmark_curve is None:
+            raise ValueError("Benchmark curve (benchmark_curve) is not defined.")
+
+        if yield_calculation_convention is None:
+            yield_calculation_convention = self.yield_calculation_convention
+
+        # Issue warning if self.benchmark_curve.day_count_convention is not the same as self.day_count_convention
+        if self.benchmark_curve.day_count_convention != self.day_count_convention:
+            warnings.warn(
+                "Benchmark curve's day count convention is different from the spread curve's."
+            )
+        r = self.benchmark_curve.get_rate(
+            t, yield_calculation_convention=self.yield_calculation_convention
+        )
+        s = self._get_spread(t) + spread
+
+        return rc.convert_yield(
+            r + s,
+            self.yield_calculation_convention,
+            yield_calculation_convention,
+        )
+
+    def date_rate(
+        self,
+        date: Union[str, pd.Timestamp],
+        yield_calculation_convention: Optional[str] = None,
+        spread: float = 0,
+    ) -> float:
+        """
+        Get the rate for a cash flow by time t (in years) if there is a benchmark curve.
+
+        Returns the rate for the cash flow including the spread curve.
+
+        If a spread is input, the spread is added to the yield in the original curve.
+
+        yield_calculation_convention can be used to transform the yield to different conventions.
+
+        Parameters
+        ----------
+        date : Union[str, pd.Timestamp]
+            Date to get the rate for.
+        yield_calculation_convention : Optional[str]
+            Yield calculation convention to use (default is None).
+        spread : float
+            Spread to add to the rate.
+
+        Returns
+        -------
+        float
+            Rate for the cash flow.
+        """
+
+        if self.benchmark_curve is None:
+            raise ValueError("Benchmark curve (benchmark_curve) is not defined.")
+        if yield_calculation_convention is None:
+            yield_calculation_convention = self.yield_calculation_convention
+
+        t_b = self.benchmark_curve.day_count_convention.fraction(
+            start=self.benchmark_curve.curve_date, current=pd.to_datetime(date)
+        )
+        b = self.benchmark_curve.get_rate(t_b, self.yield_calculation_convention)
+        s = self.date_spread(date, spread=spread)
+
+        return rc.convert_yield(
+            b + s,
+            self.yield_calculation_convention,
+            yield_calculation_convention,
+        )
+
+    def _get_t(self, t: float, spread: float = 0) -> float:
         """
         Get the rate for a cash flow by time t (in years).
 
@@ -172,7 +273,7 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
         t = self.day_count_convention.fraction(
             start=self.curve_date, current=pd.to_datetime(date)
         )
-        return self._get_rate(t, spread)
+        return self._get_t(t, spread)
 
     def _get_spread(self, t: float) -> float:
         # Simple linear interpolation between known maturities
@@ -244,6 +345,8 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
                 max_zero_rates_maturity = max(spreads.keys()) if spreads else None
                 cumulative_present_value = 0
                 non_valued_payments = {}
+                # iterator = iter(payment_dates.items())
+                # d, payment = next(iterator)
                 for d, payment in payment_dates.items():
                     t = self.day_count_convention.fraction(
                         start=self.curve_date, current=d
@@ -270,6 +373,7 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
                         )
                     else:
                         non_valued_payments[d] = payment
+
                 # Now we have cumulative_present_value + sum(non_valued_payments discounted with spot rates) = price
                 non_valued_payments[settlement_date] = cumulative_present_value
 
@@ -413,7 +517,7 @@ class FlatCreditSpreadCurve(CreditSpreadCurveBase):
             "yield_calculation_convention": self.yield_calculation_convention,
         }
 
-    def _get_rate(self, t: float, spread: float = 0) -> float:
+    def _get_t(self, t: float, spread: float = 0) -> float:
         """
         Get the spread for a given maturity.
 
@@ -447,7 +551,7 @@ class FlatCreditSpreadCurve(CreditSpreadCurveBase):
         float
             The spread for the given date.
         """
-        return self._get_rate(0, spread)
+        return self._get_t(0, spread)
 
     def __repr__(self) -> str:
         return f"FlatCreditSpreadCurve(spread={self.spread}, curve_date={self.curve_date.strftime('%Y-%m-%d')})"
