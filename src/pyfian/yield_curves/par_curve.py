@@ -76,11 +76,13 @@ class ParCurve(ZeroCouponCurve):
             self.zero_rates = {}
             self._bootstrap_spot_rates()
 
+        self.maturities = list(self.zero_rates.keys())
+
     def as_dict(self):
         return {
             "curve_date": self.curve_date,
             "par_rates": self.par_rates,
-            "zero_rates": self.zero_rates,
+            "zero_rates": self.zero_rates.copy(),
         }
 
     def _bootstrap_spot_rates(self):

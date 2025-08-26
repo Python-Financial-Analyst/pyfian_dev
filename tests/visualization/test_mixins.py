@@ -12,7 +12,7 @@ class DummyCurve(YieldCurvePlotMixin):
     def __init__(self):
         self.curve_date = pd.Timestamp("2025-01-01")
 
-    def __call__(self, t):
+    def _get_rate(self, t):
         return 0.05 + 0 * t
 
     def discount_t(self, t):

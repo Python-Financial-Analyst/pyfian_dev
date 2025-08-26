@@ -246,8 +246,8 @@ class TestFixedRateBullet:
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         curve = FlatCurveLog(0.05, "2020-01-01")
         pv_expected = {
-            t: np.exp(-0.05 * t) * cash_flow
-            for t, cash_flow in bond.calculate_time_to_payments(
+            d: np.exp(-0.05 * (d - pd.Timestamp("2020-01-01")).days / 365) * cash_flow
+            for d, cash_flow in bond.filter_payment_flow(
                 settlement_date="2020-01-01"
             ).items()
         }
@@ -474,11 +474,11 @@ class TestFixedRateBullet:
         spread = bond.z_spread(benchmark_curve=curve, yield_to_maturity=0.05)
         bond_price = bond.price_from_yield(0.05)
         assert isinstance(spread, float)
-        time_to_payments = bond.calculate_time_to_payments()
+        dates_of_payments = bond.filter_payment_flow()
         price_from_curve = sum(
             [
-                curve.discount_t(t, spread=spread) * value
-                for t, value in time_to_payments.items()
+                curve.discount_date(d, spread=spread) * value
+                for d, value in dates_of_payments.items()
             ]
         )
         assert price_from_curve == pytest.approx(bond_price, rel=1e-6), (

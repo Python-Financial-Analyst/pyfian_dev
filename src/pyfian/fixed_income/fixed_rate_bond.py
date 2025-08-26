@@ -901,6 +901,7 @@ class FixedRateBullet:
     def value_with_curve(
         self,
         curve: YieldCurveBase,
+        spread: float = 0,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         bond_price: Optional[float] = None,
         adjust_to_business_days: Optional[bool] = None,
@@ -919,41 +920,42 @@ class FixedRateBullet:
         present value would be equivalent to a Net Present Value (NPV) calculation, useful for
         comparing the bond's market price against its theoretical value based on the discount curve.
 
-        The curve should have a method `discount_t(t)` that returns the discount factor for a given time `t` expressed in years from the settlement date.
+        The curve should have a method `discount_date(d)` that returns the discount factor for a given date `d`.
 
         The discount factor is typically calculated as:
 
         .. math::
-            discount_t(t) = \\frac{1}{(1 + r(t))^t}
+            discount_date(d) = \\frac{1}{(1 + r(d))^t}
 
         where:
 
-        - :math:`r(t)` is the discount rate at time :math:`t`.
+        - :math:`r(d)` is the discount rate at date :math:`d`.
+        - :math:`t` is the time in years from the settlement date to date :math:`d`.
 
         The discount factor brings the future value back to the present. Using this discount factor, we can calculate the present value of future cash flows by discounting them back to the settlement date.
 
         For a set of cash flows :math:`C(t)` at times :math:`t`, the present value (PV) is calculated as:
 
         .. math::
-            PV = \\sum_{i}^{N} C(t_i) * discount_t(t_i)
+            PV = \\sum_{i}^{N} C(d_i) * discount_date(d_i)
 
-        for each (:math:`t_i`, :math:`C(t_i)`) cash flow, where :math:`i = 1, ..., N`
+        for each (:math:`d_i`, :math:`C(d_i)`) cash flow, where :math:`i = 1, ..., N`
 
         where:
 
         - :math:`PV` is the present value of the cash flows
-        - :math:`C(t)` is the cash flow at time :math:`t`
+        - :math:`C(d)` is the cash flow at date :math:`d`
         - :math:`N` is the total number of cash flows
-        - :math:`r(t)` is the discount rate at time :math:`t`.
+        - :math:`r(d)` is the discount rate at date :math:`d`.
 
-        The discount rate for a cash flow at time :math:`t` is obtained from the discount curve using `curve.discount_t(t)`.
+        The discount rate for a cash flow at date :math:`d` is obtained from the discount curve using `curve.discount_date(d)`.
 
         This can be used to optimize the yield curve fitting process.
 
         Parameters
         ----------
         curve : object
-            Discount curve object with a discount_t(t) method.
+            Discount curve object with a discount_date(d) method.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
         bond_price : float, optional
@@ -977,8 +979,8 @@ class FixedRateBullet:
         Examples
         --------
         >>> class DummyCurve:
-        ...     def discount_t(self, t):
-        ...         return 1 / (1 + 0.05 * t)
+        ...     def discount_date(self, d):
+        ...         return 1 / (1 + 0.05 * (d - pd.Timestamp('2020-01-01')).days / 365)
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.value_with_curve(DummyCurve())
         (value, {t1: pv1, t2: pv2, ...})
@@ -996,15 +998,20 @@ class FixedRateBullet:
             yield_calculation_convention,
         )
 
-        time_to_payments = self._calculate_time_to_payments(
+        date_of_payments = self._filter_payment_flow(
             settlement_date,
             bond_price,
+            payment_flow=self.payment_flow,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
             day_count_convention=day_count_convention,
         )
-        pv = {t: curve.discount_t(t) * value for t, value in time_to_payments.items()}
+
+        pv = {
+            d: curve.discount_date(d, spread) * value
+            for d, value in date_of_payments.items()
+        }
         return sum(pv.values()), pv
 
     def g_spread(
@@ -1271,9 +1278,10 @@ class FixedRateBullet:
             day_count_convention=day_count_convention,
         )
 
-        time_to_payments = self._calculate_time_to_payments(
+        date_of_payments = self._filter_payment_flow(
             settlement_date,
-            bond_price=None,
+            bond_price,
+            payment_flow=self.payment_flow,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -1288,8 +1296,8 @@ class FixedRateBullet:
         def _price_difference(z_spread):
             return (
                 sum(
-                    benchmark_curve.discount_t(t, z_spread) * value
-                    for t, value in time_to_payments.items()
+                    benchmark_curve.discount_date(d, z_spread) * value
+                    for d, value in date_of_payments.items()
                 )
                 - price_calc
             )

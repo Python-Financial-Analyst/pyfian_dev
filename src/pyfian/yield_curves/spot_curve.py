@@ -8,7 +8,6 @@ import pandas as pd
 from typing import Optional
 from scipy.optimize import fsolve
 
-
 from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
 from pyfian.time_value.rate_conversions import validate_yield_calculation_convention
 from pyfian.utils.day_count import DayCountBase, get_day_count_convention
@@ -76,11 +75,16 @@ class SpotCurve(ZeroCouponCurve):
             self.zero_rates = {}
             self._bootstrap_spot_rates()
 
+        self.maturities = list(self.zero_rates.keys())
+
     def as_dict(self):
+        """
+        Convert the curve to a dictionary.
+        """
         return {
             "curve_date": self.curve_date,
             "bonds": self.bonds,
-            "zero_rates": self.zero_rates,
+            "zero_rates": self.zero_rates.copy(),
         }
 
     def _bootstrap_spot_rates(self):
@@ -119,8 +123,6 @@ class SpotCurve(ZeroCouponCurve):
                 non_valued_payments[0] = cumulative_present_value
 
                 # Get last_available_rate
-                # last_t = max_zero_rates_maturity
-                # last_rate = zero_rates.get(max_zero_rates_maturity, None)
                 next_t = max(non_valued_payments.keys())
 
                 # Get Linear Extrapolation
@@ -132,14 +134,12 @@ class SpotCurve(ZeroCouponCurve):
 
     def _get_optimal_rate(
         self,
-        #   last_t,
-        #   last_rate,
         next_t,
         non_valued_payments,
     ):
         if next_t is None:
             raise ValueError("Invalid input parameters")
-        # start_guess = (last_rate + non_valued_payments[next_t]) / 2
+
         positive_cash_flows = [
             (cf, cf * t) for t, cf in non_valued_payments.items() if cf > 0
         ]
@@ -223,3 +223,13 @@ if __name__ == "__main__":
     # self = curve
     print(curve)
     print(curve.as_dict())
+
+    for bond in bonds:
+        bond_price = bond.get_bond_price()
+        if bond_price is None:
+            continue
+        pv, flows_pv = bond.value_with_curve(curve)
+        maturity_date = bond.maturity
+        print(
+            f"Maturity Date: {maturity_date}, Bond Price: {bond_price}, PV: {pv}, Difference: {bond_price - pv}"
+        )

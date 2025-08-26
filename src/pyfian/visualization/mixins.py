@@ -20,9 +20,11 @@ class YieldCurvePlotMixin:
         """
         ts = np.linspace(0, t_max, n)
         if kind == "rate":
-            ys = [self(t) for t in ts]
+            ys = [self._get_rate(t) for t in ts]
             ylabel = "Rate"
         elif kind == "discount":
+            if not hasattr(self, "discount_t"):
+                raise AttributeError("The curve does not have a discount_t method.")
             ys = [self.discount_t(t) for t in ts]
             ylabel = "Discount Factor"
         else:

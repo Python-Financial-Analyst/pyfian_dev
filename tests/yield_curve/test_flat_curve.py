@@ -20,26 +20,28 @@ class TestFlatCurveLog:
         )
 
     def test_call_default(self):
-        assert self.curve(1) == 0.05
+        assert self.curve.get_rate(1) == 0.05
 
     def test_call_annual(self):
-        assert self.curve(1, yield_calculation_convention="Annual") == pytest.approx(
-            np.expm1(0.05)
-        )
+        assert self.curve.get_rate(
+            1, yield_calculation_convention="Annual"
+        ) == pytest.approx(np.expm1(0.05))
 
     def test_call_bey(self):
         eff = np.expm1(0.05)
         bey = 2 * ((1 + eff) ** 0.5 - 1)
-        assert self.curve(1, yield_calculation_convention="BEY") == pytest.approx(bey)
+        assert self.curve.get_rate(
+            1, yield_calculation_convention="BEY"
+        ) == pytest.approx(bey)
 
     def test_call_continuous(self):
-        assert self.curve(1, yield_calculation_convention="Continuous") == 0.05
+        assert self.curve.get_rate(1, yield_calculation_convention="Continuous") == 0.05
 
     def test_call_invalid(self):
         with pytest.raises(
             ValueError, match="Unknown yield calculation convention: Unknown"
         ):
-            self.curve(1, yield_calculation_convention="Unknown")
+            self.curve.get_rate(1, yield_calculation_convention="Unknown")
 
     def test_date_rate_default(self):
         assert self.curve.date_rate("2022-01-01") == 0.05
@@ -91,8 +93,11 @@ class TestFlatCurveLog:
     def test_to_dataframe(self):
         df = self.curve.to_dataframe([0.5, 1, 2])
         assert isinstance(df, pd.DataFrame)
-        assert list(df["Maturity"]) == [0.5, 1, 2]
-        assert np.allclose(df["Rate"], [self.curve(0.5), self.curve(1), self.curve(2)])
+        assert list(df.index) == [0.5, 1, 2]
+        assert np.allclose(
+            df["Rate"],
+            [self.curve.get_rate(0.5), self.curve.get_rate(1), self.curve.get_rate(2)],
+        )
 
     def test_compare_to(self):
         curve2 = FlatCurveLog(0.04, "2020-01-01")
@@ -165,15 +170,17 @@ class TestFlatCurveAER:
         )
 
     def test_call_default(self):
-        assert self.curve(1) == 0.05
+        assert self.curve.get_rate(1) == 0.05
 
     def test_call_bey(self):
         bey = 2 * ((1 + 0.05) ** 0.5 - 1)
-        assert self.curve(1, yield_calculation_convention="BEY") == pytest.approx(bey)
+        assert self.curve.get_rate(
+            1, yield_calculation_convention="BEY"
+        ) == pytest.approx(bey)
 
     def test_call_continuous(self):
         cont = np.log(1 + 0.05)
-        assert self.curve(
+        assert self.curve.get_rate(
             1, yield_calculation_convention="Continuous"
         ) == pytest.approx(cont)
 
@@ -181,7 +188,7 @@ class TestFlatCurveAER:
         with pytest.raises(
             ValueError, match="Unknown yield calculation convention: Unknown"
         ):
-            self.curve(1, yield_calculation_convention="Unknown")
+            self.curve.get_rate(1, yield_calculation_convention="Unknown")
 
     def test_date_rate_default(self):
         assert self.curve.date_rate("2022-01-01") == 0.05
@@ -225,16 +232,17 @@ class TestFlatCurveAER:
     def test_to_dataframe(self):
         df = self.curve.to_dataframe()
         assert isinstance(df, pd.DataFrame)
-        assert list(df["Maturity"]) == [0.25, 0.5, 1, 2, 5, 10]
+        assert list(df.index) == [0.25, 0.5, 1, 2, 5, 7, 10]
         assert np.allclose(
             df["Rate"],
             [
-                self.curve(0.25),
-                self.curve(0.5),
-                self.curve(1),
-                self.curve(2),
-                self.curve(5),
-                self.curve(10),
+                self.curve.get_rate(0.25),
+                self.curve.get_rate(0.5),
+                self.curve.get_rate(1),
+                self.curve.get_rate(2),
+                self.curve.get_rate(5),
+                self.curve.get_rate(7),
+                self.curve.get_rate(10),
             ],
         )
 
@@ -310,9 +318,9 @@ class TestFlatCurveBEY:
     def test_call_default(self):
         # Default yield_calculation_convention is "BEY"
         eff = (1 + 0.05 / 2) ** 2 - 1
-        assert self.curve(1, yield_calculation_convention="Annual") == pytest.approx(
-            eff
-        )
+        assert self.curve.get_rate(
+            1, yield_calculation_convention="Annual"
+        ) == pytest.approx(eff)
 
     def test_date_rate_default(self):
         # Default yield_calculation_convention is "BEY"
@@ -330,17 +338,17 @@ class TestFlatCurveBEY:
 
     def test_call_annual(self):
         eff = (1 + 0.05 / 2) ** 2 - 1
-        assert self.curve(1, yield_calculation_convention="Annual") == pytest.approx(
-            eff
-        )
+        assert self.curve.get_rate(
+            1, yield_calculation_convention="Annual"
+        ) == pytest.approx(eff)
 
     def test_call_bey(self):
-        assert self.curve(1, yield_calculation_convention="BEY") == 0.05
+        assert self.curve.get_rate(1, yield_calculation_convention="BEY") == 0.05
 
     def test_call_continuous(self):
         eff = (1 + 0.05 / 2) ** 2 - 1
         cont = np.log(1 + eff)
-        assert self.curve(
+        assert self.curve.get_rate(
             1, yield_calculation_convention="Continuous"
         ) == pytest.approx(cont)
 
@@ -348,7 +356,7 @@ class TestFlatCurveBEY:
         with pytest.raises(
             ValueError, match="Unknown yield calculation convention: Unknown"
         ):
-            self.curve(1, yield_calculation_convention="Unknown")
+            self.curve.get_rate(1, yield_calculation_convention="Unknown")
 
     def test_date_rate_annual(self):
         eff = (1 + 0.05 / 2) ** 2 - 1
@@ -393,8 +401,11 @@ class TestFlatCurveBEY:
     def test_to_dataframe(self):
         df = self.curve.to_dataframe([0.5, 1, 2])
         assert isinstance(df, pd.DataFrame)
-        assert list(df["Maturity"]) == [0.5, 1, 2]
-        assert np.allclose(df["Rate"], [self.curve(0.5), self.curve(1), self.curve(2)])
+        assert list(df.index) == [0.5, 1, 2]
+        assert np.allclose(
+            df["Rate"],
+            [self.curve.get_rate(0.5), self.curve.get_rate(1), self.curve.get_rate(2)],
+        )
 
     def test_compare_to(self):
         curve2 = FlatCurveBEY(0.04, "2020-01-01")

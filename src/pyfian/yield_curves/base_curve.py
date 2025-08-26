@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from copy import deepcopy
 from typing import Optional, Union
 import pandas as pd
 
@@ -7,14 +8,85 @@ from pyfian.utils.day_count import DayCountBase
 
 # Abstract base class for yield curves
 
+MATURITIES = [0.25, 0.5, 1, 2, 3, 5, 7, 10, 20, 30]
 
-class YieldCurveBase(ABC):
+
+class CurveBase(ABC):
+    """
+    Abstract base class for all curves.
+    """
+
+    curve_date: pd.Timestamp
+
+    @abstractmethod
+    def _get_rate(
+        self,
+        t: float,
+        spread: float = 0,
+    ) -> float:
+        """
+        Get the rate for a cash flow by time t (in years).
+
+        The spread is added to the yield in the original curve.
+
+        Parameters
+        ----------
+        t : float
+            Time in years to discount.
+        spread : float
+            Spread to add to the discount rate.
+
+        Returns
+        -------
+        float
+            Rate for the cash flow.
+        """
+        pass
+
+    def to_dataframe(self, maturities: Optional[list] = None) -> pd.DataFrame:
+        """
+        Export curve data to a pandas DataFrame.
+        Uses __call__ for each maturity.
+        """
+        if maturities is None:
+            if hasattr(self, "maturities"):
+                maturities = self.maturities
+            else:
+                maturities = [0.25, 0.5, 1, 2, 5, 7, 10]
+        data = {"Maturity": maturities, "Rate": [self._get_rate(m) for m in maturities]}
+        return pd.DataFrame(data).set_index("Maturity")
+
+    @abstractmethod
+    def as_dict(self) -> dict:  # pragma: no cover
+        """
+        Return curve parameters and metadata as a dictionary.
+        """
+        raise NotImplementedError("as_dict must be implemented in subclass.")
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "CurveBase":
+        """
+        Instantiate a curve from a dictionary.
+        """
+        return cls(**data)
+
+    def clone_with_new_date(self, new_date: Union[str, pd.Timestamp]) -> "CurveBase":
+        """
+        Clone the curve with a new date.
+        """
+        new_curve = deepcopy(self)
+        new_curve.curve_date = pd.to_datetime(new_date)
+        return new_curve
+
+
+class YieldCurveBase(CurveBase):
     """
     Abstract base class for yield curves.
     """
 
     curve_date: pd.Timestamp
     day_count_convention: DayCountBase
+    yield_calculation_convention: str
 
     @abstractmethod
     def discount_t(self, t: float, spread: float = 0) -> float:  # pragma: no cover
@@ -33,7 +105,7 @@ class YieldCurveBase(ABC):
         pass
 
     @abstractmethod
-    def __call__(
+    def get_rate(
         self,
         t: float,
         yield_calculation_convention: Optional[str] = None,
@@ -242,30 +314,6 @@ class YieldCurveBase(ABC):
         )
         return self.forward_dt(start_date, dt, spread_start, spread_end, spread_forward)
 
-    def to_dataframe(self, maturities: Optional[list] = None) -> pd.DataFrame:
-        """
-        Export curve data to a pandas DataFrame.
-        Uses __call__ for each maturity.
-        """
-        if maturities is None:
-            maturities = [0.25, 0.5, 1, 2, 5, 10]
-        data = {"Maturity": maturities, "Rate": [self(m) for m in maturities]}
-        return pd.DataFrame(data)
-
-    @abstractmethod
-    def as_dict(self) -> dict:  # pragma: no cover
-        """
-        Return curve parameters and metadata as a dictionary.
-        """
-        raise NotImplementedError("as_dict must be implemented in subclass.")
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "YieldCurveBase":
-        """
-        Instantiate a curve from a dictionary.
-        """
-        return cls(**data)
-
     def compare_to(
         self, other: "YieldCurveBase", maturities: Optional[list] = None
     ) -> pd.DataFrame:
@@ -275,8 +323,11 @@ class YieldCurveBase(ABC):
         The discount_t and discount_to_rate are applied only to the compared curve.
         """
         if maturities is None:
-            maturities = [0.25, 0.5, 1, 2, 5, 10]
-        current_rates = [self(m) for m in maturities]
+            if hasattr(self, "maturities"):
+                maturities = self.maturities
+            else:
+                maturities = [0.25, 0.5, 1, 2, 5, 10]
+        current_rates = [self._get_rate(m) for m in maturities]
         compared_rates = [
             self.discount_to_rate(other.discount_t(m), m, spread=0) for m in maturities
         ]
@@ -288,5 +339,5 @@ class YieldCurveBase(ABC):
                 "Compared Curve": compared_rates,
                 "Spread": spread,
             }
-        )
+        ).set_index("Maturity")
         return df

@@ -214,7 +214,7 @@ class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
         )
         return self.discount_t(t, spread)
 
-    def __call__(
+    def get_rate(
         self,
         t: float,
         yield_calculation_convention: Optional[str] = None,
@@ -244,15 +244,15 @@ class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
         Examples
         --------
         >>> curve = FlatCurveLog(0.05, "2020-01-01")
-        >>> curve(1)
+        >>> curve.get_rate(1)
         0.05
-        >>> curve(1, yield_calculation_convention="Annual")
+        >>> curve.get_rate(1, yield_calculation_convention="Annual")
         np.expm1(0.05)
-        >>> curve(1, yield_calculation_convention="BEY")
+        >>> curve.get_rate(1, yield_calculation_convention="BEY")
         2 * ((1 + np.expm1(0.05)) ** 0.5 - 1)
-        >>> curve(1, yield_calculation_convention="Continuous")
+        >>> curve.get_rate(1, yield_calculation_convention="Continuous")
         0.05
-        >>> curve(1, yield_calculation_convention="Unknown")
+        >>> curve.get_rate(1, yield_calculation_convention="Unknown")
         Traceback (most recent call last):
             ...
         ValueError: Unknown yield calculation convention: Unknown
@@ -264,6 +264,9 @@ class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
         return rc.convert_yield(
             self.log_rate + spread, "Continuous", yield_calculation_convention
         )
+
+    def _get_rate(self, t, spread=0):
+        return self.log_rate + spread
 
     def date_rate(
         self,
@@ -464,7 +467,7 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
         )
         return self.discount_t(t, spread)
 
-    def __call__(
+    def get_rate(
         self,
         t: float,
         yield_calculation_convention: Optional[str] = None,
@@ -494,13 +497,13 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
         Examples
         --------
         >>> curve = FlatCurveAER(0.05, "2020-01-01")
-        >>> curve(1)
+        >>> curve.get_rate(1)
         0.05
-        >>> curve(1, yield_calculation_convention="BEY")
+        >>> curve.get_rate(1, yield_calculation_convention="BEY")
         2 * ((1 + 0.05) ** 0.5 - 1)
-        >>> curve(1, yield_calculation_convention="Continuous")
+        >>> curve.get_rate(1, yield_calculation_convention="Continuous")
         np.log(1 + 0.05)
-        >>> curve(1, yield_calculation_convention="Unknown")
+        >>> curve.get_rate(1, yield_calculation_convention="Unknown")
         Traceback (most recent call last):
             ...
         ValueError: Unknown yield calculation convention: Unknown
@@ -511,6 +514,9 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
         return rc.convert_yield(
             self.aer + spread, "Annual", yield_calculation_convention
         )
+
+    def _get_rate(self, t, spread=0):
+        return self.aer + spread
 
     def date_rate(
         self,
@@ -709,7 +715,7 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
         )
         return self.discount_t(t, spread=spread)
 
-    def __call__(
+    def get_rate(
         self,
         t: float,
         yield_calculation_convention: Optional[str] = None,
@@ -739,15 +745,15 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
         Examples
         --------
         >>> curve = FlatCurveBEY(0.05, "2020-01-01")
-        >>> curve(1)
+        >>> curve.get_rate(1)
         (1 + 0.05 / 2) ** 2 - 1
-        >>> curve(1, yield_calculation_convention="Annual")
+        >>> curve.get_rate(1, yield_calculation_convention="Annual")
         (1 + 0.05 / 2) ** 2 - 1
-        >>> curve(1, yield_calculation_convention="BEY")
+        >>> curve.get_rate(1, yield_calculation_convention="BEY")
         0.05
-        >>> curve(1, yield_calculation_convention="Continuous")
+        >>> curve.get_rate(1, yield_calculation_convention="Continuous")
         np.log(1 + ((1 + 0.05 / 2) ** 2 - 1))
-        >>> curve(1, yield_calculation_convention="Unknown")
+        >>> curve.get_rate(1, yield_calculation_convention="Unknown")
         Traceback (most recent call last):
             ...
         ValueError: Unknown yield calculation convention: Unknown
@@ -756,6 +762,9 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
             yield_calculation_convention = self.yield_calculation_convention
 
         return rc.convert_yield(self.bey + spread, "BEY", yield_calculation_convention)
+
+    def _get_rate(self, t, spread=0):
+        return self.bey + spread
 
     def date_rate(
         self,

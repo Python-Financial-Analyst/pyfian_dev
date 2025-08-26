@@ -57,6 +57,7 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
             else validate_yield_calculation_convention(yield_calculation_convention)
         )
         self.zero_rates = self._prepare_zero_rates(zero_rates)
+        self.maturities = list(self.zero_rates.keys())
 
     def as_dict(self):
         """Convert the curve to a dictionary."""
@@ -102,7 +103,7 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
             Present value of the cash flow.
 
         """
-        rate = self(t, spread=spread, yield_calculation_convention="Annual")
+        rate = self.get_rate(t, spread=spread, yield_calculation_convention="Annual")
         return 1 / (1 + rate) ** t
 
     def discount_to_rate(
@@ -171,7 +172,7 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
         )
         return self.discount_t(t, spread)
 
-    def __call__(
+    def get_rate(
         self,
         t: float,
         yield_calculation_convention: Optional[str] = None,
@@ -190,6 +191,8 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
             Time in years to discount.
         spread : float
             Spread to add to the discount rate.
+        yield_calculation_convention : Optional[str]
+            Yield calculation convention to use (default is None).
 
         Returns
         -------
@@ -199,7 +202,7 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
         return rc.convert_yield(
-            self._get_rate(t) + spread,
+            self._get_rate(t, spread),
             self.yield_calculation_convention,
             yield_calculation_convention,
         )
@@ -237,13 +240,9 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
         t = self.day_count_convention.fraction(
             start=self.curve_date, current=pd.to_datetime(date)
         )
-        return rc.convert_yield(
-            self._get_rate(t) + spread,
-            self.yield_calculation_convention,
-            yield_calculation_convention,
-        )
+        return self.get_rate(t, yield_calculation_convention, spread)
 
-    def _get_rate(self, t: float) -> float:
+    def _get_rate(self, t: float, spread: float = 0) -> float:
         # Simple linear interpolation between known maturities
         assert t >= 0, "Maturity must be non-negative"
         maturities = list(self.zero_rates.keys())

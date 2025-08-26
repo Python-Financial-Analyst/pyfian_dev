@@ -53,8 +53,8 @@ class TestZeroCouponCurve:
         expected = 1 / (1 + 0.025) ** t
         assert pytest.approx(pv, rel=1e-6) == expected
 
-    def test_call(self):
-        rate = self.curve(2.0)
+    def test__get_rate(self):
+        rate = self.curve._get_rate(2.0)
         assert pytest.approx(rate, rel=1e-6) == 0.025
 
     def test_date_rate(self):
@@ -66,7 +66,7 @@ class TestZeroCouponCurve:
         # Between 2 and 3 years
         t = 2.5
         expected = 0.025 + (0.03 - 0.025) * (t - 2.0) / (3.0 - 2.0)
-        rate = self.curve(t)
+        rate = self.curve.get_rate(t)
         assert pytest.approx(rate, rel=1e-6) == expected
 
     def test_date_below(self):
