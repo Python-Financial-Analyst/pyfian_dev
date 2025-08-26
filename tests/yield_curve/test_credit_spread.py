@@ -4,6 +4,7 @@ from pyfian.yield_curves.credit_spread import CreditSpreadCurve, FlatCreditSprea
 from pyfian.yield_curves.flat_curve import FlatCurveBEY
 from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
 import matplotlib
+import warnings
 
 
 class TestCreditSpreadCurve:
@@ -149,7 +150,13 @@ class TestFlatCreditSpreadCurve:
 
     def test_plot_curve(self):
         matplotlib.use("Agg")
-        self.curve.plot_curve()
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore",
+                category=UserWarning,
+                message="FigureCanvasAgg is non-interactive, and thus cannot be shown",
+            )
+            self.curve.plot_curve()
 
     def test_plot_curve_discount(self):
         with pytest.raises(ValueError):
