@@ -8,26 +8,50 @@ Module for bootstrapping par rates and zero-coupon rates from a series of bonds.
 Examples
 --------
 >>> from pyfian.yield_curves.par_curve import ParCurve
->>> curve = ParCurve(curve_date="2025-08-22", par_rates=par_rates)
+>>> list_maturities_rates = [
+...         (pd.DateOffset(months=1), 4.49),
+...         (pd.DateOffset(months=3), 4.32),
+...         (pd.DateOffset(months=6), 4.14),
+...         (pd.DateOffset(years=1), 3.95),
+...         (pd.DateOffset(years=2), 3.79),
+...         (pd.DateOffset(years=3), 3.75),
+...         (pd.DateOffset(years=5), 3.86),
+...         (pd.DateOffset(years=7), 4.07),
+...         (pd.DateOffset(years=10), 4.33),
+...         (pd.DateOffset(years=20), 4.89),
+...         (pd.DateOffset(years=30), 4.92),
+...     ]
+>>> date = pd.Timestamp("2025-08-22")
+>>> one_year_offset = date + pd.DateOffset(years=1)
+>>> par_rates = {}
+
+>>> for offset, cpn in list_maturities_rates:
+...     not_zero_coupon = date + offset > one_year_offset
+...     bond = {
+...         "cpn_freq": 2 if not_zero_coupon else 0,
+...         "cpn": cpn if not_zero_coupon else 0,
+...         "bond_price": 100 if not_zero_coupon else None,
+...         "yield_to_maturity": None if not_zero_coupon else cpn / 100,
+...     }
+...     par_rates[offset] = bond
+>>> curve = ParCurve(curve_date="2025-08-22", par_rates=par_rates, yield_calculation_convention="BEY")
 >>> curve.discount_t(1)
-... # returns discount factor for 1 year
+np.float64(0.9616401157)
 >>> curve.get_rate(1)
-... # returns par rate for 1 year
+np.float64(0.0395)
 """
 
 import pandas as pd
 from typing import Optional
-from scipy.optimize import fsolve
-
 
 from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
 from pyfian.time_value.rate_conversions import validate_yield_calculation_convention
 from pyfian.utils.day_count import DayCountBase, get_day_count_convention
-from pyfian.yield_curves.zero_coupon_curve import ZeroCouponCurve
+from pyfian.yield_curves.spot_curve import SpotCurve
 from pyfian.time_value import rate_conversions as rc
 
 
-class ParCurve(ZeroCouponCurve):
+class ParCurve(SpotCurve):
     """
     ParCurve.
 
@@ -232,62 +256,6 @@ class ParCurve(ZeroCouponCurve):
                     non_valued_payments,
                 )
 
-    def _get_optimal_rate(
-        self,
-        #   last_t,
-        #   last_rate,
-        next_t,
-        non_valued_payments,
-    ):
-        """
-        Find the optimal spot rate for a given maturity using non-valued payments.
-
-        Parameters
-        ----------
-        next_t : float
-            Maturity for which to solve the spot rate.
-        non_valued_payments : dict
-            Payments not valued by previous spot rates.
-
-        Returns
-        -------
-        float
-            Optimal spot rate for the given maturity.
-        """
-        if next_t is None:
-            raise ValueError("Invalid input parameters")
-        # start_guess = (last_rate + non_valued_payments[next_t]) / 2
-        positive_cash_flows = [
-            (cf, cf * t) for t, cf in non_valued_payments.items() if cf > 0
-        ]
-        negative_cash_flows = [
-            (cf, cf * t) for t, cf in non_valued_payments.items() if cf < 0
-        ]
-        positive_cf, positive_cf_t = list(zip(*positive_cash_flows))
-        negative_cf, negative_cf_t = list(zip(*negative_cash_flows))
-        sum_positive_cf, sum_negative_cf = sum(positive_cf), sum(negative_cf)
-        weighted_t_positive = (
-            sum(positive_cf_t) / sum_positive_cf if sum_positive_cf else 0
-        )
-        weighted_t_negative = (
-            sum(negative_cf_t) / sum_negative_cf if sum_negative_cf else 0
-        )
-
-        rate = (sum_positive_cf / -sum_negative_cf) ** (
-            1 / (weighted_t_positive - weighted_t_negative)
-        ) - 1
-
-        def _net_present_value(rate):
-            self.zero_rates[next_t] = float(rate[0])
-            return sum(
-                self.discount_t(t) * payment
-                for t, payment in non_valued_payments.items()
-            )
-
-        # find root of _net_present_value
-        root = float(fsolve(_net_present_value, x0=rate)[0])
-        return root
-
     def __repr__(self):
         """
         Return string representation of the ParCurve.
@@ -300,7 +268,7 @@ class ParCurve(ZeroCouponCurve):
         return f"SpotCurve(zero_rates={self.zero_rates}, curve_date={self.curve_date.strftime('%Y-%m-%d')})"
 
 
-if __name__ == "__main__":  # pragma : no cover
+if __name__ == "__main__":  # pragma: no cover
     # Example usage
     # Par rates for different periods
     # 1-month	 4.49

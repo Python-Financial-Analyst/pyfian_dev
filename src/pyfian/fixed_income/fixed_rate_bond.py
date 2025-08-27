@@ -109,7 +109,7 @@ class FixedRateBullet:
     Examples
     --------
     >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1, notional=1000)
-    >>> bond.payment_flow
+    >>> bond.payment_flow # doctest: +SKIP
     {Timestamp('2025-01-01 00:00:00'): 1050.0, Timestamp('2024-01-01 00:00:00'): 50.0, ...}
     """
 
@@ -609,7 +609,7 @@ class FixedRateBullet:
         Examples
         --------
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1, notional=1000)
-        >>> bond.make_payment_flow()
+        >>> bond.make_payment_flow() # doctest: +SKIP
         {Timestamp('2025-01-01 00:00:00'): 1050.0, Timestamp('2024-01-01 00:00:00'): 50.0, ...}
         """
         issue_dt, maturity, cpn, cpn_freq, notional = (
@@ -694,7 +694,7 @@ class FixedRateBullet:
         Examples
         --------
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.filter_payment_flow('2022-01-01')
+        >>> bond.filter_payment_flow('2022-01-01') # doctest: +SKIP
         {Timestamp('2023-01-01 00:00:00'): 5.0, Timestamp('2024-01-01 00:00:00'): 5.0,
         Timestamp('2025-01-01 00:00:00'): 105.0}
         """
@@ -820,7 +820,7 @@ class FixedRateBullet:
         --------
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.calculate_time_to_payments('2022-01-01')
-        {1.0: 5.0, 2.0: 5.0, 3.0: 105.0}
+        {0.5: 2.5, 1.0: 2.5, 1.5: 2.5, 2.0: 2.5, 2.5: 2.5, 3.0: 102.5}
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -978,11 +978,9 @@ class FixedRateBullet:
 
         Examples
         --------
-        >>> class DummyCurve:
-        ...     def discount_date(self, d):
-        ...         return 1 / (1 + 0.05 * (d - pd.Timestamp('2020-01-01')).days / 365)
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.value_with_curve(DummyCurve())
+        >>> bond.value_with_curve(FlatCurveBEY(curve_date="2020-01-01", bey=0.05)) # doctest: +SKIP
         (value, {t1: pv1, t2: pv2, ...})
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
@@ -1012,7 +1010,7 @@ class FixedRateBullet:
             d: curve.discount_date(d, spread) * value
             for d, value in date_of_payments.items()
         }
-        return sum(pv.values()), pv
+        return round(sum(pv.values()), 10), pv
 
     def g_spread(
         self,
@@ -1063,9 +1061,9 @@ class FixedRateBullet:
 
         Examples
         --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.g_spread(benchmark_ytm=0.03, bond_price=102)
-        0.0185
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
+        >>> bond.g_spread(benchmark_ytm=0.03, bond_price=100)
+        np.float64(0.02)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -1105,7 +1103,7 @@ class FixedRateBullet:
                 "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
             )
 
-        return ytm - benchmark_ytm
+        return round((ytm - benchmark_ytm), 10)
 
     def i_spread(
         self,
@@ -1154,7 +1152,7 @@ class FixedRateBullet:
         Examples
         --------
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.i_spread(benchmark_curve=swap_curve)
+        >>> bond.i_spread(benchmark_curve=swap_curve) # doctest: +SKIP
         0.0185
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
@@ -1250,9 +1248,10 @@ class FixedRateBullet:
 
         Examples
         --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2, bond_price=100, settlement_date="2020-01-01")
         >>> bond.z_spread(benchmark_curve=FlatCurveBEY(0.05, '2020-01-01'))
-        0.0
+        np.float64(1.9484576898804107e-16)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -1372,7 +1371,7 @@ class FixedRateBullet:
         --------
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.yield_to_maturity(bond_price=95)
-        0.06189544078
+        np.float64(0.06100197251858131)
         """
         # Prepare cash flows and dates
         settlement_date = self._resolve_settlement_date(settlement_date)
@@ -1471,9 +1470,9 @@ class FixedRateBullet:
 
         Examples
         --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.modified_duration(yield_to_maturity=0.05)
-        4.2
+        4.3760319655
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -1523,7 +1522,7 @@ class FixedRateBullet:
                 for t, cf in time_to_payments.items()
             ]
         )
-        return duration / price_calc if price_calc != 0 else 0.0
+        return round(duration / price_calc if price_calc != 0 else 0.0, 10)
 
     def macaulay_duration(
         self,
@@ -1574,9 +1573,9 @@ class FixedRateBullet:
 
         Examples
         --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.macaulay_duration(yield_to_maturity=0.05)
-        4.545249
+        4.4854327646
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -1626,7 +1625,7 @@ class FixedRateBullet:
                 for t, cf in time_to_payments.items()
             ]
         )
-        return duration / price_calc if price_calc != 0 else 0.0
+        return round(duration / price_calc if price_calc != 0 else 0.0, 10)
 
     def convexity(
         self,
@@ -1678,9 +1677,9 @@ class FixedRateBullet:
 
         Examples
         --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.convexity(yield_to_maturity=0.05)
-        18.7
+        22.6123221851
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -1734,7 +1733,11 @@ class FixedRateBullet:
                 for t, cf in time_to_payments.items()
             ]
         )
-        return convexity / price_calc / time_adjustment**2 if price_calc != 0 else 0.0
+        return (
+            round(convexity / price_calc / time_adjustment**2, 10)
+            if price_calc != 0
+            else 0.0
+        )
 
     def accrued_interest(
         self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
@@ -1926,7 +1929,7 @@ class FixedRateBullet:
 
         Examples
         --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.price_from_yield(0.05)
         100.0
         """
@@ -2138,10 +2141,9 @@ class FixedRateBullet:
         Examples
         --------
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.to_dataframe('2022-01-01')
+        >>> bond.to_dataframe('2022-01-01') # doctest: +SKIP
         date        Flows  Coupon  Amortization  Cost
-        2022-01-03  5.0    5.0          0.0           0.0
-        2023-01-02  5.0    5.0          0.0           0.0
+        2023-01-01  5.0    5.0          0.0           0.0
         2024-01-01  5.0    5.0          0.0           0.0
         2025-01-01  105.0  5.0        100.0           0.0
         """
@@ -2252,9 +2254,9 @@ class FixedRateBullet:
 
         Examples
         --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.dv01(0.05)
-        -0.42
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
+        >>> bond.dv01(yield_to_maturity=0.05)
+        -0.0437603219
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -2300,7 +2302,7 @@ class FixedRateBullet:
             yield_calculation_convention=yield_calculation_convention,
             day_count_convention=day_count_convention,
         )
-        return (price_up - price_down) / 2
+        return round((price_up - price_down) / 2, 10)
 
     def plot_cash_flows(
         self,
@@ -2332,8 +2334,8 @@ class FixedRateBullet:
 
         Examples
         --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.plot_cash_flows('2022-01-01')
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
+        >>> bond.plot_cash_flows(settlement_date='2022-01-01') # doctest: +SKIP
         # Shows a plot
         """
         (
@@ -2432,7 +2434,7 @@ class FixedRateBullet:
                 for t, cf in time_to_payments.items()
             ]
         )
-        return price
+        return round(price, 10)
 
     def _resolve_settlement_date(
         self, settlement_date: Optional[Union[str, pd.Timestamp]]

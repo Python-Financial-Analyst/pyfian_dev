@@ -42,16 +42,15 @@ def geometric_mean(returns, axis=0):
     --------
     >>> import numpy as np
     >>> geometric_mean([0.05, 0.10, -0.02])
-    0.0416...
-
+    np.float64(0.04216388706767926)
     >>> import pandas as pd
     >>> df = pd.DataFrame({
     ...     'Fund A': [0.05, 0.02, np.nan],
     ...     'Fund B': [0.01, -0.03, 0.04]
     ... })
     >>> geometric_mean(df)
-    Fund A    0.0343...
-    Fund B    0.0059...
+    Fund A    0.034891
+    Fund B    0.006257
     dtype: float64
 
     Notes
@@ -113,16 +112,15 @@ def arithmetic_mean(returns, axis=0):
     --------
     >>> import numpy as np
     >>> arithmetic_mean([0.05, 0.10, -0.02])
-    0.0433...
-
+    np.float64(0.0433333333)
     >>> import pandas as pd
     >>> df = pd.DataFrame({
     ...     'Fund A': [0.05, 0.02, np.nan],
     ...     'Fund B': [0.01, -0.03, 0.04]
     ... })
     >>> arithmetic_mean(df)
-    Fund A    0.0350...
-    Fund B   -0.0033...
+    Fund A    0.035000
+    Fund B    0.006667
     dtype: float64
 
     Notes
@@ -137,9 +135,9 @@ def arithmetic_mean(returns, axis=0):
         else np.asarray(returns)
     )
     if isinstance(returns, pd.DataFrame) or isinstance(returns, pd.Series):
-        return returns.mean(axis=axis)
+        return returns.mean(axis=axis).round(10)
     else:
-        return np.nanmean(returns, axis=axis)
+        return np.nanmean(returns, axis=axis).round(10)
 
 
 def harmonic_mean(values, axis=0):
@@ -180,7 +178,7 @@ def harmonic_mean(values, axis=0):
     Averaging P/E ratios for three companies:
     >>> pe_ratios = [15, 20, 25]
     >>> harmonic_mean(pe_ratios)
-    18.4615...
+    np.float64(19.1489361702)
 
     Averaging P/E ratios in a DataFrame:
     >>> df = pd.DataFrame({
@@ -188,8 +186,8 @@ def harmonic_mean(values, axis=0):
     ...     'Finance': [12, 15, 18]
     ... })
     >>> harmonic_mean(df)
-    Tech       29.5139...
-    Finance    14.7826...
+    Tech       29.439252
+    Finance    14.594595
     dtype: float64
 
     Notes
@@ -218,13 +216,13 @@ def harmonic_mean(values, axis=0):
         denom = invert_values.sum(axis=axis, skipna=True)
         n = invert_values.count(axis=axis)
         hmean = n / denom
-        return hmean
+        return round(hmean, 10)
     else:
         values = values.astype(float)
         values = values[values > 0]
         n = len(values)
         hmean = n / np.sum(1 / values)
-        return hmean
+        return round(hmean, 10)
 
 
 def weighted_geometric_mean(returns, weights, axis=0):
@@ -261,7 +259,7 @@ def weighted_geometric_mean(returns, weights, axis=0):
     Examples
     --------
     >>> weighted_geometric_mean([0.05, 0.10, 0.02], [1, 2, 1])
-    0.0669491...
+    np.float64(0.0669491218)
     """
     returns = np.asarray(returns)
     weights = np.asarray(weights)
@@ -274,7 +272,7 @@ def weighted_geometric_mean(returns, weights, axis=0):
     )
     log_returns = np.log(gross_returns)[filter_values]
     weighted_log = np.nansum(weights * log_returns, axis=axis)
-    return np.exp(weighted_log) - 1
+    return round(np.exp(weighted_log) - 1, 10)
 
 
 def weighted_harmonic_mean(values, weights, axis=0):
@@ -312,7 +310,7 @@ def weighted_harmonic_mean(values, weights, axis=0):
     >>> pe = [15, 20, 25]
     >>> caps = [100, 200, 700]
     >>> weighted_harmonic_mean(pe, caps)
-    22.3880597
+    np.float64(22.3880597015)
     """
     values = np.asarray(values, dtype=float)
     weights = np.asarray(weights, dtype=float)
@@ -323,4 +321,4 @@ def weighted_harmonic_mean(values, weights, axis=0):
     weighted_reciprocal = np.nansum(
         weights[filter_values] / values[filter_values], axis=axis
     )
-    return weighted_sum / weighted_reciprocal
+    return round(weighted_sum / weighted_reciprocal, 10)

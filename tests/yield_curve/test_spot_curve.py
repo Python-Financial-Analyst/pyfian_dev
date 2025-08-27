@@ -79,3 +79,14 @@ class TestSpotCurve:
     def test_invalid_day_count_convention(self):
         with pytest.raises(TypeError):
             SpotCurve(curve_date="2025-08-22", bonds=[], day_count_convention=None)
+
+    # Initialize with zero_rates
+    def test_initialize_with_zero_rates(self):
+        zero_rates = {m: 0 for m in self.curve.maturities}
+        curve = SpotCurve(curve_date="2025-08-22", bonds=[], zero_rates=zero_rates)
+        assert curve.zero_rates == zero_rates
+
+    # test _get_optimal_rate with next_t == None should raise ValueError
+    def test__get_optimal_rate(self):
+        with pytest.raises(ValueError):
+            self.curve._get_optimal_rate(None, {})

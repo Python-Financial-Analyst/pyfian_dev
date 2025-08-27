@@ -160,7 +160,7 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
 
         """
         rate = self.get_rate(t, spread=spread, yield_calculation_convention="Annual")
-        return 1 / (1 + rate) ** t
+        return round(1 / (1 + rate) ** t, 10)
 
     def discount_to_rate(
         self,

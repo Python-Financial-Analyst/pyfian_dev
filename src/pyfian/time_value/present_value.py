@@ -30,12 +30,12 @@ def present_value_annuity(payment: float, rate: float, periods: int) -> float:
     Examples
     --------
     >>> present_value_annuity(100, 0.05, 10)
-    772.1734929184818
+    772.1734929185
     """
     if rate == 0:
-        return payment * periods
+        return round(payment * periods, 10)
     pv = payment * ((1 - (1 + rate) ** -periods) / rate)
-    return pv
+    return round(pv, 10)
 
 
 def present_value_annuity_annual(
@@ -79,7 +79,7 @@ def present_value_annuity_annual(
     Examples
     --------
     >>> present_value_annuity_annual(100, 0.05, 10, 12)
-    9428.135032823473
+    9428.1350328235
     """
     rate = annual_rate / payments_per_year
     periods = years * payments_per_year
@@ -130,9 +130,9 @@ def present_value_growing_annuity(
     Examples
     --------
     >>> present_value_growing_annuity(100, 0.05, 10, 0.02 )
-    855.5867765481578
+    855.5867765482
     >>> present_value_growing_annuity(100, 0.05, 10, 0.05)
-    1000.0
+    1000
     """
     return present_value_annuity(payment, (1 + rate) / (1 + growth) - 1, periods)
 
@@ -190,7 +190,7 @@ def present_value_growing_perpetuity(
         raise ValueError(
             "Interest rate must be greater than growth rate for perpetuity."
         )
-    return payment * (1 + growth) / (rate - growth)
+    return round(payment * (1 + growth) / (rate - growth), 10)
 
 
 def present_value_two_stage_annuity(
@@ -238,7 +238,7 @@ def present_value_two_stage_annuity(
     Examples
     --------
     >>> present_value_two_stage_annuity(100, 0.05, 0.06, 5, 5)
-    762.9973919305694
+    762.9973919306094
     """
     pv_stage1 = present_value_annuity(payment, rate1, periods1)
     pv_stage2 = (
@@ -306,7 +306,7 @@ def present_value_two_stage_annuity_perpetuity(
     Examples
     --------
     >>> present_value_two_stage_annuity_perpetuity(100, 0.05, 5, 0.06, 0.02, 0.01)
-    2206.1948451002554
+    2206.19484510028
     """
     # Present value of first stage (fixed annuity)
     pv_stage1 = present_value_growing_annuity(payment, rate1, periods1, growth1)

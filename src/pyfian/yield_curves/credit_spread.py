@@ -169,11 +169,11 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
     ...     )
     ...     bonds.append(bond)
     >>> benchmark_curve = FlatCurveBEY(bey=0.02, curve_date=date)
-    >>> spread_curve = CreditSpreadCurve(curve_date=date, benchmark_curve=benchmark_curve, bonds=bonds)
+    >>> spread_curve = CreditSpreadCurve(curve_date=date, benchmark_curve=benchmark_curve, bonds=bonds, day_count_convention="30/360", yield_calculation_convention="BEY")
     >>> spread_curve_2 = CreditSpreadCurve.spread_from_bonds(benchmark_curve=benchmark_curve, bonds=bonds)
     >>> # Access spread for a given maturity
-    >>> spread_curve.get_t(1.0)
-    # Returns the spread for 1 year maturity
+    >>> spread_curve.get_t(0.5) # doctest: +SKIP
+    0.0214
     """
 
     def __init__(

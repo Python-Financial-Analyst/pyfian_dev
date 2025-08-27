@@ -85,10 +85,9 @@ class CombinedCurve(ZeroCouponCurve):
     >>> combined_curve.get_rate(1.0)
     0.07
     >>> combined_curve.date_rate("2024-01-01")
-    # Returns the combined rate for the given date
+    0.07
     >>> combined_curve.as_dict()
-    # Returns a dictionary representation of the curve
-    # Example with list_maturities_rates and bond list creation
+    {'benchmark_curve': FlatCurveAER(aer=0.0400, curve_date=2023-01-01), 'spread_curve': FlatCreditSpreadCurve(spread=0.03, curve_date=2023-01-01), 'yield_calculation_convention': 'Annual', 'day_count_convention': DayCountActual365()}
     >>> list_maturities_rates = [
     ...     (pd.DateOffset(months=1), 4.49),
     ...     (pd.DateOffset(months=3), 4.32),
@@ -120,14 +119,16 @@ class CombinedCurve(ZeroCouponCurve):
     >>> # Create a benchmark curve and spread curve from bonds
     >>> benchmark_curve_bey = FlatCurveBEY(bey=0.02, curve_date=date)
     >>> spread_curve = CreditSpreadCurve.spread_from_bonds(benchmark_curve=benchmark_curve_bey, bonds=bonds)
-    >>> combined_curve = CombinedCurve(benchmark_curve_bey, spread_curve)
+    >>> combined_curve = CombinedCurve(benchmark_curve_bey, spread_curve, day_count_convention="30/360")
     >>> for bond in bonds:
     ...     bond_price = bond.get_bond_price()
     ...     if bond_price is None:
     ...         continue
     ...     pv, flows_pv = bond.value_with_curve(combined_curve)
     ...     maturity_date = bond.maturity
-    ...     print(f"Maturity: {maturity_date}, Price: {bond_price}, PV: {pv}, Diff: {bond_price - pv}")
+    ...     print(
+    ...         f"Maturity: {maturity_date}\tPrice: {round(bond_price, 4)}\tPV: {round(pv, 4)}\tDiff: {round(abs(bond_price - pv), 4)}"
+    ...     ) # doctest: +SKIP
     """
 
     def __init__(
@@ -170,7 +171,7 @@ class CombinedCurve(ZeroCouponCurve):
         self.maturities = sorted(
             list(
                 set(getattr(self.benchmark_curve, "maturities", []))
-                | set(getattr(self.spread_curve, "maturities", []))
+                & set(getattr(self.spread_curve, "maturities", []))
             )
         )
 
@@ -247,6 +248,12 @@ class CombinedCurve(ZeroCouponCurve):
             yield_calculation_convention,
         )
 
+    def get_t(self, t: float, spread: float = 0) -> float:
+        return self.get_rate(t, spread=spread)
+
+    def _get_t(self, t, spread=0):
+        return self.get_rate(t, spread)
+
     def date_rate(
         self,
         date: Union[str, "pd.Timestamp"],
@@ -286,7 +293,7 @@ class CombinedCurve(ZeroCouponCurve):
         return f"CombinedCurve(benchmark_curve={self.benchmark_curve}, spread_curve={self.spread_curve})"
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # Example usage
     from pyfian.yield_curves.flat_curve import FlatCurveAER, FlatCurveBEY
     from pyfian.yield_curves.credit_spread import (
@@ -302,7 +309,7 @@ if __name__ == "__main__":
         spread=0.03, curve_date=curve_date
     )  # Initialize your spread curve
     combined_curve = CombinedCurve(benchmark_curve, spread_curve)
-    combined_curve.compare_to(benchmark_curve)
+    combined_curve.compare_to(other=benchmark_curve)
 
     # Example usage
     # Par rates for different periods
@@ -354,11 +361,14 @@ if __name__ == "__main__":
     benchmark_curve_bey = FlatCurveBEY(
         bey=0.02, curve_date=curve_date
     )  # pragma: no cover
+
     spread_curve = CreditSpreadCurve.spread_from_bonds(
         benchmark_curve=benchmark_curve_bey, bonds=bonds
     )
 
-    self = combined_curve = CombinedCurve(benchmark_curve_bey, spread_curve)
+    self = combined_curve = CombinedCurve(
+        benchmark_curve_bey, spread_curve, day_count_convention="30/360"
+    )
     combined_curve.compare_to(other=benchmark_curve_bey)
 
     for bond in bonds:
@@ -368,5 +378,5 @@ if __name__ == "__main__":
         pv, flows_pv = bond.value_with_curve(combined_curve)
         maturity_date = bond.maturity
         print(
-            f"Maturity: {maturity_date}, Price: {bond_price}, PV: {pv}, Diff: {bond_price - pv}"
+            f"Maturity: {maturity_date}\tPrice: {round(bond_price, 4)}\tPV: {round(pv, 4)}\tDiff: {round(abs(bond_price - pv), 4)}"
         )

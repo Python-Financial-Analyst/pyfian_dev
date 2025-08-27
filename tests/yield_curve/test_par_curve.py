@@ -78,3 +78,9 @@ class TestParCurve:
     def test_invalid_day_count_convention(self):
         with pytest.raises(TypeError):
             ParCurve(curve_date="2025-08-22", par_rates={}, day_count_convention=None)
+
+    # initialize with zero_rates
+    def test_initialize_with_zero_rates(self):
+        zero_rates = {m: 0 for m in self.curve.maturities}
+        curve = ParCurve(curve_date="2025-08-22", par_rates={}, zero_rates=zero_rates)
+        assert curve.zero_rates == zero_rates

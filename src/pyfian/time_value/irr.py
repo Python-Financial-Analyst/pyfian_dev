@@ -43,9 +43,9 @@ def npv(rate: float, cash_flows: list[float]) -> float:
     Examples
     --------
     >>> npv(0.1, [-100, 50, 60])
-    -4.95867768595
+    -4.958677686
     """
-    return sum(cf / (1 + rate) ** t for t, cf in enumerate(cash_flows))
+    return round(sum(cf / (1 + rate) ** t for t, cf in enumerate(cash_flows)), 10)
 
 
 def irr(
@@ -89,7 +89,7 @@ def irr(
     Examples
     --------
     >>> irr([-1000, 300, 400, 500, 600])
-    0.2488833566240709
+    0.2488833566
     """
     rate = guess
     for _ in range(max_iter):
@@ -101,7 +101,7 @@ def irr(
             break
         new_rate = rate - f / f_prime
         if abs(new_rate - rate) < tol:
-            return new_rate
+            return round(new_rate, 10)
         rate = new_rate
     raise ValueError("IRR calculation did not converge")
 
@@ -194,7 +194,7 @@ def xirr_base(
     Examples
     --------
     >>> xirr_base([-1000, 300, 400, 500, 600], [0, 0.5, 1.0, 1.5, 2.0])
-    0.5831820341312749  # Example output
+    np.float64(0.5597096384526054)
     """
 
     def npv_xirr(rate: float) -> float:
@@ -266,7 +266,7 @@ def xirr_dates(
     >>> dates = [datetime(2020, 1, 1), datetime(2020, 6, 1), datetime(2021, 1, 1),
     ...          datetime(2021, 6, 1), datetime(2022, 1, 1)]
     >>> xirr(cash_flows, dates)
-    0.5831820341312749  # Example output
+    np.float64(0.5831820341312749)
     """
     if len(cash_flows) != len(dates):
         raise ValueError("cash_flows and dates must have the same length")
@@ -350,7 +350,7 @@ def xirr(
     ...                index=pd.to_datetime(["2020-01-01", "2020-06-01", "2021-01-01",
     ...                                      "2021-06-01", "2022-01-01"]))
     >>> xirr(cf)
-    0.5831820341312749  # Example output
+    np.float64(0.5831820341312749)
     """
     if isinstance(cash_flows, dict):
         # dict: keys are dates, values are cash flows

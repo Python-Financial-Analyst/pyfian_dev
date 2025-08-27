@@ -32,7 +32,7 @@ def fisher_real_rate(nominal_rate: float, inflation_rate: float) -> float:
     >>> fisher_real_rate(0.05, 0.02)
     0.03
     """
-    return nominal_rate - inflation_rate
+    return round(nominal_rate - inflation_rate, 10)
 
 
 def fisher_exact_real_rate(nominal_rate: float, inflation_rate: float) -> float:

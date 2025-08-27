@@ -74,7 +74,7 @@ Examples
 
 >>> dc = get_day_count_convention('actual/360')
 >>> dc.fraction(pd.Timestamp('2024-01-01'), pd.Timestamp('2024-07-01'), pd.Timestamp('2024-07-01'))
-0.0
+0.5055555555555555
 """
 
 import pandas as pd
@@ -104,6 +104,9 @@ class DayCountBase:
     """
 
     name = "Base"
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}()"
 
     def numerator(
         self, start: pd.Timestamp, current: pd.Timestamp, end: pd.Timestamp = None
@@ -253,6 +256,9 @@ class DayCount30360(DayCountBase):
 
     name = "30/360"
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}()"
+
     def numerator(
         self, start: pd.Timestamp, current: pd.Timestamp, end: pd.Timestamp = None
     ) -> float:
@@ -327,6 +333,9 @@ class DayCount30E360(DayCountBase):
 
     name = "30E/360"
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}()"
+
     def numerator(
         self, start: pd.Timestamp, current: pd.Timestamp, end: pd.Timestamp = None
     ) -> float:
@@ -396,10 +405,13 @@ class DayCountActualActualISDA(DayCountBase):
     Example:
         >>> dc = DayCountActualActualISDA()
         >>> dc.fraction(pd.Timestamp('2024-12-31'), pd.Timestamp('2025-01-01'), pd.Timestamp('2025-01-01'))
-        0.0
+        0.00273224043715847
     """
 
     name = "actual/actual-ISDA"
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}()"
 
     def numerator(
         self, start: pd.Timestamp, current: pd.Timestamp, end: pd.Timestamp = None
@@ -540,6 +552,9 @@ class DayCountActualActualBond(DayCountBase):
 
     name = "actual/actual-Bond"
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}()"
+
     def numerator(
         self, start: pd.Timestamp, current: pd.Timestamp, end: pd.Timestamp = None
     ) -> float:
@@ -655,10 +670,13 @@ class DayCountActual360(DayCountBase):
     Example:
         >>> dc = DayCountActual360()
         >>> dc.fraction(pd.Timestamp('2024-01-01'), pd.Timestamp('2024-07-01'), pd.Timestamp('2024-07-01'))
-        0.0
+        0.5055555555555555
     """
 
     name = "actual/360"
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}()"
 
     def numerator(
         self, start: pd.Timestamp, current: pd.Timestamp, end: pd.Timestamp = None
@@ -719,10 +737,13 @@ class DayCountActual365(DayCountBase):
     Example:
         >>> dc = DayCountActual365()
         >>> dc.fraction(pd.Timestamp('2024-01-01'), pd.Timestamp('2024-07-01'), pd.Timestamp('2024-07-01'))
-        0.0
+        0.4986301369863014
     """
 
     name = "actual/365"
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}()"
 
     def numerator(
         self, start: pd.Timestamp, current: pd.Timestamp, end: pd.Timestamp = None
@@ -789,6 +810,9 @@ class DayCount30365(DayCountBase):
     """
 
     name = "30/365"
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}()"
 
     def numerator(
         self, start: pd.Timestamp, current: pd.Timestamp, end: pd.Timestamp = None

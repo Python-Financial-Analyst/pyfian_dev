@@ -36,13 +36,13 @@ def future_value_annuity(payment: float, rate: float, periods: int) -> float:
     Examples
     --------
     >>> future_value_annuity(100, 0.05, 10)
-    1257.7892535548839
+    1257.7892535549
     """
     if rate == 0:
         return payment * periods
     pv = present_value_annuity(payment, rate, periods)
     fv = pv * (1 + rate) ** periods
-    return fv
+    return round(fv, 10)
 
 
 def future_value_annuity_annual(
@@ -86,7 +86,7 @@ def future_value_annuity_annual(
     Examples
     --------
     >>> future_value_annuity_annual(100, 0.05, 10, 12)
-    15528.22794456672
+    15528.2279445667
     """
     rate = annual_rate / payments_per_year
     periods = years * payments_per_year

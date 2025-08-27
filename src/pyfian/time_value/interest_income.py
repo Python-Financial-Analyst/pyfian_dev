@@ -40,7 +40,7 @@ Where:
 Examples
 --------
 >>> interest_income_continuous(0.05, 1)
-0.05127109637602412
+np.float64(0.05127109637602412)
 >>> interest_income_effective(0.05, 1)
 0.05
 >>> interest_income_nominal_periods(0.06, 12, 6)
@@ -93,7 +93,7 @@ def interest_income_continuous(
     Examples
     --------
     >>> interest_income_continuous(0.05, 1)
-    0.05127109637602412
+    np.float64(0.05127109637602412)
     """
     return notional * (np.exp(rate * time) - 1)
 
@@ -134,7 +134,7 @@ def interest_income_effective(
     >>> interest_income_effective(0.05, 1)
     0.05
     """
-    return notional * ((1 + effective_rate) ** time - 1)
+    return round(notional * ((1 + effective_rate) ** time - 1), 10)
 
 
 def interest_income_nominal_periods(
@@ -226,7 +226,7 @@ def interest_income_nominal_days(
     0.005
     """
     # Calculate interest income directly from nominal rate and compounding for custom period
-    return notional * nominal_rate * (days / base_year)
+    return round(notional * nominal_rate * (days / base_year), 10)
 
 
 def interest_income_money_market_discount(

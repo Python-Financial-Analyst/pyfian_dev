@@ -99,7 +99,7 @@ class CurveBase(ABC):
             else:
                 maturities = [0.25, 0.5, 1, 2, 5, 7, 10]
         data = {"Maturity": maturities, "Rate": [self.get_t(m) for m in maturities]}
-        return pd.DataFrame(data).set_index("Maturity")
+        return pd.DataFrame(data).set_index("Maturity").round(6)
 
     @abstractmethod
     def as_dict(self) -> dict:  # pragma: no cover
@@ -410,7 +410,10 @@ class YieldCurveBase(CurveBase):
         """
         if maturities is None:
             if hasattr(self, "maturities"):
-                maturities = self.maturities
+                if self.maturities:
+                    maturities = self.maturities
+                else:
+                    maturities = [0.25, 0.5, 1, 2, 5, 10]
             else:
                 maturities = [0.25, 0.5, 1, 2, 5, 10]
         current_rates = [self.get_t(m) for m in maturities]
@@ -418,12 +421,16 @@ class YieldCurveBase(CurveBase):
             self.discount_to_rate(other.discount_t(m), m, spread=0) for m in maturities
         ]
         spread = [c - o for c, o in zip(current_rates, compared_rates)]
-        df = pd.DataFrame(
-            {
-                "Maturity": maturities,
-                "Current Curve": current_rates,
-                "Compared Curve": compared_rates,
-                "Spread": spread,
-            }
-        ).set_index("Maturity")
+        df = (
+            pd.DataFrame(
+                {
+                    "Maturity": maturities,
+                    "Current Curve": current_rates,
+                    "Compared Curve": compared_rates,
+                    "Spread": spread,
+                }
+            )
+            .set_index("Maturity")
+            .round(6)
+        )
         return df

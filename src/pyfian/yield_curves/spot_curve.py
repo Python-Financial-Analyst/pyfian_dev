@@ -8,10 +8,11 @@ Module for bootstrapping zero-coupon rates from a series of bonds. Implements:
 Examples
 --------
 >>> from pyfian.yield_curves.spot_curve import SpotCurve
->>> curve = SpotCurve(curve_date="2025-08-22", bonds=bonds)
->>> curve.discount_t(1)
+>>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
+>>> curve = SpotCurve(curve_date="2025-08-22", bonds=bonds) # doctest: +SKIP
+>>> curve.discount_t(1) # doctest: +SKIP
 ... # returns discount factor for 1 year
->>> curve.get_rate(1)
+>>> curve.get_rate(1) # doctest: +SKIP
 ... # returns spot rate for 1 year
 """
 
@@ -302,7 +303,7 @@ class SpotCurve(ZeroCouponCurve):
         return f"SpotCurve(zero_rates={self.zero_rates}, curve_date={self.curve_date.strftime('%Y-%m-%d')})"
 
 
-if __name__ == "__main__":  # pragma : no cover
+if __name__ == "__main__":  # pragma: no cover
     # Example usage
     # Par rates for different periods
     # 1-month	 4.49

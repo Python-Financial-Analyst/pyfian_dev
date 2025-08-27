@@ -142,7 +142,7 @@ class TestFixedRateBullet:
         )
 
     def test_convexity(self):
-        bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1, **TRUE_TIME_PARAMS)
+        bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 2, **TRUE_TIME_PARAMS)
         conv = bond.convexity(yield_to_maturity=0.05, **TRUE_TIME_PARAMS)
         price = bond.price_from_yield(yield_to_maturity=0.05, **TRUE_TIME_PARAMS)
         assert isinstance(conv, float)

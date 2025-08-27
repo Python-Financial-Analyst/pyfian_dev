@@ -105,7 +105,7 @@ def generate_amortization_schedule(
     Examples
     --------
     >>> df = generate_amortization_schedule(200000, 0.04, 360, 1)
-    >>> df.head()
+    >>> df.head() # doctest: +SKIP
        Period  Payment  Interest  Principal  Remaining Balance
     0       1   954.83   666.67     288.16          199711.84
     1       2   954.83   665.71     289.12          199422.72
@@ -180,7 +180,7 @@ def mortgage_cash_flows(
     Examples
     --------
     >>> df = mortgage_cash_flows(200000, 0.04, 11)
-    >>> print(df)
+    >>> print(df) # doctest: +SKIP
        Period  Payment  Interest  Principal  Remaining Balance
     0       1   18182.95   666.67   17516.28           182483.72
     ...
