@@ -54,7 +54,7 @@ Module Contents
    .. rubric:: Examples
 
    >>> npv(0.1, [-100, 50, 60])
-   -4.95867768595
+   -4.958677686
 
 
 .. py:function:: irr(cash_flows: list[float], guess: float = 0.1, tol: float = 1e-06, max_iter: int = 1000) -> float
@@ -89,7 +89,7 @@ Module Contents
    .. rubric:: Examples
 
    >>> irr([-1000, 300, 400, 500, 600])
-   0.2488833566240709
+   0.2488833566
 
 
 .. py:function:: np_irr(cash_flows: list[float]) -> float
@@ -161,7 +161,7 @@ Module Contents
    .. rubric:: Examples
 
    >>> xirr_base([-1000, 300, 400, 500, 600], [0, 0.5, 1.0, 1.5, 2.0])
-   0.5831820341312749  # Example output
+   np.float64(0.5597096384526054)
 
 
 .. py:function:: xirr_dates(cash_flows: collections.abc.Sequence[float], dates: collections.abc.Sequence[datetime.datetime], guess: float = 0.1, tol: float = 1e-06, max_iter: int = 100) -> float
@@ -209,7 +209,7 @@ Module Contents
    >>> dates = [datetime(2020, 1, 1), datetime(2020, 6, 1), datetime(2021, 1, 1),
    ...          datetime(2021, 6, 1), datetime(2022, 1, 1)]
    >>> xirr(cash_flows, dates)
-   0.5831820341312749  # Example output
+   np.float64(0.5831820341312749)
 
 
 .. py:function:: xirr(cash_flows, dates=None, guess: float = 0.1, tol: float = 1e-06, max_iter: int = 100) -> float
@@ -273,6 +273,6 @@ Module Contents
    ...                index=pd.to_datetime(["2020-01-01", "2020-06-01", "2021-01-01",
    ...                                      "2021-06-01", "2022-01-01"]))
    >>> xirr(cf)
-   0.5831820341312749  # Example output
+   np.float64(0.5831820341312749)
 
 

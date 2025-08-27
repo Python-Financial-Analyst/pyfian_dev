@@ -80,7 +80,7 @@ pyfian.utils.day_count
 
    >>> dc = get_day_count_convention('actual/360')
    >>> dc.fraction(pd.Timestamp('2024-01-01'), pd.Timestamp('2024-07-01'), pd.Timestamp('2024-07-01'))
-   0.0
+   0.5055555555555555
 
 
 
@@ -156,6 +156,9 @@ Module Contents
    .. py:attribute:: name
       :value: 'Base'
 
+
+
+   .. py:method:: __repr__()
 
 
    .. py:method:: numerator(start: pandas.Timestamp, current: pandas.Timestamp, end: pandas.Timestamp = None) -> float
@@ -286,6 +289,9 @@ Module Contents
 
 
 
+   .. py:method:: __repr__()
+
+
    .. py:method:: numerator(start: pandas.Timestamp, current: pandas.Timestamp, end: pandas.Timestamp = None) -> float
 
       Numerator for 30/360 convention: calculates days as if each month has 30 days.
@@ -348,6 +354,9 @@ Module Contents
 
 
 
+   .. py:method:: __repr__()
+
+
    .. py:method:: numerator(start: pandas.Timestamp, current: pandas.Timestamp, end: pandas.Timestamp = None) -> float
 
       Numerator for 30E/360 convention: treats all end-of-month dates as the 30th.
@@ -402,12 +411,15 @@ Module Contents
 
    >>> dc = DayCountActualActualISDA()
    >>> dc.fraction(pd.Timestamp('2024-12-31'), pd.Timestamp('2025-01-01'), pd.Timestamp('2025-01-01'))
-   0.0
+   0.00273224043715847
 
 
    .. py:attribute:: name
       :value: 'actual/actual-ISDA'
 
+
+
+   .. py:method:: __repr__()
 
 
    .. py:method:: numerator(start: pandas.Timestamp, current: pandas.Timestamp, end: pandas.Timestamp = None) -> float
@@ -511,6 +523,9 @@ Module Contents
 
 
 
+   .. py:method:: __repr__()
+
+
    .. py:method:: numerator(start: pandas.Timestamp, current: pandas.Timestamp, end: pandas.Timestamp = None) -> float
 
       Numerator for Actual/Actual (Bond): actual days between the date of calculation (`current`) and the start of the period (`start`).
@@ -595,12 +610,15 @@ Module Contents
 
    >>> dc = DayCountActual360()
    >>> dc.fraction(pd.Timestamp('2024-01-01'), pd.Timestamp('2024-07-01'), pd.Timestamp('2024-07-01'))
-   0.0
+   0.5055555555555555
 
 
    .. py:attribute:: name
       :value: 'actual/360'
 
+
+
+   .. py:method:: __repr__()
 
 
    .. py:method:: numerator(start: pandas.Timestamp, current: pandas.Timestamp, end: pandas.Timestamp = None) -> float
@@ -653,12 +671,15 @@ Module Contents
 
    >>> dc = DayCountActual365()
    >>> dc.fraction(pd.Timestamp('2024-01-01'), pd.Timestamp('2024-07-01'), pd.Timestamp('2024-07-01'))
-   0.0
+   0.4986301369863014
 
 
    .. py:attribute:: name
       :value: 'actual/365'
 
+
+
+   .. py:method:: __repr__()
 
 
    .. py:method:: numerator(start: pandas.Timestamp, current: pandas.Timestamp, end: pandas.Timestamp = None) -> float
@@ -719,6 +740,9 @@ Module Contents
    .. py:attribute:: name
       :value: '30/365'
 
+
+
+   .. py:method:: __repr__()
 
 
    .. py:method:: numerator(start: pandas.Timestamp, current: pandas.Timestamp, end: pandas.Timestamp = None) -> float

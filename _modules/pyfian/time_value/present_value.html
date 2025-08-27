@@ -110,12 +110,12 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; present_value_annuity(100, 0.05, 10)</span>
-<span class="sd">    772.1734929184818</span>
+<span class="sd">    772.1734929185</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">payment</span> <span class="o">*</span> <span class="n">periods</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">payment</span> <span class="o">*</span> <span class="n">periods</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
     <span class="n">pv</span> <span class="o">=</span> <span class="n">payment</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="o">-</span><span class="n">periods</span><span class="p">)</span> <span class="o">/</span> <span class="n">rate</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">pv</span></div>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">pv</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></div>
 
 
 
@@ -162,7 +162,7 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; present_value_annuity_annual(100, 0.05, 10, 12)</span>
-<span class="sd">    9428.135032823473</span>
+<span class="sd">    9428.1350328235</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">rate</span> <span class="o">=</span> <span class="n">annual_rate</span> <span class="o">/</span> <span class="n">payments_per_year</span>
     <span class="n">periods</span> <span class="o">=</span> <span class="n">years</span> <span class="o">*</span> <span class="n">payments_per_year</span>
@@ -216,9 +216,9 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; present_value_growing_annuity(100, 0.05, 10, 0.02 )</span>
-<span class="sd">    855.5867765481578</span>
+<span class="sd">    855.5867765482</span>
 <span class="sd">    &gt;&gt;&gt; present_value_growing_annuity(100, 0.05, 10, 0.05)</span>
-<span class="sd">    1000.0</span>
+<span class="sd">    1000</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">present_value_annuity</span><span class="p">(</span><span class="n">payment</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">growth</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">periods</span><span class="p">)</span></div>
 
@@ -279,7 +279,7 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Interest rate must be greater than growth rate for perpetuity.&quot;</span>
         <span class="p">)</span>
-    <span class="k">return</span> <span class="n">payment</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">growth</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">rate</span> <span class="o">-</span> <span class="n">growth</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">payment</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">growth</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">rate</span> <span class="o">-</span> <span class="n">growth</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span></div>
 
 
 
@@ -330,7 +330,7 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; present_value_two_stage_annuity(100, 0.05, 0.06, 5, 5)</span>
-<span class="sd">    762.9973919305694</span>
+<span class="sd">    762.9973919306094</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">pv_stage1</span> <span class="o">=</span> <span class="n">present_value_annuity</span><span class="p">(</span><span class="n">payment</span><span class="p">,</span> <span class="n">rate1</span><span class="p">,</span> <span class="n">periods1</span><span class="p">)</span>
     <span class="n">pv_stage2</span> <span class="o">=</span> <span class="p">(</span>
@@ -401,7 +401,7 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; present_value_two_stage_annuity_perpetuity(100, 0.05, 5, 0.06, 0.02, 0.01)</span>
-<span class="sd">    2206.1948451002554</span>
+<span class="sd">    2206.19484510028</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Present value of first stage (fixed annuity)</span>
     <span class="n">pv_stage1</span> <span class="o">=</span> <span class="n">present_value_growing_annuity</span><span class="p">(</span><span class="n">payment</span><span class="p">,</span> <span class="n">rate1</span><span class="p">,</span> <span class="n">periods1</span><span class="p">,</span> <span class="n">growth1</span><span class="p">)</span>

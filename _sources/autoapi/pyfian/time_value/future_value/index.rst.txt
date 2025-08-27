@@ -45,7 +45,7 @@ Module Contents
    .. rubric:: Examples
 
    >>> future_value_annuity(100, 0.05, 10)
-   1257.7892535548839
+   1257.7892535549
 
 
 .. py:function:: future_value_annuity_annual(payment: float, annual_rate: float, years: int, payments_per_year: int) -> float
@@ -83,7 +83,7 @@ Module Contents
    .. rubric:: Examples
 
    >>> future_value_annuity_annual(100, 0.05, 10, 12)
-   15528.22794456672
+   15528.2279445667
 
 
 .. py:function:: future_value_growing_annuity(payment: float, rate: float, periods: int, growth: float = 0.0) -> float

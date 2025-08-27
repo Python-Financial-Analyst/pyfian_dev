@@ -123,9 +123,9 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; npv(0.1, [-100, 50, 60])</span>
-<span class="sd">    -4.95867768595</span>
+<span class="sd">    -4.958677686</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">cf</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">cf</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cash_flows</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">cf</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">cf</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cash_flows</span><span class="p">)),</span> <span class="mi">10</span><span class="p">)</span></div>
 
 
 
@@ -172,7 +172,7 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; irr([-1000, 300, 400, 500, 600])</span>
-<span class="sd">    0.2488833566240709</span>
+<span class="sd">    0.2488833566</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">rate</span> <span class="o">=</span> <span class="n">guess</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iter</span><span class="p">):</span>
@@ -184,7 +184,7 @@
             <span class="k">break</span>
         <span class="n">new_rate</span> <span class="o">=</span> <span class="n">rate</span> <span class="o">-</span> <span class="n">f</span> <span class="o">/</span> <span class="n">f_prime</span>
         <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">new_rate</span> <span class="o">-</span> <span class="n">rate</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">new_rate</span>
+            <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">new_rate</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
         <span class="n">rate</span> <span class="o">=</span> <span class="n">new_rate</span>
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;IRR calculation did not converge&quot;</span><span class="p">)</span></div>
 
@@ -283,7 +283,7 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; xirr_base([-1000, 300, 400, 500, 600], [0, 0.5, 1.0, 1.5, 2.0])</span>
-<span class="sd">    0.5831820341312749  # Example output</span>
+<span class="sd">    np.float64(0.5597096384526054)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">npv_xirr</span><span class="p">(</span><span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -358,7 +358,7 @@
 <span class="sd">    &gt;&gt;&gt; dates = [datetime(2020, 1, 1), datetime(2020, 6, 1), datetime(2021, 1, 1),</span>
 <span class="sd">    ...          datetime(2021, 6, 1), datetime(2022, 1, 1)]</span>
 <span class="sd">    &gt;&gt;&gt; xirr(cash_flows, dates)</span>
-<span class="sd">    0.5831820341312749  # Example output</span>
+<span class="sd">    np.float64(0.5831820341312749)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cash_flows</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dates</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;cash_flows and dates must have the same length&quot;</span><span class="p">)</span>
@@ -445,7 +445,7 @@
 <span class="sd">    ...                index=pd.to_datetime([&quot;2020-01-01&quot;, &quot;2020-06-01&quot;, &quot;2021-01-01&quot;,</span>
 <span class="sd">    ...                                      &quot;2021-06-01&quot;, &quot;2022-01-01&quot;]))</span>
 <span class="sd">    &gt;&gt;&gt; xirr(cf)</span>
-<span class="sd">    0.5831820341312749  # Example output</span>
+<span class="sd">    np.float64(0.5831820341312749)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cash_flows</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="c1"># dict: keys are dates, values are cash flows</span>

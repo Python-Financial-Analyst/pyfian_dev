@@ -1,0 +1,598 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyfian.yield_curves.base_curve &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Topics/fixed_income/index.html">Fixed Income</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyfian.yield_curves.base_curve</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyfian.yield_curves.base_curve</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">base_curve.py</span>
+
+<span class="sd">Module for abstract base classes for yield curves and related curve models.</span>
+
+<span class="sd">Implements:</span>
+
+<span class="sd">- CurveBase: Abstract base class for all curve types, providing common interface and utilities.</span>
+<span class="sd">- YieldCurveBase: Abstract base class for yield curves, extending CurveBase with discounting and rate calculation methods.</span>
+
+<span class="sd">These classes define the structure and required methods for curve models used in fixed income analytics, including discounting, rate calculation, forward rates, and comparison utilities.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.utils.day_count</span><span class="w"> </span><span class="kn">import</span> <span class="n">DayCountBase</span>
+
+
+<span class="c1"># Abstract base class for yield curves</span>
+
+<span class="n">MATURITIES</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="CurveBase">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.CurveBase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CurveBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for all curves.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    curve_date : pd.Timestamp</span>
+<span class="sd">        Date of the curve.</span>
+<span class="sd">    day_count_convention : DayCountBase</span>
+<span class="sd">        Day count convention used for time calculations.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    curve_date : pd.Timestamp</span>
+<span class="sd">        Date of the curve.</span>
+<span class="sd">    day_count_convention : DayCountBase</span>
+<span class="sd">        Day count convention used for time calculations.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    _get_t(t, spread=0)</span>
+<span class="sd">        Get the rate for a cash flow by time t (in years).</span>
+<span class="sd">    to_dataframe(maturities=None)</span>
+<span class="sd">        Export curve data to a pandas DataFrame.</span>
+<span class="sd">    as_dict()</span>
+<span class="sd">        Return curve parameters and metadata as a dictionary.</span>
+<span class="sd">    from_dict(data)</span>
+<span class="sd">        Instantiate a curve from a dictionary.</span>
+<span class="sd">    clone_with_new_date(new_date)</span>
+<span class="sd">        Clone the curve with a new date.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">curve_date</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span>
+    <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">DayCountBase</span>
+
+<div class="viewcode-block" id="CurveBase._get_t">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.CurveBase._get_t">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_t</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the rate for a cash flow by time t (in years).</span>
+
+<span class="sd">        The spread is added to the yield in the original curve.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : float</span>
+<span class="sd">            Time in years to discount.</span>
+<span class="sd">        spread : float</span>
+<span class="sd">            Spread to add to the discount rate.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Rate for the cash flow.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="CurveBase.get_t">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.CurveBase.get_t">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="CurveBase.to_dataframe">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.CurveBase.to_dataframe">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maturities</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Export curve data to a pandas DataFrame.</span>
+<span class="sd">        Uses __call__ for each maturity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">maturities</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;maturities&quot;</span><span class="p">):</span>
+                <span class="n">maturities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maturities</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">maturities</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Maturity&quot;</span><span class="p">:</span> <span class="n">maturities</span><span class="p">,</span> <span class="s2">&quot;Rate&quot;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_t</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">maturities</span><span class="p">]}</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;Maturity&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CurveBase.as_dict">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.CurveBase.as_dict">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return curve parameters and metadata as a dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;as_dict must be implemented in subclass.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CurveBase.from_dict">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.CurveBase.from_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;CurveBase&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate a curve from a dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CurveBase.clone_with_new_date">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.CurveBase.clone_with_new_date">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clone_with_new_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;CurveBase&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clone the curve with a new date.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_curve</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">new_curve</span><span class="o">.</span><span class="n">curve_date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">new_date</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_curve</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="YieldCurveBase">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">YieldCurveBase</span><span class="p">(</span><span class="n">CurveBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for yield curves.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    curve_date : pd.Timestamp</span>
+<span class="sd">        Date of the curve.</span>
+<span class="sd">    day_count_convention : DayCountBase</span>
+<span class="sd">        Day count convention used for time calculations.</span>
+<span class="sd">    yield_calculation_convention : str</span>
+<span class="sd">        Yield calculation convention used for rate conversions.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    curve_date : pd.Timestamp</span>
+<span class="sd">        Date of the curve.</span>
+<span class="sd">    day_count_convention : DayCountBase</span>
+<span class="sd">        Day count convention used for time calculations.</span>
+<span class="sd">    yield_calculation_convention : str</span>
+<span class="sd">        Yield calculation convention used for rate conversions.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    discount_t(t, spread=0)</span>
+<span class="sd">        Discount a cash flow by time t (in years).</span>
+<span class="sd">    discount_date(date, spread=0)</span>
+<span class="sd">        Discount a cash flow by a target date.</span>
+<span class="sd">    get_rate(t, yield_calculation_convention=None, spread=0)</span>
+<span class="sd">        Return the rate at time horizon t (in years).</span>
+<span class="sd">    date_rate(date, yield_calculation_convention=None, spread=0)</span>
+<span class="sd">        Return the rate at a specified date.</span>
+<span class="sd">    discount_to_rate(discount_factor, t, spread)</span>
+<span class="sd">        Convert a discount factor to a rate.</span>
+<span class="sd">    forward_t_start_t_end(t_start, t_end, spread_start=0, spread_end=0, spread_forward=0)</span>
+<span class="sd">        Calculate the forward rate between two time horizons.</span>
+<span class="sd">    forward_t_start_dt(t_start, dt, spread_start=0, spread_end=0, spread_forward=0)</span>
+<span class="sd">        Calculate the forward rate given a start time and a time increment.</span>
+<span class="sd">    forward_dt(date, dt, spread_start=0, spread_end=0, spread_forward=0)</span>
+<span class="sd">        Calculate the forward rate from a given date and time increment.</span>
+<span class="sd">    forward_dates(start_date, end_date, spread_start=0, spread_end=0, spread_forward=0)</span>
+<span class="sd">        Calculate the forward rate between two dates.</span>
+<span class="sd">    compare_to(other, maturities=None)</span>
+<span class="sd">        Compare this curve to another curve.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">curve_date</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span>
+    <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">DayCountBase</span>
+    <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span>
+
+<div class="viewcode-block" id="YieldCurveBase.discount_t">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase.discount_t">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">discount_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Discount a cash flow by time t (in years).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="YieldCurveBase.discount_date">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase.discount_date">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">discount_date</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Discount a cash flow by a target date.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="YieldCurveBase.get_rate">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase.get_rate">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_rate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the rate at time horizon t (in years).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="YieldCurveBase.date_rate">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase.date_rate">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">date_rate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the rate at a specified date.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="YieldCurveBase.discount_to_rate">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase.discount_to_rate">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">discount_to_rate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">discount_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert a discount factor to a rate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;discount_to_rate must be implemented in subclass.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="YieldCurveBase.forward_t_start_t_end">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase.forward_t_start_t_end">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward_t_start_t_end</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">t_start</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">t_end</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">spread_start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">spread_end</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">spread_forward</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the forward rate between two time horizons.</span>
+
+<span class="sd">        You can adjust the spreads for each time horizon. For example, if you want</span>
+<span class="sd">        to use the curve but adjust it to a specific spread, you can use</span>
+<span class="sd">        the `spread_start` and `spread_end` parameters. If you want the result to revert to a curve without a spread, you can apply</span>
+<span class="sd">        the `spread_forward` parameter that subtracts from the forward rate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t_start : float</span>
+<span class="sd">            Start time in years.</span>
+<span class="sd">        t_end : float</span>
+<span class="sd">            End time in years.</span>
+<span class="sd">        spread_start : float, optional</span>
+<span class="sd">            Spread to apply at the start time (default is 0).</span>
+<span class="sd">        spread_end : float, optional</span>
+<span class="sd">            Spread to apply at the end time (default is 0).</span>
+<span class="sd">        spread_forward : float, optional</span>
+<span class="sd">            Spread to subtract from the forward rate (default is 0).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Forward rate between t_start and t_end.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method computes the forward rate implied by the discount factors</span>
+<span class="sd">        at t_start and t_end, adjusted for spreads.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">t_end</span> <span class="o">-</span> <span class="n">t_start</span>
+        <span class="n">descuento_t_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="n">t_start</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="n">spread_start</span><span class="p">)</span>
+        <span class="n">descuento_t_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="n">t_end</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="n">spread_end</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_to_rate</span><span class="p">(</span>
+            <span class="n">descuento_t_start</span> <span class="o">/</span> <span class="n">descuento_t_end</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="n">spread_forward</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="YieldCurveBase.forward_t_start_dt">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase.forward_t_start_dt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward_t_start_dt</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">t_start</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">spread_start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">spread_end</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">spread_forward</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the forward rate given a start time and a time increment.</span>
+
+<span class="sd">        You can adjust the spreads for each time horizon. For example, if you want</span>
+<span class="sd">        to use the curve but adjust it to a specific spread, you can use</span>
+<span class="sd">        the `spread_start` and `spread_end` parameters. If you want the result to revert to a curve without a spread, you can apply</span>
+<span class="sd">        the `spread_forward` parameter that subtracts from the forward rate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t_start : float</span>
+<span class="sd">            Start time in years.</span>
+<span class="sd">        dt : float</span>
+<span class="sd">            Time increment in years.</span>
+<span class="sd">        spread_start : float, optional</span>
+<span class="sd">            Spread to apply at the start time (default is 0).</span>
+<span class="sd">        spread_end : float, optional</span>
+<span class="sd">            Spread to apply at the end time (default is 0).</span>
+<span class="sd">        spread_forward : float, optional</span>
+<span class="sd">            Spread to subtract from the forward rate (default is 0).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Forward rate between t_start and t_start + dt.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method is a convenience wrapper for `forward_t_start_t_end`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">t_end</span> <span class="o">=</span> <span class="n">t_start</span> <span class="o">+</span> <span class="n">dt</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_t_start_t_end</span><span class="p">(</span>
+            <span class="n">t_start</span><span class="p">,</span> <span class="n">t_end</span><span class="p">,</span> <span class="n">spread_start</span><span class="p">,</span> <span class="n">spread_end</span><span class="p">,</span> <span class="n">spread_forward</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="YieldCurveBase.forward_dt">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase.forward_dt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward_dt</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
+        <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">spread_start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">spread_end</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">spread_forward</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the forward rate from a given date and time increment.</span>
+
+<span class="sd">        You can adjust the spreads for each time horizon. For example, if you want</span>
+<span class="sd">        to use the curve but adjust it to a specific spread, you can use</span>
+<span class="sd">        the `spread_start` and `spread_end` parameters. If you want the result to revert to a curve without a spread, you can apply</span>
+<span class="sd">        the `spread_forward` parameter that subtracts from the forward rate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        date : Union[str, pd.Timestamp]</span>
+<span class="sd">            Start date for the forward rate calculation.</span>
+<span class="sd">        dt : float</span>
+<span class="sd">            Time increment in years.</span>
+<span class="sd">        spread_start : float, optional</span>
+<span class="sd">            Spread to apply at the start date (default is 0).</span>
+<span class="sd">        spread_end : float, optional</span>
+<span class="sd">            Spread to apply at the end date (default is 0).</span>
+<span class="sd">        spread_forward : float, optional</span>
+<span class="sd">            Spread to subtract from the forward rate (default is 0).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Forward rate from date over dt years.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method converts the start date to a time fraction and delegates to `forward_t_start_dt`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">t_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">day_count_convention</span><span class="o">.</span><span class="n">fraction</span><span class="p">(</span>
+            <span class="n">start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_t_start_dt</span><span class="p">(</span>
+            <span class="n">t_start</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">spread_start</span><span class="p">,</span> <span class="n">spread_end</span><span class="p">,</span> <span class="n">spread_forward</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="YieldCurveBase.forward_dates">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase.forward_dates">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward_dates</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start_date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
+        <span class="n">end_date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
+        <span class="n">spread_start</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">spread_end</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">spread_forward</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the forward rate between two dates.</span>
+
+<span class="sd">        You can adjust the spreads for each time horizon. For example, if you want</span>
+<span class="sd">        to use the curve but adjust it to a specific spread, you can use</span>
+<span class="sd">        the `spread_start` and `spread_end` parameters. If you want the result to revert to a curve without a spread, you can apply</span>
+<span class="sd">        the `spread_forward` parameter that subtracts from the forward rate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        start_date : Union[str, pd.Timestamp]</span>
+<span class="sd">            Start date for the forward rate calculation.</span>
+<span class="sd">        end_date : Union[str, pd.Timestamp]</span>
+<span class="sd">            End date for the forward rate calculation.</span>
+<span class="sd">        spread_start : float, optional</span>
+<span class="sd">            Spread to apply at the start date (default is 0).</span>
+<span class="sd">        spread_end : float, optional</span>
+<span class="sd">            Spread to apply at the end date (default is 0).</span>
+<span class="sd">        spread_forward : float, optional</span>
+<span class="sd">            Spread to subtract from the forward rate (default is 0).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Forward rate between start_date and end_date.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method computes the time fraction between the two dates and delegates to `forward_dt`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">day_count_convention</span><span class="o">.</span><span class="n">fraction</span><span class="p">(</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">start_date</span><span class="p">),</span> <span class="n">current</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">end_date</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_dt</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">spread_start</span><span class="p">,</span> <span class="n">spread_end</span><span class="p">,</span> <span class="n">spread_forward</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="YieldCurveBase.compare_to">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase.compare_to">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compare_to</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;YieldCurveBase&quot;</span><span class="p">,</span> <span class="n">maturities</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compare this curve to another curve (e.g., difference in rates, spreads).</span>
+<span class="sd">        Returns a DataFrame with columns: Current Curve, Compared Curve, Spread.</span>
+<span class="sd">        The discount_t and discount_to_rate are applied only to the compared curve.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">maturities</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;maturities&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">maturities</span><span class="p">:</span>
+                    <span class="n">maturities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maturities</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">maturities</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">maturities</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+        <span class="n">current_rates</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_t</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">maturities</span><span class="p">]</span>
+        <span class="n">compared_rates</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">discount_to_rate</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="n">m</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">maturities</span>
+        <span class="p">]</span>
+        <span class="n">spread</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="o">-</span> <span class="n">o</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">o</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">current_rates</span><span class="p">,</span> <span class="n">compared_rates</span><span class="p">)]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;Maturity&quot;</span><span class="p">:</span> <span class="n">maturities</span><span class="p">,</span>
+                    <span class="s2">&quot;Current Curve&quot;</span><span class="p">:</span> <span class="n">current_rates</span><span class="p">,</span>
+                    <span class="s2">&quot;Compared Curve&quot;</span><span class="p">:</span> <span class="n">compared_rates</span><span class="p">,</span>
+                    <span class="s2">&quot;Spread&quot;</span><span class="p">:</span> <span class="n">spread</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;Maturity&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

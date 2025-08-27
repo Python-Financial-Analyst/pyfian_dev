@@ -68,19 +68,13 @@
 <li class="toctree-l4 current"><a class="reference internal" href="../index.html">pyfian.time_value</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../utils/index.html">pyfian.utils</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../visualization/index.html">pyfian.visualization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../yield_curves/index.html">pyfian.yield_curves</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../index.html#attributes">Attributes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../index.html#package-contents">Package Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../../par_curve/index.html">par_curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../base_curve/index.html">base_curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../spot_curve/index.html">spot_curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../flat_curve/index.html">flat_curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../credit_spread/index.html">credit_spread</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../curve_combination/index.html">curve_combination</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../zero_coupon_curve/index.html">zero_coupon_curve</a></li>
 </ul>
 </li>
 </ul>
@@ -173,17 +167,15 @@ a Series for DataFrames.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">geometric_mean</span><span class="p">([</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.02</span><span class="p">])</span>
-<span class="go">0.0416...</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="go">np.float64(0.04216388706767926)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
 <span class="gp">... </span>    <span class="s1">&#39;Fund A&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="s1">&#39;Fund B&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">]</span>
 <span class="gp">... </span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">geometric_mean</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="go">Fund A    0.0343...</span>
-<span class="go">Fund B    0.0059...</span>
+<span class="go">Fund A    0.034891</span>
+<span class="go">Fund B    0.006257</span>
 <span class="go">dtype: float64</span>
 </pre></div>
 </div>
@@ -222,17 +214,15 @@ a Series for DataFrames.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">arithmetic_mean</span><span class="p">([</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.02</span><span class="p">])</span>
-<span class="go">0.0433...</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="go">np.float64(0.0433333333)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
 <span class="gp">... </span>    <span class="s1">&#39;Fund A&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="s1">&#39;Fund B&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">]</span>
 <span class="gp">... </span><span class="p">})</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">arithmetic_mean</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="go">Fund A    0.0350...</span>
-<span class="go">Fund B   -0.0033...</span>
+<span class="go">Fund A    0.035000</span>
+<span class="go">Fund B    0.006667</span>
 <span class="go">dtype: float64</span>
 </pre></div>
 </div>
@@ -276,15 +266,15 @@ a Series for DataFrames.</p>
 <p>Averaging P/E ratios for three companies:
 &gt;&gt;&gt; pe_ratios = [15, 20, 25]
 &gt;&gt;&gt; harmonic_mean(pe_ratios)
-18.4615…</p>
+np.float64(19.1489361702)</p>
 <p>Averaging P/E ratios in a DataFrame:
 &gt;&gt;&gt; df = pd.DataFrame({
 …     ‘Tech’: [30, 25, 35],
 …     ‘Finance’: [12, 15, 18]
 … })
 &gt;&gt;&gt; harmonic_mean(df)
-Tech       29.5139…
-Finance    14.7826…
+Tech       29.439252
+Finance    14.594595
 dtype: float64</p>
 <p class="rubric">Notes</p>
 <ul class="simple">
@@ -326,7 +316,7 @@ and works with NumPy arrays and pandas Series/DataFrames.</p>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">weighted_geometric_mean</span><span class="p">([</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-<span class="go">0.0669491...</span>
+<span class="go">np.float64(0.0669491218)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -362,7 +352,7 @@ handles NaNs, and works with NumPy arrays and pandas Series/DataFrames.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pe</span> <span class="o">=</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">25</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">caps</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">700</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">weighted_harmonic_mean</span><span class="p">(</span><span class="n">pe</span><span class="p">,</span> <span class="n">caps</span><span class="p">)</span>
-<span class="go">22.3880597</span>
+<span class="go">np.float64(22.3880597015)</span>
 </pre></div>
 </div>
 </dd></dl>

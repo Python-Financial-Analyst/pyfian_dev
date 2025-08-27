@@ -1,0 +1,287 @@
+pyfian.yield_curves.curve_combination
+=====================================
+
+.. py:module:: pyfian.yield_curves.curve_combination
+
+.. autoapi-nested-parse::
+
+   curve_combination.py
+
+   Module for combining yield curves. Implements:
+
+   - CombinedCurve: Combines a benchmark yield curve and a spread curve to produce a total yield curve.
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   pyfian.yield_curves.curve_combination.curve_date
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   pyfian.yield_curves.curve_combination.CombinedCurve
+
+
+Module Contents
+---------------
+
+.. py:class:: CombinedCurve(benchmark_curve: pyfian.yield_curves.base_curve.YieldCurveBase, spread_curve: pyfian.yield_curves.credit_spread.CreditSpreadCurveBase, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/365', yield_calculation_convention: Optional[str] = None)
+
+   Bases: :py:obj:`pyfian.yield_curves.zero_coupon_curve.ZeroCouponCurve`
+
+
+   CombinedCurve combines a benchmark curve and a spread curve.
+
+   This class provides a mechanism for constructing a total yield curve by combining a base curve (e.g., risk-free) and a spread curve (e.g., credit spread), which is essential for pricing, discounting, and risk management in fixed income analytics.
+
+   .. attribute:: benchmark_curve
+
+      The base yield curve (e.g., ZeroCouponCurve, FlatCurveAER).
+
+      :type: YieldCurveBase
+
+   .. attribute:: spread_curve
+
+      The credit spread curve (e.g., CreditSpreadCurve, FlatCreditSpreadCurve).
+
+      :type: CreditSpreadCurveBase
+
+   .. attribute:: curve_date
+
+      The date of the curve.
+
+      :type: pd.Timestamp
+
+   .. attribute:: benchmark_yield_calculation_convention
+
+      Yield calculation convention for the benchmark curve.
+
+      :type: str
+
+   .. attribute:: spread_yield_calculation_convention
+
+      Yield calculation convention for the spread curve.
+
+      :type: str
+
+   .. attribute:: day_count_convention
+
+      The day count convention used for time calculations.
+
+      :type: DayCountBase
+
+   .. attribute:: yield_calculation_convention
+
+      The yield calculation convention used for combined rates.
+
+      :type: str
+
+   .. attribute:: maturities
+
+      Sorted list of maturities from both curves.
+
+      :type: list
+
+   .. method:: as_dict()
+
+      Returns a dictionary representation of the curve.
+
+   .. method:: from_dict(data)
+
+      Creates a CombinedCurve from a dictionary.
+
+   .. method:: get_rate(t, yield_calculation_convention=None, spread=0)
+
+      Returns the combined rate for a given time in years.
+
+   .. method:: date_rate(date, yield_calculation_convention=None, spread=0)
+
+      Returns the combined rate for a given date.
+
+   .. method:: __repr__()
+
+      String representation of the CombinedCurve.
+
+
+   :param benchmark_curve: The base yield curve (e.g., ZeroCouponCurve, FlatCurveAER).
+   :type benchmark_curve: object
+   :param spread_curve: The credit spread curve (e.g., CreditSpreadCurve, FlatCreditSpreadCurve).
+   :type spread_curve: object
+   :param day_count_convention: The day count convention to use (default is "actual/365").
+   :type day_count_convention: str | DayCountBase
+   :param yield_calculation_convention: The yield calculation convention to use (default is None). Supported: "Annual", "BEY", "Continuous". If None, "Annual" will be used.
+   :type yield_calculation_convention: str, optional
+
+   .. rubric:: Example
+
+   >>> import pandas as pd
+   >>> from pyfian.yield_curves.flat_curve import FlatCurveAER, FlatCurveBEY
+   >>> from pyfian.yield_curves.credit_spread import FlatCreditSpreadCurve, CreditSpreadCurve
+   >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
+   >>> # Simple combined curve usage
+   >>> curve_date = pd.Timestamp("2023-01-01")
+   >>> benchmark_curve = FlatCurveAER(aer=0.04, curve_date=curve_date)
+   >>> spread_curve = FlatCreditSpreadCurve(spread=0.03, curve_date=curve_date)
+   >>> combined_curve = CombinedCurve(benchmark_curve, spread_curve)
+   >>> combined_curve.get_rate(1.0)
+   0.07
+   >>> combined_curve.date_rate("2024-01-01")
+   0.07
+   >>> combined_curve.as_dict()
+   {'benchmark_curve': FlatCurveAER(aer=0.0400, curve_date=2023-01-01), 'spread_curve': FlatCreditSpreadCurve(spread=0.03, curve_date=2023-01-01), 'yield_calculation_convention': 'Annual', 'day_count_convention': DayCountActual365()}
+   >>> list_maturities_rates = [
+   ...     (pd.DateOffset(months=1), 4.49),
+   ...     (pd.DateOffset(months=3), 4.32),
+   ...     (pd.DateOffset(months=6), 4.14),
+   ...     (pd.DateOffset(years=1), 3.95),
+   ...     (pd.DateOffset(years=2), 3.79),
+   ...     (pd.DateOffset(years=3), 3.75),
+   ...     (pd.DateOffset(years=5), 3.86),
+   ...     (pd.DateOffset(years=7), 4.07),
+   ...     (pd.DateOffset(years=10), 4.33),
+   ...     (pd.DateOffset(years=20), 4.89),
+   ...     (pd.DateOffset(years=30), 4.92),
+   ... ]
+   >>> date = pd.Timestamp("2025-08-22")
+   >>> one_year_offset = date + pd.DateOffset(years=1)
+   >>> bonds = []
+   >>> for offset, cpn in list_maturities_rates:
+   ...     not_zero_coupon = date + offset > one_year_offset
+   ...     bond = FixedRateBullet(
+   ...         issue_dt=date,
+   ...         maturity=date + offset,
+   ...         cpn_freq=2 if not_zero_coupon else 0,
+   ...         cpn=cpn if not_zero_coupon else 0,
+   ...         bond_price=100 if not_zero_coupon else None,
+   ...         yield_to_maturity=None if not_zero_coupon else cpn / 100,
+   ...         settlement_date=date,
+   ...     )
+   ...     bonds.append(bond)
+   >>> # Create a benchmark curve and spread curve from bonds
+   >>> benchmark_curve_bey = FlatCurveBEY(bey=0.02, curve_date=date)
+   >>> spread_curve = CreditSpreadCurve.spread_from_bonds(benchmark_curve=benchmark_curve_bey, bonds=bonds)
+   >>> combined_curve = CombinedCurve(benchmark_curve_bey, spread_curve, day_count_convention="30/360")
+   >>> for bond in bonds:
+   ...     bond_price = bond.get_bond_price()
+   ...     if bond_price is None:
+   ...         continue
+   ...     pv, flows_pv = bond.value_with_curve(combined_curve)
+   ...     maturity_date = bond.maturity
+   ...     print(
+   ...         f"Maturity: {maturity_date}     Price: {round(bond_price, 4)}   PV: {round(pv, 4)}      Diff: {round(abs(bond_price - pv), 4)}"
+   ...     ) # doctest: +SKIP
+
+
+   .. py:attribute:: benchmark_curve
+
+
+   .. py:attribute:: spread_curve
+
+
+   .. py:attribute:: curve_date
+
+
+   .. py:attribute:: benchmark_yield_calculation_convention
+
+
+   .. py:attribute:: spread_yield_calculation_convention
+
+
+   .. py:attribute:: day_count_convention
+      :type:  pyfian.utils.day_count.DayCountBase
+
+
+   .. py:attribute:: yield_calculation_convention
+      :type:  str
+      :value: 'Annual'
+
+
+
+   .. py:attribute:: maturities
+
+
+   .. py:method:: as_dict()
+
+      Convert the curve to a dictionary.
+
+
+
+   .. py:method:: from_dict(data: dict) -> CombinedCurve
+      :classmethod:
+
+
+      Instantiate a curve from a dictionary.
+
+
+
+   .. py:method:: get_rate(t: float, yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+
+      Get the combined rate (benchmark + spread) for a cash flow by time t (in years).
+
+      The spread is added to the yield in the original curve.
+
+      yield_calculation_convention can be used to transform the yield to different conventions.
+
+      :param t: Time in years to discount.
+      :type t: float
+      :param spread: Spread to add to the discount rate.
+      :type spread: float
+      :param yield_calculation_convention: Yield calculation convention to use (default is None).
+      :type yield_calculation_convention: Optional[str]
+
+      :returns: Rate for the cash flow.
+      :rtype: float
+
+
+
+   .. py:method:: get_t(t: float, spread: float = 0) -> float
+
+
+   .. py:method:: _get_t(t, spread=0)
+
+      Get the rate for a cash flow by time t (in years).
+
+      The spread is added to the yield in the original curve.
+
+      :param t: Time in years to discount.
+      :type t: float
+      :param spread: Spread to add to the discount rate.
+      :type spread: float
+
+      :returns: Rate for the cash flow.
+      :rtype: float
+
+
+
+   .. py:method:: date_rate(date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+
+      Get the combined rate (benchmark + spread) for a cash flow by date.
+
+      The spread is added to the yield in the original curve.
+
+      yield_calculation_convention can be used to transform the yield to different conventions.
+
+      :param date: Date to get the rate for.
+      :type date: Union[str, pd.Timestamp]
+      :param yield_calculation_convention: Yield calculation convention to use (default is None).
+      :type yield_calculation_convention: Optional[str]
+      :param spread: Spread to add to the rate.
+      :type spread: float
+
+      :returns: Rate for the cash flow.
+      :rtype: float
+
+
+
+   .. py:method:: __repr__()
+
+
+.. py:data:: curve_date
+

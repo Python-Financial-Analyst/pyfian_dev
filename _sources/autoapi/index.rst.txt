@@ -7,12 +7,5 @@ This page contains auto-generated API reference documentation [#f1]_.
    :titlesonly:
 
    /autoapi/pyfian/index
-   /autoapi/par_curve/index
-   /autoapi/base_curve/index
-   /autoapi/spot_curve/index
-   /autoapi/flat_curve/index
-   /autoapi/credit_spread/index
-   /autoapi/curve_combination/index
-   /autoapi/zero_coupon_curve/index
 
 .. [#f1] Created with `sphinx-autoapi <https://github.com/readthedocs/sphinx-autoapi>`_

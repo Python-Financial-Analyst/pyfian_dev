@@ -1,0 +1,498 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyfian.yield_curves.curve_combination &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="pyfian.yield_curves.flat_curve" href="../flat_curve/index.html" />
+    <link rel="prev" title="pyfian.yield_curves.credit_spread" href="../credit_spread/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Topics/fixed_income/index.html">Fixed Income</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">pyfian</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../corporate_finance/index.html">pyfian.corporate_finance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../data/index.html">pyfian.data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../derivatives/index.html">pyfian.derivatives</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../financial_statements/index.html">pyfian.financial_statements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../fixed_income/index.html">pyfian.fixed_income</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../portfolio/index.html">pyfian.portfolio</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../risk_management/index.html">pyfian.risk_management</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../statistics/index.html">pyfian.statistics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../time_value/index.html">pyfian.time_value</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/index.html">pyfian.utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../visualization/index.html">pyfian.visualization</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">pyfian.yield_curves</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#attributes">Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">pyfian</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">pyfian.yield_curves</a></li>
+      <li class="breadcrumb-item active">pyfian.yield_curves.curve_combination</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/pyfian/yield_curves/curve_combination/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyfian.yield_curves.curve_combination">
+<span id="pyfian-yield-curves-curve-combination"></span><h1>pyfian.yield_curves.curve_combination<a class="headerlink" href="#module-pyfian.yield_curves.curve_combination" title="Link to this heading"></a></h1>
+<p>curve_combination.py</p>
+<p>Module for combining yield curves. Implements:</p>
+<ul class="simple">
+<li><p>CombinedCurve: Combines a benchmark yield curve and a spread curve to produce a total yield curve.</p></li>
+</ul>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.yield_curves.curve_combination.curve_date" title="pyfian.yield_curves.curve_combination.curve_date"><code class="xref py py-obj docutils literal notranslate"><span class="pre">curve_date</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.yield_curves.curve_combination.CombinedCurve" title="pyfian.yield_curves.curve_combination.CombinedCurve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CombinedCurve</span></code></a></p></td>
+<td><p>CombinedCurve combines a benchmark curve and a spread curve.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.yield_curves.curve_combination.</span></span><span class="sig-name descname"><span class="pre">CombinedCurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">benchmark_curve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase" title="pyfian.yield_curves.base_curve.YieldCurveBase"><span class="pre">pyfian.yield_curves.base_curve.YieldCurveBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread_curve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../credit_spread/index.html#pyfian.yield_curves.credit_spread.CreditSpreadCurveBase" title="pyfian.yield_curves.credit_spread.CreditSpreadCurveBase"><span class="pre">pyfian.yield_curves.credit_spread.CreditSpreadCurveBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'actual/365'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/yield_curves/curve_combination.html#CombinedCurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../zero_coupon_curve/index.html#pyfian.yield_curves.zero_coupon_curve.ZeroCouponCurve" title="pyfian.yield_curves.zero_coupon_curve.ZeroCouponCurve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyfian.yield_curves.zero_coupon_curve.ZeroCouponCurve</span></code></a></p>
+<p>CombinedCurve combines a benchmark curve and a spread curve.</p>
+<p>This class provides a mechanism for constructing a total yield curve by combining a base curve (e.g., risk-free) and a spread curve (e.g., credit spread), which is essential for pricing, discounting, and risk management in fixed income analytics.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve.benchmark_curve">
+<span class="sig-name descname"><span class="pre">benchmark_curve</span></span><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve.benchmark_curve" title="Link to this definition"></a></dt>
+<dd><p>The base yield curve (e.g., ZeroCouponCurve, FlatCurveAER).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase" title="pyfian.yield_curves.base_curve.YieldCurveBase">YieldCurveBase</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve.spread_curve">
+<span class="sig-name descname"><span class="pre">spread_curve</span></span><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve.spread_curve" title="Link to this definition"></a></dt>
+<dd><p>The credit spread curve (e.g., CreditSpreadCurve, FlatCreditSpreadCurve).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../credit_spread/index.html#pyfian.yield_curves.credit_spread.CreditSpreadCurveBase" title="pyfian.yield_curves.credit_spread.CreditSpreadCurveBase">CreditSpreadCurveBase</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve.curve_date">
+<span class="sig-name descname"><span class="pre">curve_date</span></span><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve.curve_date" title="Link to this definition"></a></dt>
+<dd><p>The date of the curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Timestamp</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve.benchmark_yield_calculation_convention">
+<span class="sig-name descname"><span class="pre">benchmark_yield_calculation_convention</span></span><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve.benchmark_yield_calculation_convention" title="Link to this definition"></a></dt>
+<dd><p>Yield calculation convention for the benchmark curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve.spread_yield_calculation_convention">
+<span class="sig-name descname"><span class="pre">spread_yield_calculation_convention</span></span><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve.spread_yield_calculation_convention" title="Link to this definition"></a></dt>
+<dd><p>Yield calculation convention for the spread curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve.day_count_convention">
+<span class="sig-name descname"><span class="pre">day_count_convention</span></span><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve.day_count_convention" title="Link to this definition"></a></dt>
+<dd><p>The day count convention used for time calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase">DayCountBase</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve.yield_calculation_convention">
+<span class="sig-name descname"><span class="pre">yield_calculation_convention</span></span><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve.yield_calculation_convention" title="Link to this definition"></a></dt>
+<dd><p>The yield calculation convention used for combined rates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve.maturities">
+<span class="sig-name descname"><span class="pre">maturities</span></span><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve.maturities" title="Link to this definition"></a></dt>
+<dd><p>Sorted list of maturities from both curves.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/yield_curves/curve_combination.html#CombinedCurve.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve.as_dict" title="Link to this definition"></a></dt>
+<dd><p>Returns a dictionary representation of the curve.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve.from_dict">
+<span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/yield_curves/curve_combination.html#CombinedCurve.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve.from_dict" title="Link to this definition"></a></dt>
+<dd><p>Creates a CombinedCurve from a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve.get_rate">
+<span class="sig-name descname"><span class="pre">get_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/yield_curves/curve_combination.html#CombinedCurve.get_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve.get_rate" title="Link to this definition"></a></dt>
+<dd><p>Returns the combined rate for a given time in years.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve.date_rate">
+<span class="sig-name descname"><span class="pre">date_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/yield_curves/curve_combination.html#CombinedCurve.date_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve.date_rate" title="Link to this definition"></a></dt>
+<dd><p>Returns the combined rate for a given date.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/yield_curves/curve_combination.html#CombinedCurve.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve.__repr__" title="Link to this definition"></a></dt>
+<dd><p>String representation of the CombinedCurve.</p>
+</dd></dl>
+
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>benchmark_curve</strong> (<em>object</em>) – The base yield curve (e.g., ZeroCouponCurve, FlatCurveAER).</p></li>
+<li><p><strong>spread_curve</strong> (<em>object</em>) – The credit spread curve (e.g., CreditSpreadCurve, FlatCreditSpreadCurve).</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em> | </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a>) – The day count convention to use (default is “actual/365”).</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – The yield calculation convention to use (default is None). Supported: “Annual”, “BEY”, “Continuous”. If None, “Annual” will be used.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.flat_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlatCurveAER</span><span class="p">,</span> <span class="n">FlatCurveBEY</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.credit_spread</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlatCreditSpreadCurve</span><span class="p">,</span> <span class="n">CreditSpreadCurve</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Simple combined curve usage</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve_date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s2">&quot;2023-01-01&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">benchmark_curve</span> <span class="o">=</span> <span class="n">FlatCurveAER</span><span class="p">(</span><span class="n">aer</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span> <span class="n">curve_date</span><span class="o">=</span><span class="n">curve_date</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spread_curve</span> <span class="o">=</span> <span class="n">FlatCreditSpreadCurve</span><span class="p">(</span><span class="n">spread</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">curve_date</span><span class="o">=</span><span class="n">curve_date</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">combined_curve</span> <span class="o">=</span> <span class="n">CombinedCurve</span><span class="p">(</span><span class="n">benchmark_curve</span><span class="p">,</span> <span class="n">spread_curve</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">combined_curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="go">0.07</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">combined_curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2024-01-01&quot;</span><span class="p">)</span>
+<span class="go">0.07</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">combined_curve</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
+<span class="go">{&#39;benchmark_curve&#39;: FlatCurveAER(aer=0.0400, curve_date=2023-01-01), &#39;spread_curve&#39;: FlatCreditSpreadCurve(spread=0.03, curve_date=2023-01-01), &#39;yield_calculation_convention&#39;: &#39;Annual&#39;, &#39;day_count_convention&#39;: DayCountActual365()}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">list_maturities_rates</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="mf">4.49</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span> <span class="mf">4.32</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="mi">6</span><span class="p">),</span> <span class="mf">4.14</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="mf">3.95</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="mf">3.79</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span> <span class="mf">3.75</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span> <span class="mf">3.86</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">7</span><span class="p">),</span> <span class="mf">4.07</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span> <span class="mf">4.33</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span> <span class="mf">4.89</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span> <span class="mf">4.92</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s2">&quot;2025-08-22&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">one_year_offset</span> <span class="o">=</span> <span class="n">date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bonds</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">offset</span><span class="p">,</span> <span class="n">cpn</span> <span class="ow">in</span> <span class="n">list_maturities_rates</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">not_zero_coupon</span> <span class="o">=</span> <span class="n">date</span> <span class="o">+</span> <span class="n">offset</span> <span class="o">&gt;</span> <span class="n">one_year_offset</span>
+<span class="gp">... </span>    <span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">issue_dt</span><span class="o">=</span><span class="n">date</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">maturity</span><span class="o">=</span><span class="n">date</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">2</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">cpn</span><span class="o">=</span><span class="n">cpn</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">bond_price</span><span class="o">=</span><span class="mi">100</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">yield_to_maturity</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="n">cpn</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">settlement_date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="p">)</span>
+<span class="gp">... </span>    <span class="n">bonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bond</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a benchmark curve and spread curve from bonds</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">benchmark_curve_bey</span> <span class="o">=</span> <span class="n">FlatCurveBEY</span><span class="p">(</span><span class="n">bey</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">curve_date</span><span class="o">=</span><span class="n">date</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spread_curve</span> <span class="o">=</span> <span class="n">CreditSpreadCurve</span><span class="o">.</span><span class="n">spread_from_bonds</span><span class="p">(</span><span class="n">benchmark_curve</span><span class="o">=</span><span class="n">benchmark_curve_bey</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="n">bonds</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">combined_curve</span> <span class="o">=</span> <span class="n">CombinedCurve</span><span class="p">(</span><span class="n">benchmark_curve_bey</span><span class="p">,</span> <span class="n">spread_curve</span><span class="p">,</span> <span class="n">day_count_convention</span><span class="o">=</span><span class="s2">&quot;30/360&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">bonds</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">bond_price</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">get_bond_price</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">bond_price</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">continue</span>
+<span class="gp">... </span>    <span class="n">pv</span><span class="p">,</span> <span class="n">flows_pv</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">value_with_curve</span><span class="p">(</span><span class="n">combined_curve</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">maturity_date</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">maturity</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="sa">f</span><span class="s2">&quot;Maturity: </span><span class="si">{</span><span class="n">maturity_date</span><span class="si">}</span><span class="s2">     Price: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">bond_price</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">   PV: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">pv</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">      Diff: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">bond_price</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pv</span><span class="p">),</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="gp">... </span>    <span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">benchmark_curve</span></span><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">spread_curve</span></span><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">curve_date</span></span><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">benchmark_yield_calculation_convention</span></span><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">spread_yield_calculation_convention</span></span><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">day_count_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></em><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">yield_calculation_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Annual'</span></em><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">maturities</span></span><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/yield_curves/curve_combination.html#CombinedCurve.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dd><p>Convert the curve to a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id9">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyfian.yield_curves.curve_combination.CombinedCurve" title="pyfian.yield_curves.curve_combination.CombinedCurve"><span class="pre">CombinedCurve</span></a></span></span><a class="reference internal" href="../../../../_modules/pyfian/yield_curves/curve_combination.html#CombinedCurve.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dd><p>Instantiate a curve from a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">get_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/yield_curves/curve_combination.html#CombinedCurve.get_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<dd><p>Get the combined rate (benchmark + spread) for a cash flow by time t (in years).</p>
+<p>The spread is added to the yield in the original curve.</p>
+<p>yield_calculation_convention can be used to transform the yield to different conventions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – Time in years to discount.</p></li>
+<li><p><strong>spread</strong> (<em>float</em>) – Spread to add to the discount rate.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Yield calculation convention to use (default is None).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rate for the cash flow.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve.get_t">
+<span class="sig-name descname"><span class="pre">get_t</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/yield_curves/curve_combination.html#CombinedCurve.get_t"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve.get_t" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.CombinedCurve._get_t">
+<span class="sig-name descname"><span class="pre">_get_t</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/yield_curves/curve_combination.html#CombinedCurve._get_t"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.yield_curves.curve_combination.CombinedCurve._get_t" title="Link to this definition"></a></dt>
+<dd><p>Get the rate for a cash flow by time t (in years).</p>
+<p>The spread is added to the yield in the original curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>float</em>) – Time in years to discount.</p></li>
+<li><p><strong>spread</strong> (<em>float</em>) – Spread to add to the discount rate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rate for the cash flow.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">date_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/yield_curves/curve_combination.html#CombinedCurve.date_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<dd><p>Get the combined rate (benchmark + spread) for a cash flow by date.</p>
+<p>The spread is added to the yield in the original curve.</p>
+<p>yield_calculation_convention can be used to transform the yield to different conventions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>date</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pd.Timestamp</em><em>]</em>) – Date to get the rate for.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Yield calculation convention to use (default is None).</p></li>
+<li><p><strong>spread</strong> (<em>float</em>) – Spread to add to the rate.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rate for the cash flow.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/yield_curves/curve_combination.html#CombinedCurve.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pyfian.yield_curves.curve_combination.curve_date">
+<span class="sig-prename descclassname"><span class="pre">pyfian.yield_curves.curve_combination.</span></span><span class="sig-name descname"><span class="pre">curve_date</span></span><a class="headerlink" href="#pyfian.yield_curves.curve_combination.curve_date" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../credit_spread/index.html" class="btn btn-neutral float-left" title="pyfian.yield_curves.credit_spread" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../flat_curve/index.html" class="btn btn-neutral float-right" title="pyfian.yield_curves.flat_curve" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

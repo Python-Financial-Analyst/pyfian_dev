@@ -46,7 +46,7 @@ pyfian.time_value.interest_income
    .. rubric:: Examples
 
    >>> interest_income_continuous(0.05, 1)
-   0.05127109637602412
+   np.float64(0.05127109637602412)
    >>> interest_income_effective(0.05, 1)
    0.05
    >>> interest_income_nominal_periods(0.06, 12, 6)
@@ -109,7 +109,7 @@ Module Contents
    .. rubric:: Examples
 
    >>> interest_income_continuous(0.05, 1)
-   0.05127109637602412
+   np.float64(0.05127109637602412)
 
 
 .. py:function:: interest_income_effective(effective_rate: float, time: float, notional: float = 1.0) -> float

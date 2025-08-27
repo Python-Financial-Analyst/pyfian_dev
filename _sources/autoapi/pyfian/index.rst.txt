@@ -26,6 +26,7 @@ Submodules
    /autoapi/pyfian/time_value/index
    /autoapi/pyfian/utils/index
    /autoapi/pyfian/visualization/index
+   /autoapi/pyfian/yield_curves/index
 
 
 Attributes

@@ -85,11 +85,11 @@ Module Contents
    .. rubric:: Examples
 
    >>> convert_yield(0.05, "BEY", "Annual")
-   0.050625
+   np.float64(0.050625)
    >>> convert_yield(0.05, "BEY", "Continuous")
-   0.04938523
+   np.float64(0.0493852252)
    >>> convert_yield(0.05, "Continuous", "Annual")
-   0.051271096376024
+   np.float64(0.0512710964)
 
 
 .. py:function:: continuous_to_effective(rate: float) -> float
@@ -119,7 +119,7 @@ Module Contents
    .. rubric:: Examples
 
    >>> continuous_to_effective(0.05)
-   0.05127109637602411
+   np.float64(0.0512710964)
 
 
 .. py:function:: effective_to_continuous(effective_rate: float) -> float
@@ -144,8 +144,8 @@ Module Contents
 
    .. rubric:: Examples
 
-   >>> effective_to_continuous(0.05127109637602411)
-   0.05
+   >>> effective_to_continuous(0.05127109637602411) # doctest: +ELLIPSIS
+   np.float64(0.05...)
 
 
 .. py:function:: nominal_periods_to_effective(nominal_rate: float, periods_per_year: int) -> float
@@ -180,9 +180,9 @@ Module Contents
    .. rubric:: Examples
 
    >>> nominal_periods_to_effective(0.12, 12)  # monthly 1%
-   0.12682503013196977
+   np.float64(0.1268250301)
    >>> nominal_periods_to_effective(0.12, 4)   # quarterly 3%
-   0.12550881349224116
+   np.float64(0.12550881)
 
 
 .. py:function:: effective_to_nominal_periods(effective_rate: float, periods_per_year: int) -> float
@@ -216,9 +216,9 @@ Module Contents
    .. rubric:: Examples
 
    >>> effective_to_nominal_periods(0.12682503013196977, 12)  # monthly
-   0.12
-   >>> effective_to_nominal_periods(0.12550881349224116, 4)   # quarterly
-   0.12
+   np.float64(0.12)
+   >>> effective_to_nominal_periods(0.12550881349224116, 4)   # quarterly # doctest: +ELLIPSIS
+   np.float64(0.12...)
 
 
 .. py:function:: nominal_days_to_effective(nominal_rate: float, days: int, base_year: int = 365) -> float
@@ -255,9 +255,9 @@ Module Contents
    .. rubric:: Examples
 
    >>> nominal_days_to_effective(0.12, 30, 365)
-   0.1268341704586875
+   np.float64(0.1268341705)
    >>> nominal_days_to_effective(0.12, 30, 360)
-   0.12682503013196977
+   np.float64(0.1268250301)
 
 
 .. py:function:: effective_to_nominal_days(effective_rate: float, days: int, base_year: int = 365) -> float
@@ -292,10 +292,10 @@ Module Contents
 
    .. rubric:: Examples
 
-   >>> effective_to_nominal_days(0.1268341704586875, 30, 365)
-   0.12
-   >>> effective_to_nominal_days(0.12682503013196977, 30, 360)
-   0.12
+   >>> effective_to_nominal_days(0.1268341704586875, 30, 365) # doctest: +ELLIPSIS
+   np.float64(0.12...)
+   >>> effective_to_nominal_days(0.12682503013196977, 30, 360) # doctest: +ELLIPSIS
+   np.float64(0.12...)
 
 
 .. py:function:: single_period_to_effective(period_rate: float, periods: int) -> float
@@ -330,7 +330,7 @@ Module Contents
    .. rubric:: Examples
 
    >>> single_period_to_effective(0.01, 12)
-   0.12682503013196977
+   np.float64(0.1268250301)
 
 
 .. py:function:: effective_to_single_period(effective_rate: float, periods: int) -> float
@@ -363,7 +363,7 @@ Module Contents
    .. rubric:: Examples
 
    >>> effective_to_single_period(0.12682503013196977, 12)
-   0.01
+   np.float64(0.01)
 
 
 .. py:function:: money_market_rate_to_effective(mmr: float, days: int = 360, base: float = 360, discount: bool = False) -> float
@@ -400,11 +400,11 @@ Module Contents
    .. rubric:: Examples
 
    >>> money_market_rate_to_effective(0.05, 365)
-   0.05178480420654806
+   np.float64(0.0499829289)
    >>> money_market_rate_to_effective(0.05, 252)
-   0.05097451209647329
+   np.float64(0.0503725338)
    >>> money_market_rate_to_effective(0.05, 365, discount=True)
-   0.05319148936170213
+   np.float64(0.0526511542)
 
 
 .. py:function:: effective_to_money_market_rate(effective_rate: float, days: int = 360, base: float = 360, discount: bool = False) -> float
@@ -439,12 +439,12 @@ Module Contents
 
    .. rubric:: Examples
 
-   >>> effective_to_money_market_rate(0.05178480420654806, 365)
-   0.05
-   >>> effective_to_money_market_rate(0.05097451209647329, 252)
-   0.05
-   >>> effective_to_money_market_rate(0.05319148936170213, 365, discount=True)
-   0.05
+   >>> effective_to_money_market_rate(0.049982929, 365) # doctest: +ELLIPSIS
+   np.float64(0.05...)
+   >>> effective_to_money_market_rate(0.0503725338, 252) # doctest: +ELLIPSIS
+   np.float64(0.05...)
+   >>> effective_to_money_market_rate(0.0526511542, 365, discount=True) # doctest: +ELLIPSIS
+   np.float64(0.05...)
 
 
 .. py:function:: bey_to_effective_annual(bey: float) -> float
@@ -471,7 +471,7 @@ Module Contents
    .. rubric:: Examples
 
    >>> bey_to_effective_annual(0.06)
-   0.0609
+   np.float64(0.0609)
 
 
 .. py:function:: effective_annual_to_bey(effective_rate: float) -> float
@@ -498,6 +498,6 @@ Module Contents
    .. rubric:: Examples
 
    >>> effective_annual_to_bey(0.0609)
-   0.06
+   np.float64(0.06)
 
 

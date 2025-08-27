@@ -52,16 +52,15 @@ Module Contents
 
    >>> import numpy as np
    >>> geometric_mean([0.05, 0.10, -0.02])
-   0.0416...
-
+   np.float64(0.04216388706767926)
    >>> import pandas as pd
    >>> df = pd.DataFrame({
    ...     'Fund A': [0.05, 0.02, np.nan],
    ...     'Fund B': [0.01, -0.03, 0.04]
    ... })
    >>> geometric_mean(df)
-   Fund A    0.0343...
-   Fund B    0.0059...
+   Fund A    0.034891
+   Fund B    0.006257
    dtype: float64
 
    .. rubric:: Notes
@@ -97,16 +96,15 @@ Module Contents
 
    >>> import numpy as np
    >>> arithmetic_mean([0.05, 0.10, -0.02])
-   0.0433...
-
+   np.float64(0.0433333333)
    >>> import pandas as pd
    >>> df = pd.DataFrame({
    ...     'Fund A': [0.05, 0.02, np.nan],
    ...     'Fund B': [0.01, -0.03, 0.04]
    ... })
    >>> arithmetic_mean(df)
-   Fund A    0.0350...
-   Fund B   -0.0033...
+   Fund A    0.035000
+   Fund B    0.006667
    dtype: float64
 
    .. rubric:: Notes
@@ -149,7 +147,7 @@ Module Contents
    Averaging P/E ratios for three companies:
    >>> pe_ratios = [15, 20, 25]
    >>> harmonic_mean(pe_ratios)
-   18.4615...
+   np.float64(19.1489361702)
 
    Averaging P/E ratios in a DataFrame:
    >>> df = pd.DataFrame({
@@ -157,8 +155,8 @@ Module Contents
    ...     'Finance': [12, 15, 18]
    ... })
    >>> harmonic_mean(df)
-   Tech       29.5139...
-   Finance    14.7826...
+   Tech       29.439252
+   Finance    14.594595
    dtype: float64
 
    .. rubric:: Notes
@@ -200,7 +198,7 @@ Module Contents
    .. rubric:: Examples
 
    >>> weighted_geometric_mean([0.05, 0.10, 0.02], [1, 2, 1])
-   0.0669491...
+   np.float64(0.0669491218)
 
 
 .. py:function:: weighted_harmonic_mean(values, weights, axis=0)
@@ -234,6 +232,6 @@ Module Contents
    >>> pe = [15, 20, 25]
    >>> caps = [100, 200, 700]
    >>> weighted_harmonic_mean(pe, caps)
-   22.3880597
+   np.float64(22.3880597015)
 
 

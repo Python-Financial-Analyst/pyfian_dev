@@ -152,7 +152,7 @@
 
 <span class="sd">&gt;&gt;&gt; dc = get_day_count_convention(&#39;actual/360&#39;)</span>
 <span class="sd">&gt;&gt;&gt; dc.fraction(pd.Timestamp(&#39;2024-01-01&#39;), pd.Timestamp(&#39;2024-07-01&#39;), pd.Timestamp(&#39;2024-07-01&#39;))</span>
-<span class="sd">0.0</span>
+<span class="sd">0.5055555555555555</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
@@ -187,6 +187,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Base&quot;</span>
+
+<div class="viewcode-block" id="DayCountBase.__repr__">
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountBase.__repr__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
+
 
 <div class="viewcode-block" id="DayCountBase.numerator">
 <a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountBase.numerator">[docs]</a>
@@ -351,6 +357,12 @@
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;30/360&quot;</span>
 
+<div class="viewcode-block" id="DayCount30360.__repr__">
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30360.__repr__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
+
+
 <div class="viewcode-block" id="DayCount30360.numerator">
 <a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30360.numerator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">numerator</span><span class="p">(</span>
@@ -434,6 +446,12 @@
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;30E/360&quot;</span>
 
+<div class="viewcode-block" id="DayCount30E360.__repr__">
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30E360.__repr__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
+
+
 <div class="viewcode-block" id="DayCount30E360.numerator">
 <a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30E360.numerator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">numerator</span><span class="p">(</span>
@@ -512,10 +530,16 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; dc = DayCountActualActualISDA()</span>
 <span class="sd">        &gt;&gt;&gt; dc.fraction(pd.Timestamp(&#39;2024-12-31&#39;), pd.Timestamp(&#39;2025-01-01&#39;), pd.Timestamp(&#39;2025-01-01&#39;))</span>
-<span class="sd">        0.0</span>
+<span class="sd">        0.00273224043715847</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;actual/actual-ISDA&quot;</span>
+
+<div class="viewcode-block" id="DayCountActualActualISDA.__repr__">
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualISDA.__repr__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
+
 
 <div class="viewcode-block" id="DayCountActualActualISDA.numerator">
 <a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualISDA.numerator">[docs]</a>
@@ -671,6 +695,12 @@
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;actual/actual-Bond&quot;</span>
 
+<div class="viewcode-block" id="DayCountActualActualBond.__repr__">
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualBond.__repr__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
+
+
 <div class="viewcode-block" id="DayCountActualActualBond.numerator">
 <a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualBond.numerator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">numerator</span><span class="p">(</span>
@@ -801,10 +831,16 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; dc = DayCountActual360()</span>
 <span class="sd">        &gt;&gt;&gt; dc.fraction(pd.Timestamp(&#39;2024-01-01&#39;), pd.Timestamp(&#39;2024-07-01&#39;), pd.Timestamp(&#39;2024-07-01&#39;))</span>
-<span class="sd">        0.0</span>
+<span class="sd">        0.5055555555555555</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;actual/360&quot;</span>
+
+<div class="viewcode-block" id="DayCountActual360.__repr__">
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActual360.__repr__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
+
 
 <div class="viewcode-block" id="DayCountActual360.numerator">
 <a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActual360.numerator">[docs]</a>
@@ -874,10 +910,16 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; dc = DayCountActual365()</span>
 <span class="sd">        &gt;&gt;&gt; dc.fraction(pd.Timestamp(&#39;2024-01-01&#39;), pd.Timestamp(&#39;2024-07-01&#39;), pd.Timestamp(&#39;2024-07-01&#39;))</span>
-<span class="sd">        0.0</span>
+<span class="sd">        0.4986301369863014</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;actual/365&quot;</span>
+
+<div class="viewcode-block" id="DayCountActual365.__repr__">
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActual365.__repr__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
+
 
 <div class="viewcode-block" id="DayCountActual365.numerator">
 <a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActual365.numerator">[docs]</a>
@@ -953,6 +995,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;30/365&quot;</span>
+
+<div class="viewcode-block" id="DayCount30365.__repr__">
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30365.__repr__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
+
 
 <div class="viewcode-block" id="DayCount30365.numerator">
 <a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30365.numerator">[docs]</a>

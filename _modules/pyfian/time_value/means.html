@@ -122,16 +122,15 @@
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">    &gt;&gt;&gt; geometric_mean([0.05, 0.10, -0.02])</span>
-<span class="sd">    0.0416...</span>
-
+<span class="sd">    np.float64(0.04216388706767926)</span>
 <span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
 <span class="sd">    &gt;&gt;&gt; df = pd.DataFrame({</span>
 <span class="sd">    ...     &#39;Fund A&#39;: [0.05, 0.02, np.nan],</span>
 <span class="sd">    ...     &#39;Fund B&#39;: [0.01, -0.03, 0.04]</span>
 <span class="sd">    ... })</span>
 <span class="sd">    &gt;&gt;&gt; geometric_mean(df)</span>
-<span class="sd">    Fund A    0.0343...</span>
-<span class="sd">    Fund B    0.0059...</span>
+<span class="sd">    Fund A    0.034891</span>
+<span class="sd">    Fund B    0.006257</span>
 <span class="sd">    dtype: float64</span>
 
 <span class="sd">    Notes</span>
@@ -196,16 +195,15 @@
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">    &gt;&gt;&gt; arithmetic_mean([0.05, 0.10, -0.02])</span>
-<span class="sd">    0.0433...</span>
-
+<span class="sd">    np.float64(0.0433333333)</span>
 <span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
 <span class="sd">    &gt;&gt;&gt; df = pd.DataFrame({</span>
 <span class="sd">    ...     &#39;Fund A&#39;: [0.05, 0.02, np.nan],</span>
 <span class="sd">    ...     &#39;Fund B&#39;: [0.01, -0.03, 0.04]</span>
 <span class="sd">    ... })</span>
 <span class="sd">    &gt;&gt;&gt; arithmetic_mean(df)</span>
-<span class="sd">    Fund A    0.0350...</span>
-<span class="sd">    Fund B   -0.0033...</span>
+<span class="sd">    Fund A    0.035000</span>
+<span class="sd">    Fund B    0.006667</span>
 <span class="sd">    dtype: float64</span>
 
 <span class="sd">    Notes</span>
@@ -220,9 +218,9 @@
         <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">returns</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">returns</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">returns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span></div>
 
 
 
@@ -266,7 +264,7 @@
 <span class="sd">    Averaging P/E ratios for three companies:</span>
 <span class="sd">    &gt;&gt;&gt; pe_ratios = [15, 20, 25]</span>
 <span class="sd">    &gt;&gt;&gt; harmonic_mean(pe_ratios)</span>
-<span class="sd">    18.4615...</span>
+<span class="sd">    np.float64(19.1489361702)</span>
 
 <span class="sd">    Averaging P/E ratios in a DataFrame:</span>
 <span class="sd">    &gt;&gt;&gt; df = pd.DataFrame({</span>
@@ -274,8 +272,8 @@
 <span class="sd">    ...     &#39;Finance&#39;: [12, 15, 18]</span>
 <span class="sd">    ... })</span>
 <span class="sd">    &gt;&gt;&gt; harmonic_mean(df)</span>
-<span class="sd">    Tech       29.5139...</span>
-<span class="sd">    Finance    14.7826...</span>
+<span class="sd">    Tech       29.439252</span>
+<span class="sd">    Finance    14.594595</span>
 <span class="sd">    dtype: float64</span>
 
 <span class="sd">    Notes</span>
@@ -304,13 +302,13 @@
         <span class="n">denom</span> <span class="o">=</span> <span class="n">invert_values</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">skipna</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">n</span> <span class="o">=</span> <span class="n">invert_values</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
         <span class="n">hmean</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="n">denom</span>
-        <span class="k">return</span> <span class="n">hmean</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">hmean</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">values</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
         <span class="n">hmean</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">values</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">hmean</span></div>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">hmean</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></div>
 
 
 
@@ -350,7 +348,7 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; weighted_geometric_mean([0.05, 0.10, 0.02], [1, 2, 1])</span>
-<span class="sd">    0.0669491...</span>
+<span class="sd">    np.float64(0.0669491218)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">returns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">returns</span><span class="p">)</span>
     <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
@@ -363,7 +361,7 @@
     <span class="p">)</span>
     <span class="n">log_returns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">gross_returns</span><span class="p">)[</span><span class="n">filter_values</span><span class="p">]</span>
     <span class="n">weighted_log</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="n">log_returns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">weighted_log</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span></div>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">weighted_log</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></div>
 
 
 
@@ -404,7 +402,7 @@
 <span class="sd">    &gt;&gt;&gt; pe = [15, 20, 25]</span>
 <span class="sd">    &gt;&gt;&gt; caps = [100, 200, 700]</span>
 <span class="sd">    &gt;&gt;&gt; weighted_harmonic_mean(pe, caps)</span>
-<span class="sd">    22.3880597</span>
+<span class="sd">    np.float64(22.3880597015)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -415,7 +413,7 @@
     <span class="n">weighted_reciprocal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span>
         <span class="n">weights</span><span class="p">[</span><span class="n">filter_values</span><span class="p">]</span> <span class="o">/</span> <span class="n">values</span><span class="p">[</span><span class="n">filter_values</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">weighted_sum</span> <span class="o">/</span> <span class="n">weighted_reciprocal</span></div>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">weighted_sum</span> <span class="o">/</span> <span class="n">weighted_reciprocal</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></div>
 
 </pre></div>
 

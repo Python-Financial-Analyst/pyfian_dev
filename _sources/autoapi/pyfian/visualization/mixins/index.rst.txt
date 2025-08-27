@@ -25,7 +25,7 @@ Module Contents
       :type t_max: float
       :param n: Number of points.
       :type n: int
-      :param kind: "rate" to plot rates, "discount" to plot discount factors.
+      :param kind: "rate" to plot rates, "discount" to plot discount factors, "spread" to plot spreads.
       :type kind: str
       :param kwargs: Additional arguments passed to plt.plot.
       :type kwargs: dict

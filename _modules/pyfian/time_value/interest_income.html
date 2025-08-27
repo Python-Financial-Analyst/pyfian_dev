@@ -118,7 +118,7 @@
 <span class="sd">Examples</span>
 <span class="sd">--------</span>
 <span class="sd">&gt;&gt;&gt; interest_income_continuous(0.05, 1)</span>
-<span class="sd">0.05127109637602412</span>
+<span class="sd">np.float64(0.05127109637602412)</span>
 <span class="sd">&gt;&gt;&gt; interest_income_effective(0.05, 1)</span>
 <span class="sd">0.05</span>
 <span class="sd">&gt;&gt;&gt; interest_income_nominal_periods(0.06, 12, 6)</span>
@@ -173,7 +173,7 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; interest_income_continuous(0.05, 1)</span>
-<span class="sd">    0.05127109637602412</span>
+<span class="sd">    np.float64(0.05127109637602412)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">notional</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">rate</span> <span class="o">*</span> <span class="n">time</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
 
@@ -217,7 +217,7 @@
 <span class="sd">    &gt;&gt;&gt; interest_income_effective(0.05, 1)</span>
 <span class="sd">    0.05</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">notional</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">effective_rate</span><span class="p">)</span> <span class="o">**</span> <span class="n">time</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">notional</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">effective_rate</span><span class="p">)</span> <span class="o">**</span> <span class="n">time</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span></div>
 
 
 
@@ -315,7 +315,7 @@
 <span class="sd">    0.005</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Calculate interest income directly from nominal rate and compounding for custom period</span>
-    <span class="k">return</span> <span class="n">notional</span> <span class="o">*</span> <span class="n">nominal_rate</span> <span class="o">*</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="n">base_year</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">notional</span> <span class="o">*</span> <span class="n">nominal_rate</span> <span class="o">*</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="n">base_year</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span></div>
 
 
 

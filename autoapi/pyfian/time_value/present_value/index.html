@@ -68,19 +68,13 @@
 <li class="toctree-l4 current"><a class="reference internal" href="../index.html">pyfian.time_value</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../utils/index.html">pyfian.utils</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../visualization/index.html">pyfian.visualization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../yield_curves/index.html">pyfian.yield_curves</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../index.html#attributes">Attributes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../index.html#package-contents">Package Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../../par_curve/index.html">par_curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../base_curve/index.html">base_curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../spot_curve/index.html">spot_curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../flat_curve/index.html">flat_curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../credit_spread/index.html">credit_spread</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../curve_combination/index.html">curve_combination</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../zero_coupon_curve/index.html">zero_coupon_curve</a></li>
 </ul>
 </li>
 </ul>
@@ -174,7 +168,7 @@
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">present_value_annuity</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-<span class="go">772.1734929184818</span>
+<span class="go">772.1734929185</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -216,7 +210,7 @@ for non-annual payment frequencies.</p>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">present_value_annuity_annual</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
-<span class="go">9428.135032823473</span>
+<span class="go">9428.1350328235</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -265,9 +259,9 @@ Growth is applied in the first period as well, so the payment at time t=k is:</p
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">present_value_growing_annuity</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.02</span> <span class="p">)</span>
-<span class="go">855.5867765481578</span>
+<span class="go">855.5867765482</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">present_value_growing_annuity</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
-<span class="go">1000.0</span>
+<span class="go">1000</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -367,7 +361,7 @@ Growth is applied in the first period as well, so the payment at time t=k is:</p
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">present_value_two_stage_annuity</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-<span class="go">762.9973919305694</span>
+<span class="go">762.9973919306094</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -423,7 +417,7 @@ Growth is applied in the first period as well, so the payment at time t=k is:</p
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">present_value_two_stage_annuity_perpetuity</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
-<span class="go">2206.1948451002554</span>
+<span class="go">2206.19484510028</span>
 </pre></div>
 </div>
 </dd></dl>
