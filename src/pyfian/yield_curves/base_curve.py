@@ -1,3 +1,16 @@
+"""
+base_curve.py
+
+Module for abstract base classes for yield curves and related curve models.
+
+Implements:
+
+- CurveBase: Abstract base class for all curve types, providing common interface and utilities.
+- YieldCurveBase: Abstract base class for yield curves, extending CurveBase with discounting and rate calculation methods.
+
+These classes define the structure and required methods for curve models used in fixed income analytics, including discounting, rate calculation, forward rates, and comparison utilities.
+"""
+
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from typing import Optional, Union
@@ -14,9 +27,37 @@ MATURITIES = [0.25, 0.5, 1, 2, 3, 5, 7, 10, 20, 30]
 class CurveBase(ABC):
     """
     Abstract base class for all curves.
+
+    Parameters
+    ----------
+    curve_date : pd.Timestamp
+        Date of the curve.
+    day_count_convention : DayCountBase
+        Day count convention used for time calculations.
+
+    Attributes
+    ----------
+    curve_date : pd.Timestamp
+        Date of the curve.
+    day_count_convention : DayCountBase
+        Day count convention used for time calculations.
+
+    Methods
+    -------
+    _get_t(t, spread=0)
+        Get the rate for a cash flow by time t (in years).
+    to_dataframe(maturities=None)
+        Export curve data to a pandas DataFrame.
+    as_dict()
+        Return curve parameters and metadata as a dictionary.
+    from_dict(data)
+        Instantiate a curve from a dictionary.
+    clone_with_new_date(new_date)
+        Clone the curve with a new date.
     """
 
     curve_date: pd.Timestamp
+    day_count_convention: DayCountBase
 
     @abstractmethod
     def _get_t(
@@ -43,6 +84,10 @@ class CurveBase(ABC):
         """
         pass
 
+    @abstractmethod
+    def get_t(self, t: float, spread: float = 0) -> float:  # pragma: no cover
+        pass
+
     def to_dataframe(self, maturities: Optional[list] = None) -> pd.DataFrame:
         """
         Export curve data to a pandas DataFrame.
@@ -53,7 +98,7 @@ class CurveBase(ABC):
                 maturities = self.maturities
             else:
                 maturities = [0.25, 0.5, 1, 2, 5, 7, 10]
-        data = {"Maturity": maturities, "Rate": [self._get_t(m) for m in maturities]}
+        data = {"Maturity": maturities, "Rate": [self.get_t(m) for m in maturities]}
         return pd.DataFrame(data).set_index("Maturity")
 
     @abstractmethod
@@ -82,6 +127,47 @@ class CurveBase(ABC):
 class YieldCurveBase(CurveBase):
     """
     Abstract base class for yield curves.
+
+    Parameters
+    ----------
+    curve_date : pd.Timestamp
+        Date of the curve.
+    day_count_convention : DayCountBase
+        Day count convention used for time calculations.
+    yield_calculation_convention : str
+        Yield calculation convention used for rate conversions.
+
+    Attributes
+    ----------
+    curve_date : pd.Timestamp
+        Date of the curve.
+    day_count_convention : DayCountBase
+        Day count convention used for time calculations.
+    yield_calculation_convention : str
+        Yield calculation convention used for rate conversions.
+
+    Methods
+    -------
+    discount_t(t, spread=0)
+        Discount a cash flow by time t (in years).
+    discount_date(date, spread=0)
+        Discount a cash flow by a target date.
+    get_rate(t, yield_calculation_convention=None, spread=0)
+        Return the rate at time horizon t (in years).
+    date_rate(date, yield_calculation_convention=None, spread=0)
+        Return the rate at a specified date.
+    discount_to_rate(discount_factor, t, spread)
+        Convert a discount factor to a rate.
+    forward_t_start_t_end(t_start, t_end, spread_start=0, spread_end=0, spread_forward=0)
+        Calculate the forward rate between two time horizons.
+    forward_t_start_dt(t_start, dt, spread_start=0, spread_end=0, spread_forward=0)
+        Calculate the forward rate given a start time and a time increment.
+    forward_dt(date, dt, spread_start=0, spread_end=0, spread_forward=0)
+        Calculate the forward rate from a given date and time increment.
+    forward_dates(start_date, end_date, spread_start=0, spread_end=0, spread_forward=0)
+        Calculate the forward rate between two dates.
+    compare_to(other, maturities=None)
+        Compare this curve to another curve.
     """
 
     curve_date: pd.Timestamp
@@ -327,7 +413,7 @@ class YieldCurveBase(CurveBase):
                 maturities = self.maturities
             else:
                 maturities = [0.25, 0.5, 1, 2, 5, 10]
-        current_rates = [self._get_t(m) for m in maturities]
+        current_rates = [self.get_t(m) for m in maturities]
         compared_rates = [
             self.discount_to_rate(other.discount_t(m), m, spread=0) for m in maturities
         ]

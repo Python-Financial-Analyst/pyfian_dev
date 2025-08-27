@@ -28,6 +28,38 @@ class CombinedCurve(ZeroCouponCurve):
 
     This class provides a mechanism for constructing a total yield curve by combining a base curve (e.g., risk-free) and a spread curve (e.g., credit spread), which is essential for pricing, discounting, and risk management in fixed income analytics.
 
+    Attributes
+    ----------
+    benchmark_curve : YieldCurveBase
+        The base yield curve (e.g., ZeroCouponCurve, FlatCurveAER).
+    spread_curve : CreditSpreadCurveBase
+        The credit spread curve (e.g., CreditSpreadCurve, FlatCreditSpreadCurve).
+    curve_date : pd.Timestamp
+        The date of the curve.
+    benchmark_yield_calculation_convention : str
+        Yield calculation convention for the benchmark curve.
+    spread_yield_calculation_convention : str
+        Yield calculation convention for the spread curve.
+    day_count_convention : DayCountBase
+        The day count convention used for time calculations.
+    yield_calculation_convention : str
+        The yield calculation convention used for combined rates.
+    maturities : list
+        Sorted list of maturities from both curves.
+
+    Methods
+    -------
+    as_dict()
+        Returns a dictionary representation of the curve.
+    from_dict(data)
+        Creates a CombinedCurve from a dictionary.
+    get_rate(t, yield_calculation_convention=None, spread=0)
+        Returns the combined rate for a given time in years.
+    date_rate(date, yield_calculation_convention=None, spread=0)
+        Returns the combined rate for a given date.
+    __repr__()
+        String representation of the CombinedCurve.
+
     Parameters
     ----------
     benchmark_curve : object
@@ -38,6 +70,64 @@ class CombinedCurve(ZeroCouponCurve):
             The day count convention to use (default is "actual/365").
     yield_calculation_convention : str, optional
             The yield calculation convention to use (default is None). Supported: "Annual", "BEY", "Continuous". If None, "Annual" will be used.
+
+    Example
+    -------
+    >>> import pandas as pd
+    >>> from pyfian.yield_curves.flat_curve import FlatCurveAER, FlatCurveBEY
+    >>> from pyfian.yield_curves.credit_spread import FlatCreditSpreadCurve, CreditSpreadCurve
+    >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
+    >>> # Simple combined curve usage
+    >>> curve_date = pd.Timestamp("2023-01-01")
+    >>> benchmark_curve = FlatCurveAER(aer=0.04, curve_date=curve_date)
+    >>> spread_curve = FlatCreditSpreadCurve(spread=0.03, curve_date=curve_date)
+    >>> combined_curve = CombinedCurve(benchmark_curve, spread_curve)
+    >>> combined_curve.get_rate(1.0)
+    0.07
+    >>> combined_curve.date_rate("2024-01-01")
+    # Returns the combined rate for the given date
+    >>> combined_curve.as_dict()
+    # Returns a dictionary representation of the curve
+    # Example with list_maturities_rates and bond list creation
+    >>> list_maturities_rates = [
+    ...     (pd.DateOffset(months=1), 4.49),
+    ...     (pd.DateOffset(months=3), 4.32),
+    ...     (pd.DateOffset(months=6), 4.14),
+    ...     (pd.DateOffset(years=1), 3.95),
+    ...     (pd.DateOffset(years=2), 3.79),
+    ...     (pd.DateOffset(years=3), 3.75),
+    ...     (pd.DateOffset(years=5), 3.86),
+    ...     (pd.DateOffset(years=7), 4.07),
+    ...     (pd.DateOffset(years=10), 4.33),
+    ...     (pd.DateOffset(years=20), 4.89),
+    ...     (pd.DateOffset(years=30), 4.92),
+    ... ]
+    >>> date = pd.Timestamp("2025-08-22")
+    >>> one_year_offset = date + pd.DateOffset(years=1)
+    >>> bonds = []
+    >>> for offset, cpn in list_maturities_rates:
+    ...     not_zero_coupon = date + offset > one_year_offset
+    ...     bond = FixedRateBullet(
+    ...         issue_dt=date,
+    ...         maturity=date + offset,
+    ...         cpn_freq=2 if not_zero_coupon else 0,
+    ...         cpn=cpn if not_zero_coupon else 0,
+    ...         bond_price=100 if not_zero_coupon else None,
+    ...         yield_to_maturity=None if not_zero_coupon else cpn / 100,
+    ...         settlement_date=date,
+    ...     )
+    ...     bonds.append(bond)
+    >>> # Create a benchmark curve and spread curve from bonds
+    >>> benchmark_curve_bey = FlatCurveBEY(bey=0.02, curve_date=date)
+    >>> spread_curve = CreditSpreadCurve.spread_from_bonds(benchmark_curve=benchmark_curve_bey, bonds=bonds)
+    >>> combined_curve = CombinedCurve(benchmark_curve_bey, spread_curve)
+    >>> for bond in bonds:
+    ...     bond_price = bond.get_bond_price()
+    ...     if bond_price is None:
+    ...         continue
+    ...     pv, flows_pv = bond.value_with_curve(combined_curve)
+    ...     maturity_date = bond.maturity
+    ...     print(f"Maturity: {maturity_date}, Price: {bond_price}, PV: {pv}, Diff: {bond_price - pv}")
     """
 
     def __init__(
@@ -138,7 +228,7 @@ class CombinedCurve(ZeroCouponCurve):
 
         # Get the base and spread rates
         base_rate = self.benchmark_curve.get_rate(t, spread=spread)
-        spread_rate = self.spread_curve._get_t(t)
+        spread_rate = self.spread_curve.get_t(t)
 
         # Convert the base_rate to the self.spread_curve_yield_curve_convention
         base_rate = rc.convert_yield(

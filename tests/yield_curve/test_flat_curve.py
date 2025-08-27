@@ -10,6 +10,13 @@ class TestFlatCurveLog:
     def setup_method(self):
         self.curve = FlatCurveLog(0.05, "2020-01-01")
 
+    def test_invalid_day_count_convention(self):
+        with pytest.raises(
+            TypeError,
+            match="day_count_convention must be either a string or a DayCountBase instance.",
+        ):
+            FlatCurveLog(0.05, "2020-01-01", day_count_convention=123)
+
     def test_discount_t(self):
         assert self.curve.discount_t(1) == pytest.approx(np.exp(-0.05))
 
@@ -156,10 +163,25 @@ class TestFlatCurveLog:
         expected = self.curve.discount_to_rate(d0 / d1, dt, spread=0)
         assert fwd == pytest.approx(expected)
 
+    def test__get_t(self):
+        assert self.curve._get_t(1.0) == 0.05
+        assert self.curve._get_t(1.0, 0.005) == 0.05 + 0.005
+
 
 class TestFlatCurveAER:
     def setup_method(self):
         self.curve = FlatCurveAER(0.05, "2020-01-01")
+
+    def test__get_t(self):
+        assert self.curve._get_t(1.0) == 0.05
+        assert self.curve._get_t(1.0, 0.005) == 0.05 + 0.005
+
+    def test_invalid_day_count_convention(self):
+        with pytest.raises(
+            TypeError,
+            match="day_count_convention must be either a string or a DayCountBase instance.",
+        ):
+            FlatCurveAER(0.05, "2020-01-01", day_count_convention=123)
 
     def test_discount_t(self):
         assert self.curve.discount_t(1) == pytest.approx(1 / (1 + 0.05))
@@ -303,6 +325,17 @@ class TestFlatCurveAER:
 class TestFlatCurveBEY:
     def setup_method(self):
         self.curve = FlatCurveBEY(0.05, "2020-01-01")
+
+    def test__get_t(self):
+        assert self.curve._get_t(1.0) == 0.05
+        assert self.curve._get_t(1.0, 0.005) == 0.05 + 0.005
+
+    def test_invalid_day_count_convention(self):
+        with pytest.raises(
+            TypeError,
+            match="day_count_convention must be either a string or a DayCountBase instance.",
+        ):
+            FlatCurveBEY(0.05, "2020-01-01", day_count_convention=123)
 
     def test_discount_t(self):
         assert self.curve.discount_t(1) == pytest.approx(1 / (1 + 0.05 / 2) ** (1 * 2))

@@ -33,6 +33,57 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
     yield_calculation_convention : str, optional
         Yield calculation convention to use (default is None).
         Supported conventions: "Annual", "BEY", "Continuous". If None, "Annual" will be used.
+
+    Attributes
+    ----------
+    zero_rates : dict
+        Dictionary of zero-coupon rates keyed by maturity (in years).
+    curve_date : pd.Timestamp
+        Date of the curve.
+    day_count_convention : DayCountBase
+        Day count convention used for calculations.
+    yield_calculation_convention : str
+        Yield calculation convention used for rate conversions.
+    maturities : list of float
+        List of maturities (in years) for which zero-coupon rates are available.
+
+    Methods
+    -------
+    as_dict()
+        Convert the curve to a dictionary.
+    discount_t(t, spread=0)
+        Discount a cash flow by time t (in years).
+    discount_to_rate(discount_factor, t, spread, yield_calculation_convention=None)
+        Convert a discount factor for a period t to a rate.
+    discount_date(date, spread=0)
+        Discount a cash flow to a specific date.
+    get_rate(t, yield_calculation_convention=None, spread=0)
+        Get the rate for a cash flow by time t (in years).
+    date_rate(date, yield_calculation_convention=None, spread=0)
+        Get the rate for a cash flow by date.
+    get_t(t, spread=0)
+        Get the interpolated zero-coupon rate for time t (in years).
+
+    Example
+    -------
+    .. code-block:: python
+
+        import pandas as pd
+        from pyfian.yield_curves.zero_coupon_curve import ZeroCouponCurve
+
+        zero_rates = {
+            1: 0.04,   # 1 year maturity, 4% rate
+            2: 0.042,  # 2 year maturity, 4.2% rate
+            5: 0.045,  # 5 year maturity, 4.5% rate
+        }
+        curve_date = "2025-08-22"
+        curve = ZeroCouponCurve(zero_rates=zero_rates, curve_date=curve_date)
+        # Get discount factor for 2 years
+        df = curve.discount_t(2)
+        # Get rate for 2 years
+        rate = curve.get_rate(2)
+        print(f"Discount factor for 2 years: {df}")
+        print(f"Zero-coupon rate for 2 years: {rate}")
     """
 
     def __init__(
@@ -207,7 +258,7 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
         return rc.convert_yield(
-            self._get_t(t, spread),
+            self.get_t(t, spread),
             self.yield_calculation_convention,
             yield_calculation_convention,
         )
@@ -246,6 +297,9 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
             start=self.curve_date, current=pd.to_datetime(date)
         )
         return self.get_rate(t, yield_calculation_convention, spread)
+
+    def get_t(self, t: float, spread: float = 0) -> float:
+        return self._get_t(t, spread)
 
     def _get_t(self, t: float, spread: float = 0) -> float:
         # Simple linear interpolation between known maturities

@@ -284,6 +284,9 @@ class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
             self.log_rate + spread, "Continuous", yield_calculation_convention
         )
 
+    def get_t(self, t, spread=0):
+        return self.log_rate + spread
+
     def _get_t(self, t, spread=0):
         return self.log_rate + spread
 
@@ -552,6 +555,9 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
             self.aer + spread, "Annual", yield_calculation_convention
         )
 
+    def get_t(self, t, spread=0):
+        return self.aer + spread
+
     def _get_t(self, t, spread=0):
         return self.aer + spread
 
@@ -817,6 +823,9 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
             yield_calculation_convention = self.yield_calculation_convention
 
         return rc.convert_yield(self.bey + spread, "BEY", yield_calculation_convention)
+
+    def get_t(self, t, spread=0):
+        return self.bey + spread
 
     def _get_t(self, t, spread=0):
         return self.bey + spread

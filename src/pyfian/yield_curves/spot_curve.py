@@ -44,6 +44,87 @@ class SpotCurve(ZeroCouponCurve):
         Day count convention to use (default is "actual/365").
     yield_calculation_convention : str, optional
         Yield calculation convention to use (default is None). If not specified, "Annual" will be used.
+
+    Attributes
+    ----------
+    bonds : list of FixedRateBullet or None
+        List of bonds used for bootstrapping the curve, sorted by maturity.
+    curve_date : pd.Timestamp
+        Date of the curve.
+    zero_rates : dict
+        Dictionary of zero-coupon rates keyed by maturity (in years).
+    day_count_convention : DayCountBase
+        Day count convention used for calculations.
+    yield_calculation_convention : str
+        Yield calculation convention used for rate conversions.
+    maturities : list of float
+        List of maturities (in years) for which spot rates are available.
+
+    Methods
+    -------
+    as_dict()
+        Convert the curve to a dictionary.
+    discount_t(t)
+        Return the discount factor for time t (in years).
+    get_rate(t)
+        Return the spot rate for time t (in years).
+    to_dataframe()
+        Return the curve as a pandas DataFrame.
+    _bootstrap_spot_rates()
+        Bootstrap spot rates from the provided bonds.
+    _get_optimal_rate(next_t, non_valued_payments)
+        Find the optimal spot rate for a given maturity using non-valued payments.
+
+    Example
+    -------
+    .. code-block:: python
+
+        import pandas as pd
+        from pyfian.yield_curves.spot_curve import SpotCurve
+        from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
+
+        # Par rates for different periods
+        list_maturities_rates = [
+            (pd.DateOffset(months=1), 4.49),
+            (pd.DateOffset(months=3), 4.32),
+            (pd.DateOffset(months=6), 4.14),
+            (pd.DateOffset(years=1), 3.95),
+            (pd.DateOffset(years=2), 3.79),
+            (pd.DateOffset(years=3), 3.75),
+            (pd.DateOffset(years=5), 3.86),
+            (pd.DateOffset(years=7), 4.07),
+            (pd.DateOffset(years=10), 4.33),
+            (pd.DateOffset(years=20), 4.89),
+            (pd.DateOffset(years=30), 4.92),
+        ]
+        date = pd.Timestamp("2025-08-22")
+        one_year_offset = date + pd.DateOffset(years=1)
+        bonds = []
+        for offset, cpn in list_maturities_rates:
+            not_zero_coupon = date + offset > one_year_offset
+            bond = FixedRateBullet(
+                issue_dt=date,
+                maturity=date + offset,
+                cpn_freq=2 if not_zero_coupon else 0,
+                cpn=cpn if not_zero_coupon else 0,
+                bond_price=100 if not_zero_coupon else None,
+                yield_to_maturity=None if not_zero_coupon else cpn / 100,
+                settlement_date=date,
+            )
+            bonds.append(bond)
+
+        curve = SpotCurve(curve_date="2025-08-22", bonds=bonds)
+        print(curve.to_dataframe())
+
+        for bond in bonds:
+            bond_price = bond.get_bond_price()
+            if bond_price is None:
+                continue
+            pv, flows_pv = bond.value_with_curve(curve)
+            maturity_date = bond.maturity
+            print(
+                f"Maturity Date: {maturity_date}, Bond Price: {bond_price}, PV: {pv}, Difference: {bond_price - pv}"
+            )
     """
 
     def __init__(
@@ -221,7 +302,7 @@ class SpotCurve(ZeroCouponCurve):
         return f"SpotCurve(zero_rates={self.zero_rates}, curve_date={self.curve_date.strftime('%Y-%m-%d')})"
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma : no cover
     # Example usage
     # Par rates for different periods
     # 1-month	 4.49
@@ -267,8 +348,7 @@ if __name__ == "__main__":
         bonds.append(bond)
     curve = SpotCurve(curve_date="2025-08-22", bonds=bonds)
     # self = curve
-    print(curve)
-    print(curve.as_dict())
+    print(curve.to_dataframe())
 
     for bond in bonds:
         bond_price = bond.get_bond_price()

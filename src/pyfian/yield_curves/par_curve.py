@@ -34,7 +34,6 @@ class ParCurve(ZeroCouponCurve):
     This class provides a mechanism for constructing a par rate curve and extracting zero-coupon rates from market bond prices, which is essential for fixed income analytics, pricing, and risk management.
 
     Par rates are the rates that make a Bond's present value equal to its face value.
-
     From a series of par rates, zero rates are obtained.
 
     Parameters
@@ -49,6 +48,70 @@ class ParCurve(ZeroCouponCurve):
         Day count convention to use (default is "actual/365").
     yield_calculation_convention : str, optional
         Yield calculation convention to use (default is None). If not specified, "Annual" will be used.
+
+    Attributes
+    ----------
+    curve_date : pd.Timestamp
+        Date of the curve.
+    par_rates : list
+        List of tuples (maturity, bond parameters) for each par bond.
+    zero_rates : dict
+        Bootstrapped zero-coupon rates, keyed by maturity (in years).
+    day_count_convention : DayCountBase
+        Day count convention used for calculations.
+    yield_calculation_convention : str
+        Yield calculation convention used for calculations.
+    maturities : list
+        List of maturities (in years) for which zero rates are available.
+
+    Methods
+    -------
+    as_dict()
+        Convert the curve to a dictionary.
+    discount_t(t)
+        Return the discount factor for time t.
+    get_rate(t)
+        Return the par rate for time t.
+    to_dataframe()
+        Return the curve data as a pandas DataFrame.
+
+    Example
+    -------
+    .. code-block:: python
+
+        import pandas as pd
+        from pyfian.yield_curves.par_curve import ParCurve
+
+        # Par rates for different periods
+        list_maturities_rates = [
+            (pd.DateOffset(months=1), 4.49),
+            (pd.DateOffset(months=3), 4.32),
+            (pd.DateOffset(months=6), 4.14),
+            (pd.DateOffset(years=1), 3.95),
+            (pd.DateOffset(years=2), 3.79),
+            (pd.DateOffset(years=3), 3.75),
+            (pd.DateOffset(years=5), 3.86),
+            (pd.DateOffset(years=7), 4.07),
+            (pd.DateOffset(years=10), 4.33),
+            (pd.DateOffset(years=20), 4.89),
+            (pd.DateOffset(years=30), 4.92),
+        ]
+        date = pd.Timestamp("2025-08-22")
+        one_year_offset = date + pd.DateOffset(years=1)
+        par_rates = {}
+
+        for offset, cpn in list_maturities_rates:
+            not_zero_coupon = date + offset > one_year_offset
+            bond = {
+                "cpn_freq": 2 if not_zero_coupon else 0,
+                "cpn": cpn if not_zero_coupon else 0,
+                "bond_price": 100 if not_zero_coupon else None,
+                "yield_to_maturity": None if not_zero_coupon else cpn / 100,
+            }
+            par_rates[offset] = bond
+
+        curve = ParCurve(curve_date="2025-08-22", par_rates=par_rates)
+        print(curve.to_dataframe())
     """
 
     def __init__(
@@ -237,7 +300,7 @@ class ParCurve(ZeroCouponCurve):
         return f"SpotCurve(zero_rates={self.zero_rates}, curve_date={self.curve_date.strftime('%Y-%m-%d')})"
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma : no cover
     # Example usage
     # Par rates for different periods
     # 1-month	 4.49
@@ -282,5 +345,4 @@ if __name__ == "__main__":
         par_rates[offset] = bond
     curve = ParCurve(curve_date="2025-08-22", par_rates=par_rates)
     # self = curve
-    print(curve)
-    print(curve.as_dict())
+    print(curve.to_dataframe())

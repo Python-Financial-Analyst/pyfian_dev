@@ -13,7 +13,7 @@ Each class provides a different convention for representing credit spread curves
 from abc import abstractmethod
 from typing import Optional, Union
 import pandas as pd
-from yaml import warnings  # type: ignore
+import warnings
 from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
 from pyfian.utils.day_count import DayCountBase, get_day_count_convention
 from pyfian.visualization.mixins import YieldCurvePlotMixin
@@ -26,9 +26,33 @@ from pyfian.time_value import rate_conversions as rc
 # Make an abstract CreditSpreadCurve class
 class CreditSpreadCurveBase(YieldCurvePlotMixin, CurveBase):
     yield_calculation_convention: str
+    curve_date: pd.Timestamp
 
     """
     CreditSpreadCurveBase is an abstract base class for credit spread curves.
+
+    Parameters
+    ----------
+    yield_calculation_convention : str
+        Yield calculation convention to use for rate conversions.
+    curve_date : pd.Timestamp
+        Date of the curve.
+
+    Attributes
+    ----------
+    yield_calculation_convention : str
+        Yield calculation convention used for rate conversions.
+    curve_date : pd.Timestamp
+        Date of the curve.
+
+    Methods
+    -------
+    date_spread(date, spread=0)
+        Get the spread for a given date.
+    get_t(t, spread=0)
+        Get the spread for a given maturity.
+    plot_curve(t_max=30, n=100, kind="spread", show=True, **kwargs)
+        Plot the yield curve.
     """
 
     @abstractmethod
@@ -41,11 +65,28 @@ class CreditSpreadCurveBase(YieldCurvePlotMixin, CurveBase):
         pass
 
     @abstractmethod
-    def _get_t(self, t: float, spread: float = 0) -> float:  # pragma: no cover
+    def get_t(self, t: float, spread: float = 0) -> float:  # pragma: no cover
         """
         Get the spread for a given maturity.
         """
         pass
+
+    def plot_curve(self, t_max=30, n=100, kind="spread", show=True, **kwargs):
+        """
+        Plot the yield curve.
+
+        Parameters
+        ----------
+        t_max : float
+            Maximum time horizon in years.
+        n : int
+            Number of points.
+        kind : str
+            "rate" to plot rates, "discount" to plot discount factors, "spread" to plot spreads.
+        kwargs : dict
+            Additional arguments passed to plt.plot.
+        """
+        super().plot_curve(t_max=t_max, n=n, kind=kind, show=show, **kwargs)
 
 
 class CreditSpreadCurve(CreditSpreadCurveBase):
@@ -86,12 +127,53 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
     -------
     as_dict()
         Convert the curve to a dictionary.
-    __call__(t, spread=0)
+    get_t(t, spread=0)
         Get the spread for a given maturity (in years), optionally adding a spread.
     date_spread(date, spread=0)
         Get the spread for a given date, optionally adding a spread.
     spread_from_bonds(benchmark_curve, bonds)
         Class method to derive the spread curve from bond data and a benchmark curve.
+
+    Example
+    -------
+    >>> import pandas as pd
+    >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+    >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
+    >>> # Par rates for different periods
+    >>> list_maturities_rates = [
+    ...     (pd.DateOffset(months=1), 4.49),
+    ...     (pd.DateOffset(months=3), 4.32),
+    ...     (pd.DateOffset(months=6), 4.14),
+    ...     (pd.DateOffset(years=1), 3.95),
+    ...     (pd.DateOffset(years=2), 3.79),
+    ...     (pd.DateOffset(years=3), 3.75),
+    ...     (pd.DateOffset(years=5), 3.86),
+    ...     (pd.DateOffset(years=7), 4.07),
+    ...     (pd.DateOffset(years=10), 4.33),
+    ...     (pd.DateOffset(years=20), 4.89),
+    ...     (pd.DateOffset(years=30), 4.92),
+    ... ]
+    >>> date = pd.Timestamp("2025-08-22")
+    >>> one_year_offset = date + pd.DateOffset(years=1)
+    >>> bonds = []
+    >>> for offset, cpn in list_maturities_rates:
+    ...     not_zero_coupon = date + offset > one_year_offset
+    ...     bond = FixedRateBullet(
+    ...         issue_dt=date,
+    ...         maturity=date + offset,
+    ...         cpn_freq=2 if not_zero_coupon else 0,
+    ...         cpn=cpn if not_zero_coupon else 0,
+    ...         bond_price=100 if not_zero_coupon else None,
+    ...         yield_to_maturity=None if not_zero_coupon else cpn / 100,
+    ...         settlement_date=date,
+    ...     )
+    ...     bonds.append(bond)
+    >>> benchmark_curve = FlatCurveBEY(bey=0.02, curve_date=date)
+    >>> spread_curve = CreditSpreadCurve(curve_date=date, benchmark_curve=benchmark_curve, bonds=bonds)
+    >>> spread_curve_2 = CreditSpreadCurve.spread_from_bonds(benchmark_curve=benchmark_curve, bonds=bonds)
+    >>> # Access spread for a given maturity
+    >>> spread_curve.get_t(1.0)
+    # Returns the spread for 1 year maturity
     """
 
     def __init__(
@@ -199,7 +281,7 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
         r = self.benchmark_curve.get_rate(
             t, yield_calculation_convention=self.yield_calculation_convention
         )
-        s = self._get_spread(t) + spread
+        s = self._get_t(t) + spread
 
         return rc.convert_yield(
             r + s,
@@ -254,9 +336,9 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
             yield_calculation_convention,
         )
 
-    def _get_t(self, t: float, spread: float = 0) -> float:
+    def get_spread(self, t: float, spread: float = 0) -> float:
         """
-        Get the rate for a cash flow by time t (in years).
+        Get the spread for a cash flow by time t (in years).
 
         The spread is added to the yield in the original curve.
 
@@ -272,23 +354,26 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
         float
             Rate for the cash flow.
         """
-        return self._get_spread(t) + spread
+        return self._get_t(t, spread=spread)
 
     def date_spread(self, date: Union[str, pd.Timestamp], spread: float = 0) -> float:
         """ """
         t = self.day_count_convention.fraction(
             start=self.curve_date, current=pd.to_datetime(date)
         )
-        return self._get_t(t, spread)
+        return self.get_t(t, spread)
 
-    def _get_spread(self, t: float) -> float:
+    def get_t(self, t, spread=0):
+        return self._get_t(t, spread=spread)
+
+    def _get_t(self, t: float, spread: float = 0) -> float:
         # Simple linear interpolation between known maturities
         assert t >= 0, "Maturity must be non-negative"
         maturities = list(self.spreads.keys())
         if t <= maturities[0]:
-            return self.spreads[maturities[0]]
+            return self.spreads[maturities[0]] + spread
         if t >= maturities[-1]:
-            return self.spreads[maturities[-1]]
+            return self.spreads[maturities[-1]] + spread
         else:
             for i in range(len(maturities) - 1):
                 if maturities[i] <= t <= maturities[i + 1]:
@@ -298,7 +383,7 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
                     )
                     t1, t2 = maturities[i], maturities[i + 1]
                     break
-            return s1 + (s2 - s1) * (t - t1) / (t2 - t1)
+            return s1 + (s2 - s1) * (t - t1) / (t2 - t1) + spread
 
     @classmethod
     def spread_from_bonds(
@@ -400,7 +485,7 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
         non_valued_payments,
     ):
         if next_date is None:
-            raise ValueError("Invalid input parameters")
+            raise ValueError("next_date must not be None.")
         next_t = self.day_count_convention.fraction(
             start=self.curve_date, current=next_date
         )
@@ -523,7 +608,7 @@ class FlatCreditSpreadCurve(CreditSpreadCurveBase):
             "yield_calculation_convention": self.yield_calculation_convention,
         }
 
-    def _get_t(self, t: float, spread: float = 0) -> float:
+    def get_t(self, t: float, spread: float = 0) -> float:
         """
         Get the spread for a given maturity.
 
@@ -541,6 +626,9 @@ class FlatCreditSpreadCurve(CreditSpreadCurveBase):
         """
         return self.spread + spread
 
+    def _get_t(self, t: float, spread: float = 0) -> float:
+        return self.get_t(t, spread)
+
     def date_spread(self, date: Union[str, pd.Timestamp], spread: float = 0) -> float:
         """
         Get the spread for a given date.
@@ -557,13 +645,33 @@ class FlatCreditSpreadCurve(CreditSpreadCurveBase):
         float
             The spread for the given date.
         """
-        return self._get_t(0, spread)
+        return self.get_t(0, spread)
 
     def __repr__(self) -> str:
         return f"FlatCreditSpreadCurve(spread={self.spread}, curve_date={self.curve_date.strftime('%Y-%m-%d')})"
 
+    def get_spread(self, t: float, spread: float = 0) -> float:
+        """
+        Get the spread for a cash flow by time t (in years).
 
-if __name__ == "__main__":
+        The spread is added to the yield in the original curve.
+
+        Parameters
+        ----------
+        t : float
+            Time in years to discount.
+        spread : float
+            Spread to add to the discount rate.
+
+        Returns
+        -------
+        float
+            Rate for the cash flow.
+        """
+        return self._get_t(t) + spread
+
+
+if __name__ == "__main__":  # pragma: no cover
     # Example usage
     # Par rates for different periods
     # 1-month	 4.49
