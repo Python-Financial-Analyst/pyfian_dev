@@ -1010,7 +1010,7 @@ class FixedRateBullet:
             d: curve.discount_date(d, spread) * value
             for d, value in date_of_payments.items()
         }
-        return round(sum(pv.values()), 10), pv
+        return sum(pv.values()), pv
 
     def g_spread(
         self,
@@ -1433,7 +1433,7 @@ class FixedRateBullet:
     ) -> float:
         """
         Calculate modified duration of the bond.
-        If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
+
 
         .. math::
             Modified Duration = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t}{(1 + YTM)^{(t+1)}} \\cdot t
@@ -1471,8 +1471,8 @@ class FixedRateBullet:
         Examples
         --------
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
-        >>> bond.modified_duration(yield_to_maturity=0.05)
-        4.3760319655
+        >>> bond.effective_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
+        4.3760319684
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -1524,6 +1524,112 @@ class FixedRateBullet:
         )
         return round(duration / price_calc if price_calc != 0 else 0.0, 10)
 
+    def effective_duration(
+        self,
+        yield_to_maturity: Optional[float] = None,
+        bond_price: Optional[float] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+    ) -> float:
+        """
+        Calculate effective duration of the bond.
+
+        .. math::
+            \\text{Effective Duration} = -\\frac{(P_{+} - P_{-})}{2 \\cdot \\epsilon \\cdot P}
+
+        where:
+
+        - :math:`P` is the price of the bond
+        - :math:`P_{+}` is the price if yield increases by :math:`\\epsilon`
+        - :math:`P_{-}` is the price if yield decreases by :math:`\\epsilon`
+        - :math:`\\epsilon` is a small change in yield
+
+        The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+        Parameters
+        ----------
+        yield_to_maturity : float, optional
+            Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
+        bond_price : float, optional
+            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+
+        Returns
+        -------
+        duration : float
+            Effective duration in years.
+
+        Examples
+        --------
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
+        >>> bond.effective_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
+        4.3760319684
+        """
+        settlement_date = self._resolve_settlement_date(settlement_date)
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = self._resolve_valuation_parameters(
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
+
+        ytm, price_calc = self._resolve_ytm_and_bond_price(
+            yield_to_maturity,
+            bond_price,
+            settlement_date,
+            adjust_to_business_days=adjust_to_business_days,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
+        )
+
+        if ytm is None or price_calc is None:
+            raise ValueError("Unable to determine yield to maturity.")
+
+        time_to_payments = self._calculate_time_to_payments(
+            settlement_date,
+            bond_price=None,
+            adjust_to_business_days=adjust_to_business_days,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
+        )
+
+        # Calculate effective duration using a small epsilon
+        epsilon = 0.0000001
+        price_plus_epsilon = self._price_from_yield(
+            yield_to_maturity=ytm + epsilon,
+            time_to_payments=time_to_payments,
+            yield_calculation_convention=yield_calculation_convention,
+        )
+        price_minus_epsilon = self._price_from_yield(
+            yield_to_maturity=ytm - epsilon,
+            time_to_payments=time_to_payments,
+            yield_calculation_convention=yield_calculation_convention,
+        )
+
+        effective_duration = (
+            -1 * (price_plus_epsilon - price_minus_epsilon) / (2 * epsilon * price_calc)
+        )
+        return round(effective_duration, 10)
+
     def macaulay_duration(
         self,
         yield_to_maturity: Optional[float] = None,
@@ -1536,7 +1642,7 @@ class FixedRateBullet:
     ) -> float:
         """
         Calculate macaulay duration of the bond.
-        If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
+
 
         .. math::
             Macaulay Duration = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t}{(1 + YTM)^{(t)}} \\cdot t
@@ -1640,7 +1746,7 @@ class FixedRateBullet:
         """
         Calculate the convexity of the bond.
 
-        If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
+
 
         .. math::
             Convexity = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t \\cdot t \\cdot (t + 1)}{(1 + YTM)^{(t + 2)}}
@@ -1738,6 +1844,111 @@ class FixedRateBullet:
             if price_calc != 0
             else 0.0
         )
+
+    def effective_convexity(
+        self,
+        yield_to_maturity: Optional[float] = None,
+        bond_price: Optional[float] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+    ) -> float:
+        """
+        Calculate the effective convexity of the bond.
+
+        .. math::
+            \text{Effective Convexity} = \frac{P_{+} + P_{-} - 2P}{\\epsilon^2 P}
+
+        where:
+
+        - :math:`P` is the price of the bond
+        - :math:`P_{+}` is the price if yield increases by :math:`\\epsilon`
+        - :math:`P_{-}` is the price if yield decreases by :math:`\\epsilon`
+        - :math:`\\epsilon` is a small change in yield
+
+        The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+        Parameters
+        ----------
+        yield_to_maturity : float, optional
+            Yield to maturity as a decimal. If not provided, will be calculated from price if given.
+        bond_price : float, optional
+            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+
+        Returns
+        -------
+        convexity : float
+            Bond effective convexity.
+
+        Examples
+        --------
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
+        >>> bond.effective_convexity(yield_to_maturity=0.05) # doctest: +ELLIPSIS
+        22.61232265...
+        """
+        settlement_date = self._resolve_settlement_date(settlement_date)
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = self._resolve_valuation_parameters(
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
+
+        ytm, price_calc = self._resolve_ytm_and_bond_price(
+            yield_to_maturity,
+            bond_price,
+            settlement_date,
+            adjust_to_business_days=adjust_to_business_days,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
+        )
+
+        if ytm is None or price_calc is None:
+            raise ValueError("Unable to determine yield to maturity.")
+
+        time_to_payments = self._calculate_time_to_payments(
+            settlement_date,
+            bond_price=None,
+            adjust_to_business_days=adjust_to_business_days,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
+        )
+
+        # Calculate effective convexity using a small epsilon
+        epsilon = 0.0001
+        price_plus_epsilon = self._price_from_yield(
+            yield_to_maturity=ytm + epsilon,
+            time_to_payments=time_to_payments,
+            yield_calculation_convention=yield_calculation_convention,
+        )
+        price_minus_epsilon = self._price_from_yield(
+            yield_to_maturity=ytm - epsilon,
+            time_to_payments=time_to_payments,
+            yield_calculation_convention=yield_calculation_convention,
+        )
+        expected_convexity = (
+            price_plus_epsilon + price_minus_epsilon - 2 * price_calc
+        ) / (epsilon**2 * price_calc)
+        return expected_convexity
 
     def accrued_interest(
         self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
@@ -1930,8 +2141,8 @@ class FixedRateBullet:
         Examples
         --------
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
-        >>> bond.price_from_yield(0.05)
-        100.0
+        >>> bond.price_from_yield(0.05) # doctest: +ELLIPSIS
+        100.0...
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -2256,7 +2467,7 @@ class FixedRateBullet:
         --------
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.dv01(yield_to_maturity=0.05)
-        -0.0437603219
+        -0.0437603218
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -2434,7 +2645,7 @@ class FixedRateBullet:
                 for t, cf in time_to_payments.items()
             ]
         )
-        return round(price, 10)
+        return price
 
     def _resolve_settlement_date(
         self, settlement_date: Optional[Union[str, pd.Timestamp]]

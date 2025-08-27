@@ -80,6 +80,26 @@ class TestFixedRateBullet:
             f"Expected duration: {expected_duration}, but got: {duration}"
         )
 
+    def test_effective_duration(self):
+        bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
+        modified_duration = bond.modified_duration(yield_to_maturity=0.05)
+        effective_duration = bond.effective_duration(yield_to_maturity=0.05)
+        assert isinstance(effective_duration, float)
+        assert abs(effective_duration - modified_duration) < 1e-6, (
+            f"Expected duration: {modified_duration}, but got: {effective_duration}"
+        )
+
+    # test calling effective duration without price nor yield_to_maturity raises ValueError
+    def test_effective_duration_without_price_or_ytm(self):
+        bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
+        with pytest.raises(ValueError, match="Unable to determine yield to maturity."):
+            bond.effective_duration()
+
+    def test_effective_convexity_without_price_or_ytm(self):
+        bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
+        with pytest.raises(ValueError, match="Unable to determine yield to maturity."):
+            bond.effective_convexity()
+
     def test_macauley_duration(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         duration = bond.macaulay_duration(yield_to_maturity=0.05)
@@ -162,6 +182,15 @@ class TestFixedRateBullet:
         conv = round(conv, 5)
         assert np.isclose(conv, expected_convexity, rtol=1e-5), (
             f"Expected convexity: {expected_convexity}, but got: {conv}"
+        )
+
+    def test_effective_convexity(self):
+        bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 2)
+        effective_convexity = bond.effective_convexity(yield_to_maturity=0.05)
+        convexity = bond.convexity(yield_to_maturity=0.05)
+        assert isinstance(convexity, float)
+        assert np.isclose(convexity, effective_convexity, rtol=1e-5), (
+            f"Expected convexity: {effective_convexity}, but got: {convexity}"
         )
 
     # call convexity without yield or bond price should raise ValueError
