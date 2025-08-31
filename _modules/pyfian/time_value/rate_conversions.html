@@ -136,14 +136,15 @@
 
 
 
-<div class="viewcode-block" id="validate_yield_calculation_convention">
-<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.validate_yield_calculation_convention">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">validate_yield_calculation_convention</span><span class="p">(</span><span class="n">convention</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="n">valid_conventions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Annual&quot;</span><span class="p">,</span> <span class="s2">&quot;BEY&quot;</span><span class="p">,</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">convention</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_conventions</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">convention</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">convention</span></div>
+<span class="n">VALID_YIELD_CALCULATION_CONVENTIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Annual&quot;</span><span class="p">,</span> <span class="s2">&quot;BEY&quot;</span><span class="p">,</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">,</span> <span class="s2">&quot;BEY-Q&quot;</span><span class="p">,</span> <span class="s2">&quot;BEY-M&quot;</span><span class="p">]</span>
 
+<span class="n">YIELD_CALCULATION_ADJUSTMENTS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Continuous&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="s2">&quot;BEY&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="s2">&quot;Annual&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="s2">&quot;BEY-Q&quot;</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">,</span>
+    <span class="s2">&quot;BEY-M&quot;</span><span class="p">:</span> <span class="mf">12.0</span><span class="p">,</span>
+<span class="p">}</span>
 
 
 <div class="viewcode-block" id="convert_yield">
@@ -159,9 +160,9 @@
 <span class="sd">    rate : float</span>
 <span class="sd">        The interest rate to convert, expressed as a decimal (e.g., 0.05 for 5%).</span>
 <span class="sd">    from_convention : str</span>
-<span class="sd">        The current yield calculation convention of the rate. Must be one of &quot;Annual&quot;, &quot;BEY&quot;, &quot;Continuous&quot;.</span>
+<span class="sd">        The current yield calculation convention of the rate. Must be one of &quot;Annual&quot;, &quot;Continuous&quot;, &quot;BEY&quot;, &quot;BEY_Q&quot;, &quot;BEY_M&quot;.</span>
 <span class="sd">    to_convention : str</span>
-<span class="sd">        The target yield calculation convention to convert the rate to. Must be one of &quot;Annual&quot;, &quot;BEY&quot;, &quot;Continuous&quot;.</span>
+<span class="sd">        The target yield calculation convention to convert the rate to. Must be one of &quot;Annual&quot;, &quot;Continuous&quot;, &quot;BEY&quot;, &quot;BEY_Q&quot;, &quot;BEY_M&quot;.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -184,8 +185,10 @@
         <span class="n">eff</span> <span class="o">=</span> <span class="n">continuous_to_effective</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">from_convention</span> <span class="o">==</span> <span class="s2">&quot;Annual&quot;</span><span class="p">:</span>
         <span class="n">eff</span> <span class="o">=</span> <span class="n">rate</span>
-    <span class="k">elif</span> <span class="n">from_convention</span> <span class="o">==</span> <span class="s2">&quot;BEY&quot;</span><span class="p">:</span>
-        <span class="n">eff</span> <span class="o">=</span> <span class="n">bey_to_effective_annual</span><span class="p">(</span><span class="n">rate</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="s2">&quot;BEY&quot;</span> <span class="ow">in</span> <span class="n">from_convention</span> <span class="ow">and</span> <span class="n">from_convention</span> <span class="ow">in</span> <span class="n">YIELD_CALCULATION_ADJUSTMENTS</span><span class="p">:</span>
+        <span class="n">eff</span> <span class="o">=</span> <span class="n">nominal_periods_to_effective</span><span class="p">(</span>
+            <span class="n">rate</span><span class="p">,</span> <span class="n">periods_per_year</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">YIELD_CALCULATION_ADJUSTMENTS</span><span class="p">[</span><span class="n">from_convention</span><span class="p">])</span>
+        <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">from_convention</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -193,10 +196,28 @@
         <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">eff</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">to_convention</span> <span class="o">==</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">effective_to_continuous</span><span class="p">(</span><span class="n">eff</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">to_convention</span> <span class="o">==</span> <span class="s2">&quot;BEY&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">effective_annual_to_bey</span><span class="p">(</span><span class="n">eff</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="s2">&quot;BEY&quot;</span> <span class="ow">in</span> <span class="n">to_convention</span> <span class="ow">and</span> <span class="n">to_convention</span> <span class="ow">in</span> <span class="n">YIELD_CALCULATION_ADJUSTMENTS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span>
+            <span class="n">effective_to_nominal_periods</span><span class="p">(</span>
+                <span class="n">eff</span><span class="p">,</span> <span class="n">periods_per_year</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">YIELD_CALCULATION_ADJUSTMENTS</span><span class="p">[</span><span class="n">to_convention</span><span class="p">])</span>
+            <span class="p">),</span>
+            <span class="mi">10</span><span class="p">,</span>
+        <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">to_convention</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_time_adjustment">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.get_time_adjustment">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_time_adjustment</span><span class="p">(</span><span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the time adjustment factor based on the yield calculation convention.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="ow">in</span> <span class="n">YIELD_CALCULATION_ADJUSTMENTS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">YIELD_CALCULATION_ADJUSTMENTS</span><span class="p">[</span><span class="n">yield_calculation_convention</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
 
 
 
@@ -377,7 +398,7 @@
 <div class="viewcode-block" id="nominal_days_to_effective">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.nominal_days_to_effective">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">nominal_days_to_effective</span><span class="p">(</span>
-    <span class="n">nominal_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">days</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">base_year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">365</span>
+    <span class="n">nominal_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">days</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">base_year</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">365.0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert a nominal rate for a period of given days to an effective annual rate.</span>
@@ -403,10 +424,10 @@
 <span class="sd">    ----------</span>
 <span class="sd">    nominal_rate : float</span>
 <span class="sd">        Nominal rate for the period (as decimal).</span>
-<span class="sd">    days : int</span>
-<span class="sd">        Number of days in the period.</span>
-<span class="sd">    base_year : int, optional</span>
-<span class="sd">        Number of days in the year (default 365).</span>
+<span class="sd">    days : float</span>
+<span class="sd">        Number of days in the period (can be float).</span>
+<span class="sd">    base_year : float, optional</span>
+<span class="sd">        Number of days in the year (default 365, can be float).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -431,7 +452,7 @@
 <div class="viewcode-block" id="effective_to_nominal_days">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.effective_to_nominal_days">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">effective_to_nominal_days</span><span class="p">(</span>
-    <span class="n">effective_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">days</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">base_year</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">365</span>
+    <span class="n">effective_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">days</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">base_year</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">365.0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert an effective annual rate to a nominal rate for a period of given days.</span>
@@ -456,10 +477,10 @@
 <span class="sd">    ----------</span>
 <span class="sd">    effective_rate : float</span>
 <span class="sd">        Effective annual rate (as decimal).</span>
-<span class="sd">    days : int</span>
-<span class="sd">        Number of days in the period.</span>
-<span class="sd">    base_year : int, optional</span>
-<span class="sd">        Number of days in the year (default 365).</span>
+<span class="sd">    days : float</span>
+<span class="sd">        Number of days in the period (can be float).</span>
+<span class="sd">    base_year : float, optional</span>
+<span class="sd">        Number of days in the year (default 365, can be float).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -579,7 +600,7 @@
 <div class="viewcode-block" id="money_market_rate_to_effective">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.money_market_rate_to_effective">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">money_market_rate_to_effective</span><span class="p">(</span>
-    <span class="n">mmr</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">days</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">360</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">360</span><span class="p">,</span> <span class="n">discount</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">mmr</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">days</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">360.0</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">360.0</span><span class="p">,</span> <span class="n">discount</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert a Money Market Rate (MMR, actual/360) to effective annual rate (EAR).</span>
@@ -603,10 +624,10 @@
 <span class="sd">    ----------</span>
 <span class="sd">    mmr : float</span>
 <span class="sd">        Money Market Rate (as decimal).</span>
-<span class="sd">    days : int, optional</span>
-<span class="sd">        Number of days in the year (default 360).</span>
+<span class="sd">    days : float, optional</span>
+<span class="sd">        Number of days in the year (default 360, can be float).</span>
 <span class="sd">    base : float, optional</span>
-<span class="sd">        Base for the calculation (default 360).</span>
+<span class="sd">        Base for the calculation (default 360, can be float).</span>
 <span class="sd">    discount : bool, optional</span>
 <span class="sd">        If True, interpret mmr as a discount rate. If False (default), as an add-on (interest-bearing) rate.</span>
 
@@ -637,7 +658,10 @@
 <div class="viewcode-block" id="effective_to_money_market_rate">
 <a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.effective_to_money_market_rate">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">effective_to_money_market_rate</span><span class="p">(</span>
-    <span class="n">effective_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">days</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">360</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">360</span><span class="p">,</span> <span class="n">discount</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">effective_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">days</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">360.0</span><span class="p">,</span>
+    <span class="n">base</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">360.0</span><span class="p">,</span>
+    <span class="n">discount</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert an effective annual rate (EAR) to a Money Market Rate (actual/360).</span>
@@ -660,10 +684,10 @@
 <span class="sd">    ----------</span>
 <span class="sd">    effective_rate : float</span>
 <span class="sd">        Effective annual rate (as decimal).</span>
-<span class="sd">    days : int, optional</span>
-<span class="sd">        Number of days in the year (default 360).</span>
+<span class="sd">    days : float, optional</span>
+<span class="sd">        Number of days in the year (default 360, can be float).</span>
 <span class="sd">    base : float, optional</span>
-<span class="sd">        Base for the calculation (default 360).</span>
+<span class="sd">        Base for the calculation (default 360, can be float).</span>
 <span class="sd">    discount : bool, optional</span>
 <span class="sd">        If True, return the discount rate. If False (default), return the add-on (interest-bearing) rate.</span>
 
@@ -768,6 +792,61 @@
 <span class="sd">    np.float64(0.06)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">_exp_general</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">effective_rate</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="convert_effective_to_mmr">
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/rate_conversions/index.html#pyfian.time_value.rate_conversions.convert_effective_to_mmr">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_effective_to_mmr</span><span class="p">(</span>
+    <span class="n">yield_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">days</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">360.0</span><span class="p">,</span>
+    <span class="n">base</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">360.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert an effective interest rate to a money market rate (MMR) based on the specified yield calculation convention.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    yield_value : float</span>
+<span class="sd">        The effective interest rate (as decimal).</span>
+<span class="sd">    yield_calculation_convention : str</span>
+<span class="sd">        The yield calculation convention to use (e.g., &quot;Discount&quot;, &quot;Add-On&quot;, &quot;Annual&quot;, &quot;Continuous&quot;, &quot;BEY&quot;).</span>
+<span class="sd">    days : float, optional</span>
+<span class="sd">        The number of days in the year (default is 360, can be float).</span>
+<span class="sd">    base : float, optional</span>
+<span class="sd">        The base for the money market rate calculation (default is 360, can be float).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The converted money market rate (as decimal).</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    AssertionError</span>
+<span class="sd">        If the yield calculation convention is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Discount&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">effective_to_money_market_rate</span><span class="p">(</span>
+            <span class="n">yield_value</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Add-On&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">effective_to_money_market_rate</span><span class="p">(</span>
+            <span class="n">yield_value</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;BEY&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">effective_to_money_market_rate</span><span class="p">(</span>
+            <span class="n">yield_value</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mf">365.0</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Annual&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">yield_value</span>
+    <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">effective_to_continuous</span><span class="p">(</span><span class="n">yield_value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
 
 </pre></div>
 

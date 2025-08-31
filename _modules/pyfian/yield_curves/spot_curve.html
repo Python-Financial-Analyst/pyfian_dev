@@ -99,7 +99,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">fsolve</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.rate_conversions</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_yield_calculation_convention</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.utils.day_count</span><span class="w"> </span><span class="kn">import</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="n">get_day_count_convention</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.zero_coupon_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZeroCouponCurve</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value</span><span class="w"> </span><span class="kn">import</span> <span class="n">rate_conversions</span> <span class="k">as</span> <span class="n">rc</span>
@@ -241,7 +240,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;Annual&quot;</span>
             <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="ow">is</span> <span class="kc">None</span>
-            <span class="k">else</span> <span class="n">validate_yield_calculation_convention</span><span class="p">(</span><span class="n">yield_calculation_convention</span><span class="p">)</span>
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_yield_calculation_convention</span><span class="p">(</span>
+                <span class="n">yield_calculation_convention</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">zero_rates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

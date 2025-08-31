@@ -89,7 +89,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.rate_conversions</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_yield_calculation_convention</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.utils.day_count</span><span class="w"> </span><span class="kn">import</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="n">get_day_count_convention</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.base_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">YieldCurveBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.credit_spread</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -245,7 +244,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;Annual&quot;</span>
             <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="ow">is</span> <span class="kc">None</span>
-            <span class="k">else</span> <span class="n">validate_yield_calculation_convention</span><span class="p">(</span><span class="n">yield_calculation_convention</span><span class="p">)</span>
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_yield_calculation_convention</span><span class="p">(</span>
+                <span class="n">yield_calculation_convention</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">maturities</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
@@ -331,9 +332,9 @@
 
         <span class="c1"># Convert total_rate back to the original</span>
         <span class="k">return</span> <span class="n">rc</span><span class="o">.</span><span class="n">convert_yield</span><span class="p">(</span>
-            <span class="n">total_rate</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">spread_yield_calculation_convention</span><span class="p">,</span>
-            <span class="n">yield_calculation_convention</span><span class="p">,</span>
+            <span class="n">rate</span><span class="o">=</span><span class="n">total_rate</span><span class="p">,</span>
+            <span class="n">from_convention</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spread_yield_calculation_convention</span><span class="p">,</span>
+            <span class="n">to_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
@@ -346,7 +347,7 @@
 <div class="viewcode-block" id="CombinedCurve._get_t">
 <a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/curve_combination/index.html#pyfian.yield_curves.curve_combination.CombinedCurve._get_t">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">spread</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="n">spread</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="CombinedCurve.date_rate">

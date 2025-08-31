@@ -147,6 +147,12 @@ Module Contents
    .. py:attribute:: maturities
 
 
+   .. py:method:: _validate_yield_calculation_convention(convention)
+
+      Validate the yield calculation convention.
+
+
+
    .. py:method:: as_dict()
 
       Convert the curve to a dictionary.

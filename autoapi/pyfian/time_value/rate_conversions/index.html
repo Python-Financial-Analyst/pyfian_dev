@@ -120,6 +120,19 @@
 <li><p>Bond Equivalent Yield (BEY, semiannual-pay bond convention) &lt;-&gt; Effective annual rate (EAR)</p></li>
 </ul>
 <p>These conversions are essential for comparing, quoting, and reporting interest rates and yields across different financial products, regulatory frameworks, and institutional conventions.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.VALID_YIELD_CALCULATION_CONVENTIONS" title="pyfian.time_value.rate_conversions.VALID_YIELD_CALCULATION_CONVENTIONS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VALID_YIELD_CALCULATION_CONVENTIONS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.YIELD_CALCULATION_ADJUSTMENTS" title="pyfian.time_value.rate_conversions.YIELD_CALCULATION_ADJUSTMENTS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">YIELD_CALCULATION_ADJUSTMENTS</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
 <section id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
 <table class="autosummary longtable docutils align-default">
@@ -136,11 +149,11 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions._validate_effective_rate" title="pyfian.time_value.rate_conversions._validate_effective_rate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_validate_effective_rate</span></code></a>(effective_rate)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.validate_yield_calculation_convention" title="pyfian.time_value.rate_conversions.validate_yield_calculation_convention"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_yield_calculation_convention</span></code></a>(→ str)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.convert_yield" title="pyfian.time_value.rate_conversions.convert_yield"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_yield</span></code></a>(→ float)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.convert_yield" title="pyfian.time_value.rate_conversions.convert_yield"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_yield</span></code></a>(→ float)</p></td>
 <td><p>Convert a yield from one convention to another.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.get_time_adjustment" title="pyfian.time_value.rate_conversions.get_time_adjustment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_time_adjustment</span></code></a>(→ float)</p></td>
+<td><p>Get the time adjustment factor based on the yield calculation convention.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.continuous_to_effective" title="pyfian.time_value.rate_conversions.continuous_to_effective"><code class="xref py py-obj docutils literal notranslate"><span class="pre">continuous_to_effective</span></code></a>(→ float)</p></td>
 <td><p>Convert a continuously compounded rate to an effective annual rate.</p></td>
@@ -178,6 +191,9 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.effective_annual_to_bey" title="pyfian.time_value.rate_conversions.effective_annual_to_bey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">effective_annual_to_bey</span></code></a>(→ float)</p></td>
 <td><p>Convert effective annual rate (EAR) to Bond Equivalent Yield (BEY).</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.time_value.rate_conversions.convert_effective_to_mmr" title="pyfian.time_value.rate_conversions.convert_effective_to_mmr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_effective_to_mmr</span></code></a>(→ float)</p></td>
+<td><p>Convert an effective interest rate to a money market rate (MMR) based on the specified yield calculation convention.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -205,9 +221,14 @@ Returns <span class="math notranslate nohighlight">\(base^n - 1\)</span></p>
 <span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">_validate_effective_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">effective_rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/time_value/rate_conversions.html#_validate_effective_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.rate_conversions._validate_effective_rate" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="pyfian.time_value.rate_conversions.validate_yield_calculation_convention">
-<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">validate_yield_calculation_convention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/rate_conversions.html#validate_yield_calculation_convention"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.rate_conversions.validate_yield_calculation_convention" title="Link to this definition"></a></dt>
+<dl class="py data">
+<dt class="sig sig-object py" id="pyfian.time_value.rate_conversions.VALID_YIELD_CALCULATION_CONVENTIONS">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">VALID_YIELD_CALCULATION_CONVENTIONS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Annual',</span> <span class="pre">'BEY',</span> <span class="pre">'Continuous',</span> <span class="pre">'BEY-Q',</span> <span class="pre">'BEY-M']</span></em><a class="headerlink" href="#pyfian.time_value.rate_conversions.VALID_YIELD_CALCULATION_CONVENTIONS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pyfian.time_value.rate_conversions.YIELD_CALCULATION_ADJUSTMENTS">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">YIELD_CALCULATION_ADJUSTMENTS</span></span><a class="headerlink" href="#pyfian.time_value.rate_conversions.YIELD_CALCULATION_ADJUSTMENTS" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -220,9 +241,9 @@ Returns <span class="math notranslate nohighlight">\(base^n - 1\)</span></p>
 <dl class="simple">
 <dt>rate<span class="classifier">float</span></dt><dd><p>The interest rate to convert, expressed as a decimal (e.g., 0.05 for 5%).</p>
 </dd>
-<dt>from_convention<span class="classifier">str</span></dt><dd><p>The current yield calculation convention of the rate. Must be one of “Annual”, “BEY”, “Continuous”.</p>
+<dt>from_convention<span class="classifier">str</span></dt><dd><p>The current yield calculation convention of the rate. Must be one of “Annual”, “Continuous”, “BEY”, “BEY_Q”, “BEY_M”.</p>
 </dd>
-<dt>to_convention<span class="classifier">str</span></dt><dd><p>The target yield calculation convention to convert the rate to. Must be one of “Annual”, “BEY”, “Continuous”.</p>
+<dt>to_convention<span class="classifier">str</span></dt><dd><p>The target yield calculation convention to convert the rate to. Must be one of “Annual”, “Continuous”, “BEY”, “BEY_Q”, “BEY_M”.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -243,6 +264,12 @@ Returns <span class="math notranslate nohighlight">\(base^n - 1\)</span></p>
 </pre></div>
 </div>
 </section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.time_value.rate_conversions.get_time_adjustment">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">get_time_adjustment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/rate_conversions.html#get_time_adjustment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.rate_conversions.get_time_adjustment" title="Link to this definition"></a></dt>
+<dd><p>Get the time adjustment factor based on the yield calculation convention.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -397,7 +424,7 @@ added to the principal constantly, creating a smooth growth curve.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyfian.time_value.rate_conversions.nominal_days_to_effective">
-<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">nominal_days_to_effective</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nominal_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">365</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/rate_conversions.html#nominal_days_to_effective"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.rate_conversions.nominal_days_to_effective" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">nominal_days_to_effective</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nominal_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">365.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/rate_conversions.html#nominal_days_to_effective"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.rate_conversions.nominal_days_to_effective" title="Link to this definition"></a></dt>
 <dd><p>Convert a nominal rate for a period of given days to an effective annual rate.</p>
 <p>About this rates:</p>
 <ul class="simple">
@@ -419,8 +446,8 @@ or maturities.</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nominal_rate</strong> (<em>float</em>) – Nominal rate for the period (as decimal).</p></li>
-<li><p><strong>days</strong> (<em>int</em>) – Number of days in the period.</p></li>
-<li><p><strong>base_year</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of days in the year (default 365).</p></li>
+<li><p><strong>days</strong> (<em>float</em>) – Number of days in the period (can be float).</p></li>
+<li><p><strong>base_year</strong> (<em>float</em><em>, </em><em>optional</em>) – Number of days in the year (default 365, can be float).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -441,7 +468,7 @@ or maturities.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyfian.time_value.rate_conversions.effective_to_nominal_days">
-<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">effective_to_nominal_days</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">effective_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">365</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/rate_conversions.html#effective_to_nominal_days"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.rate_conversions.effective_to_nominal_days" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">effective_to_nominal_days</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">effective_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">365.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/rate_conversions.html#effective_to_nominal_days"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.rate_conversions.effective_to_nominal_days" title="Link to this definition"></a></dt>
 <dd><p>Convert an effective annual rate to a nominal rate for a period of given days.</p>
 <p>About this rates:</p>
 <ul class="simple">
@@ -462,8 +489,8 @@ and commercial paper.</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>effective_rate</strong> (<em>float</em>) – Effective annual rate (as decimal).</p></li>
-<li><p><strong>days</strong> (<em>int</em>) – Number of days in the period.</p></li>
-<li><p><strong>base_year</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of days in the year (default 365).</p></li>
+<li><p><strong>days</strong> (<em>float</em>) – Number of days in the period (can be float).</p></li>
+<li><p><strong>base_year</strong> (<em>float</em><em>, </em><em>optional</em>) – Number of days in the year (default 365, can be float).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -562,7 +589,7 @@ mortgages, and deposits.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyfian.time_value.rate_conversions.money_market_rate_to_effective">
-<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">money_market_rate_to_effective</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mmr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">360</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">360</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discount</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/rate_conversions.html#money_market_rate_to_effective"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.rate_conversions.money_market_rate_to_effective" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">money_market_rate_to_effective</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mmr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">360.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">360.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discount</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/rate_conversions.html#money_market_rate_to_effective"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.rate_conversions.money_market_rate_to_effective" title="Link to this definition"></a></dt>
 <dd><p>Convert a Money Market Rate (MMR, actual/360) to effective annual rate (EAR).</p>
 <p>About this rates:</p>
 <ul class="simple">
@@ -581,8 +608,8 @@ mortgages, and deposits.</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mmr</strong> (<em>float</em>) – Money Market Rate (as decimal).</p></li>
-<li><p><strong>days</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of days in the year (default 360).</p></li>
-<li><p><strong>base</strong> (<em>float</em><em>, </em><em>optional</em>) – Base for the calculation (default 360).</p></li>
+<li><p><strong>days</strong> (<em>float</em><em>, </em><em>optional</em>) – Number of days in the year (default 360, can be float).</p></li>
+<li><p><strong>base</strong> (<em>float</em><em>, </em><em>optional</em>) – Base for the calculation (default 360, can be float).</p></li>
 <li><p><strong>discount</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, interpret mmr as a discount rate. If False (default), as an add-on (interest-bearing) rate.</p></li>
 </ul>
 </dd>
@@ -606,7 +633,7 @@ mortgages, and deposits.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyfian.time_value.rate_conversions.effective_to_money_market_rate">
-<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">effective_to_money_market_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">effective_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">360</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">360</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discount</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/rate_conversions.html#effective_to_money_market_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.rate_conversions.effective_to_money_market_rate" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">effective_to_money_market_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">effective_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">360.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">360.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discount</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/rate_conversions.html#effective_to_money_market_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.rate_conversions.effective_to_money_market_rate" title="Link to this definition"></a></dt>
 <dd><p>Convert an effective annual rate (EAR) to a Money Market Rate (actual/360).</p>
 <p>About this rates:</p>
 <ul class="simple">
@@ -624,8 +651,8 @@ mortgages, and deposits.</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>effective_rate</strong> (<em>float</em>) – Effective annual rate (as decimal).</p></li>
-<li><p><strong>days</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of days in the year (default 360).</p></li>
-<li><p><strong>base</strong> (<em>float</em><em>, </em><em>optional</em>) – Base for the calculation (default 360).</p></li>
+<li><p><strong>days</strong> (<em>float</em><em>, </em><em>optional</em>) – Number of days in the year (default 360, can be float).</p></li>
+<li><p><strong>base</strong> (<em>float</em><em>, </em><em>optional</em>) – Base for the calculation (default 360, can be float).</p></li>
 <li><p><strong>discount</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, return the discount rate. If False (default), return the add-on (interest-bearing) rate.</p></li>
 </ul>
 </dd>
@@ -709,6 +736,31 @@ mortgages, and deposits.</p></li>
 <span class="go">np.float64(0.06)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.time_value.rate_conversions.convert_effective_to_mmr">
+<span class="sig-prename descclassname"><span class="pre">pyfian.time_value.rate_conversions.</span></span><span class="sig-name descname"><span class="pre">convert_effective_to_mmr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yield_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">360.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">360.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/time_value/rate_conversions.html#convert_effective_to_mmr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.time_value.rate_conversions.convert_effective_to_mmr" title="Link to this definition"></a></dt>
+<dd><p>Convert an effective interest rate to a money market rate (MMR) based on the specified yield calculation convention.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yield_value</strong> (<em>float</em>) – The effective interest rate (as decimal).</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em>) – The yield calculation convention to use (e.g., “Discount”, “Add-On”, “Annual”, “Continuous”, “BEY”).</p></li>
+<li><p><strong>days</strong> (<em>float</em><em>, </em><em>optional</em>) – The number of days in the year (default is 360, can be float).</p></li>
+<li><p><strong>base</strong> (<em>float</em><em>, </em><em>optional</em>) – The base for the money market rate calculation (default is 360, can be float).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The converted money market rate (as decimal).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AssertionError</strong> – If the yield calculation convention is invalid.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

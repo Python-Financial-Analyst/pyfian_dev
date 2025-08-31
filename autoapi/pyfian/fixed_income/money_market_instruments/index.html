@@ -1,0 +1,661 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyfian.fixed_income.money_market_instruments &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="pyfian.portfolio" href="../../portfolio/index.html" />
+    <link rel="prev" title="pyfian.fixed_income.fixed_rate_bond" href="../fixed_rate_bond/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Topics/fixed_income/index.html">Fixed Income</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">pyfian</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../corporate_finance/index.html">pyfian.corporate_finance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../data/index.html">pyfian.data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../derivatives/index.html">pyfian.derivatives</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../financial_statements/index.html">pyfian.financial_statements</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">pyfian.fixed_income</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../portfolio/index.html">pyfian.portfolio</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../risk_management/index.html">pyfian.risk_management</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../statistics/index.html">pyfian.statistics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../time_value/index.html">pyfian.time_value</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/index.html">pyfian.utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../visualization/index.html">pyfian.visualization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../yield_curves/index.html">pyfian.yield_curves</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#attributes">Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">pyfian</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">pyfian.fixed_income</a></li>
+      <li class="breadcrumb-item active">pyfian.fixed_income.money_market_instruments</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/pyfian/fixed_income/money_market_instruments/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyfian.fixed_income.money_market_instruments">
+<span id="pyfian-fixed-income-money-market-instruments"></span><h1>pyfian.fixed_income.money_market_instruments<a class="headerlink" href="#module-pyfian.fixed_income.money_market_instruments" title="Link to this heading"></a></h1>
+<p>money_market_instruments.py</p>
+<p>Module for money market instruments, including generic MoneyMarketInstrument and specific types such as Treasury Bill, Certificate of Deposit, Commercial Paper, and Banker’s Acceptance.</p>
+<p>Provides classes for short-term debt instruments, payment flow generation, and instrument-specific conventions.</p>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument" title="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MoneyMarketInstrument</span></code></a></p></td>
+<td><p>MoneyMarketInstrument represents a generic short-term debt instrument, typically with maturities less than one year.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.fixed_income.money_market_instruments.TreasuryBill" title="pyfian.fixed_income.money_market_instruments.TreasuryBill"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TreasuryBill</span></code></a></p></td>
+<td><p>TreasuryBill represents a short-term government security issued at a discount and maturing at par.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.fixed_income.money_market_instruments.CertificateOfDeposit" title="pyfian.fixed_income.money_market_instruments.CertificateOfDeposit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CertificateOfDeposit</span></code></a></p></td>
+<td><p>CertificateOfDeposit (CD) is a time deposit with a fixed interest rate and specified maturity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.fixed_income.money_market_instruments.CommercialPaper" title="pyfian.fixed_income.money_market_instruments.CommercialPaper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CommercialPaper</span></code></a></p></td>
+<td><p>CommercialPaper (CP) is a short-term unsecured promissory note issued by corporations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.fixed_income.money_market_instruments.BankersAcceptance" title="pyfian.fixed_income.money_market_instruments.BankersAcceptance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BankersAcceptance</span></code></a></p></td>
+<td><p>BankersAcceptance (BA) is a short-term debt instrument guaranteed by a bank, commonly used in international trade.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.fixed_income.money_market_instruments.</span></span><span class="sig-name descname"><span class="pre">MoneyMarketInstrument</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">issue_dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpn_freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_convention_t_plus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_date_t_minus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_to_maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bond_price</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'actual/365'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'30/360'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Add-On'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#MoneyMarketInstrument"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base_fixed_income/index.html#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument" title="pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument</span></code></a></p>
+<p>MoneyMarketInstrument represents a generic short-term debt instrument, typically with maturities less than one year.
+Inherits from BaseFixedIncomeInstrument and provides payment flow logic specific to money market conventions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>issue_dt</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – Issue date of the instrument.</p></li>
+<li><p><strong>maturity</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – Maturity date of the instrument.</p></li>
+<li><p><strong>cpn</strong> (<em>float</em>) – Annual coupon rate (percentage).</p></li>
+<li><p><strong>cpn_freq</strong> (<em>int</em>) – Number of coupon payments per year.</p></li>
+<li><p><strong>notional</strong> (<em>float</em><em>, </em><em>optional</em>) – Face value (principal) of the instrument. Defaults to 100.</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Day count convention for the instrument. Defaults to ‘actual/360’.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional keyword arguments for FixedRateBullet.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.payment_flow">
+<span class="sig-name descname"><span class="pre">payment_flow</span></span><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.payment_flow" title="Link to this definition"></a></dt>
+<dd><p>Dictionary of payment dates and amounts (principal + coupon).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.coupon_flow">
+<span class="sig-name descname"><span class="pre">coupon_flow</span></span><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.coupon_flow" title="Link to this definition"></a></dt>
+<dd><p>Dictionary of coupon payment dates and amounts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.amortization_flow">
+<span class="sig-name descname"><span class="pre">amortization_flow</span></span><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.amortization_flow" title="Link to this definition"></a></dt>
+<dd><p>Dictionary of amortization payment dates and amounts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.issue_dt">
+<span class="sig-name descname"><span class="pre">issue_dt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.issue_dt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.maturity">
+<span class="sig-name descname"><span class="pre">maturity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.maturity" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.cpn">
+<span class="sig-name descname"><span class="pre">cpn</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.cpn" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.cpn_freq">
+<span class="sig-name descname"><span class="pre">cpn_freq</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.cpn_freq" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.notional">
+<span class="sig-name descname"><span class="pre">notional</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.notional" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.settlement_convention_t_plus">
+<span class="sig-name descname"><span class="pre">settlement_convention_t_plus</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.settlement_convention_t_plus" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.record_date_t_minus">
+<span class="sig-name descname"><span class="pre">record_date_t_minus</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.record_date_t_minus" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.day_count_convention">
+<span class="sig-name descname"><span class="pre">day_count_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></em><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.day_count_convention" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.adjust_to_business_days">
+<span class="sig-name descname"><span class="pre">adjust_to_business_days</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.adjust_to_business_days" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.following_coupons_day_count">
+<span class="sig-name descname"><span class="pre">following_coupons_day_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></em><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.following_coupons_day_count" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.yield_calculation_convention">
+<span class="sig-name descname"><span class="pre">yield_calculation_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.yield_calculation_convention" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">payment_flow</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.Timestamp</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">coupon_flow</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.Timestamp</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">amortization_flow</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.Timestamp</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument._settlement_date">
+<span class="sig-name descname"><span class="pre">_settlement_date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument._settlement_date" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument._validate_following_coupons_day_count">
+<span class="sig-name descname"><span class="pre">_validate_following_coupons_day_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#MoneyMarketInstrument._validate_following_coupons_day_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument._validate_following_coupons_day_count" title="Link to this definition"></a></dt>
+<dd><p>Validate the following coupons day count convention.
+Raises ValueError if the convention is not supported.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.make_payment_flow">
+<span class="sig-name descname"><span class="pre">make_payment_flow</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#MoneyMarketInstrument.make_payment_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.make_payment_flow" title="Link to this definition"></a></dt>
+<dd><p>Generate the payment flow for a money market instrument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(dict_payments, dict_coupons, dict_amortization):
+- dict_payments: Dictionary of payment dates and total payments (principal + coupon).
+- dict_coupons: Dictionary of coupon payment dates and amounts.
+- dict_amortization: Dictionary of amortization payment dates and amounts.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For money market instruments, typically only a single payment at maturity (principal + last coupon, if any).
+Coupon is calculated using the day count convention and year fraction between issue and maturity.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.from_days">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_days</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">days</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notional</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'actual/360'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">issue_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#MoneyMarketInstrument.from_days"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.from_days" title="Link to this definition"></a></dt>
+<dd><p>Create a MoneyMarketInstrument with a specified number of days to maturity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>days</strong> (<em>int</em>) – Number of days until maturity.</p></li>
+<li><p><strong>notional</strong> (<em>float</em><em>, </em><em>optional</em>) – Face value (principal). Defaults to 100.</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Day count convention. Defaults to ‘actual/360’.</p></li>
+<li><p><strong>issue_dt</strong> (<em>datetime</em><em>, </em><em>optional</em>) – Issue date. Defaults to current date if None.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional keyword arguments for FixedRateBullet.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Instance with specified maturity.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument" title="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument">MoneyMarketInstrument</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.accrued_interest">
+<span class="sig-name descname"><span class="pre">accrued_interest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#MoneyMarketInstrument.accrued_interest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.accrued_interest" title="Link to this definition"></a></dt>
+<dd><p>Calculate the accrued interest for the money market instrument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>settlement_date</strong> (<em>str</em><em> or </em><em>datetime-like</em><em>, </em><em>optional</em>) – Settlement date. Defaults to issue date.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>accrued_interest</strong> – The accrued interest amount.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.yield_to_maturity">
+<span class="sig-name descname"><span class="pre">yield_to_maturity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bond_price</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#MoneyMarketInstrument.yield_to_maturity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.yield_to_maturity" title="Link to this definition"></a></dt>
+<dd><p>Estimate the yield to maturity (YTM) using the xirr function from pyfian.time_value.irr.</p>
+<p>The YTM is the internal rate of return (IRR) of the bond’s cash flows, assuming the bond is held to maturity.</p>
+<p>It is the discount rate that makes the present value of the bond’s cash flows equal to its price for a given set of cash flows and settlement date.</p>
+<p>The YTM is calculated by solving the equation:</p>
+<div class="math notranslate nohighlight">
+\[P = \sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{(t+1)}}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P\)</span> is the price of the bond</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_t\)</span> is the cash flow at time <span class="math notranslate nohighlight">\(t\)</span>, where <span class="math notranslate nohighlight">\(t\)</span> is the time in years from the settlement date</p></li>
+<li><p><span class="math notranslate nohighlight">\(YTM\)</span> is the yield to maturity</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span> is the total number of periods</p></li>
+</ul>
+<p>The times to payments are calculated from the settlement date to each payment date and need not be integer values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bond_price</strong> (<em>float</em>) – Price of the bond.</p></li>
+<li><p><strong>settlement_date</strong> (<em>str</em><em> or </em><em>datetime-like</em><em>, </em><em>optional</em>) – Settlement date. Defaults to issue date.</p></li>
+<li><p><strong>adjust_to_business_days</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention. Defaults to value of self.day_count_convention.</p></li>
+<li><p><strong>following_coupons_day_count</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention. Defaults to value of self.yield_calculation_convention.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ytm</strong> – Estimated yield to maturity as a decimal.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If bond price is not set or YTM calculation does not converge.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">yield_to_maturity</span><span class="p">(</span><span class="n">bond_price</span><span class="o">=</span><span class="mi">95</span><span class="p">)</span>
+<span class="go">np.float64(0.06100197251858131)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument._validate_yield_calculation_convention">
+<span class="sig-name descname"><span class="pre">_validate_yield_calculation_convention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#MoneyMarketInstrument._validate_yield_calculation_convention"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument._validate_yield_calculation_convention" title="Link to this definition"></a></dt>
+<dd><p>Validate the yield calculation convention.
+Raises ValueError if the convention is not supported.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument._price_from_yield">
+<span class="sig-name descname"><span class="pre">_price_from_yield</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_to_payments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_to_maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#MoneyMarketInstrument._price_from_yield"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument._price_from_yield" title="Link to this definition"></a></dt>
+<dd><p>Helper to calculate the price of the bond from yield to maturity and time to payments.
+:param time_to_payments: Dictionary with time to payment (in years) as keys and cash flow values.
+:type time_to_payments: dict
+:param yield_to_maturity: Yield to maturity as a decimal (e.g., 0.05 for 5%).
+:type yield_to_maturity: float
+:param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+:type yield_calculation_convention: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Price of the bond.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument._price_from_yield_and_clean_parameters">
+<span class="sig-name descname"><span class="pre">_price_from_yield_and_clean_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yield_to_maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#MoneyMarketInstrument._price_from_yield_and_clean_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument._price_from_yield_and_clean_parameters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument._calculate_time_to_payments">
+<span class="sig-name descname"><span class="pre">_calculate_time_to_payments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bond_price</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#MoneyMarketInstrument._calculate_time_to_payments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument._calculate_time_to_payments" title="Link to this definition"></a></dt>
+<dd><p>Calculate the time to each payment from the settlement date.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.modified_duration">
+<span class="sig-name descname"><span class="pre">modified_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yield_to_maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bond_price</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#MoneyMarketInstrument.modified_duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.modified_duration" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Calculate modified duration of the bond.</p>
+</div></blockquote>
+<div class="math notranslate nohighlight">
+\[Modified Duration = \frac{1}{P} \sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{(t+1)}} \cdot t\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P\)</span> is the price of the bond</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_t\)</span> is the cash flow at time <span class="math notranslate nohighlight">\(t\)</span>, where <span class="math notranslate nohighlight">\(t\)</span> is the time in years from the settlement date</p></li>
+<li><p><span class="math notranslate nohighlight">\(YTM\)</span> is the yield to maturity</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span> is the total number of periods</p></li>
+</ul>
+<p>The times to payments are calculated from the settlement date to each payment date and need not be integer values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yield_to_maturity</strong> (<em>float</em><em>, </em><em>optional</em>) – Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.</p></li>
+<li><p><strong>bond_price</strong> (<em>float</em><em>, </em><em>optional</em>) – Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.</p></li>
+<li><p><strong>settlement_date</strong> (<em>str</em><em> or </em><em>datetime-like</em><em>, </em><em>optional</em>) – Settlement date. Defaults to issue date.</p></li>
+<li><p><strong>adjust_to_business_days</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention. Defaults to value of self.day_count_convention.</p></li>
+<li><p><strong>following_coupons_day_count</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention. Defaults to value of self.yield_calculation_convention.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>duration</strong> – Modified duration in years.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">effective_duration</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">settlement_date</span><span class="o">=</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">)</span>
+<span class="go">4.3760319684</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.macaulay_duration">
+<span class="sig-name descname"><span class="pre">macaulay_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yield_to_maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bond_price</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#MoneyMarketInstrument.macaulay_duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.macaulay_duration" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Calculate Macaulay duration of the bond. It is the weighted average time to receive the bond’s cash flows, where the weights are the present values of the cash flows.</p>
+</div></blockquote>
+<div class="math notranslate nohighlight">
+\[Macaulay Duration = \frac{1}{P} \sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{(t+1)}} \cdot t\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P\)</span> is the price of the bond</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_t\)</span> is the cash flow at time <span class="math notranslate nohighlight">\(t\)</span>, where <span class="math notranslate nohighlight">\(t\)</span> is the time in years from the settlement date</p></li>
+<li><p><span class="math notranslate nohighlight">\(YTM\)</span> is the yield to maturity</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span> is the total number of periods</p></li>
+</ul>
+<p>The times to payments are calculated from the settlement date to each payment date and need not be integer values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yield_to_maturity</strong> (<em>float</em><em>, </em><em>optional</em>) – Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.</p></li>
+<li><p><strong>bond_price</strong> (<em>float</em><em>, </em><em>optional</em>) – Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.</p></li>
+<li><p><strong>settlement_date</strong> (<em>str</em><em> or </em><em>datetime-like</em><em>, </em><em>optional</em>) – Settlement date. Defaults to issue date.</p></li>
+<li><p><strong>adjust_to_business_days</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention. Defaults to value of self.day_count_convention.</p></li>
+<li><p><strong>following_coupons_day_count</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention. Defaults to value of self.yield_calculation_convention.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>duration</strong> – Modified duration in years.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">effective_duration</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">settlement_date</span><span class="o">=</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">)</span>
+<span class="go">4.3760319684</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.convexity">
+<span class="sig-name descname"><span class="pre">convexity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yield_to_maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bond_price</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#MoneyMarketInstrument.convexity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.convexity" title="Link to this definition"></a></dt>
+<dd><p>Calculate the convexity of the bond.</p>
+<div class="math notranslate nohighlight">
+\[Convexity = \frac{1}{P} \sum_{t=1}^{T} \frac{C_t \cdot t \cdot (t + 1)}{(1 + YTM)^{(t + 2)}}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P\)</span> is the price of the bond</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_t\)</span> is the cash flow at time <span class="math notranslate nohighlight">\(t\)</span>, where <span class="math notranslate nohighlight">\(t\)</span> is the time in years from the settlement date</p></li>
+<li><p><span class="math notranslate nohighlight">\(YTM\)</span> is the yield to maturity</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span> is the total number of periods</p></li>
+</ul>
+<p>The times to payments are calculated from the settlement date to each payment date and need not be integer values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yield_to_maturity</strong> (<em>float</em><em>, </em><em>optional</em>) – Yield to maturity as a decimal. If not provided, will be calculated from price if given.</p></li>
+<li><p><strong>bond_price</strong> (<em>float</em><em>, </em><em>optional</em>) – Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.</p></li>
+<li><p><strong>settlement_date</strong> (<em>str</em><em> or </em><em>datetime-like</em><em>, </em><em>optional</em>) – Settlement date. Defaults to issue date.</p></li>
+<li><p><strong>adjust_to_business_days</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention. Defaults to value of self.day_count_convention.</p></li>
+<li><p><strong>following_coupons_day_count</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention. Defaults to value of self.yield_calculation_convention.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>convexity</strong> – Bond convexity.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">convexity</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="go">22.6123221851</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.TreasuryBill">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.fixed_income.money_market_instruments.</span></span><span class="sig-name descname"><span class="pre">TreasuryBill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">issue_dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maturity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notional</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'actual/360'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Discount'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#TreasuryBill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.TreasuryBill" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument" title="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MoneyMarketInstrument</span></code></a></p>
+<p>TreasuryBill represents a short-term government security issued at a discount and maturing at par.
+Coupon is always zero and payment is made at maturity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>issue_dt</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – Issue date of the T-Bill.</p></li>
+<li><p><strong>maturity</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – Maturity date of the T-Bill.</p></li>
+<li><p><strong>notional</strong> (<em>float</em><em>, </em><em>optional</em>) – Face value (principal). Defaults to 100.</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Day count convention. Defaults to ‘actual/360’.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention. Defaults to ‘Discount’.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional keyword arguments for MoneyMarketInstrument.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.CertificateOfDeposit">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.fixed_income.money_market_instruments.</span></span><span class="sig-name descname"><span class="pre">CertificateOfDeposit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">issue_dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maturity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpn_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notional</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'actual/360'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Add-On'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#CertificateOfDeposit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.CertificateOfDeposit" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument" title="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MoneyMarketInstrument</span></code></a></p>
+<p>CertificateOfDeposit (CD) is a time deposit with a fixed interest rate and specified maturity.
+Pays interest at maturity or at specified frequency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>issue_dt</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – Issue date of the CD.</p></li>
+<li><p><strong>maturity</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – Maturity date of the CD.</p></li>
+<li><p><strong>cpn</strong> (<em>float</em>) – Annual coupon rate (percentage).</p></li>
+<li><p><strong>cpn_freq</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of coupon payments per year. Defaults to 1.</p></li>
+<li><p><strong>notional</strong> (<em>float</em><em>, </em><em>optional</em>) – Face value (principal). Defaults to 100.</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Day count convention. Defaults to ‘actual/360’.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention. Defaults to ‘Add-On’.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional keyword arguments for MoneyMarketInstrument.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.CommercialPaper">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.fixed_income.money_market_instruments.</span></span><span class="sig-name descname"><span class="pre">CommercialPaper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">issue_dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maturity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notional</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'actual/360'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Discount'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#CommercialPaper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.CommercialPaper" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument" title="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MoneyMarketInstrument</span></code></a></p>
+<p>CommercialPaper (CP) is a short-term unsecured promissory note issued by corporations.
+Issued at a discount, pays principal at maturity. Coupon is always zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>issue_dt</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – Issue date of the CP.</p></li>
+<li><p><strong>maturity</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – Maturity date of the CP.</p></li>
+<li><p><strong>notional</strong> (<em>float</em><em>, </em><em>optional</em>) – Face value (principal). Defaults to 100.</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Day count convention. Defaults to ‘actual/360’.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention. Defaults to ‘Discount’.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional keyword arguments for MoneyMarketInstrument.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.fixed_income.money_market_instruments.BankersAcceptance">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.fixed_income.money_market_instruments.</span></span><span class="sig-name descname"><span class="pre">BankersAcceptance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">issue_dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maturity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notional</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'actual/360'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Discount'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/money_market_instruments.html#BankersAcceptance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.money_market_instruments.BankersAcceptance" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument" title="pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MoneyMarketInstrument</span></code></a></p>
+<p>BankersAcceptance (BA) is a short-term debt instrument guaranteed by a bank, commonly used in international trade.
+Issued at a discount, pays principal at maturity. Coupon is always zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>issue_dt</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – Issue date of the BA.</p></li>
+<li><p><strong>maturity</strong> (<em>str</em><em> or </em><em>datetime-like</em>) – Maturity date of the BA.</p></li>
+<li><p><strong>notional</strong> (<em>float</em><em>, </em><em>optional</em>) – Face value (principal). Defaults to 100.</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Day count convention. Defaults to ‘actual/360’.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention. Defaults to ‘Discount’.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional keyword arguments for MoneyMarketInstrument.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../fixed_rate_bond/index.html" class="btn btn-neutral float-left" title="pyfian.fixed_income.fixed_rate_bond" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../portfolio/index.html" class="btn btn-neutral float-right" title="pyfian.portfolio" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

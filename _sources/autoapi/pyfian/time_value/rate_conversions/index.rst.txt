@@ -22,6 +22,15 @@ pyfian.time_value.rate_conversions
 
 
 
+Attributes
+----------
+
+.. autoapisummary::
+
+   pyfian.time_value.rate_conversions.VALID_YIELD_CALCULATION_CONVENTIONS
+   pyfian.time_value.rate_conversions.YIELD_CALCULATION_ADJUSTMENTS
+
+
 Functions
 ---------
 
@@ -31,8 +40,8 @@ Functions
    pyfian.time_value.rate_conversions._validate_numeric
    pyfian.time_value.rate_conversions._validate_positive_number
    pyfian.time_value.rate_conversions._validate_effective_rate
-   pyfian.time_value.rate_conversions.validate_yield_calculation_convention
    pyfian.time_value.rate_conversions.convert_yield
+   pyfian.time_value.rate_conversions.get_time_adjustment
    pyfian.time_value.rate_conversions.continuous_to_effective
    pyfian.time_value.rate_conversions.effective_to_continuous
    pyfian.time_value.rate_conversions.nominal_periods_to_effective
@@ -45,6 +54,7 @@ Functions
    pyfian.time_value.rate_conversions.effective_to_money_market_rate
    pyfian.time_value.rate_conversions.bey_to_effective_annual
    pyfian.time_value.rate_conversions.effective_annual_to_bey
+   pyfian.time_value.rate_conversions.convert_effective_to_mmr
 
 
 Module Contents
@@ -62,7 +72,11 @@ Module Contents
 
 .. py:function:: _validate_effective_rate(effective_rate)
 
-.. py:function:: validate_yield_calculation_convention(convention: str) -> str
+.. py:data:: VALID_YIELD_CALCULATION_CONVENTIONS
+   :value: ['Annual', 'BEY', 'Continuous', 'BEY-Q', 'BEY-M']
+
+
+.. py:data:: YIELD_CALCULATION_ADJUSTMENTS
 
 .. py:function:: convert_yield(rate: float, from_convention: str, to_convention: str) -> float
 
@@ -75,9 +89,9 @@ Module Contents
    rate : float
        The interest rate to convert, expressed as a decimal (e.g., 0.05 for 5%).
    from_convention : str
-       The current yield calculation convention of the rate. Must be one of "Annual", "BEY", "Continuous".
+       The current yield calculation convention of the rate. Must be one of "Annual", "Continuous", "BEY", "BEY_Q", "BEY_M".
    to_convention : str
-       The target yield calculation convention to convert the rate to. Must be one of "Annual", "BEY", "Continuous".
+       The target yield calculation convention to convert the rate to. Must be one of "Annual", "Continuous", "BEY", "BEY_Q", "BEY_M".
 
    :returns: The converted interest rate, expressed as a decimal.
    :rtype: float
@@ -90,6 +104,11 @@ Module Contents
    np.float64(0.0493852252)
    >>> convert_yield(0.05, "Continuous", "Annual")
    np.float64(0.0512710964)
+
+
+.. py:function:: get_time_adjustment(yield_calculation_convention: str) -> float
+
+   Get the time adjustment factor based on the yield calculation convention.
 
 
 .. py:function:: continuous_to_effective(rate: float) -> float
@@ -221,7 +240,7 @@ Module Contents
    np.float64(0.12...)
 
 
-.. py:function:: nominal_days_to_effective(nominal_rate: float, days: int, base_year: int = 365) -> float
+.. py:function:: nominal_days_to_effective(nominal_rate: float, days: float, base_year: float = 365.0) -> float
 
    Convert a nominal rate for a period of given days to an effective annual rate.
 
@@ -244,10 +263,10 @@ Module Contents
 
    :param nominal_rate: Nominal rate for the period (as decimal).
    :type nominal_rate: float
-   :param days: Number of days in the period.
-   :type days: int
-   :param base_year: Number of days in the year (default 365).
-   :type base_year: int, optional
+   :param days: Number of days in the period (can be float).
+   :type days: float
+   :param base_year: Number of days in the year (default 365, can be float).
+   :type base_year: float, optional
 
    :returns: Effective annual rate (as decimal).
    :rtype: float
@@ -260,7 +279,7 @@ Module Contents
    np.float64(0.1268250301)
 
 
-.. py:function:: effective_to_nominal_days(effective_rate: float, days: int, base_year: int = 365) -> float
+.. py:function:: effective_to_nominal_days(effective_rate: float, days: float, base_year: float = 365.0) -> float
 
    Convert an effective annual rate to a nominal rate for a period of given days.
 
@@ -282,10 +301,10 @@ Module Contents
 
    :param effective_rate: Effective annual rate (as decimal).
    :type effective_rate: float
-   :param days: Number of days in the period.
-   :type days: int
-   :param base_year: Number of days in the year (default 365).
-   :type base_year: int, optional
+   :param days: Number of days in the period (can be float).
+   :type days: float
+   :param base_year: Number of days in the year (default 365, can be float).
+   :type base_year: float, optional
 
    :returns: Nominal rate for the period (as decimal).
    :rtype: float
@@ -366,7 +385,7 @@ Module Contents
    np.float64(0.01)
 
 
-.. py:function:: money_market_rate_to_effective(mmr: float, days: int = 360, base: float = 360, discount: bool = False) -> float
+.. py:function:: money_market_rate_to_effective(mmr: float, days: float = 360.0, base: float = 360.0, discount: bool = False) -> float
 
    Convert a Money Market Rate (MMR, actual/360) to effective annual rate (EAR).
 
@@ -387,9 +406,9 @@ Module Contents
 
    :param mmr: Money Market Rate (as decimal).
    :type mmr: float
-   :param days: Number of days in the year (default 360).
-   :type days: int, optional
-   :param base: Base for the calculation (default 360).
+   :param days: Number of days in the year (default 360, can be float).
+   :type days: float, optional
+   :param base: Base for the calculation (default 360, can be float).
    :type base: float, optional
    :param discount: If True, interpret mmr as a discount rate. If False (default), as an add-on (interest-bearing) rate.
    :type discount: bool, optional
@@ -407,7 +426,7 @@ Module Contents
    np.float64(0.0526511542)
 
 
-.. py:function:: effective_to_money_market_rate(effective_rate: float, days: int = 360, base: float = 360, discount: bool = False) -> float
+.. py:function:: effective_to_money_market_rate(effective_rate: float, days: float = 360.0, base: float = 360.0, discount: bool = False) -> float
 
    Convert an effective annual rate (EAR) to a Money Market Rate (actual/360).
 
@@ -427,9 +446,9 @@ Module Contents
 
    :param effective_rate: Effective annual rate (as decimal).
    :type effective_rate: float
-   :param days: Number of days in the year (default 360).
-   :type days: int, optional
-   :param base: Base for the calculation (default 360).
+   :param days: Number of days in the year (default 360, can be float).
+   :type days: float, optional
+   :param base: Base for the calculation (default 360, can be float).
    :type base: float, optional
    :param discount: If True, return the discount rate. If False (default), return the add-on (interest-bearing) rate.
    :type discount: bool, optional
@@ -499,5 +518,24 @@ Module Contents
 
    >>> effective_annual_to_bey(0.0609)
    np.float64(0.06)
+
+
+.. py:function:: convert_effective_to_mmr(yield_value: float, yield_calculation_convention: str, days: float = 360.0, base: float = 360.0) -> float
+
+   Convert an effective interest rate to a money market rate (MMR) based on the specified yield calculation convention.
+
+   :param yield_value: The effective interest rate (as decimal).
+   :type yield_value: float
+   :param yield_calculation_convention: The yield calculation convention to use (e.g., "Discount", "Add-On", "Annual", "Continuous", "BEY").
+   :type yield_calculation_convention: str
+   :param days: The number of days in the year (default is 360, can be float).
+   :type days: float, optional
+   :param base: The base for the money market rate calculation (default is 360, can be float).
+   :type base: float, optional
+
+   :returns: The converted money market rate (as decimal).
+   :rtype: float
+
+   :raises AssertionError: If the yield calculation convention is invalid.
 
 
