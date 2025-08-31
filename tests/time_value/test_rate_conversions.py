@@ -74,15 +74,6 @@ class TestRateConversions:
         with pytest.raises(ValueError):
             rc.nominal_days_to_effective(0.01, -1)
 
-    def test_validate_yield_calculation_convention(self):
-        # Valid conventions
-        assert rc.validate_yield_calculation_convention("Annual") == "Annual"
-        assert rc.validate_yield_calculation_convention("BEY") == "BEY"
-        assert rc.validate_yield_calculation_convention("Continuous") == "Continuous"
-        # Invalid convention
-        with pytest.raises(ValueError):
-            rc.validate_yield_calculation_convention("BAD")
-
 
 # Separate class for convert_yield tests
 class TestConvertYield:

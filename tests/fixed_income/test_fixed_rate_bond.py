@@ -8,7 +8,7 @@ from pyfian.yield_curves.flat_curve import FlatCurveLog
 
 TRUE_TIME_PARAMS = {
     "day_count_convention": "actual/actual-Bond",
-    "yield_calculation_convention": "annual",
+    "yield_calculation_convention": "Annual",
     "following_coupons_day_count": "actual/365",
     "adjust_to_business_days": True,
 }
@@ -121,7 +121,7 @@ class TestFixedRateBullet:
 
     def test_modified_duration_with_annual(self):
         bond = FixedRateBullet(
-            "2020-01-01", "2025-01-01", 5, 1, yield_calculation_convention="annual"
+            "2020-01-01", "2025-01-01", 5, 1, yield_calculation_convention="Annual"
         )
         duration = bond.modified_duration(yield_to_maturity=0.05)
         price = bond.price_from_yield(yield_to_maturity=0.05)
@@ -142,7 +142,7 @@ class TestFixedRateBullet:
 
     def test_macaulay_duration_with_annual(self):
         bond = FixedRateBullet(
-            "2020-01-01", "2025-01-01", 5, 1, yield_calculation_convention="annual"
+            "2020-01-01", "2025-01-01", 5, 1, yield_calculation_convention="Annual"
         )
         duration = bond.macaulay_duration(yield_to_maturity=0.05)
         price = bond.price_from_yield(yield_to_maturity=0.05)

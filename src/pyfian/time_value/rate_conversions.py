@@ -46,11 +46,15 @@ def _validate_effective_rate(effective_rate):
         raise ValueError("effective_rate must be greater than -1.")
 
 
-def validate_yield_calculation_convention(convention: str) -> str:
-    valid_conventions = ["Annual", "BEY", "Continuous"]
-    if convention not in valid_conventions:
-        raise ValueError(f"Unknown yield calculation convention: {convention}")
-    return convention
+VALID_YIELD_CALCULATION_CONVENTIONS = ["Annual", "BEY", "Continuous", "BEY-Q", "BEY-M"]
+
+YIELD_CALCULATION_ADJUSTMENTS = {
+    "Continuous": 1.0,
+    "BEY": 2.0,
+    "Annual": 1.0,
+    "BEY-Q": 4.0,
+    "BEY-M": 12.0,
+}
 
 
 def convert_yield(rate: float, from_convention: str, to_convention: str) -> float:
@@ -64,9 +68,9 @@ def convert_yield(rate: float, from_convention: str, to_convention: str) -> floa
     rate : float
         The interest rate to convert, expressed as a decimal (e.g., 0.05 for 5%).
     from_convention : str
-        The current yield calculation convention of the rate. Must be one of "Annual", "BEY", "Continuous".
+        The current yield calculation convention of the rate. Must be one of "Annual", "Continuous", "BEY", "BEY_Q", "BEY_M".
     to_convention : str
-        The target yield calculation convention to convert the rate to. Must be one of "Annual", "BEY", "Continuous".
+        The target yield calculation convention to convert the rate to. Must be one of "Annual", "Continuous", "BEY", "BEY_Q", "BEY_M".
 
     Returns
     -------
@@ -89,8 +93,10 @@ def convert_yield(rate: float, from_convention: str, to_convention: str) -> floa
         eff = continuous_to_effective(rate)
     elif from_convention == "Annual":
         eff = rate
-    elif from_convention == "BEY":
-        eff = bey_to_effective_annual(rate)
+    elif "BEY" in from_convention and from_convention in YIELD_CALCULATION_ADJUSTMENTS:
+        eff = nominal_periods_to_effective(
+            rate, periods_per_year=int(YIELD_CALCULATION_ADJUSTMENTS[from_convention])
+        )
     else:
         raise ValueError(f"Unknown yield calculation convention: {from_convention}")
 
@@ -98,10 +104,25 @@ def convert_yield(rate: float, from_convention: str, to_convention: str) -> floa
         return round(eff, 10)
     elif to_convention == "Continuous":
         return round(effective_to_continuous(eff), 10)
-    elif to_convention == "BEY":
-        return round(effective_annual_to_bey(eff), 10)
+    elif "BEY" in to_convention and to_convention in YIELD_CALCULATION_ADJUSTMENTS:
+        return round(
+            effective_to_nominal_periods(
+                eff, periods_per_year=int(YIELD_CALCULATION_ADJUSTMENTS[to_convention])
+            ),
+            10,
+        )
     else:
         raise ValueError(f"Unknown yield calculation convention: {to_convention}")
+
+
+def get_time_adjustment(yield_calculation_convention: str) -> float:
+    """Get the time adjustment factor based on the yield calculation convention."""
+    if yield_calculation_convention in YIELD_CALCULATION_ADJUSTMENTS:
+        return YIELD_CALCULATION_ADJUSTMENTS[yield_calculation_convention]
+    else:
+        raise ValueError(
+            f"Unknown yield calculation convention: {yield_calculation_convention}"
+        )
 
 
 # continuous_to_effective <-> effective_to_continuous conversions
@@ -267,7 +288,7 @@ def effective_to_nominal_periods(effective_rate: float, periods_per_year: int) -
 
 # nominal_days_to_effective <-> effective_to_nominal_days conversions
 def nominal_days_to_effective(
-    nominal_rate: float, days: int, base_year: int = 365
+    nominal_rate: float, days: float, base_year: float = 365.0
 ) -> float:
     """
     Convert a nominal rate for a period of given days to an effective annual rate.
@@ -293,10 +314,10 @@ def nominal_days_to_effective(
     ----------
     nominal_rate : float
         Nominal rate for the period (as decimal).
-    days : int
-        Number of days in the period.
-    base_year : int, optional
-        Number of days in the year (default 365).
+    days : float
+        Number of days in the period (can be float).
+    base_year : float, optional
+        Number of days in the year (default 365, can be float).
 
     Returns
     -------
@@ -318,7 +339,7 @@ def nominal_days_to_effective(
 
 
 def effective_to_nominal_days(
-    effective_rate: float, days: int, base_year: int = 365
+    effective_rate: float, days: float, base_year: float = 365.0
 ) -> float:
     """
     Convert an effective annual rate to a nominal rate for a period of given days.
@@ -343,10 +364,10 @@ def effective_to_nominal_days(
     ----------
     effective_rate : float
         Effective annual rate (as decimal).
-    days : int
-        Number of days in the period.
-    base_year : int, optional
-        Number of days in the year (default 365).
+    days : float
+        Number of days in the period (can be float).
+    base_year : float, optional
+        Number of days in the year (default 365, can be float).
 
     Returns
     -------
@@ -457,7 +478,7 @@ def effective_to_single_period(effective_rate: float, periods: int) -> float:
 
 # money_market_rate_to_effective <-> effective_to_money_market_rate conversions
 def money_market_rate_to_effective(
-    mmr: float, days: int = 360, base: float = 360, discount: bool = False
+    mmr: float, days: float = 360.0, base: float = 360.0, discount: bool = False
 ) -> float:
     """
     Convert a Money Market Rate (MMR, actual/360) to effective annual rate (EAR).
@@ -481,10 +502,10 @@ def money_market_rate_to_effective(
     ----------
     mmr : float
         Money Market Rate (as decimal).
-    days : int, optional
-        Number of days in the year (default 360).
+    days : float, optional
+        Number of days in the year (default 360, can be float).
     base : float, optional
-        Base for the calculation (default 360).
+        Base for the calculation (default 360, can be float).
     discount : bool, optional
         If True, interpret mmr as a discount rate. If False (default), as an add-on (interest-bearing) rate.
 
@@ -512,7 +533,10 @@ def money_market_rate_to_effective(
 
 
 def effective_to_money_market_rate(
-    effective_rate: float, days: int = 360, base: float = 360, discount: bool = False
+    effective_rate: float,
+    days: float = 360.0,
+    base: float = 360.0,
+    discount: bool = False,
 ) -> float:
     """
     Convert an effective annual rate (EAR) to a Money Market Rate (actual/360).
@@ -535,10 +559,10 @@ def effective_to_money_market_rate(
     ----------
     effective_rate : float
         Effective annual rate (as decimal).
-    days : int, optional
-        Number of days in the year (default 360).
+    days : float, optional
+        Number of days in the year (default 360, can be float).
     base : float, optional
-        Base for the calculation (default 360).
+        Base for the calculation (default 360, can be float).
     discount : bool, optional
         If True, return the discount rate. If False (default), return the add-on (interest-bearing) rate.
 
@@ -637,3 +661,64 @@ def effective_annual_to_bey(effective_rate: float) -> float:
     np.float64(0.06)
     """
     return 2 * _exp_general(1 + effective_rate, 1 / 2)
+
+
+def convert_effective_to_mmr(
+    yield_value: float,
+    yield_calculation_convention: str,
+    days: float = 360.0,
+    base: float = 360.0,
+) -> float:
+    """
+    Convert an effective interest rate to a money market rate (MMR) based on the specified yield calculation convention.
+
+    Parameters
+    ----------
+    yield_value : float
+        The effective interest rate (as decimal).
+    yield_calculation_convention : str
+        The yield calculation convention to use (e.g., "Discount", "Add-On", "Annual", "Continuous", "BEY").
+    days : float, optional
+        The number of days in the year (default is 360, can be float).
+    base : float, optional
+        The base for the money market rate calculation (default is 360, can be float).
+
+    Returns
+    -------
+    float
+        The converted money market rate (as decimal).
+
+    Raises
+    ------
+    AssertionError
+        If the yield calculation convention is invalid.
+    """
+    assert yield_calculation_convention in [
+        "Discount",
+        "Add-On",
+        "Annual",
+        "Continuous",
+        "BEY",
+    ], (
+        "Invalid yield calculation convention: Should be one of ['Discount', 'Add-On', 'Annual', 'Continuous', 'BEY']"
+    )
+    if yield_calculation_convention == "Discount":
+        return effective_to_money_market_rate(
+            yield_value, days=days, base=base, discount=True
+        )
+    elif yield_calculation_convention == "Add-On":
+        return effective_to_money_market_rate(
+            yield_value, days=days, base=base, discount=False
+        )
+    elif yield_calculation_convention == "BEY":
+        return effective_to_money_market_rate(
+            yield_value, days=days, base=365.0, discount=False
+        )
+    elif yield_calculation_convention == "Annual":
+        return yield_value
+    elif yield_calculation_convention == "Continuous":
+        return effective_to_continuous(yield_value)
+    else:
+        raise ValueError(
+            f"Unknown yield calculation convention: {yield_calculation_convention}"
+        )
