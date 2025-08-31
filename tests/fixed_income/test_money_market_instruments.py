@@ -22,6 +22,48 @@ class TestTreasuryBill:
         )
         assert tbill.day_count_convention.name == "actual/365"
 
+    def test_inherited_methods(self):
+        tbill = TreasuryBill("2025-01-01", "2025-07-01", notional=1000)
+        # set_bond_price and set_yield_to_maturity
+        tbill.set_bond_price(950, settlement_date="2025-01-01")
+        tbill.set_yield_to_maturity(0.05, settlement_date="2025-01-01")
+        # get_settlement_date, get_yield_to_maturity, get_bond_price
+        assert tbill.get_settlement_date() is not None
+        assert tbill.get_yield_to_maturity() is not None
+        assert tbill.get_bond_price() is not None
+        # to_dataframe
+        df = tbill.to_dataframe()
+        assert df is not None
+        # cash_flows
+        flows = tbill.cash_flows()
+        assert isinstance(flows, list)
+        # price_from_yield
+        price = tbill.price_from_yield(0.05)
+        assert isinstance(price, float)
+        # clean_price and dirty_price
+        clean = tbill.clean_price(950)
+        dirty = tbill.dirty_price(950)
+        assert isinstance(clean, float)
+        assert isinstance(dirty, float)
+        # filter_payment_flow
+        filtered = tbill.filter_payment_flow(settlement_date="2025-01-01")
+        assert isinstance(filtered, dict)
+        # calculate_time_to_payments
+        ttp = tbill.calculate_time_to_payments(settlement_date="2025-01-01")
+        assert isinstance(ttp, dict)
+        # set_settlement_date
+        sdt = tbill.set_settlement_date("2025-01-01")
+        assert sdt is not None
+        # plot_cash_flows (should not raise)
+        tbill.plot_cash_flows()
+        # dv01, effective_convexity
+        assert isinstance(tbill.dv01(), float)
+        assert isinstance(tbill.effective_convexity(), float)
+        # g_spread, i_spread, z_spread (pass dummy None for curve)
+        assert isinstance(tbill.g_spread(), float)
+        assert isinstance(tbill.i_spread(None), float)
+        assert isinstance(tbill.z_spread(None), float)
+
 
 class TestCertificateOfDeposit:
     def test_defaults(self):
@@ -56,6 +98,36 @@ class TestCertificateOfDeposit:
         )
         cd.get_yield_to_maturity()
 
+    def test_inherited_methods(self):
+        cd = CertificateOfDeposit("2025-01-01", "2025-07-01", cpn=2.5, notional=5000)
+        cd.set_bond_price(4900, settlement_date="2025-01-01")
+        cd.set_yield_to_maturity(0.03, settlement_date="2025-01-01")
+        assert cd.get_settlement_date() is not None
+        assert cd.get_yield_to_maturity() is not None
+        assert cd.get_bond_price() is not None
+        df = cd.to_dataframe()
+        assert df is not None
+        flows = cd.cash_flows()
+        assert isinstance(flows, list)
+        price = cd.price_from_yield(0.03)
+        assert isinstance(price, float)
+        clean = cd.clean_price(4900)
+        dirty = cd.dirty_price(4900)
+        assert isinstance(clean, float)
+        assert isinstance(dirty, float)
+        filtered = cd.filter_payment_flow(settlement_date="2025-01-01")
+        assert isinstance(filtered, dict)
+        ttp = cd.calculate_time_to_payments(settlement_date="2025-01-01")
+        assert isinstance(ttp, dict)
+        sdt = cd.set_settlement_date("2025-01-01")
+        assert sdt is not None
+        cd.plot_cash_flows()
+        assert isinstance(cd.dv01(), float)
+        assert isinstance(cd.effective_convexity(), float)
+        assert isinstance(cd.g_spread(), float)
+        assert isinstance(cd.i_spread(None), float)
+        assert isinstance(cd.z_spread(None), float)
+
 
 class TestCommercialPaper:
     def test_defaults(self):
@@ -72,6 +144,36 @@ class TestCommercialPaper:
         )
         assert cp.day_count_convention.name == "actual/365"
 
+    def test_inherited_methods(self):
+        cp = CommercialPaper("2025-01-01", "2025-04-01", notional=2000)
+        cp.set_bond_price(1950, settlement_date="2025-01-01")
+        cp.set_yield_to_maturity(0.04, settlement_date="2025-01-01")
+        assert cp.get_settlement_date() is not None
+        assert cp.get_yield_to_maturity() is not None
+        assert cp.get_bond_price() is not None
+        df = cp.to_dataframe()
+        assert df is not None
+        flows = cp.cash_flows()
+        assert isinstance(flows, list)
+        price = cp.price_from_yield(0.04)
+        assert isinstance(price, float)
+        clean = cp.clean_price(1950)
+        dirty = cp.dirty_price(1950)
+        assert isinstance(clean, float)
+        assert isinstance(dirty, float)
+        filtered = cp.filter_payment_flow(settlement_date="2025-01-01")
+        assert isinstance(filtered, dict)
+        ttp = cp.calculate_time_to_payments(settlement_date="2025-01-01")
+        assert isinstance(ttp, dict)
+        sdt = cp.set_settlement_date("2025-01-01")
+        assert sdt is not None
+        cp.plot_cash_flows()
+        assert isinstance(cp.dv01(), float)
+        assert isinstance(cp.effective_convexity(), float)
+        assert isinstance(cp.g_spread(), float)
+        assert isinstance(cp.i_spread(None), float)
+        assert isinstance(cp.z_spread(None), float)
+
 
 class TestBankersAcceptance:
     def test_defaults(self):
@@ -87,3 +189,33 @@ class TestBankersAcceptance:
             "2025-01-01", "2025-03-01", notional=1500, day_count_convention="actual/365"
         )
         assert ba.day_count_convention.name == "actual/365"
+
+    def test_inherited_methods(self):
+        ba = BankersAcceptance("2025-01-01", "2025-03-01", notional=1500)
+        ba.set_bond_price(1450, settlement_date="2025-01-01")
+        ba.set_yield_to_maturity(0.03, settlement_date="2025-01-01")
+        assert ba.get_settlement_date() is not None
+        assert ba.get_yield_to_maturity() is not None
+        assert ba.get_bond_price() is not None
+        df = ba.to_dataframe()
+        assert df is not None
+        flows = ba.cash_flows()
+        assert isinstance(flows, list)
+        price = ba.price_from_yield(0.03)
+        assert isinstance(price, float)
+        clean = ba.clean_price(1450)
+        dirty = ba.dirty_price(1450)
+        assert isinstance(clean, float)
+        assert isinstance(dirty, float)
+        filtered = ba.filter_payment_flow(settlement_date="2025-01-01")
+        assert isinstance(filtered, dict)
+        ttp = ba.calculate_time_to_payments(settlement_date="2025-01-01")
+        assert isinstance(ttp, dict)
+        sdt = ba.set_settlement_date("2025-01-01")
+        assert sdt is not None
+        ba.plot_cash_flows()
+        assert isinstance(ba.dv01(), float)
+        assert isinstance(ba.effective_convexity(), float)
+        assert isinstance(ba.g_spread(), float)
+        assert isinstance(ba.i_spread(None), float)
+        assert isinstance(ba.z_spread(None), float)
