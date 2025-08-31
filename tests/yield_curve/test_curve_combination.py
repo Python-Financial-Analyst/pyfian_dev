@@ -20,6 +20,17 @@ class TestCombinedCurve:
         rate = combined_curve.get_rate(1.0)
         assert pytest.approx(rate, abs=1e-6) == 0.07
 
+    # test get_t
+    def test_get_t(self, curve_data):
+        _, _, _, combined_curve = curve_data
+        r = combined_curve.get_t(t=1.0)
+        assert pytest.approx(r, abs=1e-6) == 0.07
+
+    def test__get_t(self, curve_data):
+        _, _, _, combined_curve = curve_data
+        r = combined_curve._get_t(t=1.0)
+        assert pytest.approx(r, abs=1e-6) == 0.07
+
     def test_date_rate(self, curve_data):
         _, _, _, combined_curve = curve_data
         date = pd.Timestamp("2024-01-01")

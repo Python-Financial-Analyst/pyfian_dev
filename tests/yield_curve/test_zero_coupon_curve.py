@@ -1,3 +1,4 @@
+import re
 import pytest
 import pandas as pd
 from pyfian.yield_curves.zero_coupon_curve import ZeroCouponCurve, ZeroCouponCurveByDate
@@ -22,6 +23,21 @@ class TestZeroCouponCurve:
             "yield_calculation_convention": self.curve.yield_calculation_convention,
         }
         assert self.curve.as_dict() == expected
+
+    # test _validate_yield_calculation_convention with an invalid yield_calculation_convention
+    def test_invalid_yield_calculation_convention(self):
+        with pytest.raises(
+            ValueError,
+            match=re.escape(
+                "Invalid yield calculation convention: InvalidConvention. Must be one of: ['Annual', 'Continuous', 'BEY']"
+            ),
+        ):
+            ZeroCouponCurve(
+                zero_rates=self.zero_rates,
+                curve_date=self.curve_date,
+                day_count_convention="actual/365",
+                yield_calculation_convention="InvalidConvention",
+            )
 
     # Test making a zero coupon curve without a valid day_count_convention, neither str nor DayCountBase
     def test_invalid_day_count_convention(self):

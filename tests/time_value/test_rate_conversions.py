@@ -1,3 +1,4 @@
+import re
 import pytest
 import numpy as np
 
@@ -17,6 +18,25 @@ class TestRateConversions:
         ear = rc.single_period_to_effective(period_rate, periods)
         assert np.isclose(ear, 0.12682503013196977)
         assert np.isclose(rc.effective_to_single_period(ear, periods), period_rate)
+
+    # test get_time_adjustment
+    def test_get_time_adjustment(self):
+        YIELD_CALCULATION_ADJUSTMENTS = {
+            "Continuous": 1.0,
+            "BEY": 2.0,
+            "Annual": 1.0,
+            "BEY-Q": 4.0,
+            "BEY-M": 12.0,
+        }
+        for key, value in YIELD_CALCULATION_ADJUSTMENTS.items():
+            assert rc.get_time_adjustment(key) == value
+
+    # test get_time_adjustment raises value error
+    def test_get_time_adjustment_raises_value_error(self):
+        with pytest.raises(
+            ValueError, match=re.escape(r"Unknown yield calculation convention: bad")
+        ):
+            rc.get_time_adjustment("bad")
 
     @pytest.mark.parametrize(
         "nominal,days,base,expected_ear",
@@ -102,3 +122,32 @@ class TestConvertYield:
             rc.convert_yield(0.05, "BAD", "Annual")
         with pytest.raises(ValueError):
             rc.convert_yield(0.05, "Annual", "BAD")
+
+
+# test convert_effective_to_mmr function
+class TestConvertEffectiveToMMR:
+    @pytest.mark.parametrize(
+        "yield_value,yield_calculation_convention,days,base,expected_mmr",
+        [
+            (0.05, "BEY", 180, 360, ((1 + 0.05) ** (180 / 365) - 1) * 365 / 180),
+            (0.12, "Annual", 30, 360, 0.12),
+            (0.05, "Continuous", 180, 360, np.log(1 + 0.05)),
+        ],
+    )
+    def test_convert_effective_to_mmr(
+        self, yield_value, yield_calculation_convention, days, base, expected_mmr
+    ):
+        result = rc.convert_effective_to_mmr(
+            yield_value, yield_calculation_convention, days, base
+        )
+        assert np.isclose(result, expected_mmr, atol=1e-7), (
+            f"Failed: {yield_value}, {yield_calculation_convention}, {days}, {base} -> {expected_mmr}, Got: {result}"
+        )
+
+    def test_convert_effective_to_mmr_invalid_yield_calculation_convention(self):
+        bad_convention = "BAD"
+        with pytest.raises(
+            ValueError,
+            match=re.escape(f"Unknown yield calculation convention: {bad_convention}"),
+        ):
+            rc.convert_effective_to_mmr(0.05, bad_convention, 180, 360)

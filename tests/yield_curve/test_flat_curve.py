@@ -277,6 +277,15 @@ class TestFlatCurveAER:
         assert "Spread" in df.columns
         assert all(df["Spread"] > 0)
 
+    def test_compare_to_without_maturities(self):
+        curve1 = FlatCurveAER(0.05, "2020-01-01")
+        curve1.maturities = list()
+        curve2 = FlatCurveAER(0.04, "2020-01-01")
+        df = curve1.compare_to(curve2)
+        assert isinstance(df, pd.DataFrame)
+        assert "Spread" in df.columns
+        assert all(df["Spread"] > 0)
+
     @pytest.mark.filterwarnings("ignore::UserWarning")
     def test_plot_curve(self):
         # Test plotting the curve. Use the appropriate backend so it doesn't graph

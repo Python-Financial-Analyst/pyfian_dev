@@ -61,6 +61,15 @@ class TestFixedRateBullet:
         bond.set_bond_price(100, "2022-01-01")
         assert isinstance(bond._yield_to_maturity, float)
 
+    # test _validate_yield_calculation_convention not in valid_conventions
+    def test_invalid_yield_calculation_convention(self):
+        with pytest.raises(
+            ValueError, match="Unsupported yield calculation convention"
+        ):
+            FixedRateBullet(
+                "2020-01-01", "2025-01-01", 5, 1, yield_calculation_convention="invalid"
+            )
+
     def test_modified_duration(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         duration = bond.modified_duration(yield_to_maturity=0.05)
@@ -292,7 +301,9 @@ class TestFixedRateBullet:
 
     def test_yield_to_maturity(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
-        ytm = bond.yield_to_maturity(bond_price=95, **TRUE_TIME_PARAMS)
+        ytm = bond.yield_to_maturity(
+            bond_price=95, **TRUE_TIME_PARAMS, tol=None, max_iter=None
+        )
 
         dates, cash_flows = list(
             zip(
@@ -307,6 +318,34 @@ class TestFixedRateBullet:
             cash_flows=cash_flows,
             dates=dates,
         )
+
+        assert isinstance(ytm, float)
+        assert ytm == pytest.approx(ytm_expected, rel=1e-4), (
+            f"Expected YTM: {ytm_expected}, but got: {ytm}"
+        )
+
+    def test_yield_to_maturity_continuous(self):
+        bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
+        TRUE_TIME_PARAMS_continuous = TRUE_TIME_PARAMS.copy()
+        TRUE_TIME_PARAMS_continuous["yield_calculation_convention"] = "continuous"
+        ytm = bond.yield_to_maturity(
+            bond_price=95, **TRUE_TIME_PARAMS_continuous, tol=None, max_iter=None
+        )
+
+        dates, cash_flows = list(
+            zip(
+                *list(
+                    bond.filter_payment_flow(
+                        "2020-01-01", bond_price=95, **TRUE_TIME_PARAMS_continuous
+                    ).items()
+                )
+            )
+        )
+        ytm_expected = xirr_dates(
+            cash_flows=cash_flows,
+            dates=dates,
+        )
+        ytm_expected = np.log(1 + ytm_expected)
 
         assert isinstance(ytm, float)
         assert ytm == pytest.approx(ytm_expected, rel=1e-4), (

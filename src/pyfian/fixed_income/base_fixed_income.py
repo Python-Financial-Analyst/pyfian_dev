@@ -29,24 +29,24 @@ class BaseFixedIncomeInstrument(ABC):
         time_to_payments: dict,
         yield_to_maturity: float,
         yield_calculation_convention: str,
-    ):
+    ) -> float:  # pragma: no cover
         # Calculate the present value of the instrument's cash flows
         pass
 
     @abstractmethod
-    def yield_to_maturity(self, *args, **kwargs):
+    def yield_to_maturity(self, *args, **kwargs) -> float:  # pragma: no cover
         pass
 
     @abstractmethod
     def _validate_following_coupons_day_count(
         self, following_coupons_day_count: str | DayCountBase
-    ) -> DayCountBase:
+    ) -> DayCountBase:  # pragma: no cover
         pass
 
     @abstractmethod
     def _validate_yield_calculation_convention(
         self, yield_calculation_convention: str
-    ) -> str:
+    ) -> str:  # pragma: no cover
         pass
 
     def _resolve_valuation_parameters(
@@ -143,7 +143,7 @@ class BaseFixedIncomeInstrument(ABC):
         following_coupons_day_count,
         yield_calculation_convention,
         day_count_convention,
-    ) -> dict:
+    ) -> dict:  # pragma: no cover
         pass
 
     @abstractmethod
@@ -155,7 +155,7 @@ class BaseFixedIncomeInstrument(ABC):
         following_coupons_day_count: DayCountBase,
         yield_calculation_convention: str,
         day_count_convention: DayCountBase,
-    ) -> float:
+    ) -> float:  # pragma: no cover
         pass
 
     def _resolve_ytm_and_bond_price(
@@ -1195,7 +1195,7 @@ class BaseFixedIncomeInstrument(ABC):
     @abstractmethod
     def accrued_interest(
         self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
-    ) -> float:
+    ) -> float:  # pragma: no cover
         pass
 
     def effective_duration(

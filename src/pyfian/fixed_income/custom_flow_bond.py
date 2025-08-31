@@ -96,7 +96,7 @@ class CustomFlowBond(FixedRateBullet):
         """
         self.custom_amortization = custom_amortization or {}
         self.custom_coupons = custom_coupons or {}
-        self.custom_coupon_rates = custom_coupon_rates
+        self.custom_coupon_rates = custom_coupon_rates or {}
         super().__init__(
             issue_dt=issue_dt,
             maturity=maturity,
@@ -110,6 +110,12 @@ class CustomFlowBond(FixedRateBullet):
         self.payment_flow, self.coupon_flow, self.amortization_flow = (
             self.make_payment_flow()
         )
+        if sum(self.amortization_flow.values()) != self.notional:
+            raise ValueError(
+                "Total amortization does not equal notional."
+                f"notional: {self.notional}, "
+                f"amortization: {sum(self.amortization_flow.values())}"
+            )
 
     def make_payment_flow(self):
         """
@@ -128,8 +134,10 @@ class CustomFlowBond(FixedRateBullet):
             Amortization payment by payment date.
         """
         # Gather all relevant dates
-        all_dates = set(self.custom_amortization.keys()) | set(
-            self.custom_coupons.keys()
+        all_dates = (
+            set(self.custom_amortization.keys())
+            | set(self.custom_coupons.keys())
+            | {self.maturity}
         )
         if isinstance(self.custom_coupon_rates, dict):
             all_dates |= set(self.custom_coupon_rates.keys())
@@ -141,12 +149,16 @@ class CustomFlowBond(FixedRateBullet):
         remaining_notional = self.notional
 
         for dt in sorted(all_dates):
-            amort = self.custom_amortization.get(dt, 0.0)
+            if self.custom_amortization:
+                amort = self.custom_amortization.get(dt, 0.0)
+            else:
+                if dt == self.maturity:
+                    amort = remaining_notional
 
             # Coupon: use value if provided, else percent if provided
             if dt in self.custom_coupons:
                 coupon = self.custom_coupons[dt]
-            elif self.custom_coupon_rates is not None:
+            elif self.custom_coupon_rates is not None and self.custom_coupon_rates:
                 if isinstance(self.custom_coupon_rates, dict):
                     rate = self.custom_coupon_rates.get(dt, 0.0)
                 else:

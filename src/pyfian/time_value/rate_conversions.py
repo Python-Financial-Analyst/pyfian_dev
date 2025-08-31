@@ -693,15 +693,6 @@ def convert_effective_to_mmr(
     AssertionError
         If the yield calculation convention is invalid.
     """
-    assert yield_calculation_convention in [
-        "Discount",
-        "Add-On",
-        "Annual",
-        "Continuous",
-        "BEY",
-    ], (
-        "Invalid yield calculation convention: Should be one of ['Discount', 'Add-On', 'Annual', 'Continuous', 'BEY']"
-    )
     if yield_calculation_convention == "Discount":
         return effective_to_money_market_rate(
             yield_value, days=days, base=base, discount=True

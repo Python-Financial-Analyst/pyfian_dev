@@ -244,16 +244,16 @@ class CombinedCurve(ZeroCouponCurve):
 
         # Convert total_rate back to the original
         return rc.convert_yield(
-            total_rate,
-            self.spread_yield_calculation_convention,
-            yield_calculation_convention,
+            rate=total_rate,
+            from_convention=self.spread_yield_calculation_convention,
+            to_convention=yield_calculation_convention,
         )
 
     def get_t(self, t: float, spread: float = 0) -> float:
         return self.get_rate(t, spread=spread)
 
     def _get_t(self, t, spread=0):
-        return self.get_rate(t, spread)
+        return self.get_rate(t, spread=spread)
 
     def date_rate(
         self,

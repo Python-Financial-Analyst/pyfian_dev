@@ -2,6 +2,7 @@ import pandas as pd
 import pytest
 from pyfian.utils.day_count import (
     DayCountActualActualBond,
+    DayCountBase,
     get_day_count_fraction,
     get_day_count_convention,
     DayCount30360,
@@ -438,3 +439,22 @@ def test_actual_actual_isda_raises_value_error():
 
     with pytest.raises(ValueError):
         dc.fraction(start, current)
+
+
+# Tests for __repr__ of day count classes
+def test_day_count_repr():
+    classes = [
+        DayCount30360,
+        DayCount30E360,
+        DayCountActualActualISDA,
+        DayCountActualActualBond,
+        DayCountActual360,
+        DayCountActual365,
+        DayCount30365,
+        DayCountBase,
+    ]
+    for cls in classes:
+        instance = cls()
+        rep = repr(instance)
+        # Should be ClassName()
+        assert rep == f"{cls.__name__}()"

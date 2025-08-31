@@ -800,6 +800,126 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         return round(duration / price_calc if price_calc != 0 else 0.0, 10)
 
+    def convexity(
+        self,
+        yield_to_maturity: Optional[float] = None,
+        bond_price: Optional[float] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+    ) -> float:
+        """
+        Calculate the convexity of the bond.
+
+
+
+        .. math::
+            Convexity = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t \\cdot t \\cdot (t + 1)}{(1 + YTM)^{(t + 2)}}
+        where:
+
+        - :math:`P` is the price of the bond
+        - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date
+        - :math:`YTM` is the yield to maturity
+        - :math:`T` is the total number of periods
+
+        The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+        Parameters
+        ----------
+        yield_to_maturity : float, optional
+            Yield to maturity as a decimal. If not provided, will be calculated from price if given.
+        bond_price : float, optional
+            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+
+        Returns
+        -------
+        convexity : float
+            Bond convexity.
+
+        Examples
+        --------
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
+        >>> bond.convexity(yield_to_maturity=0.05)
+        22.6123221851
+        """
+        settlement_date = self._resolve_settlement_date(settlement_date)
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = self._resolve_valuation_parameters(
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
+
+        ytm, price_calc = self._resolve_ytm_and_bond_price(
+            yield_to_maturity,
+            bond_price,
+            settlement_date,
+            adjust_to_business_days=adjust_to_business_days,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
+        )
+
+        time_to_payments = self._calculate_time_to_payments(
+            settlement_date,
+            bond_price=None,
+            adjust_to_business_days=adjust_to_business_days,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
+        )
+
+        if ytm is None or price_calc is None:
+            raise ValueError(
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+            )
+
+        assert len(time_to_payments) == 1, (
+            f"A Money Market instrument is supposed to have one payment, got {time_to_payments}."
+        )
+
+        t, cf = next(iter(time_to_payments.items()))
+        days = t[0]
+        base = t[1]
+
+        if yield_calculation_convention == "Continuous":
+            convexity = cf * np.exp(-ytm * days / 365) * (days / 365) ** 2
+        elif yield_calculation_convention == "Annual":
+            convexity = (
+                cf / (1 + ytm) ** (days / 365 + 2) * (days / 365) * (days / 365 + 1)
+            )
+        elif yield_calculation_convention == "Add-On":
+            # derivative of (1 / (1 + x * t)) is -(t / (1 + x * t)^2)
+            convexity = cf / (1 + ytm * days / base) ** 3 * (days / base) ** 2
+        elif yield_calculation_convention == "BEY":
+            convexity = cf / (1 + ytm * days / 365) ** 3 * (days / 365) ** 2
+        elif yield_calculation_convention == "Discount":
+            # derivative of (1 - x) is -1
+            convexity = 0.0
+        else:
+            raise ValueError(
+                f"Unknown yield calculation convention: {yield_calculation_convention}"
+            )
+
+        return round(convexity / price_calc, 10) if price_calc != 0 else 0.0
+
 
 class TreasuryBill(MoneyMarketInstrument):
     """

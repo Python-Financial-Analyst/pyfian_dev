@@ -1,4 +1,6 @@
+import re
 import pandas as pd
+import pytest
 from pyfian.fixed_income.custom_flow_bond import CustomFlowBond
 
 
@@ -72,3 +74,40 @@ class TestCustomFlowBond:
         # Payment = coupon + amortization
         assert bond.payment_flow[dt1] == 10.0 + 10
         assert bond.payment_flow[dt2] == 9.0 + 90
+
+    def test_payment_flow_without_custom_amortization_nor_coupon_rates(self):
+        maturity = pd.Timestamp("2026-01-01")
+        bond = CustomFlowBond(
+            issue_dt="2024-01-01",
+            maturity="2026-01-01",
+            notional=100,
+        )
+        # Payment = coupon + amortization
+        assert bond.payment_flow[maturity] == 100.0
+
+    def test_payment_flow_with_custom_amortization_not_coupon_rates_or_coupon(self):
+        dt1 = pd.Timestamp("2025-01-01")
+        dt2 = pd.Timestamp("2026-01-01")
+        bond = CustomFlowBond(
+            issue_dt="2024-01-01",
+            maturity="2026-01-01",
+            notional=100,
+            custom_amortization={dt1: 50, dt2: 50},
+        )
+        # Payment = coupon + amortization
+        assert bond.payment_flow[dt1] == 50.0
+        assert bond.payment_flow[dt2] == 50.0
+
+    def test_payment_flow_with_custom_amortization_not_equal_notional(self):
+        dt1 = pd.Timestamp("2025-01-01")
+        dt2 = pd.Timestamp("2026-01-01")
+
+        with pytest.raises(
+            ValueError, match=re.escape("Total amortization does not equal notional")
+        ):
+            CustomFlowBond(
+                issue_dt="2024-01-01",
+                maturity="2026-01-01",
+                notional=100,
+                custom_amortization={dt1: 50, dt2: 40},
+            )
