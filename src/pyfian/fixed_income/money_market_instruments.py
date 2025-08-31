@@ -13,7 +13,7 @@ from typing import Optional, Union
 import numpy as np
 import pandas as pd
 from pyfian.fixed_income.base_fixed_income import BaseFixedIncomeInstrument
-from pyfian.utils.day_count import DayCountBase
+from pyfian.utils.day_count import DayCountBase, get_day_count_convention
 from pyfian.time_value import rate_conversions as rc
 
 
@@ -48,6 +48,144 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
     amortization_flow : dict
             Dictionary of amortization payment dates and amounts.
     """
+
+    def __init__(
+        self,
+        issue_dt: Union[str, pd.Timestamp],
+        maturity: Union[str, pd.Timestamp],
+        cpn: float,
+        cpn_freq: int,
+        notional: float = 100,
+        settlement_convention_t_plus: int = 1,
+        record_date_t_minus: int = 1,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        yield_to_maturity: Optional[float] = None,
+        bond_price: Optional[float] = None,
+        adjust_to_business_days: bool = False,
+        day_count_convention: str | DayCountBase = "actual/365",
+        following_coupons_day_count: str | DayCountBase = "30/360",
+        yield_calculation_convention: str = "Add-On",
+    ) -> None:
+        # Input validation
+        if cpn_freq < 0:
+            raise ValueError("Coupon frequency must be greater or equal to zero.")
+        # If coupon is positive, the coupon frequency must be greater than 0
+        if cpn > 0 and cpn_freq <= 0:
+            raise ValueError(
+                "Coupon frequency must be greater than zero for positive coupons."
+            )
+
+        if notional < 0:
+            raise ValueError("Notional (face value) cannot be negative.")
+        if cpn < 0:
+            raise ValueError("Coupon rate cannot be negative.")
+        if settlement_convention_t_plus < 0:
+            raise ValueError("Settlement convention (T+) cannot be negative.")
+        if record_date_t_minus < 0:
+            raise ValueError("Record date (T-) cannot be negative.")
+
+        # Convert dates for validation
+        _issue_dt = pd.to_datetime(issue_dt)
+        _maturity = pd.to_datetime(maturity)
+        if _maturity < _issue_dt:
+            raise ValueError("Maturity date cannot be before issue date.")
+        if settlement_date is not None:
+            _settlement_date = pd.to_datetime(settlement_date)
+            if _settlement_date < _issue_dt:
+                raise ValueError("Settlement date cannot be before issue date.")
+
+        self.issue_dt: pd.Timestamp = pd.to_datetime(issue_dt)
+        self.maturity: pd.Timestamp = pd.to_datetime(maturity)
+        self.cpn: float = cpn
+        self.cpn_freq: int = cpn_freq
+        self.notional: float = notional
+        self.settlement_convention_t_plus: int = settlement_convention_t_plus
+        self.record_date_t_minus: int = record_date_t_minus
+
+        # Raise if day_count_convention is neither str nor DayCountBase
+        if not isinstance(day_count_convention, (str, DayCountBase)):
+            raise TypeError(
+                "day_count_convention must be either a string or a DayCountBase instance."
+            )
+
+        # Initialize day count convention, defaulting to 'actual/actual-Bond'
+        self.day_count_convention: DayCountBase = (
+            get_day_count_convention(day_count_convention)
+            if isinstance(day_count_convention, str)
+            else day_count_convention
+        )
+        self.adjust_to_business_days: bool = adjust_to_business_days
+
+        self._validate_following_coupons_day_count(following_coupons_day_count)
+        self.following_coupons_day_count: DayCountBase = (
+            get_day_count_convention(following_coupons_day_count)
+            if isinstance(following_coupons_day_count, str)
+            else following_coupons_day_count
+        )
+
+        self.yield_calculation_convention: str = (
+            self._validate_yield_calculation_convention(yield_calculation_convention)
+        )
+
+        dict_payments, dict_coupons, dict_amortization = self.make_payment_flow()
+        self.payment_flow: dict[pd.Timestamp, float] = dict_payments
+        self.coupon_flow: dict[pd.Timestamp, float] = dict_coupons
+        self.amortization_flow: dict[pd.Timestamp, float] = dict_amortization
+
+        # Initialize settlement date, yield to maturity, and bond price
+        self._settlement_date: Optional[pd.Timestamp] = None
+        self._validate_bond_price(bond_price=bond_price)
+
+        if settlement_date is not None:
+            self.set_settlement_date(
+                settlement_date,
+                adjust_to_business_days=adjust_to_business_days,
+                day_count_convention=day_count_convention,
+                following_coupons_day_count=following_coupons_day_count,
+                yield_calculation_convention=yield_calculation_convention,
+            )
+
+        if yield_to_maturity is not None:
+            # Throw error if yield_to_maturity is not None and settlement_date is None
+            if self._settlement_date is None:
+                raise ValueError(
+                    "Settlement date must be set if yield to maturity is set."
+                )
+            self.set_yield_to_maturity(
+                yield_to_maturity,
+                settlement_date,
+                adjust_to_business_days=adjust_to_business_days,
+                day_count_convention=day_count_convention,
+                following_coupons_day_count=following_coupons_day_count,
+                yield_calculation_convention=yield_calculation_convention,
+            )
+        else:
+            self._yield_to_maturity: Optional[float] = None
+
+        if bond_price is not None:
+            # Throw error if bond_price is not None and settlement_date is None
+            if self._settlement_date is None:
+                raise ValueError("Settlement date must be set if bond_price is set.")
+            if yield_to_maturity is not None:
+                # Check if self._bond_price is approximately equal to the bond_price, else raise ValueError
+                if (
+                    getattr(self, "_bond_price", None) is not None
+                    and abs(self._bond_price - bond_price) / self._bond_price > 1e-5
+                ):
+                    raise ValueError(
+                        "Bond price calculated by yield to maturity does not match the current bond price."
+                        f" (calculated: {self._bond_price}, given: {bond_price})"
+                    )
+            self.set_bond_price(
+                bond_price,
+                settlement_date,
+                adjust_to_business_days=adjust_to_business_days,
+                following_coupons_day_count=following_coupons_day_count,
+                yield_calculation_convention=yield_calculation_convention,
+            )
+        elif yield_to_maturity is None:
+            # If neither yield_to_maturity nor bond_price is set, set bond price to None
+            self._bond_price: Optional[float] = None
 
     def make_payment_flow(self):
         """
