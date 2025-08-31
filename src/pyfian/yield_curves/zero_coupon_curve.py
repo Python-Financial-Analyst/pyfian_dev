@@ -11,7 +11,6 @@ Each class provides a different convention for representing zero-coupon yield cu
 
 from typing import Optional, Union
 import pandas as pd
-from pyfian.time_value.rate_conversions import validate_yield_calculation_convention
 from pyfian.utils.day_count import DayCountBase, get_day_count_convention
 from pyfian.visualization.mixins import YieldCurvePlotMixin
 from pyfian.yield_curves.base_curve import YieldCurveBase
@@ -110,10 +109,22 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
         self.yield_calculation_convention: str = (
             "Annual"
             if yield_calculation_convention is None
-            else validate_yield_calculation_convention(yield_calculation_convention)
+            else self._validate_yield_calculation_convention(
+                yield_calculation_convention
+            )
         )
         self.zero_rates = self._prepare_zero_rates(zero_rates)
         self.maturities = list(self.zero_rates.keys())
+
+    def _validate_yield_calculation_convention(self, convention):
+        """Validate the yield calculation convention."""
+        valid_conventions = ["Annual", "Continuous", "BEY"]
+        if convention not in valid_conventions:
+            raise ValueError(
+                f"Invalid yield calculation convention: {convention}. "
+                f"Must be one of: {valid_conventions}"
+            )
+        return convention
 
     def as_dict(self):
         """Convert the curve to a dictionary."""
@@ -353,7 +364,9 @@ class ZeroCouponCurveByDate(ZeroCouponCurve):
         self.yield_calculation_convention: str = (
             "Annual"
             if yield_calculation_convention is None
-            else validate_yield_calculation_convention(yield_calculation_convention)
+            else self._validate_yield_calculation_convention(
+                yield_calculation_convention
+            )
         )
 
         # Raise if day_count_convention is neither str nor DayCountBase

@@ -1,3 +1,5 @@
+import warnings
+import matplotlib
 from pyfian.fixed_income.money_market_instruments import (
     TreasuryBill,
     CertificateOfDeposit,
@@ -5,6 +7,8 @@ from pyfian.fixed_income.money_market_instruments import (
     BankersAcceptance,
 )
 import pandas as pd
+
+from pyfian.yield_curves.flat_curve import FlatCurveAER
 
 
 class TestTreasuryBill:
@@ -55,14 +59,40 @@ class TestTreasuryBill:
         sdt = tbill.set_settlement_date("2025-01-01")
         assert sdt is not None
         # plot_cash_flows (should not raise)
-        tbill.plot_cash_flows()
+
+        # Change matplotlib backend not to graph and ignore warnings context
+        matplotlib.use("Agg")
+        # ignore warning context
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            tbill.plot_cash_flows()
+
         # dv01, effective_convexity
         assert isinstance(tbill.dv01(), float)
         assert isinstance(tbill.effective_convexity(), float)
         # g_spread, i_spread, z_spread (pass dummy None for curve)
-        assert isinstance(tbill.g_spread(), float)
-        assert isinstance(tbill.i_spread(None), float)
-        assert isinstance(tbill.z_spread(None), float)
+        assert isinstance(
+            tbill.g_spread(benchmark_ytm=0.02, yield_calculation_convention="Annual"),
+            float,
+        )
+        assert isinstance(
+            tbill.i_spread(
+                benchmark_curve=FlatCurveAER(
+                    0.02, curve_date=pd.Timestamp("2025-01-01")
+                ),
+                yield_calculation_convention="Annual",
+            ),
+            float,
+        )
+        assert isinstance(
+            tbill.z_spread(
+                benchmark_curve=FlatCurveAER(
+                    0.02, curve_date=pd.Timestamp("2025-01-01")
+                ),
+                yield_calculation_convention="Annual",
+            ),
+            float,
+        )
 
 
 class TestCertificateOfDeposit:
@@ -121,12 +151,35 @@ class TestCertificateOfDeposit:
         assert isinstance(ttp, dict)
         sdt = cd.set_settlement_date("2025-01-01")
         assert sdt is not None
-        cd.plot_cash_flows()
+
+        # Change matplotlib backend not to graph and ignore warnings context
+        matplotlib.use("Agg")
+        # ignore warning context
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            cd.plot_cash_flows()
+
         assert isinstance(cd.dv01(), float)
         assert isinstance(cd.effective_convexity(), float)
-        assert isinstance(cd.g_spread(), float)
-        assert isinstance(cd.i_spread(None), float)
-        assert isinstance(cd.z_spread(None), float)
+        assert isinstance(cd.g_spread(benchmark_ytm=0.02), float)
+        assert isinstance(
+            cd.i_spread(
+                benchmark_curve=FlatCurveAER(
+                    0.02, curve_date=pd.Timestamp("2025-01-01")
+                ),
+                yield_calculation_convention="Annual",
+            ),
+            float,
+        )
+        assert isinstance(
+            cd.z_spread(
+                benchmark_curve=FlatCurveAER(
+                    0.02, curve_date=pd.Timestamp("2025-01-01")
+                ),
+                yield_calculation_convention="Annual",
+            ),
+            float,
+        )
 
 
 class TestCommercialPaper:
@@ -167,12 +220,35 @@ class TestCommercialPaper:
         assert isinstance(ttp, dict)
         sdt = cp.set_settlement_date("2025-01-01")
         assert sdt is not None
-        cp.plot_cash_flows()
+
+        # Change matplotlib backend not to graph and ignore warnings context
+        matplotlib.use("Agg")
+        # ignore warning context
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            cp.plot_cash_flows()
+
         assert isinstance(cp.dv01(), float)
         assert isinstance(cp.effective_convexity(), float)
-        assert isinstance(cp.g_spread(), float)
-        assert isinstance(cp.i_spread(None), float)
-        assert isinstance(cp.z_spread(None), float)
+        assert isinstance(cp.g_spread(benchmark_ytm=0.02), float)
+        assert isinstance(
+            cp.i_spread(
+                benchmark_curve=FlatCurveAER(
+                    0.02, curve_date=pd.Timestamp("2025-01-01")
+                ),
+                yield_calculation_convention="Annual",
+            ),
+            float,
+        )
+        assert isinstance(
+            cp.z_spread(
+                benchmark_curve=FlatCurveAER(
+                    0.02, curve_date=pd.Timestamp("2025-01-01")
+                ),
+                yield_calculation_convention="Annual",
+            ),
+            float,
+        )
 
 
 class TestBankersAcceptance:
@@ -213,9 +289,34 @@ class TestBankersAcceptance:
         assert isinstance(ttp, dict)
         sdt = ba.set_settlement_date("2025-01-01")
         assert sdt is not None
-        ba.plot_cash_flows()
+
+        # Change matplotlib backend not to graph and ignore warnings context
+        matplotlib.use("Agg")
+        # ignore warning context
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            ba.plot_cash_flows()
         assert isinstance(ba.dv01(), float)
         assert isinstance(ba.effective_convexity(), float)
-        assert isinstance(ba.g_spread(), float)
-        assert isinstance(ba.i_spread(None), float)
-        assert isinstance(ba.z_spread(None), float)
+        assert isinstance(
+            ba.g_spread(benchmark_ytm=0.02, yield_calculation_convention="Annual"),
+            float,
+        )
+        assert isinstance(
+            ba.i_spread(
+                benchmark_curve=FlatCurveAER(
+                    0.02, curve_date=pd.Timestamp("2025-01-01")
+                ),
+                yield_calculation_convention="Annual",
+            ),
+            float,
+        )
+        assert isinstance(
+            ba.z_spread(
+                benchmark_curve=FlatCurveAER(
+                    0.02, curve_date=pd.Timestamp("2025-01-01")
+                ),
+                yield_calculation_convention="Annual",
+            ),
+            float,
+        )

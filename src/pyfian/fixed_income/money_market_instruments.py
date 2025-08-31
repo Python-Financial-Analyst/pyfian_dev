@@ -187,6 +187,29 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
             # If neither yield_to_maturity nor bond_price is set, set bond price to None
             self._bond_price: Optional[float] = None
 
+    def _validate_following_coupons_day_count(
+        self, following_coupons_day_count: str | DayCountBase
+    ) -> DayCountBase:
+        """
+        Validate the following coupons day count convention.
+        Raises ValueError if the convention is not supported.
+        """
+        valid_conventions = ["30/360", "30e/360", "actual/360", "actual/365", "30/365"]
+        if isinstance(following_coupons_day_count, DayCountBase):
+            following_coupons_day_count_name = following_coupons_day_count.name
+            following_coupons_day_count = following_coupons_day_count
+        else:
+            following_coupons_day_count_name = following_coupons_day_count
+            following_coupons_day_count = get_day_count_convention(
+                following_coupons_day_count
+            )
+        if following_coupons_day_count_name not in valid_conventions:
+            raise ValueError(
+                f"Unsupported following coupons day count convention: {following_coupons_day_count}. "
+                f"Supported conventions: {valid_conventions}"
+            )
+        return following_coupons_day_count
+
     def make_payment_flow(self):
         """
         Generate the payment flow for a money market instrument.
@@ -274,6 +297,28 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
             day_count_convention=day_count_convention,
             **kwargs,
         )
+
+    # Implement accrued_interest for Money Market Instruments
+    def accrued_interest(
+        self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
+    ) -> float:
+        """
+        Calculate the accrued interest for the money market instrument.
+
+        Parameters
+        ----------
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+
+        Returns
+        -------
+        accrued_interest : float
+            The accrued interest amount.
+        """
+        settlement_date = self._resolve_settlement_date(settlement_date)
+        t = self.day_count_convention.fraction(self.issue_dt, settlement_date)
+        accrued_interest = (self.cpn / self.cpn_freq) * t * self.notional / 100
+        return accrued_interest
 
     def yield_to_maturity(
         self,

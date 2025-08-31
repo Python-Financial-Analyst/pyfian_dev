@@ -45,7 +45,6 @@ import pandas as pd
 from typing import Optional
 
 from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
-from pyfian.time_value.rate_conversions import validate_yield_calculation_convention
 from pyfian.utils.day_count import DayCountBase, get_day_count_convention
 from pyfian.yield_curves.spot_curve import SpotCurve
 from pyfian.time_value import rate_conversions as rc
@@ -171,7 +170,9 @@ class ParCurve(SpotCurve):
         self.yield_calculation_convention: str = (
             "Annual"
             if yield_calculation_convention is None
-            else validate_yield_calculation_convention(yield_calculation_convention)
+            else self._validate_yield_calculation_convention(
+                yield_calculation_convention
+            )
         )
 
         if zero_rates is not None:

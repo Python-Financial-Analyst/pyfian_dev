@@ -979,15 +979,20 @@ class BaseFixedIncomeInstrument(ABC):
             day_count_convention=day_count_convention,
         )
         # Concat coupon_flows and amortization_flows in a single dataframe
-        df = pd.concat(
-            [
-                pd.Series(flows, name="Flows"),
-                pd.Series(coupon_flows, name="Coupon"),
-                pd.Series(amortization_flows, name="Amortization"),
-            ],
-            axis=1,
-        ).fillna(0)
+        df = (
+            pd.concat(
+                [
+                    pd.Series(flows, name="Flows"),
+                    pd.Series(coupon_flows, name="Coupon"),
+                    pd.Series(amortization_flows, name="Amortization"),
+                ],
+                axis=1,
+            )
+            .astype(float)
+            .fillna(0)
+        )
         df["Cost"] = df["Coupon"] + df["Amortization"] - df["Flows"]
+        df.index = pd.DatetimeIndex(df.index)
 
         return df.sort_index()
 
