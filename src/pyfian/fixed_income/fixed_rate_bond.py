@@ -48,7 +48,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         Settlement date for the bond. Defaults to None.
     yield_to_maturity : float, optional
         Yield to maturity of the bond. Set in decimal, e.g., 0.05 for 5%. Defaults to None.
-    bond_price : float, optional
+    price : float, optional
         Market price of the bond. Defaults to None.
     adjust_to_business_days : bool, optional
         Whether to adjust dates to business days. Defaults to False.
@@ -88,7 +88,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         Settlement date for the bond.
     yield_to_maturity : float
         Yield to maturity of the bond.
-    bond_price : float
+    price : float
         Market price of the bond.
     payment_flow : dict[pd.Timestamp, float]
         Payment flow schedule for the bond.
@@ -126,7 +126,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         record_date_t_minus: int = 1,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         adjust_to_business_days: bool = False,
         day_count_convention: str | DayCountBase = "actual/actual-Bond",
         following_coupons_day_count: str | DayCountBase = "30/360",
@@ -159,6 +159,8 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
             _settlement_date = pd.to_datetime(settlement_date)
             if _settlement_date < _issue_dt:
                 raise ValueError("Settlement date cannot be before issue date.")
+            if _settlement_date > _maturity:
+                raise ValueError("Settlement date cannot be after maturity date.")
 
         self.issue_dt: pd.Timestamp = pd.to_datetime(issue_dt)
         self.maturity: pd.Timestamp = pd.to_datetime(maturity)
@@ -200,7 +202,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
         # Initialize settlement date, yield to maturity, and bond price
         self._settlement_date: Optional[pd.Timestamp] = None
-        self._validate_bond_price(bond_price=bond_price)
+        self._validate_price(price=price)
 
         if settlement_date is not None:
             self.set_settlement_date(
@@ -228,30 +230,30 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         else:
             self._yield_to_maturity: Optional[float] = None
 
-        if bond_price is not None:
-            # Throw error if bond_price is not None and settlement_date is None
+        if price is not None:
+            # Throw error if price is not None and settlement_date is None
             if self._settlement_date is None:
-                raise ValueError("Settlement date must be set if bond_price is set.")
+                raise ValueError("Settlement date must be set if price is set.")
             if yield_to_maturity is not None:
-                # Check if self._bond_price is approximately equal to the bond_price, else raise ValueError
+                # Check if self._price is approximately equal to the price, else raise ValueError
                 if (
-                    getattr(self, "_bond_price", None) is not None
-                    and abs(self._bond_price - bond_price) / self._bond_price > 1e-5
+                    getattr(self, "_price", None) is not None
+                    and abs(self._price - price) / self._price > 1e-5
                 ):
                     raise ValueError(
                         "Bond price calculated by yield to maturity does not match the current bond price."
-                        f" (calculated: {self._bond_price}, given: {bond_price})"
+                        f" (calculated: {self._price}, given: {price})"
                     )
-            self.set_bond_price(
-                bond_price,
+            self.set_price(
+                price,
                 settlement_date,
                 adjust_to_business_days=adjust_to_business_days,
                 following_coupons_day_count=following_coupons_day_count,
                 yield_calculation_convention=yield_calculation_convention,
             )
         elif yield_to_maturity is None:
-            # If neither yield_to_maturity nor bond_price is set, set bond price to None
-            self._bond_price: Optional[float] = None
+            # If neither yield_to_maturity nor price is set, set bond price to None
+            self._price: Optional[float] = None
 
     def _validate_yield_calculation_convention(
         self, yield_calculation_convention: str
@@ -344,11 +346,11 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         dict_amortization = {}
 
         # Final payment: principal + last coupon
-        last_coupon = (cpn / cpn_freq) * notional / 100 if cpn > 0 else 0
+        last_coupon = (cpn / cpn_freq) * notional / 100 if cpn != 0 else 0
         dict_payments[maturity] = notional + last_coupon
         dict_amortization[maturity] = notional
 
-        if cpn > 0:
+        if cpn != 0:
             dict_coupons[maturity] = last_coupon
             next_date_processed = maturity - relativedelta(months=12 // cpn_freq)
 
@@ -372,7 +374,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
     def _calculate_time_to_payments(
         self,
         settlement_date,
-        bond_price,
+        price,
         adjust_to_business_days,
         following_coupons_day_count,
         yield_calculation_convention,
@@ -381,7 +383,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         """Calculate the time to each payment from the settlement date."""
         flows = self._filter_payment_flow(
             settlement_date,
-            bond_price,
+            price,
             payment_flow=self.payment_flow,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -404,7 +406,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
             start=start,
             current=settlement_date,
             end=first_non_negative_key,
-            periods_per_year=self.cpn_freq,
+            periods_per_year=self.cpn_freq if self.cpn_freq > 0 else 1,
         )
 
         times: defaultdict[float, float] = defaultdict(float)
@@ -428,7 +430,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         curve: YieldCurveBase,
         spread: float = 0,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
@@ -483,7 +485,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
             Discount curve object with a discount_date(d) method.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
-        bond_price : float, optional
+        price : float, optional
             If provided, includes bond price as a negative cash flow.
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
@@ -523,7 +525,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
         date_of_payments = self._filter_payment_flow(
             settlement_date,
-            bond_price,
+            price,
             payment_flow=self.payment_flow,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -539,7 +541,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
     def yield_to_maturity(
         self,
-        bond_price: float,
+        price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -571,8 +573,8 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
         Parameters
         ----------
-        bond_price : float
-            Price of the bond.
+        price : float, optional
+            Price of the bond. If not provided, will use self.price if set.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
         adjust_to_business_days : bool, optional
@@ -601,13 +603,19 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         Examples
         --------
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.yield_to_maturity(bond_price=95)
+        >>> bond.yield_to_maturity(price=95)
         np.float64(0.06100197251858131)
         """
         if tol is None:
             tol = 1e-6
         if max_iter is None:
             max_iter = 100
+        if price is None:
+            if self._price is None:
+                raise ValueError(
+                    "Bond price must be set to calculate yield to maturity."
+                )
+            price = self._price
         # Prepare cash flows and dates
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -623,7 +631,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         )
         times_cashflows = self._calculate_time_to_payments(
             settlement_date,
-            bond_price,
+            price,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -659,7 +667,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
     def modified_duration(
         self,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -684,8 +692,8 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         Parameters
         ----------
         yield_to_maturity : float, optional
-            Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
-        bond_price : float, optional
+            Yield to maturity as a decimal. If not provided, will be calculated from price if given.
+        price : float, optional
             Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
@@ -722,9 +730,9 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
             yield_calculation_convention,
         )
 
-        ytm, price_calc = self._resolve_ytm_and_bond_price(
+        ytm, price_calc = self._resolve_ytm_and_price(
             yield_to_maturity,
-            bond_price,
+            price,
             settlement_date,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -734,7 +742,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
         time_to_payments = self._calculate_time_to_payments(
             settlement_date,
-            bond_price=None,
+            price=None,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -745,7 +753,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
         if ytm is None or price_calc is None:
             raise ValueError(
-                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
         if yield_calculation_convention == "Continuous":
@@ -764,7 +772,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
     def macaulay_duration(
         self,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -789,8 +797,8 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         Parameters
         ----------
         yield_to_maturity : float, optional
-            Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
-        bond_price : float, optional
+            Yield to maturity as a decimal. If not provided, will be calculated from price if given.
+        price : float, optional
             Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
@@ -827,9 +835,9 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
             yield_calculation_convention,
         )
 
-        ytm, price_calc = self._resolve_ytm_and_bond_price(
+        ytm, price_calc = self._resolve_ytm_and_price(
             yield_to_maturity,
-            bond_price,
+            price,
             settlement_date,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -839,7 +847,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
         time_to_payments = self._calculate_time_to_payments(
             settlement_date,
-            bond_price=None,
+            price=None,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -850,21 +858,26 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
         if ytm is None or price_calc is None:
             raise ValueError(
-                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
-        duration = sum(
-            [
-                t * cf / (1 + ytm / time_adjustment) ** (t * time_adjustment)
-                for t, cf in time_to_payments.items()
-            ]
-        )
+        if yield_calculation_convention == "Continuous":
+            duration = sum(
+                [t * cf * np.exp(-ytm * t) for t, cf in time_to_payments.items()]
+            )
+        else:
+            duration = sum(
+                [
+                    t * cf / (1 + ytm / time_adjustment) ** (t * time_adjustment)
+                    for t, cf in time_to_payments.items()
+                ]
+            )
         return round(duration / price_calc if price_calc != 0 else 0.0, 10)
 
     def convexity(
         self,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -891,7 +904,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         ----------
         yield_to_maturity : float, optional
             Yield to maturity as a decimal. If not provided, will be calculated from price if given.
-        bond_price : float, optional
+        price : float, optional
             Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
@@ -928,9 +941,9 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
             yield_calculation_convention,
         )
 
-        ytm, price_calc = self._resolve_ytm_and_bond_price(
+        ytm, price_calc = self._resolve_ytm_and_price(
             yield_to_maturity,
-            bond_price,
+            price,
             settlement_date,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -940,7 +953,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
         time_to_payments = self._calculate_time_to_payments(
             settlement_date,
-            bond_price=None,
+            price=None,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -951,7 +964,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
         if ytm is None or price_calc is None:
             raise ValueError(
-                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
         if yield_calculation_convention == "Continuous":
@@ -1189,7 +1202,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
     ) -> float:
         time_to_payments = self._calculate_time_to_payments(
             settlement_date,
-            bond_price=None,
+            price=None,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,

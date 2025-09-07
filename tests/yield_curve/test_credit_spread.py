@@ -108,7 +108,7 @@ class TestCreditSpreadCurve:
                 maturity=date + offset,
                 cpn_freq=2 if not_zero_coupon else 0,
                 cpn=cpn if not_zero_coupon else 0,
-                bond_price=100 if not_zero_coupon else None,
+                price=100 if not_zero_coupon else None,
                 yield_to_maturity=None if not_zero_coupon else cpn / 100,
                 settlement_date=date,
             )
@@ -202,7 +202,7 @@ class TestCreditSpreadCurve:
                 maturity=date + offset,
                 cpn_freq=2 if not_zero_coupon else 0,  # Less than a year
                 cpn=cpn if not_zero_coupon else 0,
-                bond_price=100 if not_zero_coupon else None,
+                price=100 if not_zero_coupon else None,
                 yield_to_maturity=None if not_zero_coupon else cpn / 100,
                 settlement_date=date,
             )

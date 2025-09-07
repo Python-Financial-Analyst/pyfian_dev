@@ -126,7 +126,7 @@ class TestFlatCurveLog:
         # For log curve, should match discount_to_rate of D(0.5)/D(1) over dt=0.5
         d0 = self.curve.discount_t(0.5)
         d1 = self.curve.discount_t(1)
-        expected = self.curve.discount_to_rate(d0 / d1, 0.5, spread=0)
+        expected = self.curve.discount_to_rate(d1 / d0, 0.5, spread=0)
         assert fwd == pytest.approx(expected)
 
     def test_forward_t_start_dt(self):
@@ -134,7 +134,7 @@ class TestFlatCurveLog:
         fwd = self.curve.forward_t_start_dt(0.5, 0.5)
         d0 = self.curve.discount_t(0.5)
         d1 = self.curve.discount_t(1)
-        expected = self.curve.discount_to_rate(d0 / d1, 0.5, spread=0)
+        expected = self.curve.discount_to_rate(d1 / d0, 0.5, spread=0)
         assert fwd == pytest.approx(expected)
 
     def test_forward_dt(self):
@@ -145,7 +145,7 @@ class TestFlatCurveLog:
         )
         d0 = self.curve.discount_t(t_start)
         d1 = self.curve.discount_t(t_start + 0.5)
-        expected = self.curve.discount_to_rate(d0 / d1, 0.5, spread=0)
+        expected = self.curve.discount_to_rate(d1 / d0, 0.5, spread=0)
         assert fwd == pytest.approx(expected)
 
     def test_forward_dates(self):
@@ -160,7 +160,7 @@ class TestFlatCurveLog:
         dt = t_end - t_start
         d0 = self.curve.discount_t(t_start)
         d1 = self.curve.discount_t(t_end)
-        expected = self.curve.discount_to_rate(d0 / d1, dt, spread=0)
+        expected = self.curve.discount_to_rate(d1 / d0, dt, spread=0)
         assert fwd == pytest.approx(expected)
 
     def test__get_t(self):
@@ -296,14 +296,14 @@ class TestFlatCurveAER:
         fwd = self.curve.forward_t_start_t_end(0.5, 1)
         d0 = self.curve.discount_t(0.5)
         d1 = self.curve.discount_t(1)
-        expected = self.curve.discount_to_rate(d0 / d1, 0.5, spread=0)
+        expected = self.curve.discount_to_rate(d1 / d0, 0.5, spread=0)
         assert fwd == pytest.approx(expected)
 
     def test_forward_t_start_dt(self):
         fwd = self.curve.forward_t_start_dt(0.5, 0.5)
         d0 = self.curve.discount_t(0.5)
         d1 = self.curve.discount_t(1)
-        expected = self.curve.discount_to_rate(d0 / d1, 0.5, spread=0)
+        expected = self.curve.discount_to_rate(d1 / d0, 0.5, spread=0)
         assert fwd == pytest.approx(expected)
 
     def test_forward_dt(self):
@@ -313,7 +313,7 @@ class TestFlatCurveAER:
         )
         d0 = self.curve.discount_t(t_start)
         d1 = self.curve.discount_t(t_start + 0.5)
-        expected = self.curve.discount_to_rate(d0 / d1, 0.5, spread=0)
+        expected = self.curve.discount_to_rate(d1 / d0, 0.5, spread=0)
         assert fwd == pytest.approx(expected)
 
     def test_forward_dates(self):
@@ -327,7 +327,7 @@ class TestFlatCurveAER:
         dt = t_end - t_start
         d0 = self.curve.discount_t(t_start)
         d1 = self.curve.discount_t(t_end)
-        expected = self.curve.discount_to_rate(d0 / d1, dt, spread=0)
+        expected = self.curve.discount_to_rate(d1 / d0, dt, spread=0)
         assert fwd == pytest.approx(expected)
 
 
@@ -466,14 +466,14 @@ class TestFlatCurveBEY:
         fwd = self.curve.forward_t_start_t_end(0.5, 1)
         d0 = self.curve.discount_t(0.5)
         d1 = self.curve.discount_t(1)
-        expected = self.curve.discount_to_rate(d0 / d1, 0.5, spread=0)
+        expected = self.curve.discount_to_rate(d1 / d0, 0.5, spread=0)
         assert fwd == pytest.approx(expected)
 
     def test_forward_t_start_dt(self):
         fwd = self.curve.forward_t_start_dt(0.5, 0.5)
         d0 = self.curve.discount_t(0.5)
         d1 = self.curve.discount_t(1)
-        expected = self.curve.discount_to_rate(d0 / d1, 0.5, spread=0)
+        expected = self.curve.discount_to_rate(d1 / d0, 0.5, spread=0)
         assert fwd == pytest.approx(expected)
 
     def test_forward_dt(self):
@@ -483,7 +483,7 @@ class TestFlatCurveBEY:
         )
         d0 = self.curve.discount_t(t_start)
         d1 = self.curve.discount_t(t_start + 0.5)
-        expected = self.curve.discount_to_rate(d0 / d1, 0.5, spread=0)
+        expected = self.curve.discount_to_rate(d1 / d0, 0.5, spread=0)
         assert fwd == pytest.approx(expected)
 
     def test_forward_dates(self):
@@ -497,5 +497,5 @@ class TestFlatCurveBEY:
         dt = t_end - t_start
         d0 = self.curve.discount_t(t_start)
         d1 = self.curve.discount_t(t_end)
-        expected = self.curve.discount_to_rate(d0 / d1, dt, spread=0)
+        expected = self.curve.discount_to_rate(d1 / d0, dt, spread=0)
         assert fwd == pytest.approx(expected)

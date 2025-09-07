@@ -28,16 +28,16 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
             Issue date of the instrument.
     maturity : str or datetime-like
             Maturity date of the instrument.
-    cpn : float
-            Annual coupon rate (percentage).
-    cpn_freq : int
-            Number of coupon payments per year.
+    cpn : float, optional
+            Annual coupon rate (percentage). Defaults to 0 (zero-coupon).
+    cpn_freq : int, optional
+            Number of coupon payments per year. Defaults to 0 (zero-coupon).
     notional : float, optional
             Face value (principal) of the instrument. Defaults to 100.
     day_count_convention : str, optional
             Day count convention for the instrument. Defaults to 'actual/360'.
     kwargs : dict, optional
-            Additional keyword arguments for FixedRateBullet.
+            Additional keyword arguments for BaseFixedIncomeInstrument.
 
     Attributes
     ----------
@@ -53,14 +53,14 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         self,
         issue_dt: Union[str, pd.Timestamp],
         maturity: Union[str, pd.Timestamp],
-        cpn: float,
-        cpn_freq: int,
+        cpn: float = 0,
+        cpn_freq: int = 0,
         notional: float = 100,
         settlement_convention_t_plus: int = 1,
         record_date_t_minus: int = 1,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         adjust_to_business_days: bool = False,
         day_count_convention: str | DayCountBase = "actual/365",
         following_coupons_day_count: str | DayCountBase = "30/360",
@@ -93,6 +93,8 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
             _settlement_date = pd.to_datetime(settlement_date)
             if _settlement_date < _issue_dt:
                 raise ValueError("Settlement date cannot be before issue date.")
+            if _settlement_date > _maturity:
+                raise ValueError("Settlement date cannot be after maturity date.")
 
         self.issue_dt: pd.Timestamp = pd.to_datetime(issue_dt)
         self.maturity: pd.Timestamp = pd.to_datetime(maturity)
@@ -104,7 +106,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         # Raise if day_count_convention is neither str nor DayCountBase
         if not isinstance(day_count_convention, (str, DayCountBase)):
-            raise TypeError(
+            raise ValueError(
                 "day_count_convention must be either a string or a DayCountBase instance."
             )
 
@@ -132,9 +134,9 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         self.coupon_flow: dict[pd.Timestamp, float] = dict_coupons
         self.amortization_flow: dict[pd.Timestamp, float] = dict_amortization
 
-        # Initialize settlement date, yield to maturity, and bond price
+        # Initialize settlement date, yield to maturity, and price
         self._settlement_date: Optional[pd.Timestamp] = None
-        self._validate_bond_price(bond_price=bond_price)
+        self._validate_price(price=price)
 
         if settlement_date is not None:
             self.set_settlement_date(
@@ -162,30 +164,30 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         else:
             self._yield_to_maturity: Optional[float] = None
 
-        if bond_price is not None:
-            # Throw error if bond_price is not None and settlement_date is None
+        if price is not None:
+            # Throw error if price is not None and settlement_date is None
             if self._settlement_date is None:
-                raise ValueError("Settlement date must be set if bond_price is set.")
+                raise ValueError("Settlement date must be set if price is set.")
             if yield_to_maturity is not None:
-                # Check if self._bond_price is approximately equal to the bond_price, else raise ValueError
+                # Check if self._price is approximately equal to the price, else raise ValueError
                 if (
-                    getattr(self, "_bond_price", None) is not None
-                    and abs(self._bond_price - bond_price) / self._bond_price > 1e-5
+                    getattr(self, "_price", None) is not None
+                    and abs(self._price - price) / self._price > 1e-5
                 ):
                     raise ValueError(
-                        "Bond price calculated by yield to maturity does not match the current bond price."
-                        f" (calculated: {self._bond_price}, given: {bond_price})"
+                        "Price calculated by yield to maturity does not match the current price."
+                        f" (calculated: {self._price}, given: {price})"
                     )
-            self.set_bond_price(
-                bond_price,
+            self.set_price(
+                price,
                 settlement_date,
                 adjust_to_business_days=adjust_to_business_days,
                 following_coupons_day_count=following_coupons_day_count,
                 yield_calculation_convention=yield_calculation_convention,
             )
         elif yield_to_maturity is None:
-            # If neither yield_to_maturity nor bond_price is set, set bond price to None
-            self._bond_price: Optional[float] = None
+            # If neither yield_to_maturity nor price is set, set price to None
+            self._price: Optional[float] = None
 
     def _validate_following_coupons_day_count(
         self, following_coupons_day_count: str | DayCountBase
@@ -257,12 +259,25 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         dict_amortization = dict(sorted(dict_amortization.items()))
         return dict_payments, dict_coupons, dict_amortization
 
+    @staticmethod
+    def _resolve_issue_dt(issue_dt):
+        if issue_dt is None:
+            issue_dt = pd.Timestamp(datetime.now().date())
+        elif not isinstance(issue_dt, pd.Timestamp):
+            if isinstance(issue_dt, (str, datetime)):
+                issue_dt = pd.to_datetime(issue_dt)
+            else:
+                raise TypeError(
+                    "issue_dt must be either a string or a pd.Timestamp or datetime."
+                )
+        return issue_dt
+
     @classmethod
     def from_days(
         cls,
         days,
         notional=100,
-        day_count_convention="actual/360",
+        day_count_convention="actual/365",
         issue_dt=None,
         **kwargs,
     ):
@@ -276,20 +291,26 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         notional : float, optional
                 Face value (principal). Defaults to 100.
         day_count_convention : str, optional
-                Day count convention. Defaults to 'actual/360'.
+                Day count convention. Defaults to 'actual/365'.
         issue_dt : datetime, optional
                 Issue date. Defaults to current date if None.
         kwargs : dict, optional
-                Additional keyword arguments for FixedRateBullet.
+                Additional keyword arguments for BaseFixedIncomeInstrument.
 
         Returns
         -------
         MoneyMarketInstrument
                 Instance with specified maturity.
         """
-        if issue_dt is None:
-            issue_dt = datetime.now()
+        issue_dt = cls._resolve_issue_dt(issue_dt)
         maturity = issue_dt + timedelta(days=days)
+        kwargs.pop("maturity", None)  # Remove maturity if passed in kwargs
+        kwargs.pop("issue_dt", None)  # Remove issue_dt if passed in kwargs
+        kwargs.pop("notional", None)  # Remove notional if passed in kwargs
+        kwargs.pop(
+            "day_count_convention", None
+        )  # Remove day_count_convention if passed in kwargs
+
         return cls(
             issue_dt=issue_dt,
             maturity=maturity,
@@ -322,7 +343,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
     def yield_to_maturity(
         self,
-        bond_price: float,
+        price: float,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -332,9 +353,9 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         """
         Estimate the yield to maturity (YTM) using the xirr function from pyfian.time_value.irr.
 
-        The YTM is the internal rate of return (IRR) of the bond's cash flows, assuming the bond is held to maturity.
+        The YTM is the internal rate of return (IRR) of the instrument's cash flows, assuming the instrument is held to maturity.
 
-        It is the discount rate that makes the present value of the bond's cash flows equal to its price for a given set of cash flows and settlement date.
+        It is the discount rate that makes the present value of the instrument's cash flows equal to its price for a given set of cash flows and settlement date.
 
         The YTM is calculated by solving the equation:
 
@@ -343,7 +364,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         where:
 
-        - :math:`P` is the price of the bond
+        - :math:`P` is the price of the instrument
         - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date
         - :math:`YTM` is the yield to maturity
         - :math:`T` is the total number of periods
@@ -352,8 +373,8 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         Parameters
         ----------
-        bond_price : float
-                Price of the bond.
+        price : float
+                Price of the instrument.
         settlement_date : str or datetime-like, optional
                 Settlement date. Defaults to issue date.
         adjust_to_business_days : bool, optional
@@ -373,12 +394,12 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         Raises
         ------
         ValueError
-                If bond price is not set or YTM calculation does not converge.
+                If price is not set or YTM calculation does not converge.
 
         Examples
         --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.yield_to_maturity(bond_price=95)
+        >>> bill = MoneyMarketInstrument('2020-01-01', '2025-07-01', 5, 1)
+        >>> bill.yield_to_maturity(price=95)
         np.float64(0.06100197251858131)
         """
         # Prepare cash flows and dates
@@ -396,7 +417,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         )
         flows = self._filter_payment_flow(
             settlement_date,
-            bond_price,
+            price,
             payment_flow=self.payment_flow,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -465,7 +486,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         yield_calculation_convention: str,
     ) -> float:
         """
-        Helper to calculate the price of the bond from yield to maturity and time to payments.
+        Helper to calculate the price of the instrument from yield to maturity and time to payments.
         Parameters
         ----------
         time_to_payments : dict
@@ -478,7 +499,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         Returns
         -------
         float
-                Price of the bond.
+                Price of the instrument.
         """
         assert len(time_to_payments) == 1, (
             f"A Money Market instrument is supposed to have one payment, got {time_to_payments}."
@@ -519,7 +540,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
     ) -> float:
         time_to_payments = self._calculate_time_to_payments(
             settlement_date,
-            bond_price=None,
+            price=None,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -536,7 +557,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
     def _calculate_time_to_payments(
         self,
         settlement_date,
-        bond_price,
+        price,
         adjust_to_business_days,
         following_coupons_day_count,
         yield_calculation_convention,
@@ -545,7 +566,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         """Calculate the time to each payment from the settlement date."""
         flows = self._filter_payment_flow(
             settlement_date,
-            bond_price,
+            price,
             payment_flow=self.payment_flow,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -572,7 +593,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
     def modified_duration(
         self,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -580,13 +601,13 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         yield_calculation_convention: Optional[str] = None,
     ) -> float:
         """
-                Calculate modified duration of the bond.
+                Calculate modified duration of the instrument.
 
         .. math::
             Modified Duration = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t}{(1 + YTM)^{(t+1)}} \\cdot t
         where:
 
-        - :math:`P` is the price of the bond
+        - :math:`P` is the price of the instrument
         - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date
         - :math:`YTM` is the yield to maturity
         - :math:`T` is the total number of periods
@@ -596,9 +617,9 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         Parameters
         ----------
         yield_to_maturity : float, optional
-            Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
-        bond_price : float, optional
-            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+            Yield to maturity as a decimal. If not provided, will be calculated from price if given.
+        price : float, optional
+            Price of the instrument. Used to estimate YTM if yield_to_maturity is not provided.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
         adjust_to_business_days : bool, optional
@@ -617,8 +638,8 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
-        >>> bond.effective_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
+        >>> instrument = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
+        >>> instrument.effective_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
         4.3760319684
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
@@ -634,9 +655,9 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
             yield_calculation_convention,
         )
 
-        ytm, price_calc = self._resolve_ytm_and_bond_price(
+        ytm, price_calc = self._resolve_ytm_and_price(
             yield_to_maturity,
-            bond_price,
+            price,
             settlement_date,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -646,7 +667,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         time_to_payments = self._calculate_time_to_payments(
             settlement_date,
-            bond_price=None,
+            price=None,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -655,7 +676,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         if ytm is None or price_calc is None:
             raise ValueError(
-                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
         assert len(time_to_payments) == 1, (
@@ -687,7 +708,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
     def macaulay_duration(
         self,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -695,14 +716,14 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         yield_calculation_convention: Optional[str] = None,
     ) -> float:
         """
-                Calculate Macaulay duration of the bond. It is the weighted average time to receive the bond's cash flows, where the weights are the present values of the cash flows.
+                Calculate Macaulay duration of the instrument. It is the weighted average time to receive the instrument's cash flows, where the weights are the present values of the cash flows.
 
 
         .. math::
             Macaulay Duration = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t}{(1 + YTM)^{(t+1)}} \\cdot t
         where:
 
-        - :math:`P` is the price of the bond
+        - :math:`P` is the price of the instrument
         - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date
         - :math:`YTM` is the yield to maturity
         - :math:`T` is the total number of periods
@@ -712,9 +733,9 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         Parameters
         ----------
         yield_to_maturity : float, optional
-            Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
-        bond_price : float, optional
-            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+            Yield to maturity as a decimal. If not provided, will be calculated from price if given.
+        price : float, optional
+            Price of the instrument. Used to estimate YTM if yield_to_maturity is not provided.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
         adjust_to_business_days : bool, optional
@@ -733,8 +754,8 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
-        >>> bond.effective_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
+        >>> instrument = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
+        >>> instrument.macaulay_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
         4.3760319684
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
@@ -750,9 +771,9 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
             yield_calculation_convention,
         )
 
-        ytm, price_calc = self._resolve_ytm_and_bond_price(
+        ytm, price_calc = self._resolve_ytm_and_price(
             yield_to_maturity,
-            bond_price,
+            price,
             settlement_date,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -762,7 +783,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         time_to_payments = self._calculate_time_to_payments(
             settlement_date,
-            bond_price=None,
+            price=None,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -771,7 +792,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         if ytm is None or price_calc is None:
             raise ValueError(
-                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
         assert len(time_to_payments) == 1, (
@@ -803,7 +824,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
     def convexity(
         self,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -811,7 +832,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         yield_calculation_convention: Optional[str] = None,
     ) -> float:
         """
-        Calculate the convexity of the bond.
+        Calculate the convexity of the instrument.
 
 
 
@@ -819,7 +840,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
             Convexity = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t \\cdot t \\cdot (t + 1)}{(1 + YTM)^{(t + 2)}}
         where:
 
-        - :math:`P` is the price of the bond
+        - :math:`P` is the price of the instrument
         - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date
         - :math:`YTM` is the yield to maturity
         - :math:`T` is the total number of periods
@@ -830,8 +851,8 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         ----------
         yield_to_maturity : float, optional
             Yield to maturity as a decimal. If not provided, will be calculated from price if given.
-        bond_price : float, optional
-            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+        price : float, optional
+            Price of the instrument. Used to estimate YTM if yield_to_maturity is not provided.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
         adjust_to_business_days : bool, optional
@@ -850,8 +871,8 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
-        >>> bond.convexity(yield_to_maturity=0.05)
+        >>> instrument = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
+        >>> instrument.convexity(yield_to_maturity=0.05)
         22.6123221851
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
@@ -867,9 +888,9 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
             yield_calculation_convention,
         )
 
-        ytm, price_calc = self._resolve_ytm_and_bond_price(
+        ytm, price_calc = self._resolve_ytm_and_price(
             yield_to_maturity,
-            bond_price,
+            price,
             settlement_date,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -879,7 +900,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         time_to_payments = self._calculate_time_to_payments(
             settlement_date,
-            bond_price=None,
+            price=None,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -888,7 +909,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         if ytm is None or price_calc is None:
             raise ValueError(
-                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
         assert len(time_to_payments) == 1, (
@@ -951,11 +972,66 @@ class TreasuryBill(MoneyMarketInstrument):
         yield_calculation_convention="Discount",
         **kwargs,
     ):
+        # cpn and cpn_freq are fixed for TreasuryBill, raise error if user tries to set them
+        if "cpn" in kwargs or "cpn_freq" in kwargs:
+            raise ValueError(
+                "TreasuryBill does not allow setting coupon or coupon frequency."
+            )
+
         super().__init__(
             issue_dt=issue_dt,
             maturity=maturity,
             cpn=0.0,
             cpn_freq=1,
+            notional=notional,
+            day_count_convention=day_count_convention,
+            yield_calculation_convention=yield_calculation_convention,
+            **kwargs,
+        )
+
+    @classmethod
+    def from_days(
+        cls,
+        days,
+        notional=100,
+        day_count_convention="actual/360",
+        yield_calculation_convention="Discount",
+        issue_dt=None,
+        **kwargs,
+    ):
+        """
+        Create a TreasuryBill with a specified number of days to maturity.
+
+        Parameters
+        ----------
+        days : int
+                Number of days until maturity.
+        notional : float, optional
+                Face value (principal). Defaults to 100.
+        day_count_convention : str, optional
+                Day count convention. Defaults to 'actual/360'.
+        issue_dt : datetime, optional
+                Issue date. Defaults to current date if None.
+        kwargs : dict, optional
+                Additional keyword arguments for MoneyMarketInstrument.
+
+        Returns
+        -------
+        TreasuryBill
+                Instance with specified maturity.
+        """
+        issue_dt = cls._resolve_issue_dt(issue_dt)
+        maturity = issue_dt + timedelta(days=days)
+        kwargs.pop("maturity", None)  # Remove maturity if passed in kwargs
+        kwargs.pop("issue_dt", None)  # Remove issue_dt if passed in kwargs
+        kwargs.pop("notional", None)  # Remove notional if passed in kwargs
+        kwargs.pop(
+            "day_count_convention", None
+        )  # Remove day_count_convention if passed in kwargs
+
+        return cls(
+            issue_dt=issue_dt,
+            maturity=maturity,
             notional=notional,
             day_count_convention=day_count_convention,
             yield_calculation_convention=yield_calculation_convention,
@@ -1010,6 +1086,55 @@ class CertificateOfDeposit(MoneyMarketInstrument):
             **kwargs,
         )
 
+    @classmethod
+    def from_days(
+        cls,
+        days,
+        notional=100,
+        day_count_convention="actual/360",
+        yield_calculation_convention="Add-On",
+        issue_dt=None,
+        **kwargs,
+    ):
+        """
+        Create a CertificateOfDeposit with a specified number of days to maturity.
+
+        Parameters
+        ----------
+        days : int
+                Number of days until maturity.
+        notional : float, optional
+                Face value (principal). Defaults to 100.
+        day_count_convention : str, optional
+                Day count convention. Defaults to 'actual/360'.
+        issue_dt : datetime, optional
+                Issue date. Defaults to current date if None.
+        kwargs : dict, optional
+                Additional keyword arguments for MoneyMarketInstrument.
+
+        Returns
+        -------
+        CertificateOfDeposit
+                Instance with specified maturity.
+        """
+        issue_dt = cls._resolve_issue_dt(issue_dt)
+        maturity = issue_dt + timedelta(days=days)
+        kwargs.pop("maturity", None)  # Remove maturity if passed in kwargs
+        kwargs.pop("issue_dt", None)  # Remove issue_dt if passed in kwargs
+        kwargs.pop("notional", None)  # Remove notional if passed in kwargs
+        kwargs.pop(
+            "day_count_convention", None
+        )  # Remove day_count_convention if passed in kwargs
+
+        return cls(
+            issue_dt=issue_dt,
+            maturity=maturity,
+            notional=notional,
+            day_count_convention=day_count_convention,
+            yield_calculation_convention=yield_calculation_convention,
+            **kwargs,
+        )
+
 
 class CommercialPaper(MoneyMarketInstrument):
     """
@@ -1041,11 +1166,66 @@ class CommercialPaper(MoneyMarketInstrument):
         yield_calculation_convention="Discount",
         **kwargs,
     ):
+        # cpn and cpn_freq are fixed for CommercialPaper, raise error if user tries to set them
+        if "cpn" in kwargs or "cpn_freq" in kwargs:
+            raise ValueError(
+                "CommercialPaper does not allow setting coupon or coupon frequency."
+            )
+
         super().__init__(
             issue_dt=issue_dt,
             maturity=maturity,
             cpn=0.0,
             cpn_freq=1,
+            notional=notional,
+            day_count_convention=day_count_convention,
+            yield_calculation_convention=yield_calculation_convention,
+            **kwargs,
+        )
+
+    @classmethod
+    def from_days(
+        cls,
+        days,
+        notional=100,
+        day_count_convention="actual/360",
+        yield_calculation_convention="Discount",
+        issue_dt=None,
+        **kwargs,
+    ):
+        """
+        Create a CommercialPaper with a specified number of days to maturity.
+
+        Parameters
+        ----------
+        days : int
+                Number of days until maturity.
+        notional : float, optional
+                Face value (principal). Defaults to 100.
+        day_count_convention : str, optional
+                Day count convention. Defaults to 'actual/360'.
+        issue_dt : datetime, optional
+                Issue date. Defaults to current date if None.
+        kwargs : dict, optional
+                Additional keyword arguments for MoneyMarketInstrument.
+
+        Returns
+        -------
+        CommercialPaper
+                Instance with specified maturity.
+        """
+        issue_dt = cls._resolve_issue_dt(issue_dt)
+        maturity = issue_dt + timedelta(days=days)
+        kwargs.pop("maturity", None)  # Remove maturity if passed in kwargs
+        kwargs.pop("issue_dt", None)  # Remove issue_dt if passed in kwargs
+        kwargs.pop("notional", None)  # Remove notional if passed in kwargs
+        kwargs.pop(
+            "day_count_convention", None
+        )  # Remove day_count_convention if passed in kwargs
+
+        return cls(
+            issue_dt=issue_dt,
+            maturity=maturity,
             notional=notional,
             day_count_convention=day_count_convention,
             yield_calculation_convention=yield_calculation_convention,
@@ -1083,11 +1263,67 @@ class BankersAcceptance(MoneyMarketInstrument):
         yield_calculation_convention="Discount",
         **kwargs,
     ):
+        # cpn and cpn_freq are fixed for Bankers Acceptance, raise error if user tries to set them
+        if "cpn" in kwargs or "cpn_freq" in kwargs:
+            raise ValueError(
+                "BankersAcceptance does not allow setting coupon or coupon frequency."
+            )
+
         super().__init__(
             issue_dt=issue_dt,
             maturity=maturity,
             cpn=0.0,
             cpn_freq=1,
+            notional=notional,
+            day_count_convention=day_count_convention,
+            yield_calculation_convention=yield_calculation_convention,
+            **kwargs,
+        )
+
+    @classmethod
+    def from_days(
+        cls,
+        days,
+        notional=100,
+        day_count_convention="actual/360",
+        yield_calculation_convention="Discount",
+        issue_dt=None,
+        **kwargs,
+    ):
+        """
+        Create a BankersAcceptance with a specified number of days to maturity.
+
+        Parameters
+        ----------
+        days : int
+                Number of days until maturity.
+        notional : float, optional
+                Face value (principal). Defaults to 100.
+        day_count_convention : str, optional
+                Day count convention. Defaults to 'actual/360'.
+        issue_dt : datetime, optional
+                Issue date. Defaults to current date if None.
+        kwargs : dict, optional
+                Additional keyword arguments for MoneyMarketInstrument.
+
+        Returns
+        -------
+        BankersAcceptance
+                Instance with specified maturity.
+        """
+        issue_dt = cls._resolve_issue_dt(issue_dt)
+
+        maturity = issue_dt + timedelta(days=days)
+        kwargs.pop("maturity", None)  # Remove maturity if passed in kwargs
+        kwargs.pop("issue_dt", None)  # Remove issue_dt if passed in kwargs
+        kwargs.pop("notional", None)  # Remove notional if passed in kwargs
+        kwargs.pop(
+            "day_count_convention", None
+        )  # Remove day_count_convention if passed in kwargs
+
+        return cls(
+            issue_dt=issue_dt,
+            maturity=maturity,
             notional=notional,
             day_count_convention=day_count_convention,
             yield_calculation_convention=yield_calculation_convention,

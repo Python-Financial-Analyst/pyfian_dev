@@ -85,7 +85,7 @@ class BaseFixedIncomeInstrument(ABC):
     def _get_ytm_payments_price(
         self,
         yield_to_maturity: Optional[float],
-        bond_price: Optional[float],
+        price: Optional[float],
         settlement_date: Optional[Union[str, pd.Timestamp]],
         adjust_to_business_days: bool,
         day_count_convention: DayCountBase,
@@ -97,9 +97,9 @@ class BaseFixedIncomeInstrument(ABC):
         Returns (ytm, time_to_payments, price_calc)
         """
 
-        ytm, price_calc = self._resolve_ytm_and_bond_price(
+        ytm, price_calc = self._resolve_ytm_and_price(
             yield_to_maturity,
-            bond_price,
+            price,
             settlement_date,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -108,7 +108,7 @@ class BaseFixedIncomeInstrument(ABC):
         )
         time_to_payments = self._calculate_time_to_payments(
             settlement_date,
-            bond_price=price_calc,
+            price=price_calc,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -138,7 +138,7 @@ class BaseFixedIncomeInstrument(ABC):
     def _calculate_time_to_payments(
         self,
         settlement_date,
-        bond_price,
+        price,
         adjust_to_business_days,
         following_coupons_day_count,
         yield_calculation_convention,
@@ -158,10 +158,10 @@ class BaseFixedIncomeInstrument(ABC):
     ) -> float:  # pragma: no cover
         pass
 
-    def _resolve_ytm_and_bond_price(
+    def _resolve_ytm_and_price(
         self,
         yield_to_maturity: Optional[float],
-        bond_price: Optional[float],
+        price: Optional[float],
         settlement_date: Optional[Union[str, pd.Timestamp]],
         adjust_to_business_days: bool,
         day_count_convention: DayCountBase,
@@ -169,26 +169,26 @@ class BaseFixedIncomeInstrument(ABC):
         yield_calculation_convention: str,
     ) -> tuple[Optional[float], Optional[float]]:
         """
-        Helper to resolve yield_to_maturity and bond_price from direct input, price, or default to notional.
+        Helper to resolve yield_to_maturity and price from direct input, price, or default to notional.
         Returns a tuple (ytm, price_calc), both float or None.
         """
-        # Case 1: bond_price is provided, ytm is None
-        if bond_price is not None and yield_to_maturity is None:
-            if bond_price < 0:
+        # Case 1: price is provided, ytm is None
+        if price is not None and yield_to_maturity is None:
+            if price < 0:
                 raise ValueError("Bond price cannot be negative.")
             ytm = self.yield_to_maturity(
-                bond_price=bond_price,
+                price=price,
                 settlement_date=settlement_date,
                 adjust_to_business_days=adjust_to_business_days,
                 following_coupons_day_count=following_coupons_day_count,
                 yield_calculation_convention=yield_calculation_convention,
                 day_count_convention=day_count_convention,
             )
-            return ytm, bond_price
+            return ytm, price
 
-        # Case 2: both bond_price and ytm are provided
-        if bond_price is not None and yield_to_maturity is not None:
-            if bond_price < 0:
+        # Case 2: both price and ytm are provided
+        if price is not None and yield_to_maturity is not None:
+            if price < 0:
                 raise ValueError("Bond price cannot be negative.")
             price_calc = self.price_from_yield(
                 yield_to_maturity,
@@ -198,14 +198,14 @@ class BaseFixedIncomeInstrument(ABC):
                 yield_calculation_convention=yield_calculation_convention,
                 day_count_convention=day_count_convention,
             )
-            if abs(price_calc - bond_price) / bond_price > 0.001 / 100:
+            if abs(price_calc - price) / price > 0.001 / 100:
                 raise ValueError(
                     "Bond price calculated by yield to maturity does not match the given bond price."
                     "Given bond price: {}, calculated bond price: {}".format(
-                        bond_price, price_calc
+                        price, price_calc
                     )
                 )
-            return yield_to_maturity, bond_price
+            return yield_to_maturity, price
 
         # Case 3: only ytm is provided
         if yield_to_maturity is not None:
@@ -224,7 +224,7 @@ class BaseFixedIncomeInstrument(ABC):
             self._yield_to_maturity is not None
             and self._settlement_date == settlement_date
         ):
-            return self._yield_to_maturity, self._bond_price
+            return self._yield_to_maturity, self._price
 
         # Case 5: cannot determine, return None, None
         return None, None
@@ -232,7 +232,7 @@ class BaseFixedIncomeInstrument(ABC):
     def _filter_payment_flow(
         self,
         settlement_date,
-        bond_price,
+        price,
         payment_flow,
         adjust_to_business_days,
         day_count_convention,
@@ -255,9 +255,9 @@ class BaseFixedIncomeInstrument(ABC):
             return {}
         cash_flows = {}
 
-        # If a bond_price is provided, add it as a negative cash flow
-        if bond_price is not None:
-            cash_flows[settlement_date] = -bond_price
+        # If a price is provided, add it as a negative cash flow
+        if price is not None:
+            cash_flows[settlement_date] = -price
 
         # Include all payments after the settlement date
         cash_flows.update(
@@ -277,7 +277,7 @@ class BaseFixedIncomeInstrument(ABC):
     def plot_cash_flows(
         self,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -291,7 +291,7 @@ class BaseFixedIncomeInstrument(ABC):
         ----------
         settlement_date : str or datetime-like, optional
             Date from which to consider future payments. Defaults to issue date.
-        bond_price : float, optional
+        price : float, optional
             If provided, includes bond price as a negative cash flow.
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
@@ -322,7 +322,7 @@ class BaseFixedIncomeInstrument(ABC):
         df = self.to_dataframe(
             settlement_date=settlement_date,
             yield_to_maturity=yield_to_maturity,
-            bond_price=bond_price,
+            price=price,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -354,7 +354,7 @@ class BaseFixedIncomeInstrument(ABC):
     def dv01(
         self,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -363,13 +363,13 @@ class BaseFixedIncomeInstrument(ABC):
     ) -> float:
         """
         Calculate the DV01 (Dollar Value of a 1 basis point) for the bond.
-        If neither yield_to_maturity nor bond_price is provided, it is assumed that the clean price is equal to the notional.
+        If neither yield_to_maturity nor price is provided, it is assumed that the clean price is equal to the notional.
 
         Parameters
         ----------
         yield_to_maturity : float, optional
             Yield to maturity as a decimal (e.g., 0.05 for 5%).
-        bond_price : float, optional
+        price : float, optional
             Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
@@ -408,7 +408,7 @@ class BaseFixedIncomeInstrument(ABC):
         # Resolve yield to maturity and bond price
         ytm, time_to_payments, price_calc = self._get_ytm_payments_price(
             yield_to_maturity,
-            bond_price,
+            price,
             settlement_date,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -418,7 +418,7 @@ class BaseFixedIncomeInstrument(ABC):
 
         if ytm is None:
             raise ValueError(
-                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
         price_up = self.price_from_yield(
@@ -442,7 +442,7 @@ class BaseFixedIncomeInstrument(ABC):
     def filter_payment_flow(
         self,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         payment_flow: Optional[dict[pd.Timestamp, float]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -463,7 +463,7 @@ class BaseFixedIncomeInstrument(ABC):
         ----------
         settlement_date : str or datetime-like, optional
             Date from which to consider future payments. Defaults to issue date.
-        bond_price : float, optional
+        price : float, optional
             If provided, adds the bond price as a negative cash flow at the settlement date.
         payment_flow : dict, optional
             Dictionary of payment dates and cash flows. If not provided, uses the bond's payment flow.
@@ -505,11 +505,11 @@ class BaseFixedIncomeInstrument(ABC):
 
         settlement_date = self._resolve_settlement_date(settlement_date)
 
-        self._validate_bond_price(bond_price)
+        self._validate_price(price)
 
         return self._filter_payment_flow(
             settlement_date,
-            bond_price,
+            price,
             payment_flow,
             adjust_to_business_days,
             day_count_convention,
@@ -520,7 +520,7 @@ class BaseFixedIncomeInstrument(ABC):
     def calculate_time_to_payments(
         self,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
@@ -545,7 +545,7 @@ class BaseFixedIncomeInstrument(ABC):
         ----------
         settlement_date : str or datetime-like, optional
             Date from which to calculate time to payments. Defaults to issue date.
-        bond_price : float, optional
+        price : float, optional
             If provided, adds bond price as a negative cash flow.
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
@@ -582,7 +582,7 @@ class BaseFixedIncomeInstrument(ABC):
 
         return self._calculate_time_to_payments(
             settlement_date,
-            bond_price,
+            price,
             adjust_to_business_days,
             following_coupons_day_count,
             yield_calculation_convention,
@@ -650,13 +650,13 @@ class BaseFixedIncomeInstrument(ABC):
                 and settlement_date != old_settlement_date
             ):
                 # If the settlement date is changed, reset related attributes
-                self._bond_price = None
+                self._price = None
                 if reset_yield_to_maturity:
                     self._yield_to_maturity = None
                 else:
                     # If not resetting YTM, ensure it is still valid
                     if self._yield_to_maturity is not None:
-                        self._bond_price = self.price_from_yield(
+                        self._price = self.price_from_yield(
                             self._yield_to_maturity,
                             settlement_date,
                             adjust_to_business_days=adjust_to_business_days,
@@ -669,7 +669,7 @@ class BaseFixedIncomeInstrument(ABC):
         else:
             self._settlement_date = None
             # If no settlement date is set, reset bond price and YTM
-            self._bond_price = None
+            self._price = None
             self._yield_to_maturity = None
         return self._settlement_date
 
@@ -735,7 +735,7 @@ class BaseFixedIncomeInstrument(ABC):
                 raise ValueError(
                     "Settlement date must be set since there is no default settlement_date for the bond."
                 )
-            self._bond_price = self._price_from_yield_and_clean_parameters(
+            self._price = self._price_from_yield_and_clean_parameters(
                 yield_to_maturity=yield_to_maturity,
                 settlement_date=settlement_date,
                 adjust_to_business_days=adjust_to_business_days,
@@ -745,20 +745,20 @@ class BaseFixedIncomeInstrument(ABC):
             )
         else:
             # If no yield to maturity is set, reset bond price and yield to maturity
-            self._bond_price = None
+            self._price = None
             self._yield_to_maturity = None
 
-    def _validate_bond_price(self, bond_price: Optional[float]) -> None:
+    def _validate_price(self, price: Optional[float]) -> None:
         """
         Validate the bond price.
         Raises ValueError if the bond price is negative.
         """
-        if bond_price is not None and bond_price < 0:
+        if price is not None and price < 0:
             raise ValueError("Bond price cannot be negative.")
 
-    def set_bond_price(
+    def set_price(
         self,
-        bond_price: Optional[float],
+        price: Optional[float],
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -770,7 +770,7 @@ class BaseFixedIncomeInstrument(ABC):
 
         Parameters
         ----------
-        bond_price : float, optional
+        price : float, optional
             The bond price to set.
         settlement_date : Union[str, pd.Timestamp], optional
             The settlement date to set.
@@ -790,8 +790,8 @@ class BaseFixedIncomeInstrument(ABC):
 
         If the bond price is set, it will also update the yield to maturity based on the bond price.
         """
-        self._validate_bond_price(bond_price=bond_price)
-        self._bond_price = bond_price
+        self._validate_price(price=price)
+        self._price = price
         (
             adjust_to_business_days,
             day_count_convention,
@@ -814,14 +814,14 @@ class BaseFixedIncomeInstrument(ABC):
             )
 
         # Since bond price is set, update yield to maturity
-        if bond_price is not None:
+        if price is not None:
             vdate = self._settlement_date
             if vdate is None:
                 raise ValueError(
                     "Settlement date must be set since there is no default settlement_date for the bond."
                 )
             self._yield_to_maturity = self.yield_to_maturity(
-                bond_price,
+                price,
                 vdate,
                 adjust_to_business_days=adjust_to_business_days,
                 following_coupons_day_count=following_coupons_day_count,
@@ -830,7 +830,7 @@ class BaseFixedIncomeInstrument(ABC):
             )
         else:
             # If no bond price is set, reset yield to maturity and bond price
-            self._bond_price = None
+            self._price = None
             self._yield_to_maturity = None
 
     def get_settlement_date(self) -> Optional[pd.Timestamp]:
@@ -853,7 +853,7 @@ class BaseFixedIncomeInstrument(ABC):
         """
         return self._yield_to_maturity
 
-    def get_bond_price(self) -> Optional[float]:
+    def get_price(self) -> Optional[float]:
         """
         Get the current bond price for the bond.
         Returns
@@ -861,13 +861,13 @@ class BaseFixedIncomeInstrument(ABC):
         Optional[float]
             The current bond price, or None if not set.
         """
-        return self._bond_price
+        return self._price
 
     def to_dataframe(
         self,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
@@ -897,7 +897,7 @@ class BaseFixedIncomeInstrument(ABC):
             Date from which to consider future payments. Defaults to issue date.
         yield_to_maturity : float, optional
             Yield to maturity as a decimal. If provided, it will be used to calculate the cash flows.
-        bond_price : float, optional
+        price : float, optional
             If provided, includes bond price as a negative cash flow.
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
@@ -937,7 +937,7 @@ class BaseFixedIncomeInstrument(ABC):
 
         ytm, time_to_payments, price_calc = self._get_ytm_payments_price(
             yield_to_maturity,
-            bond_price,
+            price,
             settlement_date,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -945,8 +945,8 @@ class BaseFixedIncomeInstrument(ABC):
             day_count_convention=day_count_convention,
         )
 
-        # If neither yield_to_maturity nor bond_price is provided, make price calculation None
-        if yield_to_maturity is None and bond_price is None:
+        # If neither yield_to_maturity nor price is provided, make price calculation None
+        if yield_to_maturity is None and price is None:
             valid_price_calc = False
         else:
             valid_price_calc = True
@@ -1201,7 +1201,7 @@ class BaseFixedIncomeInstrument(ABC):
     def effective_duration(
         self,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -1226,8 +1226,8 @@ class BaseFixedIncomeInstrument(ABC):
         Parameters
         ----------
         yield_to_maturity : float, optional
-            Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
-        bond_price : float, optional
+            Yield to maturity as a decimal. If not provided, will be calculated from price if given.
+        price : float, optional
             Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
@@ -1264,9 +1264,9 @@ class BaseFixedIncomeInstrument(ABC):
             yield_calculation_convention,
         )
 
-        ytm, price_calc = self._resolve_ytm_and_bond_price(
+        ytm, price_calc = self._resolve_ytm_and_price(
             yield_to_maturity,
-            bond_price,
+            price,
             settlement_date,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -1279,7 +1279,7 @@ class BaseFixedIncomeInstrument(ABC):
 
         time_to_payments = self._calculate_time_to_payments(
             settlement_date,
-            bond_price=None,
+            price=None,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -1307,7 +1307,7 @@ class BaseFixedIncomeInstrument(ABC):
     def effective_convexity(
         self,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -1333,7 +1333,7 @@ class BaseFixedIncomeInstrument(ABC):
         ----------
         yield_to_maturity : float, optional
             Yield to maturity as a decimal. If not provided, will be calculated from price if given.
-        bond_price : float, optional
+        price : float, optional
             Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
@@ -1370,9 +1370,9 @@ class BaseFixedIncomeInstrument(ABC):
             yield_calculation_convention,
         )
 
-        ytm, price_calc = self._resolve_ytm_and_bond_price(
+        ytm, price_calc = self._resolve_ytm_and_price(
             yield_to_maturity,
-            bond_price,
+            price,
             settlement_date,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -1385,7 +1385,7 @@ class BaseFixedIncomeInstrument(ABC):
 
         time_to_payments = self._calculate_time_to_payments(
             settlement_date,
-            bond_price=None,
+            price=None,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -1414,7 +1414,7 @@ class BaseFixedIncomeInstrument(ABC):
         benchmark_ytm: Optional[float] = None,
         benchmark_curve: Optional[YieldCurveBase] = None,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -1438,7 +1438,7 @@ class BaseFixedIncomeInstrument(ABC):
             The benchmark yield curve to use for the G-spread calculation.
         yield_to_maturity : float, optional
             Yield to maturity of the bond. Used to estimate YTM if not set.
-        bond_price : float, optional
+        price : float, optional
             Price of the bond. Used to estimate YTM if not set.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
@@ -1459,7 +1459,7 @@ class BaseFixedIncomeInstrument(ABC):
         Examples
         --------
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
-        >>> bond.g_spread(benchmark_ytm=0.03, bond_price=100)
+        >>> bond.g_spread(benchmark_ytm=0.03, price=100)
         np.float64(0.02)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
@@ -1486,9 +1486,9 @@ class BaseFixedIncomeInstrument(ABC):
                     "Either benchmark_ytm or benchmark_curve must be provided."
                 )
 
-        ytm, bond_price = self._resolve_ytm_and_bond_price(
+        ytm, price = self._resolve_ytm_and_price(
             yield_to_maturity,
-            bond_price,
+            price,
             settlement_date,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -1497,7 +1497,7 @@ class BaseFixedIncomeInstrument(ABC):
         )
         if ytm is None:
             raise ValueError(
-                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
         return round((ytm - benchmark_ytm), 10)
@@ -1506,7 +1506,7 @@ class BaseFixedIncomeInstrument(ABC):
         self,
         benchmark_curve: YieldCurveBase,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -1528,7 +1528,7 @@ class BaseFixedIncomeInstrument(ABC):
             The benchmark yield curve to use for the I-spread calculation.
         yield_to_maturity : float, optional
             Yield to maturity of the bond. Used to estimate YTM if not set.
-        bond_price : float, optional
+        price : float, optional
             Price of the bond. Used to estimate YTM if not set.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
@@ -1570,9 +1570,9 @@ class BaseFixedIncomeInstrument(ABC):
             yield_calculation_convention=yield_calculation_convention,
         )
 
-        ytm, bond_price = self._resolve_ytm_and_bond_price(
+        ytm, price = self._resolve_ytm_and_price(
             yield_to_maturity,
-            bond_price,
+            price,
             settlement_date,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -1581,7 +1581,7 @@ class BaseFixedIncomeInstrument(ABC):
         )
         if ytm is None:
             raise ValueError(
-                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
         return ytm - benchmark_ytm
@@ -1590,7 +1590,7 @@ class BaseFixedIncomeInstrument(ABC):
         self,
         benchmark_curve: YieldCurveBase,
         yield_to_maturity: Optional[float] = None,
-        bond_price: Optional[float] = None,
+        price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -1625,7 +1625,7 @@ class BaseFixedIncomeInstrument(ABC):
             The benchmark yield curve to use for the Z-spread calculation.
         yield_to_maturity : float, optional
             Yield to maturity of the bond. Used to estimate YTM if not set.
-        bond_price : float, optional
+        price : float, optional
             Price of the bond. Used to estimate YTM if not set.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
@@ -1646,7 +1646,7 @@ class BaseFixedIncomeInstrument(ABC):
         Examples
         --------
         >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2, bond_price=100, settlement_date="2020-01-01")
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2, price=100, settlement_date="2020-01-01")
         >>> bond.z_spread(benchmark_curve=FlatCurveBEY(0.05, '2020-01-01'))
         np.float64(1.9484576898804107e-16)
         """
@@ -1664,9 +1664,9 @@ class BaseFixedIncomeInstrument(ABC):
         )
 
         # benchmark_ytm = benchmark_curve.date_rate(date=self.maturity, yield_calculation_convention=yield_calculation_convention)
-        ytm, price_calc = self._resolve_ytm_and_bond_price(
+        ytm, price_calc = self._resolve_ytm_and_price(
             yield_to_maturity,
-            bond_price,
+            price,
             settlement_date,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -1676,7 +1676,7 @@ class BaseFixedIncomeInstrument(ABC):
 
         date_of_payments = self._filter_payment_flow(
             settlement_date,
-            bond_price,
+            price,
             payment_flow=self.payment_flow,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
@@ -1686,7 +1686,7 @@ class BaseFixedIncomeInstrument(ABC):
 
         if price_calc is None:
             raise ValueError(
-                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or bond_price. Previous information was not available."
+                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
         def _price_difference(z_spread):

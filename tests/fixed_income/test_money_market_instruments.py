@@ -1,6 +1,8 @@
 import warnings
 import matplotlib
+import pytest
 from pyfian.fixed_income.money_market_instruments import (
+    MoneyMarketInstrument,
     TreasuryBill,
     CertificateOfDeposit,
     CommercialPaper,
@@ -11,7 +13,274 @@ import pandas as pd
 from pyfian.yield_curves.flat_curve import FlatCurveAER
 
 
+class TestMoneyMarketInstrument:
+    def test_invalid_inputs(self):
+        # Negative notional
+        with pytest.raises(
+            ValueError, match=r"Notional \(face value\) cannot be negative"
+        ):
+            MoneyMarketInstrument("2025-01-01", "2025-07-01", notional=-1000)
+        # Negative coupon
+        with pytest.raises(ValueError, match="Coupon rate cannot be negative"):
+            MoneyMarketInstrument(
+                "2025-01-01",
+                "2025-07-01",
+                notional=1000,
+                day_count_convention="actual/360",
+                yield_calculation_convention="Discount",
+                cpn=-1,
+                cpn_freq=1,
+            )
+        # Negative coupon frequency
+        with pytest.raises(
+            ValueError, match="Coupon frequency must be greater or equal to zero"
+        ):
+            MoneyMarketInstrument(
+                "2025-01-01",
+                "2025-07-01",
+                notional=1000,
+                day_count_convention="actual/360",
+                yield_calculation_convention="Discount",
+                cpn=0,
+                cpn_freq=-1,
+            )
+        # Maturity before issue date
+        with pytest.raises(
+            ValueError, match="Maturity date cannot be before issue date"
+        ):
+            MoneyMarketInstrument("2025-07-01", "2025-01-01", notional=1000)
+        # Invalid day count convention
+        with pytest.raises(ValueError, match="Unknown day count convention"):
+            MoneyMarketInstrument(
+                "2025-01-01",
+                "2025-07-01",
+                notional=1000,
+                day_count_convention="invalid/000",
+            )
+        # Invalid yield calculation convention
+        with pytest.raises(
+            ValueError, match="Unsupported yield calculation convention"
+        ):
+            MoneyMarketInstrument(
+                "2025-01-01",
+                "2025-07-01",
+                notional=1000,
+                yield_calculation_convention="invalid",
+            )
+        # Invalid cpn_freq
+        with pytest.raises(
+            ValueError,
+            match="Coupon frequency must be greater than zero for positive coupons",
+        ):
+            MoneyMarketInstrument(
+                "2025-01-01", "2025-07-01", notional=1000, cpn=1, cpn_freq=0
+            )
+        # Invalid settlement_convention_t_plus
+        with pytest.raises(
+            ValueError, match=r"Settlement convention \(T\+\) cannot be negative"
+        ):
+            MoneyMarketInstrument(
+                "2025-01-01",
+                "2025-07-01",
+                notional=1000,
+                settlement_convention_t_plus=-1,
+            )
+        # Invalid settlement_date before issue date
+        with pytest.raises(
+            ValueError, match="Settlement date cannot be before issue date"
+        ):
+            MoneyMarketInstrument(
+                "2025-01-01", "2025-07-01", notional=1000, settlement_date="2024-12-31"
+            )
+        # Invalid day_count_convention
+        with pytest.raises(
+            ValueError,
+            match="day_count_convention must be either a string or a DayCountBase instance",
+        ):
+            MoneyMarketInstrument(
+                "2025-01-01", "2025-07-01", notional=1000, day_count_convention=123
+            )
+        # Invalid record_date_t_minus
+        with pytest.raises(ValueError, match=r"Record date \(T-\) cannot be negative"):
+            MoneyMarketInstrument(
+                "2025-01-01", "2025-07-01", notional=1000, record_date_t_minus=-2
+            )
+        # Invalid settlement_date after maturity
+        with pytest.raises(
+            ValueError, match="Settlement date cannot be after maturity date"
+        ):
+            MoneyMarketInstrument(
+                "2025-01-01", "2025-07-01", notional=1000, settlement_date="2025-08-01"
+            )
+        # Invalid setting of yield_to_maturity before setting price
+        with pytest.raises(
+            ValueError,
+            match="Settlement date must be set since there is no default settlement_date",
+        ):
+            mmi = MoneyMarketInstrument("2025-01-01", "2025-07-01", notional=1000)
+            mmi.set_yield_to_maturity(0.05)
+        # Invalid setting of price before setting settlement date
+        with pytest.raises(
+            ValueError,
+            match="Settlement date must be set since there is no default settlement_date",
+        ):
+            mmi = MoneyMarketInstrument("2025-01-01", "2025-07-01", notional=1000)
+            mmi.set_price(980)
+        # Invalid following_coupons_day_count
+        with pytest.raises(
+            ValueError, match="Unsupported following coupons day count convention"
+        ):
+            MoneyMarketInstrument(
+                "2025-01-01",
+                "2025-07-01",
+                notional=1000,
+                following_coupons_day_count="actual/actual-ISDA",
+            )
+
+    # Create with settlement price and yield to maturity
+    def test_defaults(self):
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+            price=98,
+        )
+        assert mmi.cpn == 0.0
+        assert mmi.cpn_freq == 0
+        assert mmi.notional == 100
+        assert mmi.day_count_convention.name == "actual/365"
+        assert mmi.maturity == pd.to_datetime("2025-07-01")
+
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+            yield_to_maturity=mmi.get_yield_to_maturity(),
+        )
+        assert mmi.cpn == 0.0
+        assert mmi.cpn_freq == 0
+        assert mmi.notional == 100
+        assert mmi.day_count_convention.name == "actual/365"
+        assert mmi.maturity == pd.to_datetime("2025-07-01")
+        # assert mmi.get_price() is approximately 98 with pytest.approx
+        assert mmi.get_price() == pytest.approx(98, rel=1e-8)
+
+    # make test_default tests but raising errors for absent settlement_date when setting price or yield
+    def test_settlement_date_required(self):
+        with pytest.raises(
+            ValueError, match="Settlement date must be set if price is set"
+        ):
+            MoneyMarketInstrument("2025-01-01", "2025-07-01", notional=100, price=98)
+        with pytest.raises(
+            ValueError, match="Settlement date must be set if yield to maturity is set"
+        ):
+            MoneyMarketInstrument(
+                "2025-01-01", "2025-07-01", notional=100, yield_to_maturity=0.04
+            )
+        with pytest.raises(
+            ValueError,
+            match="Price calculated by yield to maturity does not match the current price",
+        ):
+            MoneyMarketInstrument(
+                "2025-01-01",
+                "2025-07-01",
+                notional=100,
+                yield_to_maturity=0.04,
+                price=98,
+                settlement_date="2025-01-01",
+            )
+
+    # use from_days to create an instrument
+    def test_from_days(self):
+        mmi = MoneyMarketInstrument.from_days(
+            days=180,
+            notional=100,
+            settlement_date="2025-01-01",
+            price=98,
+            issue_dt="2025-01-01",
+        )
+        assert mmi.cpn == 0.0
+        assert mmi.cpn_freq == 0
+        assert mmi.notional == 100
+        assert mmi.day_count_convention.name == "actual/365"
+        assert mmi.maturity == pd.to_datetime("2025-06-30")
+
+    # use from_days to create an instrument without setting issue date
+    def test_from_days_no_issue(self):
+        mmi = MoneyMarketInstrument.from_days(
+            days=180,
+            notional=100,
+            settlement_date=pd.Timestamp.today().date(),
+            price=98,
+        )
+        assert mmi.cpn == 0.0
+        assert mmi.cpn_freq == 0
+        assert mmi.notional == 100
+        assert mmi.day_count_convention.name == "actual/365"
+        assert mmi.maturity == pd.Timestamp(
+            pd.Timestamp.today().date() + pd.Timedelta(days=180)
+        )
+        assert mmi.issue_dt == pd.Timestamp(pd.Timestamp.today().date())
+
+    # test from_days with invalid issue date type
+    def test_from_days_invalid_issue(self):
+        with pytest.raises(
+            TypeError,
+            match="issue_dt must be either a string or a pd.Timestamp or datetime.",
+        ):
+            MoneyMarketInstrument.from_days(
+                days=180,
+                notional=100,
+                settlement_date="2025-01-01",
+                price=98,
+                issue_dt=12345,
+            )
+
+
 class TestTreasuryBill:
+    def test_invalid_inputs(self):
+        # Negative notional
+        with pytest.raises(
+            ValueError, match=r"Notional \(face value\) cannot be negative"
+        ):
+            TreasuryBill("2025-01-01", "2025-07-01", notional=-1000)
+        # Maturity before issue date
+        with pytest.raises(
+            ValueError, match="Maturity date cannot be before issue date"
+        ):
+            TreasuryBill("2025-07-01", "2025-01-01", notional=1000)
+        # Invalid day count convention
+        with pytest.raises(ValueError, match="Unknown day count convention"):
+            TreasuryBill(
+                "2025-01-01",
+                "2025-07-01",
+                notional=1000,
+                day_count_convention="invalid/000",
+            )
+        # Invalid yield calculation convention
+        with pytest.raises(
+            ValueError, match="Unsupported yield calculation convention"
+        ):
+            TreasuryBill(
+                "2025-01-01",
+                "2025-07-01",
+                notional=1000,
+                yield_calculation_convention="invalid",
+            )
+        # Passing cpn or cpn_freq should raise ValueError
+        with pytest.raises(
+            ValueError,
+            match="TreasuryBill does not allow setting coupon or coupon frequency",
+        ):
+            TreasuryBill("2025-01-01", "2025-07-01", notional=1000, cpn=1)
+        with pytest.raises(
+            ValueError,
+            match="TreasuryBill does not allow setting coupon or coupon frequency",
+        ):
+            TreasuryBill("2025-01-01", "2025-07-01", notional=1000, cpn_freq=2)
+
     def test_defaults(self):
         tbill = TreasuryBill("2025-01-01", "2025-07-01", notional=1000)
         assert tbill.cpn == 0.0
@@ -28,13 +297,13 @@ class TestTreasuryBill:
 
     def test_inherited_methods(self):
         tbill = TreasuryBill("2025-01-01", "2025-07-01", notional=1000)
-        # set_bond_price and set_yield_to_maturity
-        tbill.set_bond_price(950, settlement_date="2025-01-01")
+        # set_price and set_yield_to_maturity
+        tbill.set_price(950, settlement_date="2025-01-01")
         tbill.set_yield_to_maturity(0.05, settlement_date="2025-01-01")
-        # get_settlement_date, get_yield_to_maturity, get_bond_price
+        # get_settlement_date, get_yield_to_maturity, get_price
         assert tbill.get_settlement_date() is not None
         assert tbill.get_yield_to_maturity() is not None
-        assert tbill.get_bond_price() is not None
+        assert tbill.get_price() is not None
         # to_dataframe
         df = tbill.to_dataframe()
         assert df is not None
@@ -96,6 +365,46 @@ class TestTreasuryBill:
 
 
 class TestCertificateOfDeposit:
+    def test_invalid_inputs(self):
+        # Negative notional
+        with pytest.raises(
+            ValueError, match=r"Notional \(face value\) cannot be negative"
+        ):
+            CertificateOfDeposit("2025-01-01", "2025-07-01", cpn=2.5, notional=-5000)
+        # Zero or negative coupon frequency with positive coupon
+        with pytest.raises(
+            ValueError,
+            match="Coupon frequency must be greater than zero for positive coupons",
+        ):
+            CertificateOfDeposit(
+                "2025-01-01", "2025-07-01", cpn=2.5, cpn_freq=0, notional=5000
+            )
+        # Maturity before issue date
+        with pytest.raises(
+            ValueError, match="Maturity date cannot be before issue date"
+        ):
+            CertificateOfDeposit("2025-07-01", "2025-01-01", cpn=2.5, notional=5000)
+        # Invalid day count convention
+        with pytest.raises(ValueError, match="Unknown day count convention"):
+            CertificateOfDeposit(
+                "2025-01-01",
+                "2025-07-01",
+                cpn=2.5,
+                notional=5000,
+                day_count_convention="invalid/000",
+            )
+        # Invalid yield calculation convention
+        with pytest.raises(
+            ValueError, match="Unsupported yield calculation convention"
+        ):
+            CertificateOfDeposit(
+                "2025-01-01",
+                "2025-07-01",
+                cpn=2.5,
+                notional=5000,
+                yield_calculation_convention="invalid",
+            )
+
     def test_defaults(self):
         cd = CertificateOfDeposit("2025-01-01", "2025-07-01", cpn=2.5, notional=5000)
         assert cd.cpn == 2.5
@@ -121,20 +430,18 @@ class TestCertificateOfDeposit:
             notional=20000000,
             day_count_convention="actual/365",
             #   settlement_date=pd.Timestamp('2025-01-01'),
-            #   bond_price=20000000,
+            #   price=20000000,
         )
-        cd.set_bond_price(
-            bond_price=20000000, settlement_date=pd.Timestamp("2025-01-01")
-        )
+        cd.set_price(price=20000000, settlement_date=pd.Timestamp("2025-01-01"))
         cd.get_yield_to_maturity()
 
     def test_inherited_methods(self):
         cd = CertificateOfDeposit("2025-01-01", "2025-07-01", cpn=2.5, notional=5000)
-        cd.set_bond_price(4900, settlement_date="2025-01-01")
+        cd.set_price(4900, settlement_date="2025-01-01")
         cd.set_yield_to_maturity(0.03, settlement_date="2025-01-01")
         assert cd.get_settlement_date() is not None
         assert cd.get_yield_to_maturity() is not None
-        assert cd.get_bond_price() is not None
+        assert cd.get_price() is not None
         df = cd.to_dataframe()
         assert df is not None
         flows = cd.cash_flows()
@@ -183,6 +490,47 @@ class TestCertificateOfDeposit:
 
 
 class TestCommercialPaper:
+    def test_invalid_inputs(self):
+        # Negative notional
+        with pytest.raises(
+            ValueError, match=r"Notional \(face value\) cannot be negative"
+        ):
+            CommercialPaper("2025-01-01", "2025-04-01", notional=-2000)
+        # Maturity before issue date
+        with pytest.raises(
+            ValueError, match="Maturity date cannot be before issue date"
+        ):
+            CommercialPaper("2025-04-01", "2025-01-01", notional=2000)
+        # Invalid day count convention
+        with pytest.raises(ValueError, match="Unknown day count convention"):
+            CommercialPaper(
+                "2025-01-01",
+                "2025-04-01",
+                notional=2000,
+                day_count_convention="invalid/000",
+            )
+        # Invalid yield calculation convention
+        with pytest.raises(
+            ValueError, match="Unsupported yield calculation convention"
+        ):
+            CommercialPaper(
+                "2025-01-01",
+                "2025-04-01",
+                notional=2000,
+                yield_calculation_convention="invalid",
+            )
+        # Passing cpn or cpn_freq should raise ValueError
+        with pytest.raises(
+            ValueError,
+            match="CommercialPaper does not allow setting coupon or coupon frequency",
+        ):
+            CommercialPaper("2025-01-01", "2025-04-01", notional=2000, cpn=1)
+        with pytest.raises(
+            ValueError,
+            match="CommercialPaper does not allow setting coupon or coupon frequency",
+        ):
+            CommercialPaper("2025-01-01", "2025-04-01", notional=2000, cpn_freq=2)
+
     def test_defaults(self):
         cp = CommercialPaper("2025-01-01", "2025-04-01", notional=2000)
         assert cp.cpn == 0.0
@@ -199,11 +547,11 @@ class TestCommercialPaper:
 
     def test_inherited_methods(self):
         cp = CommercialPaper("2025-01-01", "2025-04-01", notional=2000)
-        cp.set_bond_price(1950, settlement_date="2025-01-01")
+        cp.set_price(1950, settlement_date="2025-01-01")
         cp.set_yield_to_maturity(0.04, settlement_date="2025-01-01")
         assert cp.get_settlement_date() is not None
         assert cp.get_yield_to_maturity() is not None
-        assert cp.get_bond_price() is not None
+        assert cp.get_price() is not None
         df = cp.to_dataframe()
         assert df is not None
         flows = cp.cash_flows()
@@ -252,6 +600,47 @@ class TestCommercialPaper:
 
 
 class TestBankersAcceptance:
+    def test_invalid_inputs(self):
+        # Negative notional
+        with pytest.raises(
+            ValueError, match=r"Notional \(face value\) cannot be negative"
+        ):
+            BankersAcceptance("2025-01-01", "2025-03-01", notional=-1500)
+        # Maturity before issue date
+        with pytest.raises(
+            ValueError, match="Maturity date cannot be before issue date"
+        ):
+            BankersAcceptance("2025-03-01", "2025-01-01", notional=1500)
+        # Invalid day count convention
+        with pytest.raises(ValueError, match="Unknown day count convention"):
+            BankersAcceptance(
+                "2025-01-01",
+                "2025-03-01",
+                notional=1500,
+                day_count_convention="invalid/000",
+            )
+        # Invalid yield calculation convention
+        with pytest.raises(
+            ValueError, match="Unsupported yield calculation convention"
+        ):
+            BankersAcceptance(
+                "2025-01-01",
+                "2025-03-01",
+                notional=1500,
+                yield_calculation_convention="invalid",
+            )
+        # Passing cpn or cpn_freq should raise ValueError
+        with pytest.raises(
+            ValueError,
+            match="BankersAcceptance does not allow setting coupon or coupon frequency",
+        ):
+            BankersAcceptance("2025-01-01", "2025-03-01", notional=1500, cpn=1)
+        with pytest.raises(
+            ValueError,
+            match="BankersAcceptance does not allow setting coupon or coupon frequency",
+        ):
+            BankersAcceptance("2025-01-01", "2025-03-01", notional=1500, cpn_freq=2)
+
     def test_defaults(self):
         ba = BankersAcceptance("2025-01-01", "2025-03-01", notional=1500)
         assert ba.cpn == 0.0
@@ -268,11 +657,11 @@ class TestBankersAcceptance:
 
     def test_inherited_methods(self):
         ba = BankersAcceptance("2025-01-01", "2025-03-01", notional=1500)
-        ba.set_bond_price(1450, settlement_date="2025-01-01")
+        ba.set_price(1450, settlement_date="2025-01-01")
         ba.set_yield_to_maturity(0.03, settlement_date="2025-01-01")
         assert ba.get_settlement_date() is not None
         assert ba.get_yield_to_maturity() is not None
-        assert ba.get_bond_price() is not None
+        assert ba.get_price() is not None
         df = ba.to_dataframe()
         assert df is not None
         flows = ba.cash_flows()

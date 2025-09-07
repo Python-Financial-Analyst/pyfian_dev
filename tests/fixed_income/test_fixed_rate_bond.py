@@ -20,7 +20,7 @@ class TestFixedRateBullet:
         # Initially, get methods should return None
         assert bond.get_settlement_date() is None
         assert bond.get_yield_to_maturity() is None
-        assert bond.get_bond_price() is None
+        assert bond.get_price() is None
 
         # Set settlement date
         bond.set_settlement_date("2022-01-01")
@@ -29,11 +29,11 @@ class TestFixedRateBullet:
         # Set yield to maturity and check get method
         bond.set_yield_to_maturity(yield_to_maturity=0.05, settlement_date="2022-01-01")
         assert bond.get_yield_to_maturity() == pytest.approx(0.05)
-        assert isinstance(bond.get_bond_price(), float)
+        assert isinstance(bond.get_price(), float)
 
         # Set bond price and check get method
-        bond.set_bond_price(100, "2022-01-01")
-        assert bond.get_bond_price() == pytest.approx(100)
+        bond.set_price(100, "2022-01-01")
+        assert bond.get_price() == pytest.approx(100)
         assert isinstance(bond.get_yield_to_maturity(), float)
 
     # Test to create bond with invalid day_count_convention, neither str nor DayCountBase
@@ -52,13 +52,13 @@ class TestFixedRateBullet:
         settle_date = bond.set_settlement_date("2022-01-01")
         assert settle_date == pd.to_datetime("2022-01-01")
 
-    def test_set_yield_to_maturity_and_set_bond_price(self):
+    def test_set_yield_to_maturity_and_set_price(self):
         bond = FixedRateBullet(
             "2020-01-01", "2025-01-01", 5, 1, settlement_date="2022-01-01"
         )
         bond.set_yield_to_maturity(0.05, "2022-01-01")
-        assert isinstance(bond._bond_price, float)
-        bond.set_bond_price(100, "2022-01-01")
+        assert isinstance(bond._price, float)
+        bond.set_price(100, "2022-01-01")
         assert isinstance(bond._yield_to_maturity, float)
 
     # test _validate_yield_calculation_convention not in valid_conventions
@@ -202,6 +202,28 @@ class TestFixedRateBullet:
             f"Expected convexity: {effective_convexity}, but got: {convexity}"
         )
 
+    # test convexity with continuous compounding
+    def test_convexity_with_continuous(self):
+        bond = FixedRateBullet(
+            "2020-01-01", "2025-01-01", 5, 2, yield_calculation_convention="continuous"
+        )
+        conv = bond.convexity(yield_to_maturity=0.05)
+        price = bond.price_from_yield(yield_to_maturity=0.05)
+        assert isinstance(conv, float)
+        # Calculate effective convexity using a small epsilon
+        epsilon = 0.0001
+        price_plus_epsilon = bond.price_from_yield(yield_to_maturity=0.05 + epsilon)
+        price_minus_epsilon = bond.price_from_yield(yield_to_maturity=0.05 - epsilon)
+        expected_convexity = (price_plus_epsilon + price_minus_epsilon - 2 * price) / (
+            epsilon**2 * price
+        )
+        # Same value up to 5 significant digits, starting from the first digit
+        expected_convexity = round(expected_convexity, 5)
+        conv = round(conv, 5)
+        assert np.isclose(conv, expected_convexity, rtol=1e-5), (
+            f"Expected convexity: {expected_convexity}, but got: {conv}"
+        )
+
     # call convexity without yield or bond price should raise ValueError
     def test_convexity_without_yield_or_price(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 2)
@@ -302,14 +324,14 @@ class TestFixedRateBullet:
     def test_yield_to_maturity(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         ytm = bond.yield_to_maturity(
-            bond_price=95, **TRUE_TIME_PARAMS, tol=None, max_iter=None
+            price=95, **TRUE_TIME_PARAMS, tol=None, max_iter=None
         )
 
         dates, cash_flows = list(
             zip(
                 *list(
                     bond.filter_payment_flow(
-                        "2020-01-01", bond_price=95, **TRUE_TIME_PARAMS
+                        "2020-01-01", price=95, **TRUE_TIME_PARAMS
                     ).items()
                 )
             )
@@ -329,14 +351,14 @@ class TestFixedRateBullet:
         TRUE_TIME_PARAMS_continuous = TRUE_TIME_PARAMS.copy()
         TRUE_TIME_PARAMS_continuous["yield_calculation_convention"] = "continuous"
         ytm = bond.yield_to_maturity(
-            bond_price=95, **TRUE_TIME_PARAMS_continuous, tol=None, max_iter=None
+            price=95, **TRUE_TIME_PARAMS_continuous, tol=None, max_iter=None
         )
 
         dates, cash_flows = list(
             zip(
                 *list(
                     bond.filter_payment_flow(
-                        "2020-01-01", bond_price=95, **TRUE_TIME_PARAMS_continuous
+                        "2020-01-01", price=95, **TRUE_TIME_PARAMS_continuous
                     ).items()
                 )
             )
@@ -351,6 +373,21 @@ class TestFixedRateBullet:
         assert ytm == pytest.approx(ytm_expected, rel=1e-4), (
             f"Expected YTM: {ytm_expected}, but got: {ytm}"
         )
+
+    # call yield_to_maturity without bond price should raise ValueError
+    def test_yield_to_maturity_without_price(self):
+        bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
+        with pytest.raises(
+            ValueError, match="Bond price must be set to calculate yield to maturity."
+        ):
+            bond.yield_to_maturity()
+
+    # call yield_to_maturity after setting bond price and settlement date
+    def test_yield_to_maturity_after_setting_price_and_settlement(self):
+        bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
+        bond.set_price(95, "2022-01-01")
+        ytm = bond.yield_to_maturity(tol=None, max_iter=None)
+        assert isinstance(ytm, float)
 
     def test_filter_payment_flow_expired_bond(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
@@ -425,7 +462,7 @@ class TestFixedRateBullet:
 
     def test_to_dataframe_price(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1, notional=100)
-        df = bond.to_dataframe(bond_price=100)
+        df = bond.to_dataframe(price=100)
         assert (
             "Cost" in df.columns
             and "Amortization" in df.columns
@@ -442,7 +479,7 @@ class TestFixedRateBullet:
             ValueError,
             match="Bond price calculated by yield to maturity does not match the given bond price.",
         ):
-            bond.to_dataframe(bond_price=95, yield_to_maturity=0.05)
+            bond.to_dataframe(price=95, yield_to_maturity=0.05)
 
     # test to_dataframe with consistent yield and price
     def test_to_dataframe_consistent_yield_price(self):
@@ -450,7 +487,7 @@ class TestFixedRateBullet:
             "2020-01-01", "2025-01-01", 5, 1, notional=100, **TRUE_TIME_PARAMS
         )
         df = bond.to_dataframe(
-            bond_price=99.9738493726302, yield_to_maturity=0.05, **TRUE_TIME_PARAMS
+            price=99.9738493726302, yield_to_maturity=0.05, **TRUE_TIME_PARAMS
         )
         assert (
             "Cost" in df.columns
@@ -494,7 +531,7 @@ class TestFixedRateBullet:
     def test_g_spread_with_benchmark_ytm(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         spread = bond.g_spread(
-            benchmark_ytm=0.04, settlement_date="2022-01-01", bond_price=100
+            benchmark_ytm=0.04, settlement_date="2022-01-01", price=100
         )
         assert isinstance(spread, float)
 
@@ -502,7 +539,7 @@ class TestFixedRateBullet:
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         curve = FlatCurveLog(0.04, "2020-01-01")
         spread = bond.g_spread(
-            benchmark_curve=curve, settlement_date="2022-01-01", bond_price=100
+            benchmark_curve=curve, settlement_date="2022-01-01", price=100
         )
         assert isinstance(spread, float)
 
@@ -513,7 +550,7 @@ class TestFixedRateBullet:
                 benchmark_ytm=None, benchmark_curve=None, settlement_date="2022-01-01"
             )
 
-    # call g_spread without yield_to_maturity or bond_price should raise ValueError
+    # call g_spread without yield_to_maturity or price should raise ValueError
     def test_g_spread_without_price_or_yield(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         with pytest.raises(ValueError):
@@ -525,11 +562,11 @@ class TestFixedRateBullet:
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         curve = FlatCurveLog(0.04, "2020-01-01")
         spread = bond.i_spread(
-            benchmark_curve=curve, settlement_date="2022-01-01", bond_price=100
+            benchmark_curve=curve, settlement_date="2022-01-01", price=100
         )
         assert isinstance(spread, float)
 
-    # call i_spread without yield_to_maturity or bond_price should raise ValueError
+    # call i_spread without yield_to_maturity or price should raise ValueError
     def test_i_spread_without_price_or_yield(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         curve = FlatCurveLog(0.04, "2020-01-01")
@@ -540,7 +577,7 @@ class TestFixedRateBullet:
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         curve = FlatCurveLog(0.04, "2020-01-01")
         spread = bond.z_spread(benchmark_curve=curve, yield_to_maturity=0.05)
-        bond_price = bond.price_from_yield(0.05)
+        price = bond.price_from_yield(0.05)
         assert isinstance(spread, float)
         dates_of_payments = bond.filter_payment_flow()
         price_from_curve = sum(
@@ -549,15 +586,15 @@ class TestFixedRateBullet:
                 for d, value in dates_of_payments.items()
             ]
         )
-        assert price_from_curve == pytest.approx(bond_price, rel=1e-6), (
-            f"Expected price from curve: {bond_price}, but got: {price_from_curve}"
+        assert price_from_curve == pytest.approx(price, rel=1e-6), (
+            f"Expected price from curve: {price}, but got: {price_from_curve}"
         )
 
-    # call z_spread without yield_to_maturity or bond_price should raise ValueError
+    # call z_spread without yield_to_maturity or price should raise ValueError
     def test_z_spread_without_price_or_yield(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         with pytest.raises(ValueError):
-            bond.z_spread(benchmark_curve=None, yield_to_maturity=None, bond_price=None)
+            bond.z_spread(benchmark_curve=None, yield_to_maturity=None, price=None)
 
     # Test error for positive coupon with zero frequency
     def test_positive_coupon_zero_frequency(self):
@@ -576,14 +613,12 @@ class TestFixedRateBullet:
                 "2020-01-01", "2025-01-01", 5, 1, notional=1000, yield_to_maturity=0.05
             )
 
-    # Test set input for bond_price but no settlement date
-    def test_set_bond_price_no_settlement_date(self):
+    # Test set input for price but no settlement date
+    def test_set_price_no_settlement_date(self):
         with pytest.raises(
-            ValueError, match="Settlement date must be set if bond_price is set."
+            ValueError, match="Settlement date must be set if price is set."
         ):
-            FixedRateBullet(
-                "2020-01-01", "2025-01-01", 5, 1, notional=1000, bond_price=95
-            )
+            FixedRateBullet("2020-01-01", "2025-01-01", 5, 1, notional=1000, price=95)
 
     # Test input bond with yield_to_maturity and settlement_date
     def test_bond_with_yield_to_maturity_and_settlement_date(self):
@@ -599,20 +634,20 @@ class TestFixedRateBullet:
         assert bond._settlement_date == pd.to_datetime("2022-01-01")
 
     # Test input bond with yield_to_maturity and settlement_date
-    def test_bond_with_bond_price_and_settlement_date(self):
+    def test_bond_with_price_and_settlement_date(self):
         bond = FixedRateBullet(
             "2020-01-01",
             "2025-01-01",
             5,
             1,
             settlement_date="2022-01-01",
-            bond_price=95,
+            price=95,
         )
-        assert bond._bond_price == 95
+        assert bond._price == 95
         assert bond._settlement_date == pd.to_datetime("2022-01-01")
 
-    # Test input bond with yield_to_maturity and bond_price not compatible
-    def test_bond_with_yield_to_maturity_and_bond_price_not_compatible(self):
+    # Test input bond with yield_to_maturity and price not compatible
+    def test_bond_with_yield_to_maturity_and_price_not_compatible(self):
         with pytest.raises(
             ValueError,
             match="Bond price calculated by yield to maturity does not match the current bond price.",
@@ -624,11 +659,11 @@ class TestFixedRateBullet:
                 1,
                 settlement_date="2022-01-01",
                 yield_to_maturity=0.05,
-                bond_price=95,
+                price=95,
             )
 
-    # Test input bond with yield_to_maturity and bond_price compatible
-    def test_bond_with_yield_to_maturity_and_bond_price_compatible(self):
+    # Test input bond with yield_to_maturity and price compatible
+    def test_bond_with_yield_to_maturity_and_price_compatible(self):
         FixedRateBullet(
             "2020-01-01",
             "2025-01-01",
@@ -636,7 +671,7 @@ class TestFixedRateBullet:
             1,
             settlement_date="2020-01-01",
             yield_to_maturity=0.05,
-            bond_price=99.9738493726302,
+            price=99.9738493726302,
             **TRUE_TIME_PARAMS,
         )
         FixedRateBullet(
@@ -646,7 +681,7 @@ class TestFixedRateBullet:
             2,
             settlement_date="2020-01-01",
             yield_to_maturity=0.05,
-            bond_price=100.0,
+            price=100.0,
         )
 
         FixedRateBullet(
@@ -656,7 +691,7 @@ class TestFixedRateBullet:
             1,
             settlement_date="2020-01-01",
             yield_to_maturity=((1 + 0.05) ** 0.5 - 1) * 2,
-            bond_price=100.0,
+            price=100.0,
         )
 
     # Test set a new settlement date
@@ -683,11 +718,11 @@ class TestFixedRateBullet:
         assert bond._settlement_date == pd.to_datetime("2023-01-01")
         assert bond._yield_to_maturity == 0.05
 
-    # Test set a settlement date as None, and check that _bond_price is None and _yield_to_maturity is None as well
+    # Test set a settlement date as None, and check that _price is None and _yield_to_maturity is None as well
     def test_set_settlement_date_none(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         bond.set_settlement_date(None)
-        assert bond._bond_price is None
+        assert bond._price is None
         assert bond._yield_to_maturity is None
 
     # Test set yield to maturity to None
@@ -713,26 +748,26 @@ class TestFixedRateBullet:
             bond.set_yield_to_maturity(0.05)
 
     # Test set bond price to None
-    def test_set_bond_price_none(self):
+    def test_set_price_none(self):
         bond = FixedRateBullet(
             "2020-01-01",
             "2025-01-01",
             5,
             1,
             settlement_date="2022-01-01",
-            bond_price=100,
+            price=100,
         )
-        bond.set_bond_price(None)
-        assert bond._bond_price is None
+        bond.set_price(None)
+        assert bond._price is None
 
     # Test set bond price but there is no settlement date
-    def test_set_bond_price_none_no_settlement_date(self):
+    def test_set_price_none_no_settlement_date(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         with pytest.raises(
             ValueError,
             match="Settlement date must be set since there is no default settlement_date for the bond.",
         ):
-            bond.set_bond_price(100)
+            bond.set_price(100)
 
     # Test modified_duration for a bond with yield to maturity already set
     def test_modified_duration_with_yield(self):
@@ -751,7 +786,7 @@ class TestFixedRateBullet:
         bond = FixedRateBullet(
             "2020-01-01", "2025-01-01", 5, 1, settlement_date="2022-01-01"
         )
-        bond.modified_duration(bond_price=100)
+        bond.modified_duration(price=100)
 
     # call modified duration without yield or bond price should raise ValueError
     def test_modified_duration_without_yield_or_price(self):
@@ -760,6 +795,31 @@ class TestFixedRateBullet:
         )
         with pytest.raises(ValueError):
             bond.modified_duration()
+
+    # call modified duration with continuous yield convention
+    def test_modified_duration_continuous_yield(self):
+        bond = FixedRateBullet(
+            "2020-01-01",
+            "2025-01-01",
+            5,
+            1,
+            settlement_date="2022-01-01",
+            yield_to_maturity=0.05,
+        )
+        mod_duration = bond.modified_duration(yield_calculation_convention="continuous")
+        macaulay_duration = bond.macaulay_duration(
+            yield_calculation_convention="continuous"
+        )
+
+        assert np.isclose(mod_duration, macaulay_duration, rtol=1e-5), (
+            f"Expected modified duration to equal Macaulay duration for continuous yield, but got: {mod_duration} vs {bond.macaulay_duration()}"
+        )
+        effective_duration = bond.effective_duration(
+            yield_calculation_convention="continuous"
+        )
+        assert np.isclose(mod_duration, effective_duration, rtol=1e-5), (
+            f"Expected modified duration to equal effective duration for continuous yield, but got: {mod_duration} vs {effective_duration}"
+        )
 
     def test_macaulay_duration_without_yield_or_price(self):
         bond = FixedRateBullet(
@@ -810,7 +870,15 @@ class TestFixedRateBullet:
                 "2020-01-01", "2025-01-01", 5, 1, settlement_date="2019-12-31"
             )
 
-    def test_negative_bond_price_raises(self):
+    def test_settlement_after_maturity_raises(self):
+        with pytest.raises(
+            ValueError, match="Settlement date cannot be after maturity date."
+        ):
+            FixedRateBullet(
+                "2020-01-01", "2025-01-01", 5, 1, settlement_date="2026-01-01"
+            )
+
+    def test_negative_price_raises(self):
         with pytest.raises(ValueError, match="Bond price cannot be negative."):
             FixedRateBullet(
                 "2020-01-01",
@@ -818,7 +886,7 @@ class TestFixedRateBullet:
                 5,
                 1,
                 settlement_date="2022-01-01",
-                bond_price=-95,
+                price=-95,
             )
 
     def test_set_settlement_date_before_issue(self):
@@ -828,12 +896,12 @@ class TestFixedRateBullet:
         ):
             bond.set_settlement_date("2019-12-31")
 
-    def test_set_bond_price_negative(self):
+    def test_set_price_negative(self):
         bond = FixedRateBullet(
             "2020-01-01", "2025-01-01", 5, 1, settlement_date="2022-01-01"
         )
         with pytest.raises(ValueError, match="Bond price cannot be negative."):
-            bond.set_bond_price(-100, "2022-01-01")
+            bond.set_price(-100, "2022-01-01")
 
     def test_resolve_settlement_date_before_issue(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
@@ -842,19 +910,15 @@ class TestFixedRateBullet:
         ):
             bond._resolve_settlement_date("2019-12-31")
 
-    def test_resolve_ytm_negative_bond_price(self):
+    def test_resolve_ytm_negative_price(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         with pytest.raises(ValueError, match="Bond price cannot be negative."):
-            bond._resolve_ytm_and_bond_price(
-                None, -100, "2022-01-01", **TRUE_TIME_PARAMS
-            )
+            bond._resolve_ytm_and_price(None, -100, "2022-01-01", **TRUE_TIME_PARAMS)
 
-    def test_resolve_ytm_negative_bond_price_and_yield(self):
+    def test_resolve_ytm_negative_price_and_yield(self):
         bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
         with pytest.raises(ValueError, match="Bond price cannot be negative."):
-            bond._resolve_ytm_and_bond_price(
-                0.05, -100, "2022-01-01", **TRUE_TIME_PARAMS
-            )
+            bond._resolve_ytm_and_price(0.05, -100, "2022-01-01", **TRUE_TIME_PARAMS)
 
     def test_invalid_following_coupons_day_count(self):
         # Should raise ValueError for unsupported day count convention
@@ -882,12 +946,12 @@ class TestFixedRateBullet:
                 following_coupons_day_count="actual/actual-Bond",
             )
 
-    def test_negative_bond_price_in_ytm(self):
+    def test_negative_price_in_ytm(self):
         bond = FixedRateBullet(
             "2020-01-01", "2025-01-01", 5, 1, settlement_date="2021-01-01"
         )
         with pytest.raises(ValueError, match="Bond price cannot be negative"):
-            bond._resolve_ytm_and_bond_price(
+            bond._resolve_ytm_and_price(
                 None,
                 -100,
                 "2021-01-01",
@@ -897,9 +961,9 @@ class TestFixedRateBullet:
                 bond.day_count_convention,
             )
 
-    def test_set_bond_price_with_negative_value(self):
+    def test_set_price_with_negative_value(self):
         bond = FixedRateBullet(
             "2020-01-01", "2025-01-01", 5, 1, settlement_date="2021-01-01"
         )
         with pytest.raises(ValueError, match="Bond price cannot be negative"):
-            bond.set_bond_price(-100, "2021-01-01")
+            bond.set_price(-100, "2021-01-01")

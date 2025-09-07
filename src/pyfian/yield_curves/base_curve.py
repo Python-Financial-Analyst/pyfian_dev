@@ -266,7 +266,7 @@ class YieldCurveBase(CurveBase):
         descuento_t_start = self.discount_t(t_start, spread=spread_start)
         descuento_t_end = self.discount_t(t_end, spread=spread_end)
         return self.discount_to_rate(
-            descuento_t_start / descuento_t_end, dt, spread=spread_forward
+            descuento_t_end / descuento_t_start, dt, spread=spread_forward
         )
 
     def forward_t_start_dt(

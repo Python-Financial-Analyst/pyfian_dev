@@ -163,7 +163,7 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
     ...         maturity=date + offset,
     ...         cpn_freq=2 if not_zero_coupon else 0,
     ...         cpn=cpn if not_zero_coupon else 0,
-    ...         bond_price=100 if not_zero_coupon else None,
+    ...         price=100 if not_zero_coupon else None,
     ...         yield_to_maturity=None if not_zero_coupon else cpn / 100,
     ...         settlement_date=date,
     ...     )
@@ -406,10 +406,10 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
         spreads = self.spreads
 
         for bond in self.bonds:
-            price = bond.get_bond_price()
+            price = bond.get_price()
             settlement_date = bond.get_settlement_date()
-            payment_flow = bond.calculate_time_to_payments(bond_price=price)
-            payment_dates = bond.filter_payment_flow(bond_price=price)
+            payment_flow = bond.calculate_time_to_payments(price=price)
+            payment_dates = bond.filter_payment_flow(price=price)
 
             maturity = self.day_count_convention.fraction(
                 start=self.curve_date, current=bond.maturity
@@ -709,7 +709,7 @@ if __name__ == "__main__":  # pragma: no cover
             maturity=date + offset,
             cpn_freq=2 if not_zero_coupon else 0,  # Less than a year
             cpn=cpn if not_zero_coupon else 0,
-            bond_price=100 if not_zero_coupon else None,
+            price=100 if not_zero_coupon else None,
             yield_to_maturity=None if not_zero_coupon else cpn / 100,
             settlement_date=date,
         )

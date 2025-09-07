@@ -37,7 +37,7 @@ class SpotCurve(ZeroCouponCurve):
     curve_date : str or datetime-like
         Date of the curve.
     bonds : list of Bonds
-        Each bond must have keys: 'get_bond_price', 'calculate_time_to_payments', 'get_settlement_date'
+        Each bond must have keys: 'get_price', 'calculate_time_to_payments', 'get_settlement_date'
     zero_rates : dict
         Zero-coupon rates, keyed by maturity (in years).
     day_count_convention : str or DayCountBase, optional
@@ -107,7 +107,7 @@ class SpotCurve(ZeroCouponCurve):
                 maturity=date + offset,
                 cpn_freq=2 if not_zero_coupon else 0,
                 cpn=cpn if not_zero_coupon else 0,
-                bond_price=100 if not_zero_coupon else None,
+                price=100 if not_zero_coupon else None,
                 yield_to_maturity=None if not_zero_coupon else cpn / 100,
                 settlement_date=date,
             )
@@ -117,13 +117,13 @@ class SpotCurve(ZeroCouponCurve):
         print(curve.to_dataframe())
 
         for bond in bonds:
-            bond_price = bond.get_bond_price()
-            if bond_price is None:
+            price = bond.get_price()
+            if price is None:
                 continue
             pv, flows_pv = bond.value_with_curve(curve)
             maturity_date = bond.maturity
             print(
-                f"Maturity Date: {maturity_date}, Bond Price: {bond_price}, PV: {pv}, Difference: {bond_price - pv}"
+                f"Maturity Date: {maturity_date}, Bond Price: {price}, PV: {pv}, Difference: {price - pv}"
             )
     """
 
@@ -197,8 +197,14 @@ class SpotCurve(ZeroCouponCurve):
         zero_rates = self.zero_rates
 
         for bond in self.bonds:
-            price = bond.get_bond_price()
-            payment_flow = bond.calculate_time_to_payments(bond_price=price)
+            price = bond.get_price()
+            dated_payment_flow = bond.filter_payment_flow(price=price)
+            payment_flow = {
+                self.day_count_convention.fraction(
+                    start=self.curve_date, current=d
+                ): payment
+                for d, payment in dated_payment_flow.items()
+            }
             maturity = max(payment_flow)
             # curve_date must be the same as bond settlement date
             assert self.curve_date == bond.get_settlement_date(), (
@@ -342,7 +348,7 @@ if __name__ == "__main__":  # pragma: no cover
             maturity=date + offset,
             cpn_freq=2 if not_zero_coupon else 0,  # Less than a year
             cpn=cpn if not_zero_coupon else 0,
-            bond_price=100 if not_zero_coupon else None,
+            price=100 if not_zero_coupon else None,
             yield_to_maturity=None if not_zero_coupon else cpn / 100,
             settlement_date=date,
         )
@@ -353,11 +359,11 @@ if __name__ == "__main__":  # pragma: no cover
     print(curve.to_dataframe())
 
     for bond in bonds:
-        bond_price = bond.get_bond_price()
-        if bond_price is None:
+        price = bond.get_price()
+        if price is None:
             continue
         pv, flows_pv = bond.value_with_curve(curve)
         maturity_date = bond.maturity
         print(
-            f"Maturity Date: {maturity_date}, Bond Price: {bond_price}, PV: {pv}, Difference: {bond_price - pv}"
+            f"Maturity Date: {maturity_date}, Bond Price: {price}, PV: {pv}, Difference: {price - pv}"
         )

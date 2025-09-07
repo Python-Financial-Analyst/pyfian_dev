@@ -110,7 +110,7 @@ class CombinedCurve(ZeroCouponCurve):
     ...         maturity=date + offset,
     ...         cpn_freq=2 if not_zero_coupon else 0,
     ...         cpn=cpn if not_zero_coupon else 0,
-    ...         bond_price=100 if not_zero_coupon else None,
+    ...         price=100 if not_zero_coupon else None,
     ...         yield_to_maturity=None if not_zero_coupon else cpn / 100,
     ...         settlement_date=date,
     ...     )
@@ -120,13 +120,13 @@ class CombinedCurve(ZeroCouponCurve):
     >>> spread_curve = CreditSpreadCurve.spread_from_bonds(benchmark_curve=benchmark_curve_bey, bonds=bonds)
     >>> combined_curve = CombinedCurve(benchmark_curve_bey, spread_curve, day_count_convention="30/360")
     >>> for bond in bonds:
-    ...     bond_price = bond.get_bond_price()
-    ...     if bond_price is None:
+    ...     price = bond.get_price()
+    ...     if price is None:
     ...         continue
     ...     pv, flows_pv = bond.value_with_curve(combined_curve)
     ...     maturity_date = bond.maturity
     ...     print(
-    ...         f"Maturity: {maturity_date}\tPrice: {round(bond_price, 4)}\tPV: {round(pv, 4)}\tDiff: {round(abs(bond_price - pv), 4)}"
+    ...         f"Maturity: {maturity_date}\tPrice: {round(price, 4)}\tPV: {round(pv, 4)}\tDiff: {round(abs(price - pv), 4)}"
     ...     ) # doctest: +SKIP
     """
 
@@ -349,7 +349,7 @@ if __name__ == "__main__":  # pragma: no cover
             maturity=date + offset,
             cpn_freq=2 if not_zero_coupon else 0,  # Less than a year
             cpn=cpn if not_zero_coupon else 0,
-            bond_price=100 if not_zero_coupon else None,
+            price=100 if not_zero_coupon else None,
             yield_to_maturity=None if not_zero_coupon else cpn / 100,
             settlement_date=date,
         )
@@ -373,11 +373,11 @@ if __name__ == "__main__":  # pragma: no cover
     combined_curve.compare_to(other=benchmark_curve_bey)
 
     for bond in bonds:
-        bond_price = bond.get_bond_price()
-        if bond_price is None:
+        price = bond.get_price()
+        if price is None:
             continue
         pv, flows_pv = bond.value_with_curve(combined_curve)
         maturity_date = bond.maturity
         print(
-            f"Maturity: {maturity_date}\tPrice: {round(bond_price, 4)}\tPV: {round(pv, 4)}\tDiff: {round(abs(bond_price - pv), 4)}"
+            f"Maturity: {maturity_date}\tPrice: {round(price, 4)}\tPV: {round(pv, 4)}\tDiff: {round(abs(price - pv), 4)}"
         )

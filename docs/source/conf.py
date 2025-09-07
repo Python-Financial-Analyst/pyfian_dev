@@ -41,6 +41,12 @@ myst_enable_extensions = [
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 autoapi_dirs = ["../../src/pyfian"]
+autodoc_inherit_docstrings = True
+
+autodoc_default_options = {
+    "members": True,
+    "inherited-members": True,
+}
 
 templates_path = ["_templates"]
 exclude_patterns = []
