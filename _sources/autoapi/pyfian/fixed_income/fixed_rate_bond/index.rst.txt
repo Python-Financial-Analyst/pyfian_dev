@@ -23,7 +23,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: FixedRateBullet(issue_dt: Union[str, pandas.Timestamp], maturity: Union[str, pandas.Timestamp], cpn: float, cpn_freq: int, notional: float = 100, settlement_convention_t_plus: int = 1, record_date_t_minus: int = 1, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, adjust_to_business_days: bool = False, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/actual-Bond', following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase = '30/360', yield_calculation_convention: str = 'BEY')
+.. py:class:: FixedRateBullet(issue_dt: Union[str, pandas.Timestamp], maturity: Union[str, pandas.Timestamp], cpn: float, cpn_freq: int, notional: float = 100, settlement_convention_t_plus: int = 1, record_date_t_minus: int = 1, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, yield_to_maturity: Optional[float] = None, price: Optional[float] = None, adjust_to_business_days: bool = False, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/actual-Bond', following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase = '30/360', yield_calculation_convention: str = 'BEY')
 
    Bases: :py:obj:`pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument`
 
@@ -52,8 +52,8 @@ Module Contents
    :type settlement_date: str or datetime-like, optional
    :param yield_to_maturity: Yield to maturity of the bond. Set in decimal, e.g., 0.05 for 5%. Defaults to None.
    :type yield_to_maturity: float, optional
-   :param bond_price: Market price of the bond. Defaults to None.
-   :type bond_price: float, optional
+   :param price: Market price of the bond. Defaults to None.
+   :type price: float, optional
    :param adjust_to_business_days: Whether to adjust dates to business days. Defaults to False.
    :type adjust_to_business_days: bool, optional
    :param day_count_convention: Day count convention for the bond. Defaults to 'actual/actual-Bond'.
@@ -123,7 +123,7 @@ Module Contents
 
       :type: float
 
-   .. attribute:: bond_price
+   .. attribute:: price
 
       Market price of the bond.
 
@@ -292,13 +292,13 @@ Module Contents
 
 
 
-   .. py:method:: _calculate_time_to_payments(settlement_date, bond_price, adjust_to_business_days, following_coupons_day_count, yield_calculation_convention, day_count_convention) -> dict[float, float]
+   .. py:method:: _calculate_time_to_payments(settlement_date, price, adjust_to_business_days, following_coupons_day_count, yield_calculation_convention, day_count_convention) -> dict[float, float]
 
       Calculate the time to each payment from the settlement date.
 
 
 
-   .. py:method:: value_with_curve(curve: pyfian.yield_curves.base_curve.YieldCurveBase, spread: float = 0, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, bond_price: Optional[float] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> tuple[float, dict[float, float]]
+   .. py:method:: value_with_curve(curve: pyfian.yield_curves.base_curve.YieldCurveBase, spread: float = 0, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, price: Optional[float] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> tuple[float, dict[float, float]]
 
       Value the bond using a discount curve.
 
@@ -346,8 +346,8 @@ Module Contents
       :type curve: object
       :param settlement_date: Settlement date. Defaults to issue date.
       :type settlement_date: str or datetime-like, optional
-      :param bond_price: If provided, includes bond price as a negative cash flow.
-      :type bond_price: float, optional
+      :param price: If provided, includes bond price as a negative cash flow.
+      :type price: float, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
       :type adjust_to_business_days: bool, optional
       :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
@@ -369,7 +369,7 @@ Module Contents
 
 
 
-   .. py:method:: yield_to_maturity(bond_price: float, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, tol: Optional[float] = 1e-06, max_iter: Optional[int] = 100) -> float
+   .. py:method:: yield_to_maturity(price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, tol: Optional[float] = 1e-06, max_iter: Optional[int] = 100) -> float
 
       Estimate the yield to maturity (YTM) using the xirr function from pyfian.time_value.irr.
 
@@ -391,8 +391,8 @@ Module Contents
 
       The times to payments are calculated from the settlement date to each payment date and need not be integer values.
 
-      :param bond_price: Price of the bond.
-      :type bond_price: float
+      :param price: Price of the bond. If not provided, will use self.price if set.
+      :type price: float, optional
       :param settlement_date: Settlement date. Defaults to issue date.
       :type settlement_date: str or datetime-like, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
@@ -416,12 +416,12 @@ Module Contents
       .. rubric:: Examples
 
       >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
-      >>> bond.yield_to_maturity(bond_price=95)
+      >>> bond.yield_to_maturity(price=95)
       np.float64(0.06100197251858131)
 
 
 
-   .. py:method:: modified_duration(yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
+   .. py:method:: modified_duration(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
 
       Calculate modified duration of the bond.
 
@@ -437,10 +437,10 @@ Module Contents
 
       The times to payments are calculated from the settlement date to each payment date and need not be integer values.
 
-      :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
+      :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from price if given.
       :type yield_to_maturity: float, optional
-      :param bond_price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
-      :type bond_price: float, optional
+      :param price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+      :type price: float, optional
       :param settlement_date: Settlement date. Defaults to issue date.
       :type settlement_date: str or datetime-like, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
@@ -463,7 +463,7 @@ Module Contents
 
 
 
-   .. py:method:: macaulay_duration(yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
+   .. py:method:: macaulay_duration(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
 
       Calculate macaulay duration of the bond.
 
@@ -479,10 +479,10 @@ Module Contents
 
       The times to payments are calculated from the settlement date to each payment date and need not be integer values.
 
-      :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from bond_price if given.
+      :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from price if given.
       :type yield_to_maturity: float, optional
-      :param bond_price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
-      :type bond_price: float, optional
+      :param price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+      :type price: float, optional
       :param settlement_date: Settlement date. Defaults to issue date.
       :type settlement_date: str or datetime-like, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
@@ -505,7 +505,7 @@ Module Contents
 
 
 
-   .. py:method:: convexity(yield_to_maturity: Optional[float] = None, bond_price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
+   .. py:method:: convexity(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
 
       Calculate the convexity of the bond.
 
@@ -524,8 +524,8 @@ Module Contents
 
       :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from price if given.
       :type yield_to_maturity: float, optional
-      :param bond_price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
-      :type bond_price: float, optional
+      :param price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+      :type price: float, optional
       :param settlement_date: Settlement date. Defaults to issue date.
       :type settlement_date: str or datetime-like, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.

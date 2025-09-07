@@ -1,0 +1,422 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyfian.yield_curves.interpolated_curve &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Topics/fixed_income/index.html">Fixed Income</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyfian.yield_curves.interpolated_curve</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyfian.yield_curves.interpolated_curve</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">interpolated_curve.py</span>
+
+<span class="sd">Implements InterpolatedCurve using cubic spline interpolation.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">interp1d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.utils.day_count</span><span class="w"> </span><span class="kn">import</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="n">get_day_count_convention</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.zero_coupon_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZeroCouponCurve</span>
+
+
+<div class="viewcode-block" id="InterpolatedCurve">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/interpolated_curve/index.html#pyfian.yield_curves.interpolated_curve.InterpolatedCurve">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InterpolatedCurve</span><span class="p">(</span><span class="n">ZeroCouponCurve</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    InterpolatedCurve represents a yield curve for zero-coupon rates at different maturities.</span>
+
+<span class="sd">    The curve can be set using a dictionary of zero-coupon rates and supports interpolation</span>
+<span class="sd">    for maturities not explicitly provided.</span>
+
+<span class="sd">    It can also be derived setting a group of maturities and a group of bonds with prices,</span>
+<span class="sd">    where the bonds are used to infer the zero-coupon rates using the maturities as pivots for</span>
+<span class="sd">    an interpolated curve.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    curve_date : str or datetime-like</span>
+<span class="sd">        Date of the curve.</span>
+<span class="sd">    maturities : list of float, optional</span>
+<span class="sd">        List of maturities (in years) to make curve pivot points.</span>
+<span class="sd">        If zero_rates is provided, maturities will be inferred from its keys.</span>
+<span class="sd">        If both maturities and zero_rates are None, default maturities will be used: [0.5, 1, 2, 3, 5, 7, 10, 20, 30].</span>
+<span class="sd">    zero_rates : dict, optional</span>
+<span class="sd">        Dictionary mapping maturities (in years) to zero-coupon rates (as decimals). If provided, maturities will be inferred from its keys.</span>
+<span class="sd">    bonds : list, optional</span>
+<span class="sd">        List of bonds used to infer the zero-coupon rates.</span>
+<span class="sd">    day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">        Day count convention to use (default is None). If None, &quot;actual/365&quot; will be used.</span>
+<span class="sd">    yield_calculation_convention : str, optional</span>
+<span class="sd">        Yield calculation convention to use (default is None).</span>
+<span class="sd">        Supported conventions: &quot;Annual&quot;, &quot;BEY&quot;, &quot;Continuous&quot;. If None, &quot;Annual&quot; will be used.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    curve_date : pd.Timestamp</span>
+<span class="sd">        Date of the curve.</span>
+<span class="sd">    maturities : list of float</span>
+<span class="sd">        List of maturities (in years) for which zero-coupon rates are available.</span>
+<span class="sd">    zero_rates : dict</span>
+<span class="sd">        Dictionary of zero-coupon rates keyed by maturity (in years).</span>
+<span class="sd">    bonds : list, optional</span>
+<span class="sd">        List of bonds used to infer the zero-coupon rates.</span>
+<span class="sd">    day_count_convention : DayCountBase</span>
+<span class="sd">        Day count convention used for calculations.</span>
+<span class="sd">    yield_calculation_convention : str</span>
+<span class="sd">        Yield calculation convention used for rate conversions.</span>
+<span class="sd">    maturities : list of float</span>
+<span class="sd">        List of maturities (in years) for which zero-coupon rates are available.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    as_dict()</span>
+<span class="sd">        Convert the curve to a dictionary.</span>
+<span class="sd">    discount_t(t, spread=0)</span>
+<span class="sd">        Discount a cash flow by time t (in years).</span>
+<span class="sd">    discount_to_rate(discount_factor, t, spread, yield_calculation_convention=None)</span>
+<span class="sd">        Convert a discount factor for a period t to a rate.</span>
+<span class="sd">    discount_date(date, spread=0)</span>
+<span class="sd">        Discount a cash flow to a specific date.</span>
+<span class="sd">    get_rate(t, yield_calculation_convention=None, spread=0)</span>
+<span class="sd">        Get the rate for a cash flow by time t (in years).</span>
+<span class="sd">    date_rate(date, yield_calculation_convention=None, spread=0)</span>
+<span class="sd">        Get the rate for a cash flow by date.</span>
+<span class="sd">    get_t(t, spread=0)</span>
+<span class="sd">        Get the interpolated zero-coupon rate for time t (in years).</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import pandas as pd</span>
+<span class="sd">        from pyfian.yield_curves.zero_coupon_curve import ZeroCouponCurve</span>
+
+<span class="sd">        zero_rates = {</span>
+<span class="sd">            1: 0.04,   # 1 year maturity, 4% rate</span>
+<span class="sd">            2: 0.042,  # 2 year maturity, 4.2% rate</span>
+<span class="sd">            5: 0.045,  # 5 year maturity, 4.5% rate</span>
+<span class="sd">        }</span>
+<span class="sd">        curve_date = &quot;2025-08-22&quot;</span>
+<span class="sd">        curve = InterpolatedCurve(zero_rates=zero_rates, curve_date=curve_date)</span>
+<span class="sd">        # Get discount factor for 2 years</span>
+<span class="sd">        df = curve.discount_t(2)</span>
+<span class="sd">        # Get rate for 2 years</span>
+<span class="sd">        rate = curve.get_rate(2)</span>
+<span class="sd">        print(f&quot;Discount factor for 2 years: {df}&quot;)</span>
+<span class="sd">        print(f&quot;Zero-coupon rate for 2 years: {rate}&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">curve_date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
+        <span class="n">maturities</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">zero_rates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bonds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;actual/365&quot;</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">curve_date</span><span class="p">)</span>
+
+        <span class="c1"># Raise if day_count_convention is neither str nor DayCountBase</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">day_count_convention</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">DayCountBase</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;day_count_convention must be either a string or a DayCountBase instance.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">day_count_convention</span><span class="p">:</span> <span class="n">DayCountBase</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">get_day_count_convention</span><span class="p">(</span><span class="n">day_count_convention</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">day_count_convention</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="k">else</span> <span class="n">day_count_convention</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;Annual&quot;</span>
+            <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_yield_calculation_convention</span><span class="p">(</span>
+                <span class="n">yield_calculation_convention</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Raise an error if maturities neither maturities nor zero_rates are provided</span>
+        <span class="k">if</span> <span class="n">zero_rates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">maturities</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">maturities</span>
+                <span class="k">if</span> <span class="n">maturities</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zero_rates</span> <span class="o">=</span> <span class="p">{</span><span class="n">m</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">maturities</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zero_rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_zero_rates</span><span class="p">(</span><span class="n">zero_rates</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">maturities</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">zero_rates</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">bonds</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">maturity</span><span class="p">)</span> <span class="k">if</span> <span class="n">bonds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+
+        <span class="c1"># If bonds are provided, infer zero rates</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">zero_rates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_infer_zero_rates_from_bonds</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">)</span>
+
+<div class="viewcode-block" id="InterpolatedCurve._infer_zero_rates_from_bonds">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/interpolated_curve/index.html#pyfian.yield_curves.interpolated_curve.InterpolatedCurve._infer_zero_rates_from_bonds">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_infer_zero_rates_from_bonds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bonds</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Infer zero-coupon rates from the provided bonds and maturities using interpolation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Placeholder for actual implementation</span>
+        <span class="c1"># This method should set self.zero_rates based on bond prices and maturities</span>
+
+        <span class="c1"># Get duration and yield to Maturity for each bond</span>
+        <span class="n">initial_guesses</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">max_maturity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span>
+        <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">bonds</span><span class="p">:</span>
+            <span class="n">bond_duration</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">effective_duration</span><span class="p">()</span>
+            <span class="n">bond_yield</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">yield_to_maturity</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">get_price</span><span class="p">())</span>
+            <span class="n">initial_guesses</span><span class="p">[</span><span class="n">bond_duration</span><span class="p">]</span> <span class="o">=</span> <span class="n">bond_yield</span>
+            <span class="k">if</span> <span class="n">bond</span><span class="o">.</span><span class="n">maturity</span> <span class="o">&gt;</span> <span class="n">max_maturity</span><span class="p">:</span>
+                <span class="n">max_maturity</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">maturity</span>
+
+        <span class="c1"># Interpolate the initial guesses to the maturities</span>
+        <span class="n">guess_maturities</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">initial_guesses</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">guess_rates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">initial_guesses</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="c1"># Get difference in years between curve date and max maturity, equally counting leap years</span>
+        <span class="n">years_max_maturity</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_maturity</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span>
+
+        <span class="c1"># Filter maturities</span>
+        <span class="n">maturities_check</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="o">&gt;=</span> <span class="n">years_max_maturity</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">maturities</span><span class="p">]</span>
+
+        <span class="c1"># Get maturity of the first maturity greater than max_maturity</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">maturities_check</span><span class="p">):</span>
+            <span class="n">first_greater_maturity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maturities</span><span class="p">[</span><span class="n">maturities_check</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="kc">True</span><span class="p">)]</span>
+            <span class="n">maturities</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">maturities</span> <span class="k">if</span> <span class="n">m</span> <span class="o">&lt;=</span> <span class="n">first_greater_maturity</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">maturities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maturities</span>
+
+        <span class="n">interp_func</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
+            <span class="n">guess_maturities</span><span class="p">,</span> <span class="n">guess_rates</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s2">&quot;extrapolate&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">zero_rates</span> <span class="o">=</span> <span class="p">{</span><span class="n">m</span><span class="p">:</span> <span class="n">interp_func</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">maturities</span><span class="p">}</span>
+
+        <span class="n">initial_rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">zero_rates</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="c1"># zero_rates_array = initial_rates</span>
+
+        <span class="c1"># Make an objective function to minimize the root squared differences between bond prices and</span>
+        <span class="c1"># the prices calculated using the zero-coupon rates</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">objective</span><span class="p">(</span><span class="n">zero_rates_array</span><span class="p">):</span>
+            <span class="n">zero_rates_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">m</span><span class="p">:</span> <span class="n">r</span> <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">maturities</span><span class="p">,</span> <span class="n">zero_rates_array</span><span class="p">)}</span>
+            <span class="n">test_curve</span> <span class="o">=</span> <span class="n">InterpolatedCurve</span><span class="p">(</span>
+                <span class="n">curve_date</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span><span class="p">,</span>
+                <span class="n">maturities</span><span class="o">=</span><span class="n">maturities</span><span class="p">,</span>
+                <span class="n">zero_rates</span><span class="o">=</span><span class="n">zero_rates_dict</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">total_error</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">bonds</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">price</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">get_price</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">price</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">npv</span><span class="p">,</span> <span class="n">present_values</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">value_with_curve</span><span class="p">(</span><span class="n">test_curve</span><span class="p">,</span> <span class="n">price</span><span class="o">=</span><span class="n">price</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Maturity Date: </span><span class="si">{</span><span class="n">bond</span><span class="o">.</span><span class="n">maturity</span><span class="si">}</span><span class="s2">, Bond Price: </span><span class="si">{</span><span class="n">price</span><span class="si">}</span><span class="s2">, NPV: </span><span class="si">{</span><span class="n">npv</span><span class="si">}</span><span class="s2">, PV: </span><span class="si">{</span><span class="n">npv</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">price</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">total_error</span> <span class="o">+=</span> <span class="p">(</span><span class="n">npv</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span>
+                        <span class="mi">60</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">present_values</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>  <span class="c1"># Weight by number of rates</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="k">continue</span>
+            <span class="c1"># print(f&quot;Total Error: {total_error**.5 * 1e3}&quot;)</span>
+            <span class="k">return</span> <span class="n">total_error</span><span class="o">**</span><span class="mf">0.5</span>  <span class="c1"># Scale to avoid very small numbers</span>
+
+        <span class="c1"># Minimize the objective function to find the best-fitting zero rates</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+            <span class="n">objective</span><span class="p">,</span>
+            <span class="n">initial_rates</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;L-BFGS-B&quot;</span><span class="p">,</span>
+            <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxiter&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">},</span>
+        <span class="p">)</span>
+        <span class="c1"># zero_rates_array = result.x</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Optimization failed to find a valid solution.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Update the zero rates with the optimized values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zero_rates</span> <span class="o">=</span> <span class="p">{</span><span class="n">m</span><span class="p">:</span> <span class="n">r</span> <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">maturities</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">)}</span></div>
+
+
+<div class="viewcode-block" id="InterpolatedCurve.__repr__">
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/interpolated_curve/index.html#pyfian.yield_curves.interpolated_curve.InterpolatedCurve.__repr__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;InterpolatedCurve(maturities=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">maturities</span><span class="si">}</span><span class="s2">, zero_rates=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">zero_rates</span><span class="si">}</span><span class="s2">, curve_date=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+
+    <span class="c1"># Example usage</span>
+    <span class="c1"># Par rates for different periods</span>
+    <span class="c1"># 1-month	 4.49</span>
+    <span class="c1"># 3-month	 4.32</span>
+    <span class="c1"># 6-month	 4.14</span>
+    <span class="c1"># 1-year	 3.95</span>
+    <span class="c1"># 2-year	 3.79</span>
+    <span class="c1"># 3-year	 3.75</span>
+    <span class="c1"># 5-year	 3.86</span>
+    <span class="c1"># 7-year	 4.07</span>
+    <span class="c1"># 10-year	 4.33</span>
+    <span class="c1"># 20-year	 4.89</span>
+    <span class="c1"># 30-year	 4.92</span>
+    <span class="c1"># Make FixedRateBullet instances for each bond</span>
+    <span class="n">list_maturities_rates</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="mf">4.49</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span> <span class="mf">4.32</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">months</span><span class="o">=</span><span class="mi">6</span><span class="p">),</span> <span class="mf">4.14</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="mf">3.95</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="mf">3.79</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span> <span class="mf">3.75</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span> <span class="mf">3.86</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">7</span><span class="p">),</span> <span class="mf">4.07</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span> <span class="mf">4.33</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span> <span class="mf">4.89</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span> <span class="mf">4.92</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s2">&quot;2025-08-22&quot;</span><span class="p">)</span>
+    <span class="n">one_year_offset</span> <span class="o">=</span> <span class="n">date</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">DateOffset</span><span class="p">(</span><span class="n">years</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">bonds</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">maturities</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">offset</span><span class="p">,</span> <span class="n">cpn</span> <span class="ow">in</span> <span class="n">list_maturities_rates</span><span class="p">:</span>
+        <span class="n">not_zero_coupon</span> <span class="o">=</span> <span class="n">date</span> <span class="o">+</span> <span class="n">offset</span> <span class="o">&gt;</span> <span class="n">one_year_offset</span>
+        <span class="n">maturities</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">date</span> <span class="o">+</span> <span class="n">offset</span> <span class="o">-</span> <span class="n">date</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span>
+
+        <span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span>
+            <span class="n">issue_dt</span><span class="o">=</span><span class="n">date</span><span class="p">,</span>
+            <span class="n">maturity</span><span class="o">=</span><span class="n">date</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span>
+            <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">2</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Less than a year</span>
+            <span class="n">cpn</span><span class="o">=</span><span class="n">cpn</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="n">price</span><span class="o">=</span><span class="mi">100</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">yield_to_maturity</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="n">cpn</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="n">settlement_date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># self = bond</span>
+        <span class="n">bonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bond</span><span class="p">)</span>
+    <span class="n">curve</span> <span class="o">=</span> <span class="n">InterpolatedCurve</span><span class="p">(</span>
+        <span class="n">curve_date</span><span class="o">=</span><span class="s2">&quot;2025-08-22&quot;</span><span class="p">,</span> <span class="n">bonds</span><span class="o">=</span><span class="n">bonds</span><span class="p">,</span> <span class="n">maturities</span><span class="o">=</span><span class="n">maturities</span>
+    <span class="p">)</span>
+    <span class="c1"># self = curve</span>
+
+    <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">bonds</span><span class="p">:</span>
+        <span class="n">price</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">get_price</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">price</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">pv</span><span class="p">,</span> <span class="n">flows_pv</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">value_with_curve</span><span class="p">(</span><span class="n">curve</span><span class="p">)</span>
+        <span class="n">maturity_date</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">maturity</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Maturity Date: </span><span class="si">{</span><span class="n">maturity_date</span><span class="si">}</span><span class="s2">, Bond Price: </span><span class="si">{</span><span class="n">price</span><span class="si">}</span><span class="s2">, PV: </span><span class="si">{</span><span class="n">pv</span><span class="si">}</span><span class="s2">, Difference: </span><span class="si">{</span><span class="n">price</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pv</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

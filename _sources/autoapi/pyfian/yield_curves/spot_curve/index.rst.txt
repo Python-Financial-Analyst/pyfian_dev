@@ -53,7 +53,7 @@ Module Contents
 
    :param curve_date: Date of the curve.
    :type curve_date: str or datetime-like
-   :param bonds: Each bond must have keys: 'get_bond_price', 'calculate_time_to_payments', 'get_settlement_date'
+   :param bonds: Each bond must have keys: 'get_price', 'calculate_time_to_payments', 'get_settlement_date'
    :type bonds: list of Bonds
    :param zero_rates: Zero-coupon rates, keyed by maturity (in years).
    :type zero_rates: dict
@@ -155,7 +155,7 @@ Module Contents
                maturity=date + offset,
                cpn_freq=2 if not_zero_coupon else 0,
                cpn=cpn if not_zero_coupon else 0,
-               bond_price=100 if not_zero_coupon else None,
+               price=100 if not_zero_coupon else None,
                yield_to_maturity=None if not_zero_coupon else cpn / 100,
                settlement_date=date,
            )
@@ -165,13 +165,13 @@ Module Contents
        print(curve.to_dataframe())
 
        for bond in bonds:
-           bond_price = bond.get_bond_price()
-           if bond_price is None:
+           price = bond.get_price()
+           if price is None:
                continue
            pv, flows_pv = bond.value_with_curve(curve)
            maturity_date = bond.maturity
            print(
-               f"Maturity Date: {maturity_date}, Bond Price: {bond_price}, PV: {pv}, Difference: {bond_price - pv}"
+               f"Maturity Date: {maturity_date}, Bond Price: {price}, PV: {pv}, Difference: {price - pv}"
            )
 
 

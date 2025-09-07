@@ -384,7 +384,7 @@
         <span class="n">descuento_t_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="n">t_start</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="n">spread_start</span><span class="p">)</span>
         <span class="n">descuento_t_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="n">t_end</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="n">spread_end</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_to_rate</span><span class="p">(</span>
-            <span class="n">descuento_t_start</span> <span class="o">/</span> <span class="n">descuento_t_end</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="n">spread_forward</span>
+            <span class="n">descuento_t_end</span> <span class="o">/</span> <span class="n">descuento_t_start</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="n">spread_forward</span>
         <span class="p">)</span></div>
 
 

@@ -117,7 +117,7 @@
 <span class="sd">    curve_date : str or datetime-like</span>
 <span class="sd">        Date of the curve.</span>
 <span class="sd">    bonds : list of Bonds</span>
-<span class="sd">        Each bond must have keys: &#39;get_bond_price&#39;, &#39;calculate_time_to_payments&#39;, &#39;get_settlement_date&#39;</span>
+<span class="sd">        Each bond must have keys: &#39;get_price&#39;, &#39;calculate_time_to_payments&#39;, &#39;get_settlement_date&#39;</span>
 <span class="sd">    zero_rates : dict</span>
 <span class="sd">        Zero-coupon rates, keyed by maturity (in years).</span>
 <span class="sd">    day_count_convention : str or DayCountBase, optional</span>
@@ -187,7 +187,7 @@
 <span class="sd">                maturity=date + offset,</span>
 <span class="sd">                cpn_freq=2 if not_zero_coupon else 0,</span>
 <span class="sd">                cpn=cpn if not_zero_coupon else 0,</span>
-<span class="sd">                bond_price=100 if not_zero_coupon else None,</span>
+<span class="sd">                price=100 if not_zero_coupon else None,</span>
 <span class="sd">                yield_to_maturity=None if not_zero_coupon else cpn / 100,</span>
 <span class="sd">                settlement_date=date,</span>
 <span class="sd">            )</span>
@@ -197,13 +197,13 @@
 <span class="sd">        print(curve.to_dataframe())</span>
 
 <span class="sd">        for bond in bonds:</span>
-<span class="sd">            bond_price = bond.get_bond_price()</span>
-<span class="sd">            if bond_price is None:</span>
+<span class="sd">            price = bond.get_price()</span>
+<span class="sd">            if price is None:</span>
 <span class="sd">                continue</span>
 <span class="sd">            pv, flows_pv = bond.value_with_curve(curve)</span>
 <span class="sd">            maturity_date = bond.maturity</span>
 <span class="sd">            print(</span>
-<span class="sd">                f&quot;Maturity Date: {maturity_date}, Bond Price: {bond_price}, PV: {pv}, Difference: {bond_price - pv}&quot;</span>
+<span class="sd">                f&quot;Maturity Date: {maturity_date}, Bond Price: {price}, PV: {pv}, Difference: {price - pv}&quot;</span>
 <span class="sd">            )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -282,8 +282,14 @@
         <span class="n">zero_rates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zero_rates</span>
 
         <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">:</span>
-            <span class="n">price</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">get_bond_price</span><span class="p">()</span>
-            <span class="n">payment_flow</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">calculate_time_to_payments</span><span class="p">(</span><span class="n">bond_price</span><span class="o">=</span><span class="n">price</span><span class="p">)</span>
+            <span class="n">price</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">get_price</span><span class="p">()</span>
+            <span class="n">dated_payment_flow</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">price</span><span class="o">=</span><span class="n">price</span><span class="p">)</span>
+            <span class="n">payment_flow</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">day_count_convention</span><span class="o">.</span><span class="n">fraction</span><span class="p">(</span>
+                    <span class="n">start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="n">d</span>
+                <span class="p">):</span> <span class="n">payment</span>
+                <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">payment</span> <span class="ow">in</span> <span class="n">dated_payment_flow</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
             <span class="n">maturity</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">payment_flow</span><span class="p">)</span>
             <span class="c1"># curve_date must be the same as bond settlement date</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span> <span class="o">==</span> <span class="n">bond</span><span class="o">.</span><span class="n">get_settlement_date</span><span class="p">(),</span> <span class="p">(</span>
@@ -435,7 +441,7 @@
             <span class="n">maturity</span><span class="o">=</span><span class="n">date</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span>
             <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">2</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Less than a year</span>
             <span class="n">cpn</span><span class="o">=</span><span class="n">cpn</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="n">bond_price</span><span class="o">=</span><span class="mi">100</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">price</span><span class="o">=</span><span class="mi">100</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">yield_to_maturity</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="n">cpn</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">settlement_date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span>
         <span class="p">)</span>
@@ -446,13 +452,13 @@
     <span class="nb">print</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">())</span>
 
     <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">bonds</span><span class="p">:</span>
-        <span class="n">bond_price</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">get_bond_price</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">bond_price</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">price</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">get_price</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">price</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">continue</span>
         <span class="n">pv</span><span class="p">,</span> <span class="n">flows_pv</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">value_with_curve</span><span class="p">(</span><span class="n">curve</span><span class="p">)</span>
         <span class="n">maturity_date</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">maturity</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Maturity Date: </span><span class="si">{</span><span class="n">maturity_date</span><span class="si">}</span><span class="s2">, Bond Price: </span><span class="si">{</span><span class="n">bond_price</span><span class="si">}</span><span class="s2">, PV: </span><span class="si">{</span><span class="n">pv</span><span class="si">}</span><span class="s2">, Difference: </span><span class="si">{</span><span class="n">bond_price</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pv</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Maturity Date: </span><span class="si">{</span><span class="n">maturity_date</span><span class="si">}</span><span class="s2">, Bond Price: </span><span class="si">{</span><span class="n">price</span><span class="si">}</span><span class="s2">, PV: </span><span class="si">{</span><span class="n">pv</span><span class="si">}</span><span class="s2">, Difference: </span><span class="si">{</span><span class="n">price</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pv</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 </pre></div>
 

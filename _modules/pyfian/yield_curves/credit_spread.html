@@ -255,7 +255,7 @@
 <span class="sd">    ...         maturity=date + offset,</span>
 <span class="sd">    ...         cpn_freq=2 if not_zero_coupon else 0,</span>
 <span class="sd">    ...         cpn=cpn if not_zero_coupon else 0,</span>
-<span class="sd">    ...         bond_price=100 if not_zero_coupon else None,</span>
+<span class="sd">    ...         price=100 if not_zero_coupon else None,</span>
 <span class="sd">    ...         yield_to_maturity=None if not_zero_coupon else cpn / 100,</span>
 <span class="sd">    ...         settlement_date=date,</span>
 <span class="sd">    ...     )</span>
@@ -527,10 +527,10 @@
         <span class="n">spreads</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spreads</span>
 
         <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">:</span>
-            <span class="n">price</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">get_bond_price</span><span class="p">()</span>
+            <span class="n">price</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">get_price</span><span class="p">()</span>
             <span class="n">settlement_date</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">get_settlement_date</span><span class="p">()</span>
-            <span class="n">payment_flow</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">calculate_time_to_payments</span><span class="p">(</span><span class="n">bond_price</span><span class="o">=</span><span class="n">price</span><span class="p">)</span>
-            <span class="n">payment_dates</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">bond_price</span><span class="o">=</span><span class="n">price</span><span class="p">)</span>
+            <span class="n">payment_flow</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">calculate_time_to_payments</span><span class="p">(</span><span class="n">price</span><span class="o">=</span><span class="n">price</span><span class="p">)</span>
+            <span class="n">payment_dates</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="n">price</span><span class="o">=</span><span class="n">price</span><span class="p">)</span>
 
             <span class="n">maturity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">day_count_convention</span><span class="o">.</span><span class="n">fraction</span><span class="p">(</span>
                 <span class="n">start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="n">bond</span><span class="o">.</span><span class="n">maturity</span>
@@ -859,7 +859,7 @@
             <span class="n">maturity</span><span class="o">=</span><span class="n">date</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span>
             <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">2</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Less than a year</span>
             <span class="n">cpn</span><span class="o">=</span><span class="n">cpn</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="n">bond_price</span><span class="o">=</span><span class="mi">100</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">price</span><span class="o">=</span><span class="mi">100</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">yield_to_maturity</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="n">cpn</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">settlement_date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span>
         <span class="p">)</span>

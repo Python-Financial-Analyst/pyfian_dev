@@ -190,7 +190,7 @@
 <span class="sd">    ...         maturity=date + offset,</span>
 <span class="sd">    ...         cpn_freq=2 if not_zero_coupon else 0,</span>
 <span class="sd">    ...         cpn=cpn if not_zero_coupon else 0,</span>
-<span class="sd">    ...         bond_price=100 if not_zero_coupon else None,</span>
+<span class="sd">    ...         price=100 if not_zero_coupon else None,</span>
 <span class="sd">    ...         yield_to_maturity=None if not_zero_coupon else cpn / 100,</span>
 <span class="sd">    ...         settlement_date=date,</span>
 <span class="sd">    ...     )</span>
@@ -200,13 +200,13 @@
 <span class="sd">    &gt;&gt;&gt; spread_curve = CreditSpreadCurve.spread_from_bonds(benchmark_curve=benchmark_curve_bey, bonds=bonds)</span>
 <span class="sd">    &gt;&gt;&gt; combined_curve = CombinedCurve(benchmark_curve_bey, spread_curve, day_count_convention=&quot;30/360&quot;)</span>
 <span class="sd">    &gt;&gt;&gt; for bond in bonds:</span>
-<span class="sd">    ...     bond_price = bond.get_bond_price()</span>
-<span class="sd">    ...     if bond_price is None:</span>
+<span class="sd">    ...     price = bond.get_price()</span>
+<span class="sd">    ...     if price is None:</span>
 <span class="sd">    ...         continue</span>
 <span class="sd">    ...     pv, flows_pv = bond.value_with_curve(combined_curve)</span>
 <span class="sd">    ...     maturity_date = bond.maturity</span>
 <span class="sd">    ...     print(</span>
-<span class="sd">    ...         f&quot;Maturity: {maturity_date}\tPrice: {round(bond_price, 4)}\tPV: {round(pv, 4)}\tDiff: {round(abs(bond_price - pv), 4)}&quot;</span>
+<span class="sd">    ...         f&quot;Maturity: {maturity_date}\tPrice: {round(price, 4)}\tPV: {round(pv, 4)}\tDiff: {round(abs(price - pv), 4)}&quot;</span>
 <span class="sd">    ...     ) # doctest: +SKIP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -451,7 +451,7 @@
             <span class="n">maturity</span><span class="o">=</span><span class="n">date</span> <span class="o">+</span> <span class="n">offset</span><span class="p">,</span>
             <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">2</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Less than a year</span>
             <span class="n">cpn</span><span class="o">=</span><span class="n">cpn</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="n">bond_price</span><span class="o">=</span><span class="mi">100</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">price</span><span class="o">=</span><span class="mi">100</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">yield_to_maturity</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">not_zero_coupon</span> <span class="k">else</span> <span class="n">cpn</span> <span class="o">/</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">settlement_date</span><span class="o">=</span><span class="n">date</span><span class="p">,</span>
         <span class="p">)</span>
@@ -475,13 +475,13 @@
     <span class="n">combined_curve</span><span class="o">.</span><span class="n">compare_to</span><span class="p">(</span><span class="n">other</span><span class="o">=</span><span class="n">benchmark_curve_bey</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">bonds</span><span class="p">:</span>
-        <span class="n">bond_price</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">get_bond_price</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">bond_price</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">price</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">get_price</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">price</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">continue</span>
         <span class="n">pv</span><span class="p">,</span> <span class="n">flows_pv</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">value_with_curve</span><span class="p">(</span><span class="n">combined_curve</span><span class="p">)</span>
         <span class="n">maturity_date</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">maturity</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Maturity: </span><span class="si">{</span><span class="n">maturity_date</span><span class="si">}</span><span class="se">\t</span><span class="s2">Price: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">bond_price</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="se">\t</span><span class="s2">PV: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">pv</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="se">\t</span><span class="s2">Diff: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">bond_price</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pv</span><span class="p">),</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Maturity: </span><span class="si">{</span><span class="n">maturity_date</span><span class="si">}</span><span class="se">\t</span><span class="s2">Price: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">price</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="se">\t</span><span class="s2">PV: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">pv</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="se">\t</span><span class="s2">Diff: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">price</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pv</span><span class="p">),</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 </pre></div>
 
