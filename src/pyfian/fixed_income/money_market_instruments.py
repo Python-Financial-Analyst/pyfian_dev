@@ -338,7 +338,12 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         t = self.day_count_convention.fraction(self.issue_dt, settlement_date)
-        accrued_interest = (self.cpn / self.cpn_freq) * t * self.notional / 100
+        accrued_interest = (
+            (self.cpn / (self.cpn_freq if self.cpn_freq > 0 else 1))
+            * t
+            * self.notional
+            / 100
+        )
         return accrued_interest
 
     def yield_to_maturity(

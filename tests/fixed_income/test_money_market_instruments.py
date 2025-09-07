@@ -14,6 +14,67 @@ from pyfian.yield_curves.flat_curve import FlatCurveAER
 
 
 class TestMoneyMarketInstrument:
+    def test_accrued_interest(self):
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+            price=98,
+        )
+        ai = mmi.accrued_interest(settlement_date="2025-03-01")
+        assert isinstance(ai, float)
+
+    def test_yield_to_maturity(self):
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+            price=98,
+        )
+        ytm = mmi.yield_to_maturity(price=98, settlement_date="2025-01-01")
+        assert isinstance(ytm, float)
+
+    def test_modified_duration(self):
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+            price=98,
+        )
+        md = mmi.modified_duration(price=98, settlement_date="2025-01-01")
+        assert isinstance(md, float)
+
+    def test_macaulay_duration(self):
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+            price=98,
+        )
+        try:
+            mac = mmi.macaulay_duration(price=98, settlement_date="2025-01-01")
+            assert isinstance(mac, float)
+        except NotImplementedError:
+            pass
+
+    def test_convexity(self):
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+            price=98,
+        )
+        try:
+            conv = mmi.convexity(price=98, settlement_date="2025-01-01")
+            assert isinstance(conv, float)
+        except NotImplementedError:
+            pass
+
     def test_invalid_inputs(self):
         # Negative notional
         with pytest.raises(
@@ -240,6 +301,55 @@ class TestMoneyMarketInstrument:
 
 
 class TestTreasuryBill:
+    def test_accrued_interest(self):
+        tbill = TreasuryBill("2025-01-01", "2025-07-01", notional=1000)
+        ai = tbill.accrued_interest(settlement_date="2025-03-01")
+        assert isinstance(ai, float)
+
+    def test_yield_to_maturity(self):
+        tbill = TreasuryBill("2025-01-01", "2025-07-01", notional=1000)
+        tbill.set_price(980, settlement_date="2025-01-01")
+        ytm = tbill.yield_to_maturity(price=980, settlement_date="2025-01-01")
+        assert isinstance(ytm, float)
+
+    def test_modified_duration(self):
+        tbill = TreasuryBill("2025-01-01", "2025-07-01", notional=1000)
+        tbill.set_price(980, settlement_date="2025-01-01")
+        md = tbill.modified_duration(price=980, settlement_date="2025-01-01")
+        assert isinstance(md, float)
+
+    def test_macaulay_duration(self):
+        tbill = TreasuryBill("2025-01-01", "2025-07-01", notional=1000)
+        tbill.set_price(980, settlement_date="2025-01-01")
+        try:
+            mac = tbill.macaulay_duration(price=980, settlement_date="2025-01-01")
+            assert isinstance(mac, float)
+        except NotImplementedError:
+            pass
+
+    def test_convexity(self):
+        tbill = TreasuryBill("2025-01-01", "2025-07-01", notional=1000)
+        tbill.set_price(980, settlement_date="2025-01-01")
+        try:
+            conv = tbill.convexity(price=980, settlement_date="2025-01-01")
+            assert isinstance(conv, float)
+        except NotImplementedError:
+            pass
+
+    def test_from_days(self):
+        tbill = TreasuryBill.from_days(
+            days=180,
+            notional=1000,
+            settlement_date="2025-01-01",
+            price=980,
+            issue_dt="2025-01-01",
+        )
+        assert tbill.cpn == 0.0
+        assert tbill.cpn_freq == 1
+        assert tbill.notional == 1000
+        assert tbill.day_count_convention.name == "actual/360"
+        assert tbill.maturity == pd.to_datetime("2025-06-30")
+
     def test_invalid_inputs(self):
         # Negative notional
         with pytest.raises(
@@ -365,6 +475,56 @@ class TestTreasuryBill:
 
 
 class TestCertificateOfDeposit:
+    def test_accrued_interest(self):
+        cd = CertificateOfDeposit("2025-01-01", "2025-07-01", cpn=2.5, notional=5000)
+        ai = cd.accrued_interest(settlement_date="2025-03-01")
+        assert isinstance(ai, float)
+
+    def test_yield_to_maturity(self):
+        cd = CertificateOfDeposit("2025-01-01", "2025-07-01", cpn=2.5, notional=5000)
+        cd.set_price(4950, settlement_date="2025-01-01")
+        ytm = cd.yield_to_maturity(price=4950, settlement_date="2025-01-01")
+        assert isinstance(ytm, float)
+
+    def test_modified_duration(self):
+        cd = CertificateOfDeposit("2025-01-01", "2025-07-01", cpn=2.5, notional=5000)
+        cd.set_price(4950, settlement_date="2025-01-01")
+        md = cd.modified_duration(price=4950, settlement_date="2025-01-01")
+        assert isinstance(md, float)
+
+    def test_macaulay_duration(self):
+        cd = CertificateOfDeposit("2025-01-01", "2025-07-01", cpn=2.5, notional=5000)
+        cd.set_price(4950, settlement_date="2025-01-01")
+        try:
+            mac = cd.macaulay_duration(price=4950, settlement_date="2025-01-01")
+            assert isinstance(mac, float)
+        except NotImplementedError:
+            pass
+
+    def test_convexity(self):
+        cd = CertificateOfDeposit("2025-01-01", "2025-07-01", cpn=2.5, notional=5000)
+        cd.set_price(4950, settlement_date="2025-01-01")
+        try:
+            conv = cd.convexity(price=4950, settlement_date="2025-01-01")
+            assert isinstance(conv, float)
+        except NotImplementedError:
+            pass
+
+    def test_from_days(self):
+        cd = CertificateOfDeposit.from_days(
+            days=90,
+            notional=5000,
+            cpn=2.5,
+            settlement_date="2025-01-01",
+            price=4950,
+            issue_dt="2025-01-01",
+        )
+        assert cd.cpn == 2.5
+        assert cd.cpn_freq == 1
+        assert cd.notional == 5000
+        assert cd.day_count_convention.name == "actual/360"
+        assert cd.maturity == pd.to_datetime("2025-04-01")
+
     def test_invalid_inputs(self):
         # Negative notional
         with pytest.raises(
@@ -490,6 +650,55 @@ class TestCertificateOfDeposit:
 
 
 class TestCommercialPaper:
+    def test_accrued_interest(self):
+        cp = CommercialPaper("2025-01-01", "2025-04-01", notional=2000)
+        ai = cp.accrued_interest(settlement_date="2025-02-01")
+        assert isinstance(ai, float)
+
+    def test_yield_to_maturity(self):
+        cp = CommercialPaper("2025-01-01", "2025-04-01", notional=2000)
+        cp.set_price(1980, settlement_date="2025-01-01")
+        ytm = cp.yield_to_maturity(price=1980, settlement_date="2025-01-01")
+        assert isinstance(ytm, float)
+
+    def test_modified_duration(self):
+        cp = CommercialPaper("2025-01-01", "2025-04-01", notional=2000)
+        cp.set_price(1980, settlement_date="2025-01-01")
+        md = cp.modified_duration(price=1980, settlement_date="2025-01-01")
+        assert isinstance(md, float)
+
+    def test_macaulay_duration(self):
+        cp = CommercialPaper("2025-01-01", "2025-04-01", notional=2000)
+        cp.set_price(1980, settlement_date="2025-01-01")
+        try:
+            mac = cp.macaulay_duration(price=1980, settlement_date="2025-01-01")
+            assert isinstance(mac, float)
+        except NotImplementedError:
+            pass
+
+    def test_convexity(self):
+        cp = CommercialPaper("2025-01-01", "2025-04-01", notional=2000)
+        cp.set_price(1980, settlement_date="2025-01-01")
+        try:
+            conv = cp.convexity(price=1980, settlement_date="2025-01-01")
+            assert isinstance(conv, float)
+        except NotImplementedError:
+            pass
+
+    def test_from_days(self):
+        cp = CommercialPaper.from_days(
+            days=90,
+            notional=2000,
+            settlement_date="2025-01-01",
+            price=1980,
+            issue_dt="2025-01-01",
+        )
+        assert cp.cpn == 0.0
+        assert cp.cpn_freq == 1
+        assert cp.notional == 2000
+        assert cp.day_count_convention.name == "actual/360"
+        assert cp.maturity == pd.to_datetime("2025-04-01")
+
     def test_invalid_inputs(self):
         # Negative notional
         with pytest.raises(
@@ -600,6 +809,55 @@ class TestCommercialPaper:
 
 
 class TestBankersAcceptance:
+    def test_accrued_interest(self):
+        ba = BankersAcceptance("2025-01-01", "2025-03-01", notional=1500)
+        ai = ba.accrued_interest(settlement_date="2025-02-01")
+        assert isinstance(ai, float)
+
+    def test_yield_to_maturity(self):
+        ba = BankersAcceptance("2025-01-01", "2025-03-01", notional=1500)
+        ba.set_price(1480, settlement_date="2025-01-01")
+        ytm = ba.yield_to_maturity(price=1480, settlement_date="2025-01-01")
+        assert isinstance(ytm, float)
+
+    def test_modified_duration(self):
+        ba = BankersAcceptance("2025-01-01", "2025-03-01", notional=1500)
+        ba.set_price(1480, settlement_date="2025-01-01")
+        md = ba.modified_duration(price=1480, settlement_date="2025-01-01")
+        assert isinstance(md, float)
+
+    def test_macaulay_duration(self):
+        ba = BankersAcceptance("2025-01-01", "2025-03-01", notional=1500)
+        ba.set_price(1480, settlement_date="2025-01-01")
+        try:
+            mac = ba.macaulay_duration(price=1480, settlement_date="2025-01-01")
+            assert isinstance(mac, float)
+        except NotImplementedError:
+            pass
+
+    def test_convexity(self):
+        ba = BankersAcceptance("2025-01-01", "2025-03-01", notional=1500)
+        ba.set_price(1480, settlement_date="2025-01-01")
+        try:
+            conv = ba.convexity(price=1480, settlement_date="2025-01-01")
+            assert isinstance(conv, float)
+        except NotImplementedError:
+            pass
+
+    def test_from_days(self):
+        ba = BankersAcceptance.from_days(
+            days=60,
+            notional=1500,
+            settlement_date="2025-01-01",
+            price=1480,
+            issue_dt="2025-01-01",
+        )
+        assert ba.cpn == 0.0
+        assert ba.cpn_freq == 1
+        assert ba.notional == 1500
+        assert ba.day_count_convention.name == "actual/360"
+        assert ba.maturity == pd.to_datetime("2025-03-02")
+
     def test_invalid_inputs(self):
         # Negative notional
         with pytest.raises(
