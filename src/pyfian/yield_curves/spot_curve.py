@@ -130,9 +130,7 @@ class SpotCurve(ZeroCouponCurve):
     def __init__(
         self,
         curve_date: pd.Timestamp,
-        bonds: Optional[
-            list[FixedRateBullet] | tuple[FixedRateBullet]
-        ] = None,  # TODO: With future custom bonds add FixedRateBullet base Class
+        bonds: Optional[list[FixedRateBullet] | tuple[FixedRateBullet]] = None,
         zero_rates: Optional[dict[float, float]] = None,
         day_count_convention: str | DayCountBase = "actual/365",
         yield_calculation_convention: Optional[str] = None,

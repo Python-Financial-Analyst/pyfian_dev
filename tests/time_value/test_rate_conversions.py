@@ -34,7 +34,10 @@ class TestRateConversions:
     # test get_time_adjustment raises value error
     def test_get_time_adjustment_raises_value_error(self):
         with pytest.raises(
-            ValueError, match=re.escape(r"Unknown yield calculation convention: bad")
+            ValueError,
+            match=re.escape(
+                r"Unknown or unsupported yield calculation convention: bad"
+            ),
         ):
             rc.get_time_adjustment("bad")
 
@@ -148,6 +151,8 @@ class TestConvertEffectiveToMMR:
         bad_convention = "BAD"
         with pytest.raises(
             ValueError,
-            match=re.escape(f"Unknown yield calculation convention: {bad_convention}"),
+            match=re.escape(
+                f"Unknown or unsupported yield calculation convention: {bad_convention}"
+            ),
         ):
             rc.convert_effective_to_mmr(0.05, bad_convention, 180, 360)

@@ -6,7 +6,11 @@ from matplotlib import pyplot as plt
 import pandas as pd
 from scipy import optimize
 
-from pyfian.utils.day_count import DayCountBase, get_day_count_convention
+from pyfian.utils.day_count import (
+    DayCountActual365,
+    DayCountBase,
+    get_day_count_convention,
+)
 from pyfian.yield_curves.base_curve import YieldCurveBase
 
 
@@ -56,24 +60,30 @@ class BaseFixedIncomeInstrument(ABC):
         following_coupons_day_count: Optional[str | DayCountBase],
         yield_calculation_convention: Optional[str],
     ) -> tuple[bool, DayCountBase, DayCountBase, str]:
-        if adjust_to_business_days is None:
-            adjust_to_business_days = self.adjust_to_business_days
-        if day_count_convention is None:
-            day_count_convention = self.day_count_convention
-        elif isinstance(day_count_convention, str):
-            day_count_convention = get_day_count_convention(day_count_convention)
-        if following_coupons_day_count is None:
-            following_coupons_day_count = self.following_coupons_day_count
-        else:
-            following_coupons_day_count = self._validate_following_coupons_day_count(
-                following_coupons_day_count
-            )
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
         else:
             yield_calculation_convention = self._validate_yield_calculation_convention(
                 yield_calculation_convention
             )
+        if adjust_to_business_days is None:
+            adjust_to_business_days = self.adjust_to_business_days
+        if yield_calculation_convention not in ["Annual", "Continuous"]:
+            if day_count_convention is None:
+                day_count_convention = self.day_count_convention
+            elif isinstance(day_count_convention, str):
+                day_count_convention = get_day_count_convention(day_count_convention)
+            if following_coupons_day_count is None:
+                following_coupons_day_count = self.following_coupons_day_count
+            else:
+                following_coupons_day_count = (
+                    self._validate_following_coupons_day_count(
+                        following_coupons_day_count
+                    )
+                )
+        else:
+            day_count_convention = DayCountActual365()
+            following_coupons_day_count = DayCountActual365()
 
         return (
             adjust_to_business_days,
@@ -224,7 +234,22 @@ class BaseFixedIncomeInstrument(ABC):
             self._yield_to_maturity is not None
             and self._settlement_date == settlement_date
         ):
-            return self._yield_to_maturity, self._price
+            if (
+                day_count_convention != self.day_count_convention
+                or yield_calculation_convention != self.yield_calculation_convention
+            ):
+                ytm = self.yield_to_maturity(
+                    price=price,
+                    settlement_date=settlement_date,
+                    adjust_to_business_days=adjust_to_business_days,
+                    following_coupons_day_count=following_coupons_day_count,
+                    yield_calculation_convention=yield_calculation_convention,
+                    day_count_convention=day_count_convention,
+                )
+            else:
+                ytm = self._yield_to_maturity
+
+            return ytm, self._price
 
         # Case 5: cannot determine, return None, None
         return None, None
@@ -1304,6 +1329,69 @@ class BaseFixedIncomeInstrument(ABC):
         )
         return round(effective_duration, 10)
 
+    def spread_effective_duration(
+        self,
+        yield_to_maturity: Optional[float] = None,
+        price: Optional[float] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+    ) -> float:
+        """
+        Calculate spread effective duration of the bond.
+
+        .. math::
+            \\text{Spread Effective Duration} = -\\frac{(P_{+} - P_{-})}{2 \\cdot \\epsilon \\cdot P}
+
+        where:
+
+        - :math:`P` is the price of the bond
+        - :math:`P_{+}` is the price if yield increases by :math:`\\epsilon`
+        - :math:`P_{-}` is the price if yield decreases by :math:`\\epsilon`
+        - :math:`\\epsilon` is a small change in yield
+
+        The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+        Parameters
+        ----------
+        yield_to_maturity : float, optional
+            Yield to maturity as a decimal. If not provided, will be calculated from price if given.
+        price : float, optional
+            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+
+        Returns
+        -------
+        duration : float
+            Effective duration in years.
+
+        Examples
+        --------
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
+        >>> bond.spread_effective_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
+        4.3760319684
+        """
+        return self.effective_duration(
+            yield_to_maturity=yield_to_maturity,
+            price=price,
+            settlement_date=settlement_date,
+            adjust_to_business_days=adjust_to_business_days,
+            day_count_convention=day_count_convention,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+        )
+
     def effective_convexity(
         self,
         yield_to_maturity: Optional[float] = None,
@@ -1393,7 +1481,7 @@ class BaseFixedIncomeInstrument(ABC):
         )
 
         # Calculate effective convexity using a small epsilon
-        epsilon = 0.0001
+        epsilon = 0.001
         price_plus_epsilon = self._price_from_yield(
             yield_to_maturity=ytm + epsilon,
             time_to_payments=time_to_payments,

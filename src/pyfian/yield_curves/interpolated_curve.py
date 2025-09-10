@@ -140,6 +140,12 @@ class InterpolatedCurve(ZeroCouponCurve):
             self.zero_rates = self._prepare_zero_rates(zero_rates)
             self.maturities = list(zero_rates.keys())
 
+        # raise error if any bond has no price
+        if bonds is not None:
+            for bond in bonds:
+                price = bond.get_price()
+                if price is None:
+                    raise ValueError("All bonds must have a price to infer zero rates.")
         self.bonds = (
             sorted(bonds, key=lambda b: b.maturity) if bonds is not None else None
         )
@@ -170,7 +176,7 @@ class InterpolatedCurve(ZeroCouponCurve):
         guess_rates = list(initial_guesses.values())
 
         # Get difference in years between curve date and max maturity, equally counting leap years
-        years_max_maturity = (max_maturity - self.curve_date).days / 365
+        years_max_maturity = (max_maturity - self.curve_date).days / 365.25
 
         # Filter maturities
         maturities_check = [m >= years_max_maturity for m in self.maturities]
@@ -180,7 +186,10 @@ class InterpolatedCurve(ZeroCouponCurve):
             first_greater_maturity = self.maturities[maturities_check.index(True)]
             maturities = [m for m in self.maturities if m <= first_greater_maturity]
         else:
-            maturities = self.maturities
+            maturities = self.maturities.copy()
+            # Add max_maturity if not already in maturities
+            while maturities[-1] < years_max_maturity:
+                maturities.append(maturities[-1] + maturities[-1] - maturities[-2])
 
         interp_func = interp1d(
             guess_maturities, guess_rates, bounds_error=False, fill_value="extrapolate"
@@ -203,19 +212,14 @@ class InterpolatedCurve(ZeroCouponCurve):
 
             total_error = 0.0
             for bond in bonds:
-                try:
-                    price = bond.get_price()
-                    if price is None:
-                        continue
-                    npv, present_values = bond.value_with_curve(test_curve, price=price)
-                    print(
-                        f"Maturity Date: {bond.maturity}, Bond Price: {price}, NPV: {npv}, PV: {npv + price}"
-                    )
-                    total_error += (npv) ** 2 * (
-                        60 / (len(present_values) - 1)
-                    ) ** 0.5  # Weight by number of rates
-                except Exception:
-                    continue
+                price = bond.get_price()
+                npv, present_values = bond.value_with_curve(test_curve, price=price)
+                # print(
+                #     f"Maturity Date: {bond.maturity}, Bond Price: {price}, NPV: {npv}, PV: {npv + price}"
+                # )
+                total_error += (npv) ** 2 * (
+                    60 / (len(present_values) - 1)
+                ) ** 0.5  # Weight by number of rates
             # print(f"Total Error: {total_error**.5 * 1e3}")
             return total_error**0.5  # Scale to avoid very small numbers
 
@@ -229,10 +233,13 @@ class InterpolatedCurve(ZeroCouponCurve):
         )
         # zero_rates_array = result.x
         if not result.success:
-            raise ValueError("Optimization failed to find a valid solution.")
+            raise ValueError(
+                "Optimization failed to find a valid solution."
+            )  # pragma: no cover
 
         # Update the zero rates with the optimized values
         self.zero_rates = {m: r for m, r in zip(maturities, result.x)}
+        self.maturities = maturities
 
     def __repr__(self):
         return f"InterpolatedCurve(maturities={self.maturities}, zero_rates={self.zero_rates}, curve_date={self.curve_date.strftime('%Y-%m-%d')})"

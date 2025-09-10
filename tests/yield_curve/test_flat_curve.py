@@ -47,7 +47,8 @@ class TestFlatCurveLog:
 
     def test_get_rate_invalid(self):
         with pytest.raises(
-            ValueError, match="Unknown yield calculation convention: Unknown"
+            ValueError,
+            match="Unknown or unsupported yield calculation convention: Unknown",
         ):
             self.curve.get_rate(1, yield_calculation_convention="Unknown")
 
@@ -76,7 +77,8 @@ class TestFlatCurveLog:
 
     def test_date_rate_invalid(self):
         with pytest.raises(
-            ValueError, match="Unknown yield calculation convention: Unknown"
+            ValueError,
+            match="Unknown or unsupported yield calculation convention: Unknown",
         ):
             self.curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
 
@@ -210,7 +212,8 @@ class TestFlatCurveAER:
 
     def test_get_rate_invalid(self):
         with pytest.raises(
-            ValueError, match="Unknown yield calculation convention: Unknown"
+            ValueError,
+            match="Unknown or unsupported yield calculation convention: Unknown",
         ):
             self.curve.get_rate(1, yield_calculation_convention="Unknown")
 
@@ -231,7 +234,8 @@ class TestFlatCurveAER:
 
     def test_date_rate_invalid(self):
         with pytest.raises(
-            ValueError, match="Unknown yield calculation convention: Unknown"
+            ValueError,
+            match="Unknown or unsupported yield calculation convention: Unknown",
         ):
             self.curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
 
@@ -397,7 +401,8 @@ class TestFlatCurveBEY:
 
     def test_get_rate_invalid(self):
         with pytest.raises(
-            ValueError, match="Unknown yield calculation convention: Unknown"
+            ValueError,
+            match="Unknown or unsupported yield calculation convention: Unknown",
         ):
             self.curve.get_rate(1, yield_calculation_convention="Unknown")
 
@@ -419,7 +424,8 @@ class TestFlatCurveBEY:
 
     def test_date_rate_invalid(self):
         with pytest.raises(
-            ValueError, match="Unknown yield calculation convention: Unknown"
+            ValueError,
+            match="Unknown or unsupported yield calculation convention: Unknown",
         ):
             self.curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
 

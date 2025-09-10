@@ -28,7 +28,7 @@ np.float64(0.050630241)
 >>> curve_log.get_rate(1, yield_calculation_convention="Unknown")
 Traceback (most recent call last):
     ...
-ValueError: Unknown yield calculation convention: Unknown
+ValueError: Unknown or unsupported yield calculation convention: Unknown
 
 >>> curve_aer = FlatCurveAER(0.05, "2020-01-01")
 >>> curve_aer.discount_t(1)
@@ -44,7 +44,7 @@ np.float64(0.0487901642)
 >>> curve_aer.get_rate(1, yield_calculation_convention="Unknown")
 Traceback (most recent call last):
     ...
-ValueError: Unknown yield calculation convention: Unknown
+ValueError: Unknown or unsupported yield calculation convention: Unknown
 
 >>> curve_bey = FlatCurveBEY(0.05, "2020-01-01")
 >>> curve_bey.discount_t(1)
@@ -60,7 +60,7 @@ np.float64(0.0493852252)
 >>> curve_bey.get_rate(1, yield_calculation_convention="Unknown")
 Traceback (most recent call last):
     ...
-ValueError: Unknown yield calculation convention: Unknown
+ValueError: Unknown or unsupported yield calculation convention: Unknown
 """
 
 from typing import Optional, Union
@@ -274,7 +274,7 @@ class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
         >>> curve.get_rate(1, yield_calculation_convention="Unknown")
         Traceback (most recent call last):
             ...
-        ValueError: Unknown yield calculation convention: Unknown
+        ValueError: Unknown or unsupported yield calculation convention: Unknown
         """
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
@@ -331,7 +331,7 @@ class FlatCurveLog(YieldCurvePlotMixin, YieldCurveBase):
         >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
         Traceback (most recent call last):
             ...
-        ValueError: Unknown yield calculation convention: Unknown
+        ValueError: Unknown or unsupported yield calculation convention: Unknown
         """
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
@@ -546,7 +546,7 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
         >>> curve.get_rate(1, yield_calculation_convention="Unknown")
         Traceback (most recent call last):
             ...
-        ValueError: Unknown yield calculation convention: Unknown
+        ValueError: Unknown or unsupported yield calculation convention: Unknown
         """
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
@@ -600,7 +600,7 @@ class FlatCurveAER(YieldCurvePlotMixin, YieldCurveBase):
         >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
         Traceback (most recent call last):
             ...
-        ValueError: Unknown yield calculation convention: Unknown
+        ValueError: Unknown or unsupported yield calculation convention: Unknown
         """
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
@@ -817,7 +817,7 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
         >>> curve.get_rate(1, yield_calculation_convention="Unknown")
         Traceback (most recent call last):
             ...
-        ValueError: Unknown yield calculation convention: Unknown
+        ValueError: Unknown or unsupported yield calculation convention: Unknown
         """
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
@@ -869,7 +869,7 @@ class FlatCurveBEY(YieldCurvePlotMixin, YieldCurveBase):
         >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
         Traceback (most recent call last):
             ...
-        ValueError: Unknown yield calculation convention: Unknown
+        ValueError: Unknown or unsupported yield calculation convention: Unknown
         """
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention

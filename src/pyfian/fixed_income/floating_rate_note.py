@@ -1,13 +1,12 @@
 """
-bond.py
+floating_rate_note.py
 
-Module for fixed income bond analytics, including FixedRateBullet class for payment flows,
-valuation, and yield calculations.
+Module for fixed income floating rate note analytics, including FloatingRateNote class for payment flows,
+valuation, and yield calculations. Adapted from FixedRateBullet.
 """
 
 from collections import defaultdict
 from typing import Optional, Union
-
 import numpy as np
 import pandas as pd
 from dateutil.relativedelta import relativedelta  # type: ignore
@@ -20,107 +19,15 @@ from pyfian.utils.day_count import DayCountBase, get_day_count_convention
 from pyfian.yield_curves.base_curve import YieldCurveBase
 
 
-class FixedRateBullet(BaseFixedIncomeInstrument):
-    """
-    FixedRateBullet represents a bullet bond with fixed coupon payments and principal at maturity.
-    It allows for payment flow generation, valuation, yield calculations, and other bond analytics.
-
-    Parameters
-    ----------
-    issue_dt : str or datetime-like
-        Issue date of the bond.
-    maturity : str or datetime-like
-        Maturity date of the bond.
-    cpn : float
-        Annual coupon rate (percentage).
-    cpn_freq : int
-        Number of coupon payments per year.
-    notional : float, optional
-        Face value (principal) of the bond. Defaults to 100.
-    settlement_convention_t_plus : int, optional
-        Settlement convention. How many days after trade date the payment is made, e.g., T+1.
-        Defaults to 1.
-    record_date_t_minus : int, optional
-        Record date convention. How many days before the coupon payment is made to receive it.
-        If 1, you receive the payment if you had settled the trade 1 day before coupon payment.
-        Defaults to 1.
-    settlement_date : str or datetime-like, optional
-        Settlement date for the bond. Defaults to None.
-    yield_to_maturity : float, optional
-        Yield to maturity of the bond. Set in decimal, e.g., 0.05 for 5%. Defaults to None.
-    price : float, optional
-        Market price of the bond. Defaults to None.
-    adjust_to_business_days : bool, optional
-        Whether to adjust dates to business days. Defaults to False.
-    day_count_convention : str, optional
-        Day count convention for the bond. Defaults to 'actual/actual-Bond'.
-        It is used to calculate the day count fraction for accrued interests and time to payments.
-        Supported conventions: '30/360', '30e/360', 'actual/actual', 'actual/360', 'actual/365', '30/365', 'actual/actual-Bond'.
-    following_coupons_day_count : str, optional
-        Day count convention for the following coupons. Defaults to '30/360', to match the common convention for bonds.
-        Convention "actual/365" might be the more relevant for Effective Annual Yield or Continuous Compounding.
-    yield_calculation_convention : str, optional
-        Yield convention for the bond yield calculation. By default, it is "BEY" (Bond Equivalent Yield).
-        Other options are "Annual" or "Continuous".
-
-    Raises
-    ------
-    ValueError
-        If any of the input parameters are invalid.
-
-    Attributes
-    ----------
-    issue_dt : pd.Timestamp
-        Issue date of the bond.
-    maturity : pd.Timestamp
-        Maturity date of the bond.
-    cpn : float
-        Annual coupon rate (percentage).
-    cpn_freq : int
-        Number of coupon payments per year.
-    notional : float
-        Face value (principal) of the bond.
-    settlement_convention_t_plus : int
-        Settlement convention (T+).
-    record_date_t_minus : int
-        Record date convention (T-).
-    settlement_date : pd.Timestamp
-        Settlement date for the bond.
-    yield_to_maturity : float
-        Yield to maturity of the bond.
-    price : float
-        Market price of the bond.
-    payment_flow : dict[pd.Timestamp, float]
-        Payment flow schedule for the bond.
-    coupon_flow : dict[pd.Timestamp, float]
-        Coupon payment schedule for the bond.
-    amortization_flow : dict[pd.Timestamp, float]
-        Amortization payment schedule for the bond.
-    adjust_to_business_days : bool
-        Whether to adjust dates to business days by default.
-        If True, dates will be adjusted to the nearest business day.
-    day_count_convention : DayCountBase
-        Day count convention function for the bond.
-    following_coupons_day_count : DayCountBase
-        Day count convention for the following coupons. Defaults to '30/360', to match the common convention for bonds.
-        Convention "actual/365" might be the more relevant for Effective Annual Yield or Continuous Compounding.
-    yield_calculation_convention : str
-        Yield convention for the bond yield calculation. By default, it is "BEY" (Bond Equivalent Yield).
-        Other options are "Annual" or "Continuous".
-
-    Examples
-    --------
-    >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1, notional=1000)
-    >>> bond.payment_flow # doctest: +SKIP
-    {Timestamp('2025-01-01 00:00:00'): 1050.0, Timestamp('2024-01-01 00:00:00'): 50.0, ...}
-    """
-
+class FloatingRateNote(BaseFixedIncomeInstrument):
     def __init__(
         self,
         issue_dt: Union[str, pd.Timestamp],
         maturity: Union[str, pd.Timestamp],
-        cpn: float,
-        cpn_freq: int,
+        ref_rate_curve: Optional[YieldCurveBase] = None,
+        current_ref_rate: Optional[float] = None,
+        quoted_margin: float = 0.0,
+        cpn_freq: int = 1,
         notional: float = 100,
         settlement_convention_t_plus: int = 1,
         record_date_t_minus: int = 1,
@@ -132,78 +39,41 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         following_coupons_day_count: str | DayCountBase = "30/360",
         yield_calculation_convention: str = "BEY",
     ) -> None:
-        # Input validation
-        if cpn_freq < 0:
-            raise ValueError("Coupon frequency must be greater or equal to zero.")
-        # If coupon is positive, the coupon frequency must be greater than 0
-        if cpn > 0 and cpn_freq <= 0:
-            raise ValueError(
-                "Coupon frequency must be greater than zero for positive coupons."
-            )
-
-        if notional < 0:
-            raise ValueError("Notional (face value) cannot be negative.")
-        if cpn < 0:
-            raise ValueError("Coupon rate cannot be negative.")
-        if settlement_convention_t_plus < 0:
-            raise ValueError("Settlement convention (T+) cannot be negative.")
-        if record_date_t_minus < 0:
-            raise ValueError("Record date (T-) cannot be negative.")
-
-        # Convert dates for validation
-        _issue_dt = pd.to_datetime(issue_dt)
-        _maturity = pd.to_datetime(maturity)
-        if _maturity < _issue_dt:
-            raise ValueError("Maturity date cannot be before issue date.")
-        if settlement_date is not None:
-            _settlement_date = pd.to_datetime(settlement_date)
-            if _settlement_date < _issue_dt:
-                raise ValueError("Settlement date cannot be before issue date.")
-            if _settlement_date > _maturity:
-                raise ValueError("Settlement date cannot be after maturity date.")
-
         self.issue_dt: pd.Timestamp = pd.to_datetime(issue_dt)
         self.maturity: pd.Timestamp = pd.to_datetime(maturity)
-        self.cpn: float = cpn
-        self.cpn_freq: int = cpn_freq
-        self.notional: float = notional
-        self.settlement_convention_t_plus: int = settlement_convention_t_plus
-        self.record_date_t_minus: int = record_date_t_minus
-
-        # Raise if day_count_convention is neither str nor DayCountBase
+        self.ref_rate_curve = ref_rate_curve
+        self.current_ref_rate = current_ref_rate
+        self.quoted_margin = quoted_margin / 10000  # Convert from bps to decimal
+        self.cpn_freq = cpn_freq
+        self.notional = notional
+        self.settlement_convention_t_plus = settlement_convention_t_plus
+        self.record_date_t_minus = record_date_t_minus
         if not isinstance(day_count_convention, (str, DayCountBase)):
             raise TypeError(
                 "day_count_convention must be either a string or a DayCountBase instance."
             )
-
-        # Initialize day count convention, defaulting to 'actual/actual-Bond'
         self.day_count_convention: DayCountBase = (
             get_day_count_convention(day_count_convention)
             if isinstance(day_count_convention, str)
             else day_count_convention
         )
         self.adjust_to_business_days: bool = adjust_to_business_days
-
         self._validate_following_coupons_day_count(following_coupons_day_count)
         self.following_coupons_day_count: DayCountBase = (
             get_day_count_convention(following_coupons_day_count)
             if isinstance(following_coupons_day_count, str)
             else following_coupons_day_count
         )
-
         self.yield_calculation_convention: str = (
             self._validate_yield_calculation_convention(yield_calculation_convention)
         )
-
-        dict_payments, dict_coupons, dict_amortization = self.make_payment_flow()
+        dict_payments, dict_spreads, dict_amortization = self.make_payment_flow()
         self.payment_flow: dict[pd.Timestamp, float] = dict_payments
-        self.coupon_flow: dict[pd.Timestamp, float] = dict_coupons
+        self.coupon_flow: dict[pd.Timestamp, float] = dict_spreads
+        self.spread_flow: dict[pd.Timestamp, float] = dict_spreads
         self.amortization_flow: dict[pd.Timestamp, float] = dict_amortization
-
-        # Initialize settlement date, yield to maturity, and bond price
         self._settlement_date: Optional[pd.Timestamp] = None
         self._validate_price(price=price)
-
         if settlement_date is not None:
             self.set_settlement_date(
                 settlement_date,
@@ -212,9 +82,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
                 following_coupons_day_count=following_coupons_day_count,
                 yield_calculation_convention=yield_calculation_convention,
             )
-
         if yield_to_maturity is not None:
-            # Throw error if yield_to_maturity is not None and settlement_date is None
             if self._settlement_date is None:
                 raise ValueError(
                     "Settlement date must be set if yield to maturity is set."
@@ -229,21 +97,9 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
             )
         else:
             self._yield_to_maturity: Optional[float] = None
-
         if price is not None:
-            # Throw error if price is not None and settlement_date is None
             if self._settlement_date is None:
                 raise ValueError("Settlement date must be set if price is set.")
-            if yield_to_maturity is not None:
-                # Check if self._price is approximately equal to the price, else raise ValueError
-                if (
-                    getattr(self, "_price", None) is not None
-                    and abs(self._price - price) / self._price > 1e-5
-                ):
-                    raise ValueError(
-                        "Bond price calculated by yield to maturity does not match the current bond price."
-                        f" (calculated: {self._price}, given: {price})"
-                    )
             self.set_price(
                 price,
                 settlement_date,
@@ -252,16 +108,11 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
                 yield_calculation_convention=yield_calculation_convention,
             )
         elif yield_to_maturity is None:
-            # If neither yield_to_maturity nor price is set, set bond price to None
             self._price: Optional[float] = None
 
     def _validate_yield_calculation_convention(
         self, yield_calculation_convention: str
     ) -> str:
-        """
-        Validate the yield calculation convention.
-        Raises ValueError if the convention is not supported.
-        """
         valid_conventions_dict = {
             "bey": "BEY",
             "annual": "Annual",
@@ -270,7 +121,6 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
             "bey-m": "BEY-M",
             "bey-s": "BEY",
         }
-
         if yield_calculation_convention.lower() not in valid_conventions_dict:
             raise ValueError(
                 f"Unsupported yield calculation convention: {yield_calculation_convention}. "
@@ -288,7 +138,6 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         valid_conventions = ["30/360", "30e/360", "actual/360", "actual/365", "30/365"]
         if isinstance(following_coupons_day_count, DayCountBase):
             following_coupons_day_count_name = following_coupons_day_count.name
-            following_coupons_day_count = following_coupons_day_count
         else:
             following_coupons_day_count_name = following_coupons_day_count
             following_coupons_day_count = get_day_count_convention(
@@ -311,15 +160,15 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         Returns a tuple of dictionaries:
 
         * dict_payments: Payment dates as keys and cash flow amounts as values.
-        * dict_coupons: Coupon payment dates as keys and coupon amounts as values.
+        * dict_spreads: Spread payment dates as keys and spread amounts as values.
         * dict_amortization: Amortization payment dates as keys and amortization amounts as values.
 
         Returns
         -------
         dict_payments : dict
             Dictionary with payment dates as keys and cash flow amounts as values.
-        dict_coupons : dict
-            Dictionary with coupon payment dates as keys and coupon amounts as values.
+        dict_spreads : dict
+            Dictionary with spread payment dates as keys and spread amounts as values.
         dict_amortization : dict
             Dictionary with amortization payment dates as keys and amortization amounts as values.
 
@@ -334,42 +183,40 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         >>> bond.make_payment_flow() # doctest: +SKIP
         {Timestamp('2025-01-01 00:00:00'): 1050.0, Timestamp('2024-01-01 00:00:00'): 50.0, ...}
         """
-        issue_dt, maturity, cpn, cpn_freq, notional = (
+        issue_dt, maturity, spread, cpn_freq, notional = (
             self.issue_dt,
             self.maturity,
-            self.cpn,
+            self.quoted_margin,
             self.cpn_freq,
             self.notional,
         )
         dict_payments = {}
-        dict_coupons = {}
+        dict_spreads = {}
         dict_amortization = {}
 
-        # Final payment: principal + last coupon
-        last_coupon = (cpn / cpn_freq) * notional / 100 if cpn != 0 else 0
-        dict_payments[maturity] = notional + last_coupon
+        # Final payment: principal + last spread
+        last_spread = (spread) * notional
+
         dict_amortization[maturity] = notional
+        dict_payments[maturity] = notional + last_spread
 
-        if cpn != 0:
-            dict_coupons[maturity] = last_coupon
-            next_date_processed = maturity - relativedelta(months=12 // cpn_freq)
+        dict_spreads[maturity] = last_spread
+        next_date_processed = maturity - relativedelta(months=12 // cpn_freq)
 
-            for i in range(2, ((maturity - issue_dt) / 365).days * cpn_freq + 3):
-                if (next_date_processed - issue_dt).days < (365 * 0.99) // cpn_freq:
-                    break
-                coupon = (cpn / cpn_freq) * notional / 100
-                dict_payments[next_date_processed] = coupon
-                dict_coupons[next_date_processed] = coupon
-                dict_amortization[next_date_processed] = 0.0
-                next_date_processed = maturity - relativedelta(
-                    months=12 // cpn_freq * i
-                )
+        for i in range(2, ((maturity - issue_dt) / 365).days * cpn_freq + 3):
+            if (next_date_processed - issue_dt).days < (365 * 0.99) // cpn_freq:
+                break
+            coupon_spread = (spread) * notional
+            dict_payments[next_date_processed] = coupon_spread
+            dict_spreads[next_date_processed] = coupon_spread
+            dict_amortization[next_date_processed] = 0.0
+            next_date_processed = maturity - relativedelta(months=12 // cpn_freq * i)
 
         # Sort the payment dates
         dict_payments = dict(sorted(dict_payments.items()))
-        dict_coupons = dict(sorted(dict_coupons.items()))
+        dict_spreads = dict(sorted(dict_spreads.items()))
         dict_amortization = dict(sorted(dict_amortization.items()))
-        return dict_payments, dict_coupons, dict_amortization
+        return dict_payments, dict_spreads, dict_amortization
 
     def _calculate_time_to_payments(
         self,
@@ -379,12 +226,15 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         following_coupons_day_count,
         yield_calculation_convention,
         day_count_convention,
+        payment_flow: Optional[dict[pd.Timestamp, float]] = None,
     ) -> dict[float, float]:
         """Calculate the time to each payment from the settlement date."""
+        if payment_flow is None:
+            payment_flow = self.payment_flow
         flows = self._filter_payment_flow(
             settlement_date,
             price,
-            payment_flow=self.payment_flow,
+            payment_flow=payment_flow,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -399,14 +249,15 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
         time_to_payments_keys = sorted(flows.keys())
         first_non_negative_key = next(
-            (key for key in time_to_payments_keys if flows[key] > 0), None
+            (key for key in time_to_payments_keys if key > time_to_payments_keys[0]),
+            None,
         )
 
         time_to_first_non_negative_key = day_count_convention.fraction_period_adjusted(
             start=start,
             current=settlement_date,
             end=first_non_negative_key,
-            periods_per_year=self.cpn_freq if self.cpn_freq > 0 else 1,
+            periods_per_year=self.cpn_freq,
         )
 
         times: defaultdict[float, float] = defaultdict(float)
@@ -427,6 +278,108 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
             times[times_key] += flows[key]
 
         return dict(times)
+
+    def make_expected_coupon_flow(
+        self,
+        current_ref_rate: Optional[float] = None,
+        ref_rate_curve: Optional[YieldCurveBase] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        #    adjust_to_business_days: Optional[bool] = None,
+        #    day_count_convention: Optional[str | DayCountBase] = None,
+        #    following_coupons_day_count: Optional[str | DayCountBase] = None,
+        #    yield_calculation_convention: Optional[str] = None,
+    ) -> dict[pd.Timestamp, float]:
+        """
+        Generate the expected coupon payment flow (cash flows) for the bond from the settlement date onwards.
+        Uses the reference rate curve to estimate future reference rates for coupon calculations.
+
+        Parameters
+        ----------
+        current_ref_rate : float, optional
+            Current reference rate as a decimal. If not provided, will use self.current_ref_rate.
+        ref_rate_curve : YieldCurveBase, optional
+            Reference rate curve to use for estimating future rates. If not provided, will use self.ref_rate_curve.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+
+        Returns
+        -------
+        expected_coupon_flow : dict
+            Dictionary with coupon payment dates as keys and cash flow amounts as values.
+
+        Examples
+        --------
+        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', ref_rate_curve, current_ref_rate=0.02, quoted_margin=50, cpn_freq=2)
+        >>> bond.make_real_payment_flow(settlement_date='2022-01-01') # doctest: +SKIP
+        {Timestamp('2022-07-01 00:00:00'): 1.25, Timestamp('2023-01-01 00:00:00'): 1.25, ...}
+        """
+        settlement_date = self._resolve_settlement_date(settlement_date)
+
+        # One reference curve must be provided
+        if ref_rate_curve is None:
+            if self.ref_rate_curve is None:
+                raise ValueError(
+                    "Either ref_rate_curve or self.ref_rate_curve must be provided."
+                )
+            else:
+                ref_rate_curve = self.ref_rate_curve
+
+        # settlement date must be the same as the curve date
+        if settlement_date != ref_rate_curve.curve_date:
+            raise ValueError(
+                "Settlement date must be the same as the curve date of the reference rate curve."
+            )
+
+        expected_coupon_flow = self.spread_flow.copy()
+
+        # filter only expected payments after settlement date
+        expected_coupon_flow = {
+            date: spread
+            for date, spread in expected_coupon_flow.items()
+            if date > settlement_date
+        }
+
+        if current_ref_rate is None:
+            if self.current_ref_rate is None:
+                # extract the current reference rate from the curve at the settlement date
+                if self.issue_dt == settlement_date:
+                    current_ref_rate = ref_rate_curve.forward_dates(
+                        start_date=settlement_date,
+                        end_date=next(iter(expected_coupon_flow)),
+                    )
+                    current_ref_rate = rc.effective_to_nominal_periods(
+                        current_ref_rate, periods_per_year=self.cpn_freq
+                    )
+                else:
+                    raise ValueError(
+                        "Either current_ref_rate or self.current_ref_rate must be provided if issue_dt is not equal to settlement_date."
+                    )
+            else:
+                current_ref_rate = self.current_ref_rate
+
+        last_date = settlement_date
+        # Adjust expected coupon flow using reference rate curve and current reference rate
+        for i, (date, spread) in enumerate(expected_coupon_flow.items()):
+            if i == 0:
+                expected_coupon_flow[date] = (
+                    spread + (current_ref_rate / self.cpn_freq * self.notional)
+                    if self.cpn_freq > 0
+                    else 0
+                )
+            else:
+                # Adjust the spread using the forward rate and current reference rate
+                new_current_ref_rate = ref_rate_curve.forward_dates(last_date, date)
+                new_current_ref_rate = rc.effective_to_nominal_periods(
+                    new_current_ref_rate, periods_per_year=self.cpn_freq
+                )
+                expected_coupon_flow[date] = (
+                    spread + (new_current_ref_rate / self.cpn_freq * self.notional)
+                    if self.cpn_freq > 0
+                    else 0
+                )
+            last_date = date
+
+        return expected_coupon_flow
 
     def value_with_curve(
         self,
@@ -544,12 +497,14 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
     def yield_to_maturity(
         self,
-        price: Optional[float] = None,
+        price: float,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
         following_coupons_day_count: Optional[str | DayCountBase] = None,
         yield_calculation_convention: Optional[str] = None,
+        current_ref_rate: Optional[float] = None,
+        ref_rate_curve: Optional[YieldCurveBase] = None,
         tol: Optional[float] = 1e-6,
         max_iter: Optional[int] = 100,
     ) -> float:
@@ -576,8 +531,8 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
         Parameters
         ----------
-        price : float, optional
-            Price of the bond. If not provided, will use self.price if set.
+        price : float
+            Price of the bond.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
         adjust_to_business_days : bool, optional
@@ -605,7 +560,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.yield_to_maturity(price=95)
         np.float64(0.06100197251858131)
         """
@@ -613,12 +568,6 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
             tol = 1e-6
         if max_iter is None:
             max_iter = 100
-        if price is None:
-            if self._price is None:
-                raise ValueError(
-                    "Bond price must be set to calculate yield to maturity."
-                )
-            price = self._price
         # Prepare cash flows and dates
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -632,15 +581,37 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
             following_coupons_day_count,
             yield_calculation_convention,
         )
+        # times_cashflows = self._calculate_time_to_payments(
+        #     settlement_date,
+        #     price,
+        #     adjust_to_business_days=adjust_to_business_days,
+        #     following_coupons_day_count=following_coupons_day_count,
+        #     yield_calculation_convention=yield_calculation_convention,
+        #     day_count_convention=day_count_convention,
+        # )
+        dated_payment_flow = self.make_expected_coupon_flow(
+            settlement_date=settlement_date,
+            ref_rate_curve=ref_rate_curve,
+            current_ref_rate=current_ref_rate,
+        )
+        dated_payment_flow[
+            settlement_date
+        ] = -price  # Initial cash flow (negative for purchase)
+        for dt, amt in self.amortization_flow.items():
+            if dt in dated_payment_flow:
+                dated_payment_flow[dt] += amt
+            else:
+                dated_payment_flow[dt] = amt
+
         times_cashflows = self._calculate_time_to_payments(
-            settlement_date,
-            price,
+            settlement_date=settlement_date,
+            price=price,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
             day_count_convention=day_count_convention,
+            payment_flow=dated_payment_flow,
         )
-
         times = list(times_cashflows.keys())
         payment_flow = list(times_cashflows.values())
 
@@ -648,7 +619,11 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
         # Multiply all times by the coupon frequency to convert to BEY
         times = [t * time_adjustment for t in times]
-        initial_guess = self.cpn / 100 / time_adjustment if self.cpn > 0 else 0.05
+        initial_guess = (
+            self.quoted_margin / 100 / time_adjustment
+            if self.quoted_margin > 0
+            else 0.05
+        )
 
         # Use xirr to calculate YTM
         result = xirr_base(
@@ -679,7 +654,6 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
     ) -> float:
         """
         Calculate modified duration of the bond.
-
 
         .. math::
             Modified Duration = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t}{(1 + YTM)^{(t+1)}} \\cdot t
@@ -771,68 +745,6 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
                 ]
             )
         return round(duration / price_calc if price_calc != 0 else 0.0, 10)
-
-    def spread_duration(
-        self,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-    ) -> float:
-        """
-        Calculate spread duration of the bond. In the case of a fixed income bond without embedded options, this is equivalent to modified duration.
-
-        .. math::
-            Spread Duration = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t}{(1 + YTM)^{(t+1)}} \\cdot t
-        where:
-
-        - :math:`P` is the price of the bond
-        - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date
-        - :math:`YTM` is the yield to maturity
-        - :math:`T` is the total number of periods
-
-        The times to payments are calculated from the settlement date to each payment date and need not be integer values.
-
-        Parameters
-        ----------
-        yield_to_maturity : float, optional
-            Yield to maturity as a decimal. If not provided, will be calculated from price if given.
-        price : float, optional
-            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
-        settlement_date : str or datetime-like, optional
-            Settlement date. Defaults to issue date.
-        adjust_to_business_days : bool, optional
-            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
-        day_count_convention : str or DayCountBase, optional
-            Day count convention. Defaults to value of self.day_count_convention.
-        following_coupons_day_count : str or DayCountBase, optional
-            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
-        yield_calculation_convention : str, optional
-            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
-
-        Returns
-        -------
-        duration : float
-            Modified duration in years.
-
-        Examples
-        --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
-        >>> bond.spread_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
-        4.3760319684
-        """
-        return self.modified_duration(
-            price=price,
-            yield_to_maturity=yield_to_maturity,
-            settlement_date=settlement_date,
-            adjust_to_business_days=adjust_to_business_days,
-            day_count_convention=day_count_convention,
-            following_coupons_day_count=following_coupons_day_count,
-            yield_calculation_convention=yield_calculation_convention,
-        )
 
     def macaulay_duration(
         self,
@@ -926,17 +838,12 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
                 "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
-        if yield_calculation_convention == "Continuous":
-            duration = sum(
-                [t * cf * np.exp(-ytm * t) for t, cf in time_to_payments.items()]
-            )
-        else:
-            duration = sum(
-                [
-                    t * cf / (1 + ytm / time_adjustment) ** (t * time_adjustment)
-                    for t, cf in time_to_payments.items()
-                ]
-            )
+        duration = sum(
+            [
+                t * cf / (1 + ytm / time_adjustment) ** (t * time_adjustment)
+                for t, cf in time_to_payments.items()
+            ]
+        )
         return round(duration / price_calc if price_calc != 0 else 0.0, 10)
 
     def convexity(
@@ -1094,12 +1001,18 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
 
-        if self.cpn_freq == 0 or self.cpn == 0:
+        if self.cpn_freq == 0 or self.current_ref_rate is None:
             return 0.0
+        if self.current_ref_rate is None:
+            raise ValueError(
+                "Current reference rate must be provided to calculate accrued interest."
+            )
 
         prev_coupon: pd.Timestamp = self.previous_coupon_date(settlement_date)
         next_coupon: pd.Timestamp = self.next_coupon_date(settlement_date)
-        coupon = (self.cpn) * self.notional / 100
+
+        self.current_ref_rate
+        coupon = (self.current_ref_rate + self.quoted_margin) * self.notional / 100
 
         # If before first coupon, accrue from issue date
         if prev_coupon is None and next_coupon is not None:
@@ -1205,13 +1118,13 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', 100, 2)
         >>> print(bond)
-        FixedRateBullet(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, cpn=5, cpn_freq=1)
+        FloatingRateNote(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, quoted_margin=100, cpn_freq=2)
         """
         return (
-            f"FixedRateBullet(issue_dt={self.issue_dt}, maturity={self.maturity}, "
-            f"cpn={self.cpn}, cpn_freq={self.cpn_freq})"
+            f"FloatingRateNote(issue_dt={self.issue_dt}, maturity={self.maturity}, "
+            f"quoted_margin={self.quoted_margin}, cpn_freq={self.cpn_freq})"
         )
 
     def _price_from_yield(
@@ -1278,3 +1191,61 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
             yield_to_maturity,
             yield_calculation_convention=yield_calculation_convention,
         )
+
+
+if __name__ == "__main__":
+    from pyfian.yield_curves.par_curve import ParCurve
+
+    # Example usage
+    # Par rates for different periods
+    # 1-month	 4.49
+    # 3-month	 4.32
+    # 6-month	 4.14
+    # 1-year	 3.95
+    # 2-year	 3.79
+    # 3-year	 3.75
+    # 5-year	 3.86
+    # 7-year	 4.07
+    # 10-year	 4.33
+    # 20-year	 4.89
+    # 30-year	 4.92
+    # Make dict of t and rates instances for each bond
+    list_maturities_rates = [
+        (pd.DateOffset(months=1), 4.49),
+        (pd.DateOffset(months=3), 4.32),
+        (pd.DateOffset(months=6), 4.14),
+        (pd.DateOffset(years=1), 3.95),
+        (pd.DateOffset(years=2), 3.79),
+        (pd.DateOffset(years=3), 3.75),
+        (pd.DateOffset(years=5), 3.86),
+        (pd.DateOffset(years=7), 4.07),
+        (pd.DateOffset(years=10), 4.33),
+        (pd.DateOffset(years=20), 4.89),
+        (pd.DateOffset(years=30), 4.92),
+    ]
+    date = pd.Timestamp("2020-08-01")
+    one_year_offset = date + pd.DateOffset(years=1)
+    par_rates = {}
+
+    for offset, cpn in list_maturities_rates:
+        not_zero_coupon = date + offset > one_year_offset
+
+        bond = {
+            "cpn_freq": 2 if not_zero_coupon else 0,
+            "cpn": cpn if not_zero_coupon else 0,
+            "price": 100 if not_zero_coupon else None,
+            "yield_to_maturity": None if not_zero_coupon else cpn / 100,
+        }
+        # self = bond
+        par_rates[offset] = bond
+    ref_rate_curve = ParCurve(curve_date="2020-08-01", par_rates=par_rates)
+
+    floating_rate_note = FloatingRateNote(
+        issue_dt="2020-01-01",
+        maturity="2025-01-01",
+        quoted_margin=100,
+        cpn_freq=2,
+        ref_rate_curve=ref_rate_curve,
+        current_ref_rate=0.04,
+    )
+    floating_rate_note.yield_to_maturity(price=100, settlement_date="2020-08-01")

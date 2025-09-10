@@ -1,5 +1,6 @@
 import warnings
 import matplotlib
+import numpy as np
 import pytest
 from pyfian.fixed_income.money_market_instruments import (
     MoneyMarketInstrument,
@@ -36,6 +37,71 @@ class TestMoneyMarketInstrument:
         ytm = mmi.yield_to_maturity(price=98, settlement_date="2025-01-01")
         assert isinstance(ytm, float)
 
+    # test yield_to_maturity for continuous compounding
+    def test_yield_to_maturity_continuous(self):
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+            price=98,
+            yield_calculation_convention="Continuous",
+        )
+        ytm = mmi.yield_to_maturity()
+        assert isinstance(ytm, float)
+        ytm_expected = -np.log(98 / 100) / (
+            (mmi.maturity - mmi._settlement_date).days / 365
+        )
+        assert np.isclose(ytm, ytm_expected)
+
+    # test yield_to_maturity for bey
+    def test_yield_to_maturity_bey(self):
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+            price=98,
+            yield_calculation_convention="Annual",
+        )
+        ytm = mmi.yield_to_maturity(yield_calculation_convention="BEY")
+        assert isinstance(ytm, float)
+        ytm_expected = (
+            (100 - 98) / 98 * (365 / (mmi.maturity - mmi._settlement_date).days)
+        )
+        assert np.isclose(ytm, ytm_expected)
+
+    # test calling yield_to_maturity with unknwon yield_calculation_convention
+    def test_yield_to_maturity_invalid_convention(self):
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+            price=98,
+        )
+        with pytest.raises(
+            ValueError, match="Unsupported yield calculation convention"
+        ):
+            mmi.yield_to_maturity(yield_calculation_convention="invalid")
+
+    # call _price_from_yield should raise ValueError with Unknown or unsupported yield_calculation_convention
+    def test_price_from_yield_invalid_convention(self):
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+        )
+        with pytest.raises(
+            ValueError, match="Unknown or unsupported yield calculation convention"
+        ):
+            mmi._price_from_yield(
+                time_to_payments={(180, 360): 100},
+                yield_to_maturity=0.04,
+                yield_calculation_convention="invalid",
+            )
+
     def test_modified_duration(self):
         mmi = MoneyMarketInstrument(
             "2025-01-01",
@@ -44,8 +110,229 @@ class TestMoneyMarketInstrument:
             settlement_date="2025-01-01",
             price=98,
         )
-        md = mmi.modified_duration(price=98, settlement_date="2025-01-01")
+        md = mmi.modified_duration()
         assert isinstance(md, float)
+
+        # Check the modified duration value
+        md_expected = mmi.effective_duration()
+        assert np.isclose(md, md_expected), f"Expected {md_expected}, got {md}"
+
+        # check modified duration with different yield calculation convention
+        # annual
+        md_annual = mmi.modified_duration(yield_calculation_convention="Annual")
+        md_annual_expected = mmi.effective_duration(
+            yield_calculation_convention="Annual"
+        )
+        assert np.isclose(md_annual, md_annual_expected), (
+            f"Expected {md_annual_expected}, got {md_annual} for Annual"
+        )
+
+        # bey
+        md_bey = mmi.modified_duration(yield_calculation_convention="BEY")
+        md_bey_expected = mmi.effective_duration(yield_calculation_convention="BEY")
+        assert np.isclose(md_bey, md_bey_expected), (
+            f"Expected {md_bey_expected}, got {md_bey} for BEY"
+        )
+
+        # continuous
+        md_continuous = mmi.modified_duration(yield_calculation_convention="Continuous")
+        md_continuous_expected = mmi.effective_duration(
+            yield_calculation_convention="Continuous"
+        )
+        assert np.isclose(md_continuous, md_continuous_expected), (
+            f"Expected {md_continuous_expected}, got {md_continuous} for Continuous"
+        )
+
+        # discount
+        md_discount = mmi.modified_duration(
+            yield_calculation_convention="Discount", day_count_convention="30/360"
+        )
+        md_discount_expected = mmi.effective_duration(
+            yield_calculation_convention="Discount", day_count_convention="30/360"
+        )
+        assert np.isclose(md_discount, md_discount_expected), (
+            f"Expected {md_discount_expected}, got {md_discount} for Discount"
+        )
+
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+        )
+        # Should raise ValueError if price is not set
+        with pytest.raises(ValueError, match="Unable to resolve yield to maturity"):
+            mmi.modified_duration()
+
+    # Get price from yield for different conventions
+    def test_price_from_yield(self):
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+        )
+        price_annual = mmi.price_from_yield(0.04, yield_calculation_convention="Annual")
+        expected_price_annual = 100 / (1 + 0.04) ** (
+            (mmi.maturity - mmi._settlement_date).days / 365
+        )
+        assert np.isclose(price_annual, expected_price_annual), (
+            f"Expected {expected_price_annual}, got {price_annual} for Annual"
+        )
+
+        price_continuous = mmi.price_from_yield(
+            0.04, yield_calculation_convention="Continuous"
+        )
+        expected_price_continuous = 100 * np.exp(
+            -0.04 * ((mmi.maturity - mmi._settlement_date).days / 365)
+        )
+        assert np.isclose(price_continuous, expected_price_continuous), (
+            f"Expected {expected_price_continuous}, got {price_continuous} for Continuous"
+        )
+
+        price_bey = mmi.price_from_yield(0.04, yield_calculation_convention="BEY")
+        expected_price_bey = 100 / (
+            1 + 0.04 * (mmi.maturity - mmi._settlement_date).days / 365
+        )
+        assert np.isclose(price_bey, expected_price_bey), (
+            f"Expected {expected_price_bey}, got {price_bey} for BEY"
+        )
+
+        price_discount = mmi.price_from_yield(
+            0.04,
+            yield_calculation_convention="Discount",
+            day_count_convention="actual/360",
+        )
+        expected_price_discount = 100 * (
+            1 - 0.04 * (mmi.maturity - mmi._settlement_date).days / 360
+        )
+        assert np.isclose(price_discount, expected_price_discount), (
+            f"Expected {expected_price_discount}, got {price_discount} for Discount"
+        )
+
+        # test price_from_yield with Unknown or unsupported yield_calculation_convention
+        with pytest.raises(
+            ValueError, match="Unsupported yield calculation convention"
+        ):
+            mmi.price_from_yield(0.04, yield_calculation_convention="invalid")
+
+    # test convexity for different yield calculation conventions
+    def test_convexity_different_conventions(self):
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+            price=98,
+        )
+        # annual
+        conv_annual = mmi.convexity(yield_calculation_convention="Annual")
+        conv_annual_expected = mmi.effective_convexity(
+            yield_calculation_convention="Annual"
+        )
+        assert np.isclose(conv_annual, conv_annual_expected, atol=1e-4), (
+            f"Expected {conv_annual_expected}, got {conv_annual} for Annual"
+        )
+
+        # bey
+        conv_bey = mmi.convexity(yield_calculation_convention="BEY")
+        conv_bey_expected = mmi.effective_convexity(yield_calculation_convention="BEY")
+        assert np.isclose(conv_bey, conv_bey_expected, atol=1e-4), (
+            f"Expected {conv_bey_expected}, got {conv_bey} for BEY"
+        )
+
+        # continuous
+        conv_continuous = mmi.convexity(yield_calculation_convention="Continuous")
+        conv_continuous_expected = mmi.effective_convexity(
+            yield_calculation_convention="Continuous"
+        )
+        assert np.isclose(conv_continuous, conv_continuous_expected, atol=1e-4), (
+            f"Expected {conv_continuous_expected}, got {conv_continuous} for Continuous"
+        )
+
+        # discount
+        conv_discount = mmi.convexity(
+            yield_calculation_convention="Discount", day_count_convention="30/360"
+        )
+        conv_discount_expected = mmi.effective_convexity(
+            yield_calculation_convention="Discount", day_count_convention="30/360"
+        )
+        assert np.isclose(conv_discount, conv_discount_expected, atol=1e-4), (
+            f"Expected {conv_discount_expected}, got {conv_discount} for Discount"
+        )
+
+        # raise Error if price is not set
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+        )
+        with pytest.raises(ValueError, match="Unable to resolve yield to maturity"):
+            mmi.convexity()
+
+    # test macaulay_duration for different yield calculation conventions
+    def test_macaulay_duration_different_conventions(self):
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+            price=98,
+        )
+        # annual
+        mac_annual = mmi.macaulay_duration(yield_calculation_convention="Annual")
+        mac_annual_expected = mmi.effective_duration(
+            yield_calculation_convention="Annual"
+        ) * (1 + mmi.yield_to_maturity(yield_calculation_convention="Annual"))
+        assert np.isclose(mac_annual, mac_annual_expected, atol=1e-4), (
+            f"Expected {mac_annual_expected}, got {mac_annual} for Annual"
+        )
+
+        # bey
+        mac_bey = mmi.macaulay_duration(yield_calculation_convention="BEY")
+        mac_bey_expected = mmi.effective_duration(
+            yield_calculation_convention="BEY"
+        ) * (
+            1
+            + mmi.yield_to_maturity(yield_calculation_convention="BEY")
+            * ((mmi.maturity - mmi._settlement_date).days / 365)
+        )
+        assert np.isclose(mac_bey, mac_bey_expected, atol=1e-4), (
+            f"Expected {mac_bey_expected}, got {mac_bey} for BEY"
+        )
+
+        # continuous
+        mac_continuous = mmi.macaulay_duration(
+            yield_calculation_convention="Continuous"
+        )
+        mac_continuous_expected = mmi.effective_duration(
+            yield_calculation_convention="Continuous"
+        )
+        assert np.isclose(mac_continuous, mac_continuous_expected, atol=1e-4), (
+            f"Expected {mac_continuous_expected}, got {mac_continuous} for Continuous"
+        )
+
+        # discount
+        mac_discount = mmi.macaulay_duration(
+            yield_calculation_convention="Discount", day_count_convention="30/360"
+        )
+        mac_discount_expected = mmi.effective_duration(
+            yield_calculation_convention="Discount", day_count_convention="30/360"
+        )
+        assert np.isclose(mac_discount, mac_discount_expected, atol=1e-4), (
+            f"Expected {mac_discount_expected}, got {mac_discount} for Discount"
+        )
+
+        # raise Error if price is not set
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+        )
+        with pytest.raises(ValueError, match="Unable to resolve yield to maturity"):
+            mmi.macaulay_duration()
 
     def test_macaulay_duration(self):
         mmi = MoneyMarketInstrument(
@@ -197,6 +484,14 @@ class TestMoneyMarketInstrument:
                 notional=1000,
                 following_coupons_day_count="actual/actual-ISDA",
             )
+
+    # test calling yield_to_maturity without setting price or settlement_date
+    def test_yield_to_maturity_without_price(self):
+        mmi = MoneyMarketInstrument("2025-01-01", "2025-07-01", notional=1000)
+        with pytest.raises(
+            ValueError, match="Bond price must be set to calculate yield to maturity."
+        ):
+            mmi.yield_to_maturity()
 
     # Create with settlement price and yield to maturity
     def test_defaults(self):

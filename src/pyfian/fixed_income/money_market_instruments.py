@@ -348,7 +348,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
     def yield_to_maturity(
         self,
-        price: float,
+        price: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -403,11 +403,18 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bill = MoneyMarketInstrument('2020-01-01', '2025-07-01', 5, 1)
-        >>> bill.yield_to_maturity(price=95)
-        np.float64(0.06100197251858131)
+        >>> mmi = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
+        >>> mmi.yield_to_maturity()
+        np.float64(0.05)
         """
         # Prepare cash flows and dates
+        if price is None:
+            if self._price is None:
+                raise ValueError(
+                    "Bond price must be set to calculate yield to maturity."
+                )
+            price = self._price
+
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
             adjust_to_business_days,
@@ -441,7 +448,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         if yield_calculation_convention == "Continuous":
             return rc.convert_effective_to_mmr(effective_annual_rate, "Continuous")
         elif yield_calculation_convention == "Annual":
-            return effective_annual_rate
+            return round(effective_annual_rate, 10)
         elif yield_calculation_convention in ["Add-On", "Discount"]:
             return rc.convert_effective_to_mmr(
                 effective_annual_rate,
@@ -452,15 +459,16 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
                 base=day_count_convention.denominator(
                     start=settlement_date, end=max_date, current=max_date
                 ),
+                t=t,
             )
         elif yield_calculation_convention == "BEY":
             return rc.convert_effective_to_mmr(
-                effective_annual_rate, "BEY", days=(max_date - min_date).days
+                effective_annual_rate, "BEY", days=(max_date - min_date).days, t=t
             )
         else:
             raise ValueError(
-                f"Unknown yield calculation convention: {yield_calculation_convention}"
-            )
+                f"Unknown or unsupported yield calculation convention: {yield_calculation_convention}"
+            )  # pragma: no cover
 
     def _validate_yield_calculation_convention(
         self, yield_calculation_convention: str
@@ -513,11 +521,6 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         days = t[0]
         base = t[1]
 
-        if yield_calculation_convention == "Discount":
-            # Convert to yield_to_maturity add_on
-            present_value = cf * (1 - days / base * yield_to_maturity)
-            yield_to_maturity = (cf / present_value - 1) * base / days
-
         if yield_calculation_convention == "Continuous":
             price = cf * np.exp(-yield_to_maturity * days / 365)
         elif yield_calculation_convention == "Annual":
@@ -530,7 +533,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
             price = cf * (1 - days / base * yield_to_maturity)
         else:
             raise ValueError(
-                f"Unknown yield calculation convention: {yield_calculation_convention}"
+                f"Unknown or unsupported yield calculation convention: {yield_calculation_convention}"
             )
         return price
 
@@ -643,9 +646,9 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> instrument = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
-        >>> instrument.effective_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
-        4.3760319684
+        >>> instrument = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
+        >>> instrument.modified_duration()
+        np.float64(0.487804878)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -670,9 +673,10 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
             day_count_convention=day_count_convention,
         )
 
-        time_to_payments = self._calculate_time_to_payments(
+        flows = self._filter_payment_flow(
             settlement_date,
             price=None,
+            payment_flow=self.payment_flow,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -684,31 +688,37 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
                 "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
-        assert len(time_to_payments) == 1, (
-            f"A Money Market instrument is supposed to have one payment, got {time_to_payments}."
+        assert len(flows) == 1, (
+            f"A Money Market instrument is supposed to have one payment, got {flows}."
         )
-        t, cf = next(iter(time_to_payments.items()))
-        days = t[0]
-        base = t[1]
+        d, cf = next(iter(flows.items()))
+
+        days = day_count_convention.numerator(
+            start=settlement_date, end=self.maturity, current=self.maturity
+        )
+        base = day_count_convention.denominator(
+            start=settlement_date, end=self.maturity, current=self.maturity
+        )
+        t = (self.maturity - settlement_date).days / 365
 
         if yield_calculation_convention == "Continuous":
-            duration = cf * np.exp(-ytm * days / 365) * days / 365
+            duration = t
         elif yield_calculation_convention == "Annual":
-            duration = cf / (1 + ytm) ** (days / 365 + 1) * days / 365
+            duration = t / (1 + ytm)
         elif yield_calculation_convention == "Add-On":
             # derivative of (1 / (1 + x * t)) is -(t / (1 + x * t)^2)
-            duration = cf / (1 + ytm * days / base) ** 2 * (days / base)
+            duration = (days / base) / (1 + ytm * days / base)
         elif yield_calculation_convention == "BEY":
-            duration = cf / (1 + ytm * days / 365) ** 2 * (days / 365)
+            duration = (days / 365) / (1 + ytm * days / 365)
         elif yield_calculation_convention == "Discount":
             # derivative of (1 - x) is -1
-            duration = cf * days / base
+            duration = cf * days / base / price_calc
         else:
             raise ValueError(
-                f"Unknown yield calculation convention: {yield_calculation_convention}"
-            )
+                f"Unknown or unsupported yield calculation convention: {yield_calculation_convention}"
+            )  # pragma: no cover
 
-        return round(duration / price_calc if price_calc != 0 else 0.0, 10)
+        return round(duration, 10)
 
     def macaulay_duration(
         self,
@@ -759,9 +769,9 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> instrument = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
-        >>> instrument.macaulay_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
-        4.3760319684
+        >>> instrument = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
+        >>> instrument.macaulay_duration()
+        np.float64(0.5)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -786,9 +796,10 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
             day_count_convention=day_count_convention,
         )
 
-        time_to_payments = self._calculate_time_to_payments(
+        flows = self._filter_payment_flow(
             settlement_date,
             price=None,
+            payment_flow=self.payment_flow,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -800,31 +811,37 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
                 "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
-        assert len(time_to_payments) == 1, (
-            f"A Money Market instrument is supposed to have one payment, got {time_to_payments}."
+        assert len(flows) == 1, (
+            f"A Money Market instrument is supposed to have one payment, got {flows}."
         )
-        t, cf = next(iter(time_to_payments.items()))
-        days = t[0]
-        base = t[1]
+        d, cf = next(iter(flows.items()))
+
+        days = day_count_convention.numerator(
+            start=settlement_date, end=self.maturity, current=self.maturity
+        )
+        base = day_count_convention.denominator(
+            start=settlement_date, end=self.maturity, current=self.maturity
+        )
+        t = (self.maturity - settlement_date).days / 365
 
         if yield_calculation_convention == "Continuous":
-            duration = cf * np.exp(-ytm * days / 365) * days / 365
+            duration = t
         elif yield_calculation_convention == "Annual":
-            duration = cf / (1 + ytm) ** (days / 365) * days / 365
+            duration = t
         elif yield_calculation_convention == "Add-On":
             # derivative of (1 / (1 + x * t)) is -(t / (1 + x * t)^2)
-            duration = cf / (1 + ytm * days / base) * (days / base)
+            duration = days / base
         elif yield_calculation_convention == "BEY":
-            duration = cf / (1 + ytm * days / 365) * (days / 365)
+            duration = days / 365
         elif yield_calculation_convention == "Discount":
             # derivative of (1 - x) is -1
-            duration = cf * days / base
+            duration = cf * days / base / price_calc
         else:
             raise ValueError(
-                f"Unknown yield calculation convention: {yield_calculation_convention}"
-            )
+                f"Unknown or unsupported yield calculation convention: {yield_calculation_convention}"
+            )  # pragma: no cover
 
-        return round(duration / price_calc if price_calc != 0 else 0.0, 10)
+        return round(duration, 10)
 
     def convexity(
         self,
@@ -838,8 +855,6 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
     ) -> float:
         """
         Calculate the convexity of the instrument.
-
-
 
         .. math::
             Convexity = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t \\cdot t \\cdot (t + 1)}{(1 + YTM)^{(t + 2)}}
@@ -876,9 +891,9 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> instrument = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
-        >>> instrument.convexity(yield_to_maturity=0.05)
-        22.6123221851
+        >>> instrument = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
+        >>> instrument.convexity()
+        np.float64(0.4759071998705622)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -903,9 +918,10 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
             day_count_convention=day_count_convention,
         )
 
-        time_to_payments = self._calculate_time_to_payments(
+        flows = self._filter_payment_flow(
             settlement_date,
             price=None,
+            payment_flow=self.payment_flow,
             adjust_to_business_days=adjust_to_business_days,
             following_coupons_day_count=following_coupons_day_count,
             yield_calculation_convention=yield_calculation_convention,
@@ -917,34 +933,58 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
                 "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
-        assert len(time_to_payments) == 1, (
-            f"A Money Market instrument is supposed to have one payment, got {time_to_payments}."
+        assert len(flows) == 1, (
+            f"A Money Market instrument is supposed to have one payment, got {flows}."
+        )
+        d, cf = next(iter(flows.items()))
+        t = (self.maturity - settlement_date).days / 365
+        days = day_count_convention.numerator(
+            start=settlement_date, end=self.maturity, current=self.maturity
+        )
+        base = day_count_convention.denominator(
+            start=settlement_date, end=self.maturity, current=self.maturity
         )
 
-        t, cf = next(iter(time_to_payments.items()))
-        days = t[0]
-        base = t[1]
-
         if yield_calculation_convention == "Continuous":
-            convexity = cf * np.exp(-ytm * days / 365) * (days / 365) ** 2
+            # price = cf * np.exp(-ytm * days / 365)
+            # second derivative of price w.r.t ytm is
+            # cf * exp(-ytm * days / 365) * (t)^2
+            # divide by price to get convexity
+            # t ^ 2
+            convexity = t**2
         elif yield_calculation_convention == "Annual":
-            convexity = (
-                cf / (1 + ytm) ** (days / 365 + 2) * (days / 365) * (days / 365 + 1)
-            )
+            # price = cf * 1 / (1 + ytm) ** (t)
+            # second derivative of price w.r.t ytm is
+            # cf * 1 / (1 + ytm) ** (t + 2) * (t) * (t + 1)
+            # divide by price to get convexity
+            # (t) * (t + 1) / (1 + ytm) ** 2
+            convexity = (t) * (t + 1) / (1 + ytm) ** 2
         elif yield_calculation_convention == "Add-On":
-            # derivative of (1 / (1 + x * t)) is -(t / (1 + x * t)^2)
-            convexity = cf / (1 + ytm * days / base) ** 3 * (days / base) ** 2
+            # price = cf * 1 / (1 + ytm * days / base)
+            # second derivative of price w.r.t ytm is
+            # 2 * cf / (1 + ytm * days / base) ** 3 * (days / base) ** 2
+            # divide by price to get convexity
+            # (days / base) ** 2 / (1 + ytm * days / base) ** 2
+            convexity = 2 * (days / base) ** 2 / (1 + ytm * days / base) ** 2
         elif yield_calculation_convention == "BEY":
-            convexity = cf / (1 + ytm * days / 365) ** 3 * (days / 365) ** 2
+            # price = cf * 1 / (1 + ytm * days / 365)
+            # second derivative of price w.r.t ytm is
+            # cf / (1 + ytm * days / 365) ** 3 * (days / 365) ** 2
+            # divide by price to get convexity
+            # (days / 365) ** 2 / (1 + ytm * days / 365) ** 2
+            convexity = 2 * (days / 365) ** 2 / (1 + ytm * days / 365) ** 2
         elif yield_calculation_convention == "Discount":
-            # derivative of (1 - x) is -1
+            # price = cf * (1 - days / base * ytm)
+            # second derivative of price w.r.t ytm is 0
+            # divide by price to get convexity
+            # 0 / price = 0
             convexity = 0.0
         else:
             raise ValueError(
-                f"Unknown yield calculation convention: {yield_calculation_convention}"
-            )
+                f"Unknown or unsupported yield calculation convention: {yield_calculation_convention}"
+            )  # pragma: no cover
 
-        return round(convexity / price_calc, 10) if price_calc != 0 else 0.0
+        return round(convexity, 10)
 
 
 class TreasuryBill(MoneyMarketInstrument):

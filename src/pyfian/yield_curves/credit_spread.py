@@ -180,9 +180,7 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
         self,
         curve_date: Union[str, pd.Timestamp],
         benchmark_curve: Optional[YieldCurveBase] = None,
-        bonds: Optional[
-            list[FixedRateBullet] | tuple[FixedRateBullet]
-        ] = None,  # TODO: With future custom bonds add FixedRateBullet base Class
+        bonds: Optional[list[FixedRateBullet] | tuple[FixedRateBullet]] = None,
         spreads: Optional[dict[float, float]] = None,
         day_count_convention: Optional[str | DayCountBase] = "actual/365",
         yield_calculation_convention: Optional[str] = None,

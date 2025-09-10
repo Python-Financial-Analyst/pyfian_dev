@@ -69,24 +69,18 @@ class TestInterpolatedCurve:
         # Use bonds to infer zero rates
         date = pd.Timestamp("2025-08-22")
         list_maturities_rates = [
-            (pd.DateOffset(months=1), 4.49),
-            (pd.DateOffset(months=3), 4.32),
-            (pd.DateOffset(months=6), 4.14),
-            (pd.DateOffset(years=1), 3.95),
-            (pd.DateOffset(years=2), 3.79),
-            (pd.DateOffset(years=3), 3.75),
-            (pd.DateOffset(years=5), 3.86),
-            (pd.DateOffset(years=7), 4.07),
-            (pd.DateOffset(years=10), 4.33),
-            (pd.DateOffset(years=20), 4.89),
-            (pd.DateOffset(years=30), 4.92),
+            (pd.DateOffset(years=1), 1, 3.95),
+            (pd.DateOffset(years=2), 2, 3.79),
+            (pd.DateOffset(years=5), 5, 3.86),
+            (pd.DateOffset(years=10), 10, 4.33),
+            (pd.DateOffset(years=30), 30, 4.92),
         ]
         one_year_offset = date + pd.DateOffset(years=1)
         bonds = []
         maturities = []
-        for offset, cpn in list_maturities_rates:
+        for offset, maturity, cpn in list_maturities_rates:
             not_zero_coupon = date + offset > one_year_offset
-            maturities.append((date + offset - date).days / 365)
+            maturities.append(maturity)
             bond = FixedRateBullet(
                 issue_dt=date,
                 maturity=date + offset,
@@ -100,6 +94,69 @@ class TestInterpolatedCurve:
         curve = InterpolatedCurve(curve_date=date, bonds=bonds, maturities=maturities)
         assert isinstance(curve.zero_rates, dict)
         assert all(isinstance(r, float) for r in curve.zero_rates.values())
+
+    def test_initialize_with_bonds_50_year(self):
+        # Use bonds to infer zero rates
+        date = pd.Timestamp("2025-08-22")
+        list_maturities_rates = [
+            (pd.DateOffset(years=1), 1, 3.95),
+            (pd.DateOffset(years=2), 2, 3.79),
+            (pd.DateOffset(years=5), 5, 3.86),
+            (pd.DateOffset(years=10), 10, 4.33),
+            (pd.DateOffset(years=30), 30, 4.92),
+            (pd.DateOffset(years=50), 50, 5.0),
+        ]
+        one_year_offset = date + pd.DateOffset(years=1)
+        bonds = []
+        maturities = []
+        for offset, maturity, cpn in list_maturities_rates:
+            not_zero_coupon = date + offset > one_year_offset
+            maturities.append(maturity)
+            bond = FixedRateBullet(
+                issue_dt=date,
+                maturity=date + offset,
+                cpn_freq=2 if not_zero_coupon else 0,
+                cpn=cpn if not_zero_coupon else 0,
+                price=100 if not_zero_coupon else None,
+                yield_to_maturity=None if not_zero_coupon else cpn / 100,
+                settlement_date=date,
+            )
+            bonds.append(bond)
+
+        curve = InterpolatedCurve(curve_date=date, bonds=bonds)
+        assert isinstance(curve.zero_rates, dict)
+        assert all(isinstance(r, float) for r in curve.zero_rates.values())
+
+    def test_initialize_with_bond_with_no_price(self):
+        date = pd.Timestamp("2025-08-22")
+        list_maturities_rates = [
+            (pd.DateOffset(years=1), 1, 3.95),
+            (pd.DateOffset(years=2), 2, 3.79),
+            (pd.DateOffset(years=5), 5, 3.86),
+            (pd.DateOffset(years=10), 10, 4.33),
+            (pd.DateOffset(years=30), 30, 4.92),
+            (pd.DateOffset(years=50), 50, 5.0),
+        ]
+        one_year_offset = date + pd.DateOffset(years=1)
+        bonds = []
+        maturities = []
+        for offset, maturity, cpn in list_maturities_rates:
+            not_zero_coupon = date + offset > one_year_offset
+            maturities.append(maturity)
+            bond = FixedRateBullet(
+                issue_dt=date,
+                maturity=date + offset,
+                cpn_freq=2 if not_zero_coupon else 0,
+                cpn=cpn if not_zero_coupon else 0,
+                settlement_date=date,
+            )
+            bonds.append(bond)
+
+        # This should raise a ValueError because one bond has no price
+        with pytest.raises(
+            ValueError, match="All bonds must have a price to infer zero rates."
+        ):
+            InterpolatedCurve(curve_date=date, bonds=bonds)
 
     def test_initialize_with_zero_rates(self):
         zero_rates = {m: 0 for m in self.curve.maturities}
