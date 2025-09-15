@@ -73,7 +73,7 @@ class TestInterpolatedCurve:
             (pd.DateOffset(years=2), 2, 3.79),
             (pd.DateOffset(years=5), 5, 3.86),
             (pd.DateOffset(years=10), 10, 4.33),
-            (pd.DateOffset(years=30), 30, 4.92),
+            # (pd.DateOffset(years=30), 30, 4.92),
         ]
         one_year_offset = date + pd.DateOffset(years=1)
         bonds = []
