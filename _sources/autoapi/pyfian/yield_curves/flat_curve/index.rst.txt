@@ -34,7 +34,7 @@ pyfian.yield_curves.flat_curve
    >>> curve_log.get_rate(1, yield_calculation_convention="Unknown")
    Traceback (most recent call last):
        ...
-   ValueError: Unknown yield calculation convention: Unknown
+   ValueError: Unknown or unsupported yield calculation convention: Unknown
 
    >>> curve_aer = FlatCurveAER(0.05, "2020-01-01")
    >>> curve_aer.discount_t(1)
@@ -50,7 +50,7 @@ pyfian.yield_curves.flat_curve
    >>> curve_aer.get_rate(1, yield_calculation_convention="Unknown")
    Traceback (most recent call last):
        ...
-   ValueError: Unknown yield calculation convention: Unknown
+   ValueError: Unknown or unsupported yield calculation convention: Unknown
 
    >>> curve_bey = FlatCurveBEY(0.05, "2020-01-01")
    >>> curve_bey.discount_t(1)
@@ -66,7 +66,7 @@ pyfian.yield_curves.flat_curve
    >>> curve_bey.get_rate(1, yield_calculation_convention="Unknown")
    Traceback (most recent call last):
        ...
-   ValueError: Unknown yield calculation convention: Unknown
+   ValueError: Unknown or unsupported yield calculation convention: Unknown
 
 
 
@@ -249,7 +249,7 @@ Module Contents
       >>> curve.get_rate(1, yield_calculation_convention="Unknown")
       Traceback (most recent call last):
           ...
-      ValueError: Unknown yield calculation convention: Unknown
+      ValueError: Unknown or unsupported yield calculation convention: Unknown
 
 
 
@@ -304,7 +304,7 @@ Module Contents
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
       Traceback (most recent call last):
           ...
-      ValueError: Unknown yield calculation convention: Unknown
+      ValueError: Unknown or unsupported yield calculation convention: Unknown
 
 
 
@@ -474,7 +474,7 @@ Module Contents
       >>> curve.get_rate(1, yield_calculation_convention="Unknown")
       Traceback (most recent call last):
           ...
-      ValueError: Unknown yield calculation convention: Unknown
+      ValueError: Unknown or unsupported yield calculation convention: Unknown
 
 
 
@@ -527,7 +527,7 @@ Module Contents
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
       Traceback (most recent call last):
           ...
-      ValueError: Unknown yield calculation convention: Unknown
+      ValueError: Unknown or unsupported yield calculation convention: Unknown
 
 
 
@@ -699,7 +699,7 @@ Module Contents
       >>> curve.get_rate(1, yield_calculation_convention="Unknown")
       Traceback (most recent call last):
           ...
-      ValueError: Unknown yield calculation convention: Unknown
+      ValueError: Unknown or unsupported yield calculation convention: Unknown
 
 
 
@@ -752,7 +752,7 @@ Module Contents
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
       Traceback (most recent call last):
           ...
-      ValueError: Unknown yield calculation convention: Unknown
+      ValueError: Unknown or unsupported yield calculation convention: Unknown
 
 
 

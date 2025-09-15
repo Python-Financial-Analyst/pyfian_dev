@@ -426,9 +426,9 @@ Module Contents
    np.float64(0.0526511542)
 
 
-.. py:function:: effective_to_money_market_rate(effective_rate: float, days: float = 360.0, base: float = 360.0, discount: bool = False) -> float
+.. py:function:: effective_to_money_market_rate(effective_rate: float, days: float = 360.0, base: float = 360.0, discount: bool = False, t: Optional[float] = None) -> float
 
-   Convert an effective annual rate (EAR) to a Money Market Rate (actual/360).
+   Convert an effective annual rate (EAR) to a Money Market Rate (actual/360 or actual/365, etc).
 
    About this rates:
 
@@ -452,6 +452,8 @@ Module Contents
    :type base: float, optional
    :param discount: If True, return the discount rate. If False (default), return the add-on (interest-bearing) rate.
    :type discount: bool, optional
+   :param t: Time period for the calculation (default is None, which means use the full period).
+   :type t: float, optional
 
    :returns: Money Market Rate (as decimal).
    :rtype: float
@@ -520,7 +522,7 @@ Module Contents
    np.float64(0.06)
 
 
-.. py:function:: convert_effective_to_mmr(yield_value: float, yield_calculation_convention: str, days: float = 360.0, base: float = 360.0) -> float
+.. py:function:: convert_effective_to_mmr(yield_value: float, yield_calculation_convention: str, days: float = 360.0, base: float = 360.0, t: Optional[float] = None) -> float
 
    Convert an effective interest rate to a money market rate (MMR) based on the specified yield calculation convention.
 
@@ -532,6 +534,8 @@ Module Contents
    :type days: float, optional
    :param base: The base for the money market rate calculation (default is 360, can be float).
    :type base: float, optional
+   :param t: Time period for the calculation (default is None, which means use the full period).
+   :type t: float, optional
 
    :returns: The converted money market rate (as decimal).
    :rtype: float

@@ -84,7 +84,11 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">optimize</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.utils.day_count</span><span class="w"> </span><span class="kn">import</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="n">get_day_count_convention</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.utils.day_count</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DayCountActual365</span><span class="p">,</span>
+    <span class="n">DayCountBase</span><span class="p">,</span>
+    <span class="n">get_day_count_convention</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.base_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">YieldCurveBase</span>
 
 
@@ -150,24 +154,30 @@
         <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">],</span>
         <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">adjust_to_business_days</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">adjust_to_business_days</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adjust_to_business_days</span>
-        <span class="k">if</span> <span class="n">day_count_convention</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">day_count_convention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">day_count_convention</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">day_count_convention</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">day_count_convention</span> <span class="o">=</span> <span class="n">get_day_count_convention</span><span class="p">(</span><span class="n">day_count_convention</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">following_coupons_day_count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">following_coupons_day_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">following_coupons_day_count</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">following_coupons_day_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_following_coupons_day_count</span><span class="p">(</span>
-                <span class="n">following_coupons_day_count</span>
-            <span class="p">)</span>
         <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">yield_calculation_convention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yield_calculation_convention</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">yield_calculation_convention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_yield_calculation_convention</span><span class="p">(</span>
                 <span class="n">yield_calculation_convention</span>
             <span class="p">)</span>
+        <span class="k">if</span> <span class="n">adjust_to_business_days</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">adjust_to_business_days</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adjust_to_business_days</span>
+        <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Annual&quot;</span><span class="p">,</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">day_count_convention</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">day_count_convention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">day_count_convention</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">day_count_convention</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">day_count_convention</span> <span class="o">=</span> <span class="n">get_day_count_convention</span><span class="p">(</span><span class="n">day_count_convention</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">following_coupons_day_count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">following_coupons_day_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">following_coupons_day_count</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">following_coupons_day_count</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_validate_following_coupons_day_count</span><span class="p">(</span>
+                        <span class="n">following_coupons_day_count</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">day_count_convention</span> <span class="o">=</span> <span class="n">DayCountActual365</span><span class="p">()</span>
+            <span class="n">following_coupons_day_count</span> <span class="o">=</span> <span class="n">DayCountActual365</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
@@ -333,7 +343,22 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settlement_date</span> <span class="o">==</span> <span class="n">settlement_date</span>
         <span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_price</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">day_count_convention</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">day_count_convention</span>
+                <span class="ow">or</span> <span class="n">yield_calculation_convention</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yield_calculation_convention</span>
+            <span class="p">):</span>
+                <span class="n">ytm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yield_to_maturity</span><span class="p">(</span>
+                    <span class="n">price</span><span class="o">=</span><span class="n">price</span><span class="p">,</span>
+                    <span class="n">settlement_date</span><span class="o">=</span><span class="n">settlement_date</span><span class="p">,</span>
+                    <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
+                    <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
+                    <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
+                    <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ytm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_yield_to_maturity</span>
+
+            <span class="k">return</span> <span class="n">ytm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_price</span>
 
         <span class="c1"># Case 5: cannot determine, return None, None</span>
         <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span></div>
@@ -1471,6 +1496,72 @@
         <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">effective_duration</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="BaseFixedIncomeInstrument.spread_effective_duration">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/base_fixed_income/index.html#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument.spread_effective_duration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">spread_effective_duration</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate spread effective duration of the bond.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \\text{Spread Effective Duration} = -\\frac{(P_{+} - P_{-})}{2 \\cdot \\epsilon \\cdot P}</span>
+
+<span class="sd">        where:</span>
+
+<span class="sd">        - :math:`P` is the price of the bond</span>
+<span class="sd">        - :math:`P_{+}` is the price if yield increases by :math:`\\epsilon`</span>
+<span class="sd">        - :math:`P_{-}` is the price if yield decreases by :math:`\\epsilon`</span>
+<span class="sd">        - :math:`\\epsilon` is a small change in yield</span>
+
+<span class="sd">        The times to payments are calculated from the settlement date to each payment date and need not be integer values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        yield_to_maturity : float, optional</span>
+<span class="sd">            Yield to maturity as a decimal. If not provided, will be calculated from price if given.</span>
+<span class="sd">        price : float, optional</span>
+<span class="sd">            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
+<span class="sd">            Settlement date. Defaults to issue date.</span>
+<span class="sd">        adjust_to_business_days : bool, optional</span>
+<span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
+<span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
+<span class="sd">        yield_calculation_convention : str, optional</span>
+<span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        duration : float</span>
+<span class="sd">            Effective duration in years.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2)</span>
+<span class="sd">        &gt;&gt;&gt; bond.spread_effective_duration(yield_to_maturity=0.05, settlement_date=&#39;2020-01-01&#39;)</span>
+<span class="sd">        4.3760319684</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">effective_duration</span><span class="p">(</span>
+            <span class="n">yield_to_maturity</span><span class="o">=</span><span class="n">yield_to_maturity</span><span class="p">,</span>
+            <span class="n">price</span><span class="o">=</span><span class="n">price</span><span class="p">,</span>
+            <span class="n">settlement_date</span><span class="o">=</span><span class="n">settlement_date</span><span class="p">,</span>
+            <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
+            <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
+            <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="BaseFixedIncomeInstrument.effective_convexity">
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/base_fixed_income/index.html#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument.effective_convexity">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">effective_convexity</span><span class="p">(</span>
@@ -1562,7 +1653,7 @@
         <span class="p">)</span>
 
         <span class="c1"># Calculate effective convexity using a small epsilon</span>
-        <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">0.0001</span>
+        <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">0.001</span>
         <span class="n">price_plus_epsilon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_price_from_yield</span><span class="p">(</span>
             <span class="n">yield_to_maturity</span><span class="o">=</span><span class="n">ytm</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">,</span>
             <span class="n">time_to_payments</span><span class="o">=</span><span class="n">time_to_payments</span><span class="p">,</span>

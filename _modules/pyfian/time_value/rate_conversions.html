@@ -93,6 +93,7 @@
 <span class="sd">These conversions are essential for comparing, quoting, and reporting interest rates and yields across different financial products, regulatory frameworks, and institutional conventions.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 
@@ -190,7 +191,9 @@
             <span class="n">rate</span><span class="p">,</span> <span class="n">periods_per_year</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">YIELD_CALCULATION_ADJUSTMENTS</span><span class="p">[</span><span class="n">from_convention</span><span class="p">])</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">from_convention</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown or unsupported yield calculation convention: </span><span class="si">{</span><span class="n">from_convention</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">to_convention</span> <span class="o">==</span> <span class="s2">&quot;Annual&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">eff</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
@@ -204,7 +207,9 @@
             <span class="mi">10</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">to_convention</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown or unsupported yield calculation convention: </span><span class="si">{</span><span class="n">to_convention</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
 
 
 
@@ -216,7 +221,7 @@
         <span class="k">return</span> <span class="n">YIELD_CALCULATION_ADJUSTMENTS</span><span class="p">[</span><span class="n">yield_calculation_convention</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown or unsupported yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
 
@@ -662,9 +667,10 @@
     <span class="n">days</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">360.0</span><span class="p">,</span>
     <span class="n">base</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">360.0</span><span class="p">,</span>
     <span class="n">discount</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert an effective annual rate (EAR) to a Money Market Rate (actual/360).</span>
+<span class="sd">    Convert an effective annual rate (EAR) to a Money Market Rate (actual/360 or actual/365, etc).</span>
 
 <span class="sd">    About this rates:</span>
 
@@ -690,6 +696,8 @@
 <span class="sd">        Base for the calculation (default 360, can be float).</span>
 <span class="sd">    discount : bool, optional</span>
 <span class="sd">        If True, return the discount rate. If False (default), return the add-on (interest-bearing) rate.</span>
+<span class="sd">    t : float, optional</span>
+<span class="sd">        Time period for the calculation (default is None, which means use the full period).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -714,10 +722,16 @@
         <span class="c1"># (1 + effective_rate) ** (days / base ) = (1 / (1 - mmr * days / base)</span>
         <span class="c1"># 1 / (1 + effective_rate) ** (days / base ) = (1 - mmr * days / base)</span>
         <span class="k">return</span> <span class="nb">round</span><span class="p">(</span>
-            <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">effective_rate</span><span class="p">,</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span><span class="p">)))</span> <span class="o">*</span> <span class="p">(</span><span class="n">base</span> <span class="o">/</span> <span class="n">days</span><span class="p">),</span> <span class="mi">10</span>
+            <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">effective_rate</span><span class="p">,</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">t</span><span class="p">)))</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">base</span> <span class="o">/</span> <span class="n">days</span><span class="p">),</span>
+            <span class="mi">10</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_exp_general</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">effective_rate</span><span class="p">,</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span> <span class="o">*</span> <span class="n">base</span> <span class="o">/</span> <span class="n">days</span></div>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">_exp_general</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">effective_rate</span><span class="p">,</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">t</span><span class="p">)</span>
+            <span class="o">*</span> <span class="n">base</span>
+            <span class="o">/</span> <span class="n">days</span>
+        <span class="p">)</span></div>
 
 
 
@@ -802,6 +816,7 @@
     <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">days</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">360.0</span><span class="p">,</span>
     <span class="n">base</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">360.0</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert an effective interest rate to a money market rate (MMR) based on the specified yield calculation convention.</span>
@@ -816,6 +831,8 @@
 <span class="sd">        The number of days in the year (default is 360, can be float).</span>
 <span class="sd">    base : float, optional</span>
 <span class="sd">        The base for the money market rate calculation (default is 360, can be float).</span>
+<span class="sd">    t : float, optional</span>
+<span class="sd">        Time period for the calculation (default is None, which means use the full period).</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -829,15 +846,15 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Discount&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">effective_to_money_market_rate</span><span class="p">(</span>
-            <span class="n">yield_value</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">yield_value</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Add-On&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">effective_to_money_market_rate</span><span class="p">(</span>
-            <span class="n">yield_value</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="kc">False</span>
+            <span class="n">yield_value</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;BEY&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">effective_to_money_market_rate</span><span class="p">(</span>
-            <span class="n">yield_value</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mf">365.0</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="kc">False</span>
+            <span class="n">yield_value</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mf">365.0</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Annual&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">yield_value</span>
@@ -845,7 +862,7 @@
         <span class="k">return</span> <span class="n">effective_to_continuous</span><span class="p">(</span><span class="n">yield_value</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown or unsupported yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
 </pre></div>

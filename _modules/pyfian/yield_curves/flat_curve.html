@@ -106,7 +106,7 @@
 <span class="sd">&gt;&gt;&gt; curve_log.get_rate(1, yield_calculation_convention=&quot;Unknown&quot;)</span>
 <span class="sd">Traceback (most recent call last):</span>
 <span class="sd">    ...</span>
-<span class="sd">ValueError: Unknown yield calculation convention: Unknown</span>
+<span class="sd">ValueError: Unknown or unsupported yield calculation convention: Unknown</span>
 
 <span class="sd">&gt;&gt;&gt; curve_aer = FlatCurveAER(0.05, &quot;2020-01-01&quot;)</span>
 <span class="sd">&gt;&gt;&gt; curve_aer.discount_t(1)</span>
@@ -122,7 +122,7 @@
 <span class="sd">&gt;&gt;&gt; curve_aer.get_rate(1, yield_calculation_convention=&quot;Unknown&quot;)</span>
 <span class="sd">Traceback (most recent call last):</span>
 <span class="sd">    ...</span>
-<span class="sd">ValueError: Unknown yield calculation convention: Unknown</span>
+<span class="sd">ValueError: Unknown or unsupported yield calculation convention: Unknown</span>
 
 <span class="sd">&gt;&gt;&gt; curve_bey = FlatCurveBEY(0.05, &quot;2020-01-01&quot;)</span>
 <span class="sd">&gt;&gt;&gt; curve_bey.discount_t(1)</span>
@@ -138,7 +138,7 @@
 <span class="sd">&gt;&gt;&gt; curve_bey.get_rate(1, yield_calculation_convention=&quot;Unknown&quot;)</span>
 <span class="sd">Traceback (most recent call last):</span>
 <span class="sd">    ...</span>
-<span class="sd">ValueError: Unknown yield calculation convention: Unknown</span>
+<span class="sd">ValueError: Unknown or unsupported yield calculation convention: Unknown</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
@@ -368,7 +368,7 @@
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1, yield_calculation_convention=&quot;Unknown&quot;)</span>
 <span class="sd">        Traceback (most recent call last):</span>
 <span class="sd">            ...</span>
-<span class="sd">        ValueError: Unknown yield calculation convention: Unknown</span>
+<span class="sd">        ValueError: Unknown or unsupported yield calculation convention: Unknown</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">yield_calculation_convention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yield_calculation_convention</span>
@@ -434,7 +434,7 @@
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;, yield_calculation_convention=&quot;Unknown&quot;)</span>
 <span class="sd">        Traceback (most recent call last):</span>
 <span class="sd">            ...</span>
-<span class="sd">        ValueError: Unknown yield calculation convention: Unknown</span>
+<span class="sd">        ValueError: Unknown or unsupported yield calculation convention: Unknown</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">yield_calculation_convention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yield_calculation_convention</span>
@@ -670,7 +670,7 @@
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1, yield_calculation_convention=&quot;Unknown&quot;)</span>
 <span class="sd">        Traceback (most recent call last):</span>
 <span class="sd">            ...</span>
-<span class="sd">        ValueError: Unknown yield calculation convention: Unknown</span>
+<span class="sd">        ValueError: Unknown or unsupported yield calculation convention: Unknown</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">yield_calculation_convention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yield_calculation_convention</span>
@@ -733,7 +733,7 @@
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;, yield_calculation_convention=&quot;Unknown&quot;)</span>
 <span class="sd">        Traceback (most recent call last):</span>
 <span class="sd">            ...</span>
-<span class="sd">        ValueError: Unknown yield calculation convention: Unknown</span>
+<span class="sd">        ValueError: Unknown or unsupported yield calculation convention: Unknown</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">yield_calculation_convention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yield_calculation_convention</span>
@@ -971,7 +971,7 @@
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1, yield_calculation_convention=&quot;Unknown&quot;)</span>
 <span class="sd">        Traceback (most recent call last):</span>
 <span class="sd">            ...</span>
-<span class="sd">        ValueError: Unknown yield calculation convention: Unknown</span>
+<span class="sd">        ValueError: Unknown or unsupported yield calculation convention: Unknown</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">yield_calculation_convention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yield_calculation_convention</span>
@@ -1032,7 +1032,7 @@
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;, yield_calculation_convention=&quot;Unknown&quot;)</span>
 <span class="sd">        Traceback (most recent call last):</span>
 <span class="sd">            ...</span>
-<span class="sd">        ValueError: Unknown yield calculation convention: Unknown</span>
+<span class="sd">        ValueError: Unknown or unsupported yield calculation convention: Unknown</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">yield_calculation_convention</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yield_calculation_convention</span>

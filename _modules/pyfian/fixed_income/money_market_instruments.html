@@ -432,7 +432,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">day_count_convention</span><span class="o">.</span><span class="n">fraction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">issue_dt</span><span class="p">,</span> <span class="n">settlement_date</span><span class="p">)</span>
-        <span class="n">accrued_interest</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cpn</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpn_freq</span><span class="p">)</span> <span class="o">*</span> <span class="n">t</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">notional</span> <span class="o">/</span> <span class="mi">100</span>
+        <span class="n">accrued_interest</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cpn</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cpn_freq</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpn_freq</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="o">*</span> <span class="n">t</span>
+            <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">notional</span>
+            <span class="o">/</span> <span class="mi">100</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">accrued_interest</span></div>
 
 
@@ -440,7 +445,7 @@
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/money_market_instruments/index.html#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.yield_to_maturity">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">yield_to_maturity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">price</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -495,11 +500,18 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; bill = MoneyMarketInstrument(&#39;2020-01-01&#39;, &#39;2025-07-01&#39;, 5, 1)</span>
-<span class="sd">        &gt;&gt;&gt; bill.yield_to_maturity(price=95)</span>
-<span class="sd">        np.float64(0.06100197251858131)</span>
+<span class="sd">        &gt;&gt;&gt; mmi = MoneyMarketInstrument(&#39;2020-01-01&#39;, &#39;2020-07-01&#39;, 5, 1, price=100, settlement_date=&#39;2020-01-01&#39;, day_count_convention=&#39;30/360&#39;, yield_calculation_convention=&#39;Add-On&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; mmi.yield_to_maturity()</span>
+<span class="sd">        np.float64(0.05)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Prepare cash flows and dates</span>
+        <span class="k">if</span> <span class="n">price</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_price</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Bond price must be set to calculate yield to maturity.&quot;</span>
+                <span class="p">)</span>
+            <span class="n">price</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_price</span>
+
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="p">(</span>
             <span class="n">adjust_to_business_days</span><span class="p">,</span>
@@ -533,7 +545,7 @@
         <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">rc</span><span class="o">.</span><span class="n">convert_effective_to_mmr</span><span class="p">(</span><span class="n">effective_annual_rate</span><span class="p">,</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Annual&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">effective_annual_rate</span>
+            <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">effective_annual_rate</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Add-On&quot;</span><span class="p">,</span> <span class="s2">&quot;Discount&quot;</span><span class="p">]:</span>
             <span class="k">return</span> <span class="n">rc</span><span class="o">.</span><span class="n">convert_effective_to_mmr</span><span class="p">(</span>
                 <span class="n">effective_annual_rate</span><span class="p">,</span>
@@ -544,15 +556,16 @@
                 <span class="n">base</span><span class="o">=</span><span class="n">day_count_convention</span><span class="o">.</span><span class="n">denominator</span><span class="p">(</span>
                     <span class="n">start</span><span class="o">=</span><span class="n">settlement_date</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">max_date</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="n">max_date</span>
                 <span class="p">),</span>
+                <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;BEY&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">rc</span><span class="o">.</span><span class="n">convert_effective_to_mmr</span><span class="p">(</span>
-                <span class="n">effective_annual_rate</span><span class="p">,</span> <span class="s2">&quot;BEY&quot;</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="p">(</span><span class="n">max_date</span> <span class="o">-</span> <span class="n">min_date</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
+                <span class="n">effective_annual_rate</span><span class="p">,</span> <span class="s2">&quot;BEY&quot;</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="p">(</span><span class="n">max_date</span> <span class="o">-</span> <span class="n">min_date</span><span class="p">)</span><span class="o">.</span><span class="n">days</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span></div>
+                <span class="sa">f</span><span class="s2">&quot;Unknown or unsupported yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>  <span class="c1"># pragma: no cover</span></div>
 
 
 <div class="viewcode-block" id="MoneyMarketInstrument._validate_yield_calculation_convention">
@@ -611,11 +624,6 @@
         <span class="n">days</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">base</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Discount&quot;</span><span class="p">:</span>
-            <span class="c1"># Convert to yield_to_maturity add_on</span>
-            <span class="n">present_value</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span> <span class="o">*</span> <span class="n">yield_to_maturity</span><span class="p">)</span>
-            <span class="n">yield_to_maturity</span> <span class="o">=</span> <span class="p">(</span><span class="n">cf</span> <span class="o">/</span> <span class="n">present_value</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">base</span> <span class="o">/</span> <span class="n">days</span>
-
         <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">:</span>
             <span class="n">price</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">yield_to_maturity</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Annual&quot;</span><span class="p">:</span>
@@ -628,7 +636,7 @@
             <span class="n">price</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span> <span class="o">*</span> <span class="n">yield_to_maturity</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown or unsupported yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">price</span></div>
 
@@ -750,9 +758,9 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; instrument = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2)</span>
-<span class="sd">        &gt;&gt;&gt; instrument.effective_duration(yield_to_maturity=0.05, settlement_date=&#39;2020-01-01&#39;)</span>
-<span class="sd">        4.3760319684</span>
+<span class="sd">        &gt;&gt;&gt; instrument = MoneyMarketInstrument(&#39;2020-01-01&#39;, &#39;2020-07-01&#39;, 5, 1, price=100, settlement_date=&#39;2020-01-01&#39;, day_count_convention=&#39;30/360&#39;, yield_calculation_convention=&#39;Add-On&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; instrument.modified_duration()</span>
+<span class="sd">        np.float64(0.487804878)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="p">(</span>
@@ -777,9 +785,10 @@
             <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">time_to_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_time_to_payments</span><span class="p">(</span>
+        <span class="n">flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_payment_flow</span><span class="p">(</span>
             <span class="n">settlement_date</span><span class="p">,</span>
             <span class="n">price</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">payment_flow</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">payment_flow</span><span class="p">,</span>
             <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
@@ -791,31 +800,37 @@
                 <span class="s2">&quot;Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available.&quot;</span>
             <span class="p">)</span>
 
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_to_payments</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;A Money Market instrument is supposed to have one payment, got </span><span class="si">{</span><span class="n">time_to_payments</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">flows</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;A Money Market instrument is supposed to have one payment, got </span><span class="si">{</span><span class="n">flows</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
-        <span class="n">t</span><span class="p">,</span> <span class="n">cf</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">time_to_payments</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
-        <span class="n">days</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">base</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">d</span><span class="p">,</span> <span class="n">cf</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">flows</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+
+        <span class="n">days</span> <span class="o">=</span> <span class="n">day_count_convention</span><span class="o">.</span><span class="n">numerator</span><span class="p">(</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">settlement_date</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span>
+        <span class="p">)</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">day_count_convention</span><span class="o">.</span><span class="n">denominator</span><span class="p">(</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">settlement_date</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span>
+        <span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span> <span class="o">-</span> <span class="n">settlement_date</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span>
 
         <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">:</span>
-            <span class="n">duration</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">ytm</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="mi">365</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">t</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Annual&quot;</span><span class="p">:</span>
-            <span class="n">duration</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="mi">365</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">t</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Add-On&quot;</span><span class="p">:</span>
             <span class="c1"># derivative of (1 / (1 + x * t)) is -(t / (1 + x * t)^2)</span>
-            <span class="n">duration</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;BEY&quot;</span><span class="p">:</span>
-            <span class="n">duration</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Discount&quot;</span><span class="p">:</span>
             <span class="c1"># derivative of (1 - x) is -1</span>
-            <span class="n">duration</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span> <span class="o">/</span> <span class="n">price_calc</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown or unsupported yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>  <span class="c1"># pragma: no cover</span>
 
-        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">duration</span> <span class="o">/</span> <span class="n">price_calc</span> <span class="k">if</span> <span class="n">price_calc</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MoneyMarketInstrument.macaulay_duration">
@@ -869,9 +884,9 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; instrument = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2)</span>
-<span class="sd">        &gt;&gt;&gt; instrument.macaulay_duration(yield_to_maturity=0.05, settlement_date=&#39;2020-01-01&#39;)</span>
-<span class="sd">        4.3760319684</span>
+<span class="sd">        &gt;&gt;&gt; instrument = MoneyMarketInstrument(&#39;2020-01-01&#39;, &#39;2020-07-01&#39;, 5, 1, price=100, settlement_date=&#39;2020-01-01&#39;, day_count_convention=&#39;30/360&#39;, yield_calculation_convention=&#39;Add-On&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; instrument.macaulay_duration()</span>
+<span class="sd">        np.float64(0.5)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="p">(</span>
@@ -896,9 +911,10 @@
             <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">time_to_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_time_to_payments</span><span class="p">(</span>
+        <span class="n">flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_payment_flow</span><span class="p">(</span>
             <span class="n">settlement_date</span><span class="p">,</span>
             <span class="n">price</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">payment_flow</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">payment_flow</span><span class="p">,</span>
             <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
@@ -910,31 +926,37 @@
                 <span class="s2">&quot;Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available.&quot;</span>
             <span class="p">)</span>
 
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_to_payments</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;A Money Market instrument is supposed to have one payment, got </span><span class="si">{</span><span class="n">time_to_payments</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">flows</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;A Money Market instrument is supposed to have one payment, got </span><span class="si">{</span><span class="n">flows</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
-        <span class="n">t</span><span class="p">,</span> <span class="n">cf</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">time_to_payments</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
-        <span class="n">days</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">base</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">d</span><span class="p">,</span> <span class="n">cf</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">flows</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+
+        <span class="n">days</span> <span class="o">=</span> <span class="n">day_count_convention</span><span class="o">.</span><span class="n">numerator</span><span class="p">(</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">settlement_date</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span>
+        <span class="p">)</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">day_count_convention</span><span class="o">.</span><span class="n">denominator</span><span class="p">(</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">settlement_date</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span>
+        <span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span> <span class="o">-</span> <span class="n">settlement_date</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span>
 
         <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">:</span>
-            <span class="n">duration</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">ytm</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="mi">365</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">t</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Annual&quot;</span><span class="p">:</span>
-            <span class="n">duration</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="mi">365</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">t</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Add-On&quot;</span><span class="p">:</span>
             <span class="c1"># derivative of (1 / (1 + x * t)) is -(t / (1 + x * t)^2)</span>
-            <span class="n">duration</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;BEY&quot;</span><span class="p">:</span>
-            <span class="n">duration</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">days</span> <span class="o">/</span> <span class="mi">365</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Discount&quot;</span><span class="p">:</span>
             <span class="c1"># derivative of (1 - x) is -1</span>
-            <span class="n">duration</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span> <span class="o">/</span> <span class="n">price_calc</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown or unsupported yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>  <span class="c1"># pragma: no cover</span>
 
-        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">duration</span> <span class="o">/</span> <span class="n">price_calc</span> <span class="k">if</span> <span class="n">price_calc</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MoneyMarketInstrument.convexity">
@@ -951,8 +973,6 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the convexity of the instrument.</span>
-
-
 
 <span class="sd">        .. math::</span>
 <span class="sd">            Convexity = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t \\cdot t \\cdot (t + 1)}{(1 + YTM)^{(t + 2)}}</span>
@@ -989,9 +1009,9 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; instrument = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2)</span>
-<span class="sd">        &gt;&gt;&gt; instrument.convexity(yield_to_maturity=0.05)</span>
-<span class="sd">        22.6123221851</span>
+<span class="sd">        &gt;&gt;&gt; instrument = MoneyMarketInstrument(&#39;2020-01-01&#39;, &#39;2020-07-01&#39;, 5, 1, price=100, settlement_date=&#39;2020-01-01&#39;, day_count_convention=&#39;30/360&#39;, yield_calculation_convention=&#39;Add-On&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; instrument.convexity()</span>
+<span class="sd">        np.float64(0.4759071998705622)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="p">(</span>
@@ -1016,9 +1036,10 @@
             <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">time_to_payments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_time_to_payments</span><span class="p">(</span>
+        <span class="n">flows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_payment_flow</span><span class="p">(</span>
             <span class="n">settlement_date</span><span class="p">,</span>
             <span class="n">price</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">payment_flow</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">payment_flow</span><span class="p">,</span>
             <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
             <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
@@ -1030,34 +1051,58 @@
                 <span class="s2">&quot;Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available.&quot;</span>
             <span class="p">)</span>
 
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_to_payments</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;A Money Market instrument is supposed to have one payment, got </span><span class="si">{</span><span class="n">time_to_payments</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">flows</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;A Money Market instrument is supposed to have one payment, got </span><span class="si">{</span><span class="n">flows</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">d</span><span class="p">,</span> <span class="n">cf</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">flows</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span> <span class="o">-</span> <span class="n">settlement_date</span><span class="p">)</span><span class="o">.</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span>
+        <span class="n">days</span> <span class="o">=</span> <span class="n">day_count_convention</span><span class="o">.</span><span class="n">numerator</span><span class="p">(</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">settlement_date</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span>
+        <span class="p">)</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">day_count_convention</span><span class="o">.</span><span class="n">denominator</span><span class="p">(</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">settlement_date</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maturity</span>
         <span class="p">)</span>
 
-        <span class="n">t</span><span class="p">,</span> <span class="n">cf</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">time_to_payments</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
-        <span class="n">days</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">base</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
         <span class="k">if</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">:</span>
-            <span class="n">convexity</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">ytm</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="c1"># price = cf * np.exp(-ytm * days / 365)</span>
+            <span class="c1"># second derivative of price w.r.t ytm is</span>
+            <span class="c1"># cf * exp(-ytm * days / 365) * (t)^2</span>
+            <span class="c1"># divide by price to get convexity</span>
+            <span class="c1"># t ^ 2</span>
+            <span class="n">convexity</span> <span class="o">=</span> <span class="n">t</span><span class="o">**</span><span class="mi">2</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Annual&quot;</span><span class="p">:</span>
-            <span class="n">convexity</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">cf</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="c1"># price = cf * 1 / (1 + ytm) ** (t)</span>
+            <span class="c1"># second derivative of price w.r.t ytm is</span>
+            <span class="c1"># cf * 1 / (1 + ytm) ** (t + 2) * (t) * (t + 1)</span>
+            <span class="c1"># divide by price to get convexity</span>
+            <span class="c1"># (t) * (t + 1) / (1 + ytm) ** 2</span>
+            <span class="n">convexity</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Add-On&quot;</span><span class="p">:</span>
-            <span class="c1"># derivative of (1 / (1 + x * t)) is -(t / (1 + x * t)^2)</span>
-            <span class="n">convexity</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="c1"># price = cf * 1 / (1 + ytm * days / base)</span>
+            <span class="c1"># second derivative of price w.r.t ytm is</span>
+            <span class="c1"># 2 * cf / (1 + ytm * days / base) ** 3 * (days / base) ** 2</span>
+            <span class="c1"># divide by price to get convexity</span>
+            <span class="c1"># (days / base) ** 2 / (1 + ytm * days / base) ** 2</span>
+            <span class="n">convexity</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="n">base</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;BEY&quot;</span><span class="p">:</span>
-            <span class="n">convexity</span> <span class="o">=</span> <span class="n">cf</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+            <span class="c1"># price = cf * 1 / (1 + ytm * days / 365)</span>
+            <span class="c1"># second derivative of price w.r.t ytm is</span>
+            <span class="c1"># cf / (1 + ytm * days / 365) ** 3 * (days / 365) ** 2</span>
+            <span class="c1"># divide by price to get convexity</span>
+            <span class="c1"># (days / 365) ** 2 / (1 + ytm * days / 365) ** 2</span>
+            <span class="n">convexity</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ytm</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="mi">365</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
         <span class="k">elif</span> <span class="n">yield_calculation_convention</span> <span class="o">==</span> <span class="s2">&quot;Discount&quot;</span><span class="p">:</span>
-            <span class="c1"># derivative of (1 - x) is -1</span>
+            <span class="c1"># price = cf * (1 - days / base * ytm)</span>
+            <span class="c1"># second derivative of price w.r.t ytm is 0</span>
+            <span class="c1"># divide by price to get convexity</span>
+            <span class="c1"># 0 / price = 0</span>
             <span class="n">convexity</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unknown yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown or unsupported yield calculation convention: </span><span class="si">{</span><span class="n">yield_calculation_convention</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>  <span class="c1"># pragma: no cover</span>
 
-        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">convexity</span> <span class="o">/</span> <span class="n">price_calc</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="k">if</span> <span class="n">price_calc</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span></div>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">convexity</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></div>
 </div>
 
 

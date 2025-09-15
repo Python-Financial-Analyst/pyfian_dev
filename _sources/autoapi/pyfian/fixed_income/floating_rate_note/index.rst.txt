@@ -1,15 +1,23 @@
-pyfian.fixed_income.fixed_rate_bond
-===================================
+pyfian.fixed_income.floating_rate_note
+======================================
 
-.. py:module:: pyfian.fixed_income.fixed_rate_bond
+.. py:module:: pyfian.fixed_income.floating_rate_note
 
 .. autoapi-nested-parse::
 
-   bond.py
+   floating_rate_note.py
 
-   Module for fixed income bond analytics, including FixedRateBullet class for payment flows,
-   valuation, and yield calculations.
+   Module for fixed income floating rate note analytics, including FloatingRateNote class for payment flows,
+   valuation, and yield calculations. Adapted from FixedRateBullet.
 
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   pyfian.fixed_income.floating_rate_note.list_maturities_rates
 
 
 Classes
@@ -17,168 +25,19 @@ Classes
 
 .. autoapisummary::
 
-   pyfian.fixed_income.fixed_rate_bond.FixedRateBullet
+   pyfian.fixed_income.floating_rate_note.FloatingRateNote
 
 
 Module Contents
 ---------------
 
-.. py:class:: FixedRateBullet(issue_dt: Union[str, pandas.Timestamp], maturity: Union[str, pandas.Timestamp], cpn: float, cpn_freq: int, notional: float = 100, settlement_convention_t_plus: int = 1, record_date_t_minus: int = 1, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, yield_to_maturity: Optional[float] = None, price: Optional[float] = None, adjust_to_business_days: bool = False, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/actual-Bond', following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase = '30/360', yield_calculation_convention: str = 'BEY')
+.. py:class:: FloatingRateNote(issue_dt: Union[str, pandas.Timestamp], maturity: Union[str, pandas.Timestamp], ref_rate_curve: Optional[pyfian.yield_curves.base_curve.YieldCurveBase] = None, current_ref_rate: Optional[float] = None, quoted_margin: float = 0.0, cpn_freq: int = 1, notional: float = 100, settlement_convention_t_plus: int = 1, record_date_t_minus: int = 1, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, yield_to_maturity: Optional[float] = None, price: Optional[float] = None, adjust_to_business_days: bool = False, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/actual-Bond', following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase = '30/360', yield_calculation_convention: str = 'BEY')
 
    Bases: :py:obj:`pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument`
 
 
-   FixedRateBullet represents a bullet bond with fixed coupon payments and principal at maturity.
-   It allows for payment flow generation, valuation, yield calculations, and other bond analytics.
-
-   :param issue_dt: Issue date of the bond.
-   :type issue_dt: str or datetime-like
-   :param maturity: Maturity date of the bond.
-   :type maturity: str or datetime-like
-   :param cpn: Annual coupon rate (percentage).
-   :type cpn: float
-   :param cpn_freq: Number of coupon payments per year.
-   :type cpn_freq: int
-   :param notional: Face value (principal) of the bond. Defaults to 100.
-   :type notional: float, optional
-   :param settlement_convention_t_plus: Settlement convention. How many days after trade date the payment is made, e.g., T+1.
-                                        Defaults to 1.
-   :type settlement_convention_t_plus: int, optional
-   :param record_date_t_minus: Record date convention. How many days before the coupon payment is made to receive it.
-                               If 1, you receive the payment if you had settled the trade 1 day before coupon payment.
-                               Defaults to 1.
-   :type record_date_t_minus: int, optional
-   :param settlement_date: Settlement date for the bond. Defaults to None.
-   :type settlement_date: str or datetime-like, optional
-   :param yield_to_maturity: Yield to maturity of the bond. Set in decimal, e.g., 0.05 for 5%. Defaults to None.
-   :type yield_to_maturity: float, optional
-   :param price: Market price of the bond. Defaults to None.
-   :type price: float, optional
-   :param adjust_to_business_days: Whether to adjust dates to business days. Defaults to False.
-   :type adjust_to_business_days: bool, optional
-   :param day_count_convention: Day count convention for the bond. Defaults to 'actual/actual-Bond'.
-                                It is used to calculate the day count fraction for accrued interests and time to payments.
-                                Supported conventions: '30/360', '30e/360', 'actual/actual', 'actual/360', 'actual/365', '30/365', 'actual/actual-Bond'.
-   :type day_count_convention: str, optional
-   :param following_coupons_day_count: Day count convention for the following coupons. Defaults to '30/360', to match the common convention for bonds.
-                                       Convention "actual/365" might be the more relevant for Effective Annual Yield or Continuous Compounding.
-   :type following_coupons_day_count: str, optional
-   :param yield_calculation_convention: Yield convention for the bond yield calculation. By default, it is "BEY" (Bond Equivalent Yield).
-                                        Other options are "Annual" or "Continuous".
-   :type yield_calculation_convention: str, optional
-
-   :raises ValueError: If any of the input parameters are invalid.
-
-   .. attribute:: issue_dt
-
-      Issue date of the bond.
-
-      :type: pd.Timestamp
-
-   .. attribute:: maturity
-
-      Maturity date of the bond.
-
-      :type: pd.Timestamp
-
-   .. attribute:: cpn
-
-      Annual coupon rate (percentage).
-
-      :type: float
-
-   .. attribute:: cpn_freq
-
-      Number of coupon payments per year.
-
-      :type: int
-
-   .. attribute:: notional
-
-      Face value (principal) of the bond.
-
-      :type: float
-
-   .. attribute:: settlement_convention_t_plus
-
-      Settlement convention (T+).
-
-      :type: int
-
-   .. attribute:: record_date_t_minus
-
-      Record date convention (T-).
-
-      :type: int
-
-   .. attribute:: settlement_date
-
-      Settlement date for the bond.
-
-      :type: pd.Timestamp
-
-   .. attribute:: yield_to_maturity
-
-      Yield to maturity of the bond.
-
-      :type: float
-
-   .. attribute:: price
-
-      Market price of the bond.
-
-      :type: float
-
-   .. attribute:: payment_flow
-
-      Payment flow schedule for the bond.
-
-      :type: dict[pd.Timestamp, float]
-
-   .. attribute:: coupon_flow
-
-      Coupon payment schedule for the bond.
-
-      :type: dict[pd.Timestamp, float]
-
-   .. attribute:: amortization_flow
-
-      Amortization payment schedule for the bond.
-
-      :type: dict[pd.Timestamp, float]
-
-   .. attribute:: adjust_to_business_days
-
-      Whether to adjust dates to business days by default.
-      If True, dates will be adjusted to the nearest business day.
-
-      :type: bool
-
-   .. attribute:: day_count_convention
-
-      Day count convention function for the bond.
-
-      :type: DayCountBase
-
-   .. attribute:: following_coupons_day_count
-
-      Day count convention for the following coupons. Defaults to '30/360', to match the common convention for bonds.
-      Convention "actual/365" might be the more relevant for Effective Annual Yield or Continuous Compounding.
-
-      :type: DayCountBase
-
-   .. attribute:: yield_calculation_convention
-
-      Yield convention for the bond yield calculation. By default, it is "BEY" (Bond Equivalent Yield).
-      Other options are "Annual" or "Continuous".
-
-      :type: str
-
-   .. rubric:: Examples
-
-   >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1, notional=1000)
-   >>> bond.payment_flow # doctest: +SKIP
-   {Timestamp('2025-01-01 00:00:00'): 1050.0, Timestamp('2024-01-01 00:00:00'): 50.0, ...}
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
 
 
    .. py:attribute:: issue_dt
@@ -193,28 +52,37 @@ Module Contents
 
 
 
-   .. py:attribute:: cpn
-      :type:  float
+   .. py:attribute:: ref_rate_curve
+      :value: None
+
+
+
+   .. py:attribute:: current_ref_rate
+      :value: None
+
+
+
+   .. py:attribute:: quoted_margin
+      :value: 0.0
+
 
 
    .. py:attribute:: cpn_freq
-      :type:  int
+      :value: 1
+
 
 
    .. py:attribute:: notional
-      :type:  float
       :value: 100
 
 
 
    .. py:attribute:: settlement_convention_t_plus
-      :type:  int
       :value: 1
 
 
 
    .. py:attribute:: record_date_t_minus
-      :type:  int
       :value: 1
 
 
@@ -245,6 +113,10 @@ Module Contents
       :type:  dict[pandas.Timestamp, float]
 
 
+   .. py:attribute:: spread_flow
+      :type:  dict[pandas.Timestamp, float]
+
+
    .. py:attribute:: amortization_flow
       :type:  dict[pandas.Timestamp, float]
 
@@ -256,10 +128,6 @@ Module Contents
 
 
    .. py:method:: _validate_yield_calculation_convention(yield_calculation_convention: str) -> str
-
-      Validate the yield calculation convention.
-      Raises ValueError if the convention is not supported.
-
 
 
    .. py:method:: _validate_following_coupons_day_count(following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase) -> pyfian.utils.day_count.DayCountBase
@@ -275,11 +143,11 @@ Module Contents
       Returns a tuple of dictionaries:
 
       * dict_payments: Payment dates as keys and cash flow amounts as values.
-      * dict_coupons: Coupon payment dates as keys and coupon amounts as values.
+      * dict_spreads: Spread payment dates as keys and spread amounts as values.
       * dict_amortization: Amortization payment dates as keys and amortization amounts as values.
 
       :returns: * **dict_payments** (*dict*) -- Dictionary with payment dates as keys and cash flow amounts as values.
-                * **dict_coupons** (*dict*) -- Dictionary with coupon payment dates as keys and coupon amounts as values.
+                * **dict_spreads** (*dict*) -- Dictionary with spread payment dates as keys and spread amounts as values.
                 * **dict_amortization** (*dict*) -- Dictionary with amortization payment dates as keys and amortization amounts as values.
 
       :raises ValueError: If the bond is not properly initialized.
@@ -292,9 +160,32 @@ Module Contents
 
 
 
-   .. py:method:: _calculate_time_to_payments(settlement_date, price, adjust_to_business_days, following_coupons_day_count, yield_calculation_convention, day_count_convention) -> dict[float, float]
+   .. py:method:: _calculate_time_to_payments(settlement_date, price, adjust_to_business_days, following_coupons_day_count, yield_calculation_convention, day_count_convention, payment_flow: Optional[dict[pandas.Timestamp, float]] = None) -> dict[float, float]
 
       Calculate the time to each payment from the settlement date.
+
+
+
+   .. py:method:: make_expected_coupon_flow(current_ref_rate: Optional[float] = None, ref_rate_curve: Optional[pyfian.yield_curves.base_curve.YieldCurveBase] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None) -> dict[pandas.Timestamp, float]
+
+      Generate the expected coupon payment flow (cash flows) for the bond from the settlement date onwards.
+      Uses the reference rate curve to estimate future reference rates for coupon calculations.
+
+      :param current_ref_rate: Current reference rate as a decimal. If not provided, will use self.current_ref_rate.
+      :type current_ref_rate: float, optional
+      :param ref_rate_curve: Reference rate curve to use for estimating future rates. If not provided, will use self.ref_rate_curve.
+      :type ref_rate_curve: YieldCurveBase, optional
+      :param settlement_date: Settlement date. Defaults to issue date.
+      :type settlement_date: str or datetime-like, optional
+
+      :returns: **expected_coupon_flow** -- Dictionary with coupon payment dates as keys and cash flow amounts as values.
+      :rtype: dict
+
+      .. rubric:: Examples
+
+      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', ref_rate_curve, current_ref_rate=0.02, quoted_margin=50, cpn_freq=2)
+      >>> bond.make_real_payment_flow(settlement_date='2022-01-01') # doctest: +SKIP
+      {Timestamp('2022-07-01 00:00:00'): 1.25, Timestamp('2023-01-01 00:00:00'): 1.25, ...}
 
 
 
@@ -369,7 +260,7 @@ Module Contents
 
 
 
-   .. py:method:: yield_to_maturity(price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, tol: Optional[float] = 1e-06, max_iter: Optional[int] = 100) -> float
+   .. py:method:: yield_to_maturity(price: float, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, current_ref_rate: Optional[float] = None, ref_rate_curve: Optional[pyfian.yield_curves.base_curve.YieldCurveBase] = None, tol: Optional[float] = 1e-06, max_iter: Optional[int] = 100) -> float
 
       Estimate the yield to maturity (YTM) using the xirr function from pyfian.time_value.irr.
 
@@ -391,8 +282,8 @@ Module Contents
 
       The times to payments are calculated from the settlement date to each payment date and need not be integer values.
 
-      :param price: Price of the bond. If not provided, will use self.price if set.
-      :type price: float, optional
+      :param price: Price of the bond.
+      :type price: float
       :param settlement_date: Settlement date. Defaults to issue date.
       :type settlement_date: str or datetime-like, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
@@ -415,7 +306,7 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', 5, 1)
       >>> bond.yield_to_maturity(price=95)
       np.float64(0.06100197251858131)
 
@@ -424,7 +315,6 @@ Module Contents
    .. py:method:: modified_duration(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
 
       Calculate modified duration of the bond.
-
 
       .. math::
           Modified Duration = \frac{1}{P} \sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{(t+1)}} \cdot t
@@ -459,47 +349,6 @@ Module Contents
 
       >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
       >>> bond.effective_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
-      4.3760319684
-
-
-
-   .. py:method:: spread_duration(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
-
-      Calculate spread duration of the bond. In the case of a fixed income bond without embedded options, this is equivalent to modified duration.
-
-      .. math::
-          Spread Duration = \frac{1}{P} \sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{(t+1)}} \cdot t
-      where:
-
-      - :math:`P` is the price of the bond
-      - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date
-      - :math:`YTM` is the yield to maturity
-      - :math:`T` is the total number of periods
-
-      The times to payments are calculated from the settlement date to each payment date and need not be integer values.
-
-      :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from price if given.
-      :type yield_to_maturity: float, optional
-      :param price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
-      :type price: float, optional
-      :param settlement_date: Settlement date. Defaults to issue date.
-      :type settlement_date: str or datetime-like, optional
-      :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
-      :type adjust_to_business_days: bool, optional
-      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
-      :type day_count_convention: str or DayCountBase, optional
-      :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
-      :type following_coupons_day_count: str or DayCountBase, optional
-      :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
-      :type yield_calculation_convention: str, optional
-
-      :returns: **duration** -- Modified duration in years.
-      :rtype: float
-
-      .. rubric:: Examples
-
-      >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
-      >>> bond.spread_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
       4.3760319684
 
 
@@ -675,9 +524,9 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
+      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', 100, 2)
       >>> print(bond)
-      FixedRateBullet(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, cpn=5, cpn_freq=1)
+      FloatingRateNote(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, quoted_margin=100, cpn_freq=2)
 
 
 
@@ -698,4 +547,6 @@ Module Contents
 
    .. py:method:: _price_from_yield_and_clean_parameters(yield_to_maturity: float, settlement_date: Optional[Union[str, pandas.Timestamp]], adjust_to_business_days: bool, following_coupons_day_count: pyfian.utils.day_count.DayCountBase, yield_calculation_convention: str, day_count_convention: pyfian.utils.day_count.DayCountBase) -> float
 
+
+.. py:data:: list_maturities_rates
 

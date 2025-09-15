@@ -134,7 +134,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_log</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
-<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown or unsupported yield calculation convention: Unknown</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve_aer</span> <span class="o">=</span> <span class="n">FlatCurveAER</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
@@ -151,7 +151,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_aer</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
-<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown or unsupported yield calculation convention: Unknown</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve_bey</span> <span class="o">=</span> <span class="n">FlatCurveBEY</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
@@ -168,7 +168,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_bey</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
-<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown or unsupported yield calculation convention: Unknown</span>
 </pre></div>
 </div>
 <section id="classes">
@@ -362,7 +362,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
-<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown or unsupported yield calculation convention: Unknown</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -427,7 +427,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
-<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown or unsupported yield calculation convention: Unknown</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -609,7 +609,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
-<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown or unsupported yield calculation convention: Unknown</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -672,7 +672,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
-<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown or unsupported yield calculation convention: Unknown</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -856,7 +856,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
-<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown or unsupported yield calculation convention: Unknown</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -920,7 +920,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
-<span class="gr">ValueError</span>: <span class="n">Unknown yield calculation convention: Unknown</span>
+<span class="gr">ValueError</span>: <span class="n">Unknown or unsupported yield calculation convention: Unknown</span>
 </pre></div>
 </div>
 </dd></dl>

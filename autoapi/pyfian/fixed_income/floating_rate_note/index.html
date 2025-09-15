@@ -1,0 +1,714 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyfian.fixed_income.floating_rate_note &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="pyfian.fixed_income.money_market_instruments" href="../money_market_instruments/index.html" />
+    <link rel="prev" title="pyfian.fixed_income.fixed_rate_bond" href="../fixed_rate_bond/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../Topics/fixed_income/index.html">Fixed Income</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">pyfian</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../../corporate_finance/index.html">pyfian.corporate_finance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../data/index.html">pyfian.data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../derivatives/index.html">pyfian.derivatives</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../financial_statements/index.html">pyfian.financial_statements</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../index.html">pyfian.fixed_income</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../portfolio/index.html">pyfian.portfolio</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../risk_management/index.html">pyfian.risk_management</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../statistics/index.html">pyfian.statistics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../time_value/index.html">pyfian.time_value</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../utils/index.html">pyfian.utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../visualization/index.html">pyfian.visualization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../yield_curves/index.html">pyfian.yield_curves</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#attributes">Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#package-contents">Package Contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">pyfian</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">pyfian.fixed_income</a></li>
+      <li class="breadcrumb-item active">pyfian.fixed_income.floating_rate_note</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/autoapi/pyfian/fixed_income/floating_rate_note/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyfian.fixed_income.floating_rate_note">
+<span id="pyfian-fixed-income-floating-rate-note"></span><h1>pyfian.fixed_income.floating_rate_note<a class="headerlink" href="#module-pyfian.fixed_income.floating_rate_note" title="Link to this heading"></a></h1>
+<p>floating_rate_note.py</p>
+<p>Module for fixed income floating rate note analytics, including FloatingRateNote class for payment flows,
+valuation, and yield calculations. Adapted from FixedRateBullet.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.fixed_income.floating_rate_note.list_maturities_rates" title="pyfian.fixed_income.floating_rate_note.list_maturities_rates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_maturities_rates</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote" title="pyfian.fixed_income.floating_rate_note.FloatingRateNote"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingRateNote</span></code></a></p></td>
+<td><p>Helper class that provides a standard way to create an ABC using</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.fixed_income.floating_rate_note.</span></span><span class="sig-name descname"><span class="pre">FloatingRateNote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">issue_dt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_rate_curve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase" title="pyfian.yield_curves.base_curve.YieldCurveBase"><span class="pre">pyfian.yield_curves.base_curve.YieldCurveBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_ref_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quoted_margin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cpn_freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_convention_t_plus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_date_t_minus</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_to_maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">price</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'actual/actual-Bond'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'30/360'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'BEY'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base_fixed_income/index.html#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument" title="pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument</span></code></a></p>
+<p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.issue_dt">
+<span class="sig-name descname"><span class="pre">issue_dt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.issue_dt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.maturity">
+<span class="sig-name descname"><span class="pre">maturity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.maturity" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.ref_rate_curve">
+<span class="sig-name descname"><span class="pre">ref_rate_curve</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.ref_rate_curve" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.current_ref_rate">
+<span class="sig-name descname"><span class="pre">current_ref_rate</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.current_ref_rate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.quoted_margin">
+<span class="sig-name descname"><span class="pre">quoted_margin</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.quoted_margin" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.cpn_freq">
+<span class="sig-name descname"><span class="pre">cpn_freq</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.cpn_freq" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.notional">
+<span class="sig-name descname"><span class="pre">notional</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.notional" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.settlement_convention_t_plus">
+<span class="sig-name descname"><span class="pre">settlement_convention_t_plus</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.settlement_convention_t_plus" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.record_date_t_minus">
+<span class="sig-name descname"><span class="pre">record_date_t_minus</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.record_date_t_minus" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.day_count_convention">
+<span class="sig-name descname"><span class="pre">day_count_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.day_count_convention" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.adjust_to_business_days">
+<span class="sig-name descname"><span class="pre">adjust_to_business_days</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.adjust_to_business_days" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.following_coupons_day_count">
+<span class="sig-name descname"><span class="pre">following_coupons_day_count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.following_coupons_day_count" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.yield_calculation_convention">
+<span class="sig-name descname"><span class="pre">yield_calculation_convention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.yield_calculation_convention" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.payment_flow">
+<span class="sig-name descname"><span class="pre">payment_flow</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.Timestamp</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.payment_flow" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.coupon_flow">
+<span class="sig-name descname"><span class="pre">coupon_flow</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.Timestamp</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.coupon_flow" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.spread_flow">
+<span class="sig-name descname"><span class="pre">spread_flow</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.Timestamp</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.spread_flow" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.amortization_flow">
+<span class="sig-name descname"><span class="pre">amortization_flow</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.Timestamp</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.amortization_flow" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote._settlement_date">
+<span class="sig-name descname"><span class="pre">_settlement_date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote._settlement_date" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote._validate_yield_calculation_convention">
+<span class="sig-name descname"><span class="pre">_validate_yield_calculation_convention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote._validate_yield_calculation_convention"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote._validate_yield_calculation_convention" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote._validate_following_coupons_day_count">
+<span class="sig-name descname"><span class="pre">_validate_following_coupons_day_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote._validate_following_coupons_day_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote._validate_following_coupons_day_count" title="Link to this definition"></a></dt>
+<dd><p>Validate the following coupons day count convention.
+Raises ValueError if the convention is not supported.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.make_payment_flow">
+<span class="sig-name descname"><span class="pre">make_payment_flow</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.Timestamp</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.Timestamp</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.Timestamp</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote.make_payment_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.make_payment_flow" title="Link to this definition"></a></dt>
+<dd><p>Generate the payment flow (cash flows) for the bond.
+Returns a tuple of dictionaries:</p>
+<ul class="simple">
+<li><p>dict_payments: Payment dates as keys and cash flow amounts as values.</p></li>
+<li><p>dict_spreads: Spread payment dates as keys and spread amounts as values.</p></li>
+<li><p>dict_amortization: Amortization payment dates as keys and amortization amounts as values.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>dict_payments</strong> (<em>dict</em>) – Dictionary with payment dates as keys and cash flow amounts as values.</p></li>
+<li><p><strong>dict_spreads</strong> (<em>dict</em>) – Dictionary with spread payment dates as keys and spread amounts as values.</p></li>
+<li><p><strong>dict_amortization</strong> (<em>dict</em>) – Dictionary with amortization payment dates as keys and amortization amounts as values.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the bond is not properly initialized.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">notional</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">make_payment_flow</span><span class="p">()</span>
+<span class="go">{Timestamp(&#39;2025-01-01 00:00:00&#39;): 1050.0, Timestamp(&#39;2024-01-01 00:00:00&#39;): 50.0, ...}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote._calculate_time_to_payments">
+<span class="sig-name descname"><span class="pre">_calculate_time_to_payments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">price</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payment_flow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.Timestamp</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote._calculate_time_to_payments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote._calculate_time_to_payments" title="Link to this definition"></a></dt>
+<dd><p>Calculate the time to each payment from the settlement date.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.make_expected_coupon_flow">
+<span class="sig-name descname"><span class="pre">make_expected_coupon_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_ref_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_rate_curve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase" title="pyfian.yield_curves.base_curve.YieldCurveBase"><span class="pre">pyfian.yield_curves.base_curve.YieldCurveBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.Timestamp</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote.make_expected_coupon_flow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.make_expected_coupon_flow" title="Link to this definition"></a></dt>
+<dd><p>Generate the expected coupon payment flow (cash flows) for the bond from the settlement date onwards.
+Uses the reference rate curve to estimate future reference rates for coupon calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current_ref_rate</strong> (<em>float</em><em>, </em><em>optional</em>) – Current reference rate as a decimal. If not provided, will use self.current_ref_rate.</p></li>
+<li><p><strong>ref_rate_curve</strong> (<a class="reference internal" href="../../yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase" title="pyfian.yield_curves.base_curve.YieldCurveBase"><em>YieldCurveBase</em></a><em>, </em><em>optional</em>) – Reference rate curve to use for estimating future rates. If not provided, will use self.ref_rate_curve.</p></li>
+<li><p><strong>settlement_date</strong> (<em>str</em><em> or </em><em>datetime-like</em><em>, </em><em>optional</em>) – Settlement date. Defaults to issue date.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>expected_coupon_flow</strong> – Dictionary with coupon payment dates as keys and cash flow amounts as values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FloatingRateNote</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="n">ref_rate_curve</span><span class="p">,</span> <span class="n">current_ref_rate</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">quoted_margin</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">make_real_payment_flow</span><span class="p">(</span><span class="n">settlement_date</span><span class="o">=</span><span class="s1">&#39;2022-01-01&#39;</span><span class="p">)</span>
+<span class="go">{Timestamp(&#39;2022-07-01 00:00:00&#39;): 1.25, Timestamp(&#39;2023-01-01 00:00:00&#39;): 1.25, ...}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.value_with_curve">
+<span class="sig-name descname"><span class="pre">value_with_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase" title="pyfian.yield_curves.base_curve.YieldCurveBase"><span class="pre">pyfian.yield_curves.base_curve.YieldCurveBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">spread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">price</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote.value_with_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.value_with_curve" title="Link to this definition"></a></dt>
+<dd><p>Value the bond using a discount curve.</p>
+<p>Calculates the present value of the bond’s cash flows using the provided discount curve.</p>
+<p>Returns the total present value and a dictionary of present values for each payment.</p>
+<p>If a bond price is provided, it is included as a negative cash flow, and the
+present value would be equivalent to a Net Present Value (NPV) calculation, useful for
+comparing the bond’s market price against its theoretical value based on the discount curve.</p>
+<p>The curve should have a method <cite>discount_date(d)</cite> that returns the discount factor for a given date <cite>d</cite>.</p>
+<p>The discount factor is typically calculated as:</p>
+<div class="math notranslate nohighlight">
+\[discount_date(d) = \frac{1}{(1 + r(d))^t}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(r(d)\)</span> is the discount rate at date <span class="math notranslate nohighlight">\(d\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(t\)</span> is the time in years from the settlement date to date <span class="math notranslate nohighlight">\(d\)</span>.</p></li>
+</ul>
+<p>The discount factor brings the future value back to the present. Using this discount factor, we can calculate the present value of future cash flows by discounting them back to the settlement date.</p>
+<p>For a set of cash flows <span class="math notranslate nohighlight">\(C(t)\)</span> at times <span class="math notranslate nohighlight">\(t\)</span>, the present value (PV) is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[PV = \sum_{i}^{N} C(d_i) * discount_date(d_i)\]</div>
+<p>for each (<span class="math notranslate nohighlight">\(d_i\)</span>, <span class="math notranslate nohighlight">\(C(d_i)\)</span>) cash flow, where <span class="math notranslate nohighlight">\(i = 1, ..., N\)</span></p>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(PV\)</span> is the present value of the cash flows</p></li>
+<li><p><span class="math notranslate nohighlight">\(C(d)\)</span> is the cash flow at date <span class="math notranslate nohighlight">\(d\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(N\)</span> is the total number of cash flows</p></li>
+<li><p><span class="math notranslate nohighlight">\(r(d)\)</span> is the discount rate at date <span class="math notranslate nohighlight">\(d\)</span>.</p></li>
+</ul>
+<p>The discount rate for a cash flow at date <span class="math notranslate nohighlight">\(d\)</span> is obtained from the discount curve using <cite>curve.discount_date(d)</cite>.</p>
+<p>This can be used to optimize the yield curve fitting process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>curve</strong> (<em>object</em>) – Discount curve object with a discount_date(d) method.</p></li>
+<li><p><strong>settlement_date</strong> (<em>str</em><em> or </em><em>datetime-like</em><em>, </em><em>optional</em>) – Settlement date. Defaults to issue date.</p></li>
+<li><p><strong>price</strong> (<em>float</em><em>, </em><em>optional</em>) – If provided, includes bond price as a negative cash flow.</p></li>
+<li><p><strong>adjust_to_business_days</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention. Defaults to value of self.day_count_convention.</p></li>
+<li><p><strong>following_coupons_day_count</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention. Defaults to value of self.yield_calculation_convention.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>total_value</strong> (<em>float</em>) – Present value of the bond.</p></li>
+<li><p><strong>pv</strong> (<em>dict</em>) – Dictionary of present values for each payment.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.flat_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlatCurveBEY</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">value_with_curve</span><span class="p">(</span><span class="n">FlatCurveBEY</span><span class="p">(</span><span class="n">curve_date</span><span class="o">=</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="n">bey</span><span class="o">=</span><span class="mf">0.05</span><span class="p">))</span>
+<span class="go">(value, {t1: pv1, t2: pv2, ...})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.yield_to_maturity">
+<span class="sig-name descname"><span class="pre">yield_to_maturity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">price</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_ref_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_rate_curve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../yield_curves/base_curve/index.html#pyfian.yield_curves.base_curve.YieldCurveBase" title="pyfian.yield_curves.base_curve.YieldCurveBase"><span class="pre">pyfian.yield_curves.base_curve.YieldCurveBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote.yield_to_maturity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.yield_to_maturity" title="Link to this definition"></a></dt>
+<dd><p>Estimate the yield to maturity (YTM) using the xirr function from pyfian.time_value.irr.</p>
+<p>The YTM is the internal rate of return (IRR) of the bond’s cash flows, assuming the bond is held to maturity.</p>
+<p>It is the discount rate that makes the present value of the bond’s cash flows equal to its price for a given set of cash flows and settlement date.</p>
+<p>The YTM is calculated by solving the equation:</p>
+<div class="math notranslate nohighlight">
+\[P = \sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{(t+1)}}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P\)</span> is the price of the bond</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_t\)</span> is the cash flow at time <span class="math notranslate nohighlight">\(t\)</span>, where <span class="math notranslate nohighlight">\(t\)</span> is the time in years from the settlement date</p></li>
+<li><p><span class="math notranslate nohighlight">\(YTM\)</span> is the yield to maturity</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span> is the total number of periods</p></li>
+</ul>
+<p>The times to payments are calculated from the settlement date to each payment date and need not be integer values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>price</strong> (<em>float</em>) – Price of the bond.</p></li>
+<li><p><strong>settlement_date</strong> (<em>str</em><em> or </em><em>datetime-like</em><em>, </em><em>optional</em>) – Settlement date. Defaults to issue date.</p></li>
+<li><p><strong>adjust_to_business_days</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention. Defaults to value of self.day_count_convention.</p></li>
+<li><p><strong>following_coupons_day_count</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention. Defaults to value of self.yield_calculation_convention.</p></li>
+<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>optional</em>) – Tolerance for convergence (default is 1e-6).</p></li>
+<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum number of iterations (default is 100).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ytm</strong> – Estimated yield to maturity as a decimal.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If bond price is not set or YTM calculation does not converge.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FloatingRateNote</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">yield_to_maturity</span><span class="p">(</span><span class="n">price</span><span class="o">=</span><span class="mi">95</span><span class="p">)</span>
+<span class="go">np.float64(0.06100197251858131)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.modified_duration">
+<span class="sig-name descname"><span class="pre">modified_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yield_to_maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">price</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote.modified_duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.modified_duration" title="Link to this definition"></a></dt>
+<dd><p>Calculate modified duration of the bond.</p>
+<div class="math notranslate nohighlight">
+\[Modified Duration = \frac{1}{P} \sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{(t+1)}} \cdot t\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P\)</span> is the price of the bond</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_t\)</span> is the cash flow at time <span class="math notranslate nohighlight">\(t\)</span>, where <span class="math notranslate nohighlight">\(t\)</span> is the time in years from the settlement date</p></li>
+<li><p><span class="math notranslate nohighlight">\(YTM\)</span> is the yield to maturity</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span> is the total number of periods</p></li>
+</ul>
+<p>The times to payments are calculated from the settlement date to each payment date and need not be integer values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yield_to_maturity</strong> (<em>float</em><em>, </em><em>optional</em>) – Yield to maturity as a decimal. If not provided, will be calculated from price if given.</p></li>
+<li><p><strong>price</strong> (<em>float</em><em>, </em><em>optional</em>) – Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.</p></li>
+<li><p><strong>settlement_date</strong> (<em>str</em><em> or </em><em>datetime-like</em><em>, </em><em>optional</em>) – Settlement date. Defaults to issue date.</p></li>
+<li><p><strong>adjust_to_business_days</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention. Defaults to value of self.day_count_convention.</p></li>
+<li><p><strong>following_coupons_day_count</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention. Defaults to value of self.yield_calculation_convention.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>duration</strong> – Modified duration in years.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">effective_duration</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">settlement_date</span><span class="o">=</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">)</span>
+<span class="go">4.3760319684</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.macaulay_duration">
+<span class="sig-name descname"><span class="pre">macaulay_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yield_to_maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">price</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote.macaulay_duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.macaulay_duration" title="Link to this definition"></a></dt>
+<dd><p>Calculate macaulay duration of the bond.</p>
+<div class="math notranslate nohighlight">
+\[Macaulay Duration = \frac{1}{P} \sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{(t)}} \cdot t\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P\)</span> is the price of the bond</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_t\)</span> is the cash flow at time <span class="math notranslate nohighlight">\(t\)</span>, where <span class="math notranslate nohighlight">\(t\)</span> is the time in years from the settlement date</p></li>
+<li><p><span class="math notranslate nohighlight">\(YTM\)</span> is the yield to maturity</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span> is the total number of periods</p></li>
+</ul>
+<p>The times to payments are calculated from the settlement date to each payment date and need not be integer values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yield_to_maturity</strong> (<em>float</em><em>, </em><em>optional</em>) – Yield to maturity as a decimal. If not provided, will be calculated from price if given.</p></li>
+<li><p><strong>price</strong> (<em>float</em><em>, </em><em>optional</em>) – Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.</p></li>
+<li><p><strong>settlement_date</strong> (<em>str</em><em> or </em><em>datetime-like</em><em>, </em><em>optional</em>) – Settlement date. Defaults to issue date.</p></li>
+<li><p><strong>adjust_to_business_days</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention. Defaults to value of self.day_count_convention.</p></li>
+<li><p><strong>following_coupons_day_count</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention. Defaults to value of self.yield_calculation_convention.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>duration</strong> – Macaulay duration in years.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">macaulay_duration</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="go">4.4854327646</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.convexity">
+<span class="sig-name descname"><span class="pre">convexity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yield_to_maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">price</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote.convexity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.convexity" title="Link to this definition"></a></dt>
+<dd><p>Calculate the convexity of the bond.</p>
+<div class="math notranslate nohighlight">
+\[Convexity = \frac{1}{P} \sum_{t=1}^{T} \frac{C_t \cdot t \cdot (t + 1)}{(1 + YTM)^{(t + 2)}}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P\)</span> is the price of the bond</p></li>
+<li><p><span class="math notranslate nohighlight">\(C_t\)</span> is the cash flow at time <span class="math notranslate nohighlight">\(t\)</span>, where <span class="math notranslate nohighlight">\(t\)</span> is the time in years from the settlement date</p></li>
+<li><p><span class="math notranslate nohighlight">\(YTM\)</span> is the yield to maturity</p></li>
+<li><p><span class="math notranslate nohighlight">\(T\)</span> is the total number of periods</p></li>
+</ul>
+<p>The times to payments are calculated from the settlement date to each payment date and need not be integer values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yield_to_maturity</strong> (<em>float</em><em>, </em><em>optional</em>) – Yield to maturity as a decimal. If not provided, will be calculated from price if given.</p></li>
+<li><p><strong>price</strong> (<em>float</em><em>, </em><em>optional</em>) – Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.</p></li>
+<li><p><strong>settlement_date</strong> (<em>str</em><em> or </em><em>datetime-like</em><em>, </em><em>optional</em>) – Settlement date. Defaults to issue date.</p></li>
+<li><p><strong>adjust_to_business_days</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</p></li>
+<li><p><strong>day_count_convention</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention. Defaults to value of self.day_count_convention.</p></li>
+<li><p><strong>following_coupons_day_count</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention. Defaults to value of self.yield_calculation_convention.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>convexity</strong> – Bond convexity.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">convexity</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="go">22.6123221851</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.accrued_interest">
+<span class="sig-name descname"><span class="pre">accrued_interest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote.accrued_interest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.accrued_interest" title="Link to this definition"></a></dt>
+<dd><p>Calculate accrued interest since last coupon payment.
+This is the interest that has accumulated on the bond since the last coupon payment date
+or issue date if no coupon payments have been made.</p>
+<p>The accrued interest is calculated on an actual/actual basis, which means it considers
+the actual number of days between the last coupon payment date and the settlement date.</p>
+<p>The formula is as follows:</p>
+<div class="math notranslate nohighlight">
+\[Accrued = C \cdot \frac{SettlementDate - CouponDate_{prev}}{CouponDate_{next} - CouponDate_{prev}}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(C\)</span> is the coupon payment amount</p></li>
+<li><p><span class="math notranslate nohighlight">\(SettlementDate\)</span> is the date for which to calculate accrued interest</p></li>
+<li><p><span class="math notranslate nohighlight">\(CouponDate_{prev}\)</span> is the last coupon payment date before the settlement or issue date if no previous coupon</p></li>
+<li><p><span class="math notranslate nohighlight">\(CouponDate_{next}\)</span> is the next coupon payment date after the settlement</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>settlement_date</strong> (<em>str</em><em> or </em><em>datetime-like</em><em>, </em><em>optional</em>) – Date for which to calculate accrued interest. Defaults to today.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>accrued</strong> – Accrued interest amount.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">accrued_interest</span><span class="p">(</span><span class="s1">&#39;2024-07-02&#39;</span><span class="p">)</span>
+<span class="go">2.5</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.next_coupon_date">
+<span class="sig-name descname"><span class="pre">next_coupon_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote.next_coupon_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.next_coupon_date" title="Link to this definition"></a></dt>
+<dd><p>Get the next coupon payment date from a given date.</p>
+<p>This method finds the next coupon payment date after the specified settlement date.
+If no future coupon payments exist, it returns None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>settlement_date</strong> (<em>str</em><em> or </em><em>datetime-like</em><em>, </em><em>optional</em>) – Date from which to search. Defaults to today. Adjusts to settlement date.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>next_date</strong> – Next coupon payment date, or None if none remain.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Timestamp or None</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">next_coupon_date</span><span class="p">(</span><span class="s1">&#39;2023-06-01&#39;</span><span class="p">)</span>
+<span class="go">Timestamp(&#39;2024-01-01 00:00:00&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.previous_coupon_date">
+<span class="sig-name descname"><span class="pre">previous_coupon_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote.previous_coupon_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.previous_coupon_date" title="Link to this definition"></a></dt>
+<dd><p>Get the previous coupon payment date from a given date.</p>
+<p>This method finds the last coupon payment date before the specified settlement date.
+If no past coupon payments exist, it returns None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>settlement_date</strong> (<em>str</em><em> or </em><em>datetime-like</em><em>, </em><em>optional</em>) – Date from which to search. Defaults to today. Adjusts to settlement date.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>prev_date</strong> – Previous coupon payment date, or None if none exist.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Timestamp or None</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">previous_coupon_date</span><span class="p">(</span><span class="s1">&#39;2023-06-01&#39;</span><span class="p">)</span>
+<span class="go">Timestamp(&#39;2023-01-01 00:00:00&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote.__repr__" title="Link to this definition"></a></dt>
+<dd><p>Return string representation of the FixedRateBullet object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>String representation of the bond.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FloatingRateNote</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">bond</span><span class="p">)</span>
+<span class="go">FloatingRateNote(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, quoted_margin=100, cpn_freq=2)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote._price_from_yield">
+<span class="sig-name descname"><span class="pre">_price_from_yield</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_to_payments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_to_maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote._price_from_yield"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote._price_from_yield" title="Link to this definition"></a></dt>
+<dd><p>Helper to calculate the price of the bond from yield to maturity and time to payments.
+:param time_to_payments: Dictionary with time to payment (in years) as keys and cash flow values.
+:type time_to_payments: dict
+:param yield_to_maturity: Yield to maturity as a decimal (e.g., 0.05 for 5%).
+:type yield_to_maturity: float
+:param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+:type yield_calculation_convention: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Price of the bond.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.FloatingRateNote._price_from_yield_and_clean_parameters">
+<span class="sig-name descname"><span class="pre">_price_from_yield_and_clean_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yield_to_maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/floating_rate_note.html#FloatingRateNote._price_from_yield_and_clean_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.FloatingRateNote._price_from_yield_and_clean_parameters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="pyfian.fixed_income.floating_rate_note.list_maturities_rates">
+<span class="sig-prename descclassname"><span class="pre">pyfian.fixed_income.floating_rate_note.</span></span><span class="sig-name descname"><span class="pre">list_maturities_rates</span></span><a class="headerlink" href="#pyfian.fixed_income.floating_rate_note.list_maturities_rates" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../fixed_rate_bond/index.html" class="btn btn-neutral float-left" title="pyfian.fixed_income.fixed_rate_bond" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../money_market_instruments/index.html" class="btn btn-neutral float-right" title="pyfian.fixed_income.money_market_instruments" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
