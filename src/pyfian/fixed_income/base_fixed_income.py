@@ -21,25 +21,11 @@ class BaseFixedIncomeInstrument(ABC):
     yield_calculation_convention: str
     issue_dt: pd.Timestamp
     _settlement_date: pd.Timestamp
+    _price: Optional[float]
     payment_flow: dict
-    _yield_to_maturity: Optional[float]
     coupon_flow: dict
     amortization_flow: dict
     maturity: pd.Timestamp
-
-    @abstractmethod
-    def _price_from_yield(
-        self,
-        time_to_payments: dict,
-        yield_to_maturity: float,
-        yield_calculation_convention: str,
-    ) -> float:  # pragma: no cover
-        # Calculate the present value of the instrument's cash flows
-        pass
-
-    @abstractmethod
-    def yield_to_maturity(self, *args, **kwargs) -> float:  # pragma: no cover
-        pass
 
     @abstractmethod
     def _validate_following_coupons_day_count(
@@ -92,6 +78,472 @@ class BaseFixedIncomeInstrument(ABC):
             yield_calculation_convention,
         )
 
+    def _resolve_settlement_date(
+        self, settlement_date: Optional[Union[str, pd.Timestamp]]
+    ) -> pd.Timestamp:
+        """
+        Helper to resolve the settlement date for the bond.
+        If settlement_date is provided, converts to pd.Timestamp.
+        Otherwise, uses self._settlement_date or self.issue_dt.
+        """
+        if settlement_date is not None:
+            dt = pd.to_datetime(settlement_date)
+            if dt < self.issue_dt:
+                raise ValueError("Settlement date cannot be before issue date.")
+            return dt
+        if self._settlement_date is not None:
+            return pd.Timestamp(self._settlement_date)
+        return self.issue_dt
+
+    @abstractmethod
+    def _calculate_time_to_payments(
+        self,
+        settlement_date,
+        price,
+        adjust_to_business_days,
+        following_coupons_day_count,
+        yield_calculation_convention,
+        day_count_convention,
+    ) -> dict:  # pragma: no cover
+        pass
+
+    def _filter_payment_flow(
+        self,
+        settlement_date,
+        price,
+        payment_flow,
+        adjust_to_business_days,
+        day_count_convention,
+        following_coupons_day_count,
+        yield_calculation_convention,
+    ):
+        """Filter the payment flow based on the settlement date and other parameters."""
+        maturity = self.maturity
+        if adjust_to_business_days:
+
+            def business_days_adjustment(x):
+                return x - pd.offsets.BDay(1) + pd.offsets.BDay(1)
+        else:
+
+            def business_days_adjustment(x):
+                return x
+
+        # If settlement date would be after maturity, there are no cash flows
+        if settlement_date > business_days_adjustment(maturity):
+            return {}
+        cash_flows = {}
+
+        # If a price is provided, add it as a negative cash flow
+        if price is not None:
+            cash_flows[settlement_date] = -price
+
+        # Include all payments after the settlement date
+        cash_flows.update(
+            {
+                business_days_adjustment(pd.to_datetime(key)): value
+                for key, value in payment_flow.items()
+                if (
+                    settlement_date + pd.offsets.BDay(self.record_date_t_minus)
+                    <= business_days_adjustment(pd.to_datetime(key))
+                )
+                or (pd.to_datetime(key) == maturity and (settlement_date <= key))
+            }
+        )
+
+        return cash_flows
+
+    def filter_payment_flow(
+        self,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        price: Optional[float] = None,
+        payment_flow: Optional[dict[pd.Timestamp, float]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+    ) -> dict[pd.Timestamp, float]:
+        """
+        Filter the payment flow to include only payments after the settlement date.
+
+        If a bond price is provided, it is added as a negative cash flow at the settlement date.
+
+        The settlement date is resolved to a pd.Timestamp, and if it is not provided, it defaults to the issue date.
+
+        The function returns a dictionary of payment dates and cash flows that occur after the settlement date.
+        If `adjust_to_business_days` is True (default: value of self.adjust_to_business_days), payment dates are adjusted to business days.
+
+        Parameters
+        ----------
+        settlement_date : str or datetime-like, optional
+            Date from which to consider future payments. Defaults to issue date.
+        price : float, optional
+            If provided, adds the bond price as a negative cash flow at the settlement date.
+        payment_flow : dict, optional
+            Dictionary of payment dates and cash flows. If not provided, uses the bond's payment flow.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+
+        Returns
+        -------
+        cash_flows : dict
+            Dictionary of filtered payment dates and cash flows.
+
+        Examples
+        --------
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond.filter_payment_flow('2022-01-01') # doctest: +SKIP
+        {Timestamp('2023-01-01 00:00:00'): 5.0, Timestamp('2024-01-01 00:00:00'): 5.0,
+        Timestamp('2025-01-01 00:00:00'): 105.0}
+        """
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = self._resolve_valuation_parameters(
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
+
+        if payment_flow is None:
+            payment_flow = self.payment_flow
+
+        settlement_date = self._resolve_settlement_date(settlement_date)
+
+        self._validate_price(price)
+
+        return self._filter_payment_flow(
+            settlement_date,
+            price,
+            payment_flow,
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
+
+    def calculate_time_to_payments(
+        self,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        price: Optional[float] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+    ) -> dict[float, float]:
+        """
+        Calculate the time to each payment from the settlement date.
+        The time is expressed in years.
+
+        .. math::
+            T = \\frac{D - S}{365}
+
+        for each payment :math:`D` and settlement date :math:`S`
+
+        where:
+
+        - :math:`T` is the time to payment (in years)
+        - :math:`D` is the payment date
+        - :math:`S` is the settlement date
+
+        Parameters
+        ----------
+        settlement_date : str or datetime-like, optional
+            Date from which to calculate time to payments. Defaults to issue date.
+        price : float, optional
+            If provided, adds bond price as a negative cash flow.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+
+        Returns
+        -------
+        dict
+            Dictionary with time to payment (in years) as keys and cash flow values.
+
+        Examples
+        --------
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
+        >>> bond.calculate_time_to_payments('2022-01-01')
+        {0.5: 2.5, 1.0: 2.5, 1.5: 2.5, 2.0: 2.5, 2.5: 2.5, 3.0: 102.5}
+        """
+        settlement_date = self._resolve_settlement_date(settlement_date)
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = self._resolve_valuation_parameters(
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
+
+        return self._calculate_time_to_payments(
+            settlement_date,
+            price,
+            adjust_to_business_days,
+            following_coupons_day_count,
+            yield_calculation_convention,
+            day_count_convention,
+        )
+
+    def _validate_price(self, price: Optional[float]) -> None:
+        """
+        Validate the bond price.
+        Raises ValueError if the bond price is negative.
+        """
+        if price is not None and price < 0:
+            raise ValueError("Bond price cannot be negative.")
+
+    def get_settlement_date(self) -> Optional[pd.Timestamp]:
+        """
+        Get the current settlement date for the bond.
+        Returns
+        -------
+        Optional[pd.Timestamp]
+            The current settlement date, or None if not set.
+        """
+        return self._settlement_date
+
+    def get_price(self) -> Optional[float]:
+        """
+        Get the current bond price for the bond.
+        Returns
+        -------
+        Optional[float]
+            The current bond price, or None if not set.
+        """
+        return self._price
+
+    def cash_flows(
+        self,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+    ) -> list[float]:
+        """
+        Return a list of all future cash flows (coupons + principal at maturity).
+
+        Parameters
+        ----------
+        settlement_date : str or datetime-like, optional
+            Date from which to consider future payments. Defaults to issue date.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+
+        Returns
+        -------
+        flows : list of float
+            List of cash flows for each period.
+
+        Examples
+        --------
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond.cash_flows('2022-01-01')
+        [5.0, 5.0, 105.0]
+        """
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = self._resolve_valuation_parameters(
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
+
+        flows = self.filter_payment_flow(
+            settlement_date,
+            adjust_to_business_days=adjust_to_business_days,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
+        )
+        return list(flows.values())
+
+    def clean_price(
+        self,
+        dirty_price: float,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+    ) -> float:
+        """
+        Convert dirty price to clean price.
+
+        The clean price is the price of the bond excluding any accrued interest.
+
+        The formula is as follows:
+
+        .. math::
+            CleanPrice = DirtyPrice - AccruedInterest
+
+        Parameters
+        ----------
+        dirty_price : float
+            Dirty price of the bond.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to today.
+
+        Returns
+        -------
+        clean_price : float
+            Clean price of the bond.
+
+        Examples
+        --------
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond.clean_price(102.5, '2024-07-02')
+        100.0
+        """
+        return dirty_price - self.accrued_interest(settlement_date)
+
+    def dirty_price(
+        self,
+        clean_price: float,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+    ) -> float:
+        """
+        Convert clean price to dirty price.
+
+        The dirty price is the price of the bond including accrued interest.
+
+        The formula is as follows:
+
+        .. math::
+            DirtyPrice = CleanPrice + AccruedInterest
+
+        Parameters
+        ----------
+        clean_price : float
+            Clean price of the bond.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to today.
+
+        Returns
+        -------
+        dirty_price : float
+            Dirty price of the bond.
+
+        Examples
+        --------
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
+        >>> bond.dirty_price(100.0, '2024-07-02')
+        102.5
+        """
+        return clean_price + self.accrued_interest(settlement_date)
+
+    @abstractmethod
+    def accrued_interest(
+        self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
+    ) -> float:  # pragma: no cover
+        pass
+
+    @abstractmethod
+    def plot_cash_flows(self, *args, **kwargs) -> None:  # pragma: no cover
+        pass
+
+    @abstractmethod
+    def dv01(self, *args, **kwargs) -> float:  # pragma: no cover
+        pass
+
+    @abstractmethod
+    def set_settlement_date(self, *args, **kwargs) -> float:  # pragma: no cover
+        pass
+
+    @abstractmethod
+    def set_price(self, *args, **kwargs) -> None:  # pragma: no cover
+        pass
+
+    @abstractmethod
+    def to_dataframe(self, *args, **kwargs) -> float:  # pragma: no cover
+        pass
+
+    @abstractmethod
+    def effective_duration(self, *args, **kwargs) -> float:  # pragma: no cover
+        pass
+
+    @abstractmethod
+    def spread_effective_duration(self, *args, **kwargs) -> float:  # pragma: no cover
+        pass
+
+    @abstractmethod
+    def spread_duration(self, *args, **kwargs) -> float:  # pragma: no cover
+        pass
+
+    @abstractmethod
+    def modified_duration(self, *args, **kwargs) -> float:  # pragma: no cover
+        pass
+
+    @abstractmethod
+    def convexity(self, *args, **kwargs) -> float:  # pragma: no cover
+        pass
+
+    @abstractmethod
+    def g_spread(self, *args, **kwargs) -> float:  # pragma: no cover
+        pass
+
+    @abstractmethod
+    def z_spread(self, *args, **kwargs) -> float:  # pragma: no cover
+        pass
+
+    @abstractmethod
+    def i_spread(self, *args, **kwargs) -> float:  # pragma: no cover
+        pass
+
+
+class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, ABC):
+    _yield_to_maturity: Optional[float]
+
+    @abstractmethod
+    def _price_from_yield(
+        self,
+        time_to_payments: dict,
+        yield_to_maturity: float,
+        yield_calculation_convention: str,
+    ) -> float:  # pragma: no cover
+        # Calculate the present value of the instrument's cash flows
+        pass
+
+    @abstractmethod
+    def yield_to_maturity(self, *args, **kwargs) -> float:  # pragma: no cover
+        pass
+
+    @abstractmethod
+    def _price_from_yield_and_clean_parameters(
+        self,
+        yield_to_maturity: float,
+        settlement_date: Optional[Union[str, pd.Timestamp]],
+        adjust_to_business_days: bool,
+        following_coupons_day_count: DayCountBase,
+        yield_calculation_convention: str,
+        day_count_convention: DayCountBase,
+    ) -> float:  # pragma: no cover
+        pass
+
     def _get_ytm_payments_price(
         self,
         yield_to_maturity: Optional[float],
@@ -126,47 +578,6 @@ class BaseFixedIncomeInstrument(ABC):
         )
 
         return ytm, time_to_payments, price_calc
-
-    def _resolve_settlement_date(
-        self, settlement_date: Optional[Union[str, pd.Timestamp]]
-    ) -> pd.Timestamp:
-        """
-        Helper to resolve the settlement date for the bond.
-        If settlement_date is provided, converts to pd.Timestamp.
-        Otherwise, uses self._settlement_date or self.issue_dt.
-        """
-        if settlement_date is not None:
-            dt = pd.to_datetime(settlement_date)
-            if dt < self.issue_dt:
-                raise ValueError("Settlement date cannot be before issue date.")
-            return dt
-        if self._settlement_date is not None:
-            return pd.Timestamp(self._settlement_date)
-        return self.issue_dt
-
-    @abstractmethod
-    def _calculate_time_to_payments(
-        self,
-        settlement_date,
-        price,
-        adjust_to_business_days,
-        following_coupons_day_count,
-        yield_calculation_convention,
-        day_count_convention,
-    ) -> dict:  # pragma: no cover
-        pass
-
-    @abstractmethod
-    def _price_from_yield_and_clean_parameters(
-        self,
-        yield_to_maturity: float,
-        settlement_date: Optional[Union[str, pd.Timestamp]],
-        adjust_to_business_days: bool,
-        following_coupons_day_count: DayCountBase,
-        yield_calculation_convention: str,
-        day_count_convention: DayCountBase,
-    ) -> float:  # pragma: no cover
-        pass
 
     def _resolve_ytm_and_price(
         self,
@@ -253,51 +664,6 @@ class BaseFixedIncomeInstrument(ABC):
 
         # Case 5: cannot determine, return None, None
         return None, None
-
-    def _filter_payment_flow(
-        self,
-        settlement_date,
-        price,
-        payment_flow,
-        adjust_to_business_days,
-        day_count_convention,
-        following_coupons_day_count,
-        yield_calculation_convention,
-    ):
-        """Filter the payment flow based on the settlement date and other parameters."""
-        maturity = self.maturity
-        if adjust_to_business_days:
-
-            def business_days_adjustment(x):
-                return x - pd.offsets.BDay(1) + pd.offsets.BDay(1)
-        else:
-
-            def business_days_adjustment(x):
-                return x
-
-        # If settlement date would be after maturity, there are no cash flows
-        if settlement_date > business_days_adjustment(maturity):
-            return {}
-        cash_flows = {}
-
-        # If a price is provided, add it as a negative cash flow
-        if price is not None:
-            cash_flows[settlement_date] = -price
-
-        # Include all payments after the settlement date
-        cash_flows.update(
-            {
-                business_days_adjustment(pd.to_datetime(key)): value
-                for key, value in payment_flow.items()
-                if (
-                    settlement_date + pd.offsets.BDay(self.record_date_t_minus)
-                    <= business_days_adjustment(pd.to_datetime(key))
-                )
-                or (pd.to_datetime(key) == maturity and (settlement_date <= key))
-            }
-        )
-
-        return cash_flows
 
     def plot_cash_flows(
         self,
@@ -464,156 +830,6 @@ class BaseFixedIncomeInstrument(ABC):
         )
         return round((price_up - price_down) / 2, 10)
 
-    def filter_payment_flow(
-        self,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        price: Optional[float] = None,
-        payment_flow: Optional[dict[pd.Timestamp, float]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-    ) -> dict[pd.Timestamp, float]:
-        """
-        Filter the payment flow to include only payments after the settlement date.
-
-        If a bond price is provided, it is added as a negative cash flow at the settlement date.
-
-        The settlement date is resolved to a pd.Timestamp, and if it is not provided, it defaults to the issue date.
-
-        The function returns a dictionary of payment dates and cash flows that occur after the settlement date.
-        If `adjust_to_business_days` is True (default: value of self.adjust_to_business_days), payment dates are adjusted to business days.
-
-        Parameters
-        ----------
-        settlement_date : str or datetime-like, optional
-            Date from which to consider future payments. Defaults to issue date.
-        price : float, optional
-            If provided, adds the bond price as a negative cash flow at the settlement date.
-        payment_flow : dict, optional
-            Dictionary of payment dates and cash flows. If not provided, uses the bond's payment flow.
-        adjust_to_business_days : bool, optional
-            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
-        day_count_convention : str or DayCountBase, optional
-            Day count convention. Defaults to value of self.day_count_convention.
-        following_coupons_day_count : str or DayCountBase, optional
-            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
-        yield_calculation_convention : str, optional
-            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
-
-        Returns
-        -------
-        cash_flows : dict
-            Dictionary of filtered payment dates and cash flows.
-
-        Examples
-        --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.filter_payment_flow('2022-01-01') # doctest: +SKIP
-        {Timestamp('2023-01-01 00:00:00'): 5.0, Timestamp('2024-01-01 00:00:00'): 5.0,
-        Timestamp('2025-01-01 00:00:00'): 105.0}
-        """
-        (
-            adjust_to_business_days,
-            day_count_convention,
-            following_coupons_day_count,
-            yield_calculation_convention,
-        ) = self._resolve_valuation_parameters(
-            adjust_to_business_days,
-            day_count_convention,
-            following_coupons_day_count,
-            yield_calculation_convention,
-        )
-
-        if payment_flow is None:
-            payment_flow = self.payment_flow
-
-        settlement_date = self._resolve_settlement_date(settlement_date)
-
-        self._validate_price(price)
-
-        return self._filter_payment_flow(
-            settlement_date,
-            price,
-            payment_flow,
-            adjust_to_business_days,
-            day_count_convention,
-            following_coupons_day_count,
-            yield_calculation_convention,
-        )
-
-    def calculate_time_to_payments(
-        self,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        price: Optional[float] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-    ) -> dict[float, float]:
-        """
-        Calculate the time to each payment from the settlement date.
-        The time is expressed in years.
-
-        .. math::
-            T = \\frac{D - S}{365}
-
-        for each payment :math:`D` and settlement date :math:`S`
-
-        where:
-
-        - :math:`T` is the time to payment (in years)
-        - :math:`D` is the payment date
-        - :math:`S` is the settlement date
-
-        Parameters
-        ----------
-        settlement_date : str or datetime-like, optional
-            Date from which to calculate time to payments. Defaults to issue date.
-        price : float, optional
-            If provided, adds bond price as a negative cash flow.
-        adjust_to_business_days : bool, optional
-            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
-        day_count_convention : str or DayCountBase, optional
-            Day count convention. Defaults to value of self.day_count_convention.
-        following_coupons_day_count : str or DayCountBase, optional
-            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
-        yield_calculation_convention : str, optional
-            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
-
-        Returns
-        -------
-        dict
-            Dictionary with time to payment (in years) as keys and cash flow values.
-
-        Examples
-        --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
-        >>> bond.calculate_time_to_payments('2022-01-01')
-        {0.5: 2.5, 1.0: 2.5, 1.5: 2.5, 2.0: 2.5, 2.5: 2.5, 3.0: 102.5}
-        """
-        settlement_date = self._resolve_settlement_date(settlement_date)
-        (
-            adjust_to_business_days,
-            day_count_convention,
-            following_coupons_day_count,
-            yield_calculation_convention,
-        ) = self._resolve_valuation_parameters(
-            adjust_to_business_days,
-            day_count_convention,
-            following_coupons_day_count,
-            yield_calculation_convention,
-        )
-
-        return self._calculate_time_to_payments(
-            settlement_date,
-            price,
-            adjust_to_business_days,
-            following_coupons_day_count,
-            yield_calculation_convention,
-            day_count_convention,
-        )
-
     def set_settlement_date(
         self,
         settlement_date: Optional[Union[str, pd.Timestamp]],
@@ -773,14 +989,6 @@ class BaseFixedIncomeInstrument(ABC):
             self._price = None
             self._yield_to_maturity = None
 
-    def _validate_price(self, price: Optional[float]) -> None:
-        """
-        Validate the bond price.
-        Raises ValueError if the bond price is negative.
-        """
-        if price is not None and price < 0:
-            raise ValueError("Bond price cannot be negative.")
-
     def set_price(
         self,
         price: Optional[float],
@@ -858,16 +1066,6 @@ class BaseFixedIncomeInstrument(ABC):
             self._price = None
             self._yield_to_maturity = None
 
-    def get_settlement_date(self) -> Optional[pd.Timestamp]:
-        """
-        Get the current settlement date for the bond.
-        Returns
-        -------
-        Optional[pd.Timestamp]
-            The current settlement date, or None if not set.
-        """
-        return self._settlement_date
-
     def get_yield_to_maturity(self) -> Optional[float]:
         """
         Get the current yield to maturity for the bond.
@@ -877,16 +1075,6 @@ class BaseFixedIncomeInstrument(ABC):
             The current yield to maturity, or None if not set.
         """
         return self._yield_to_maturity
-
-    def get_price(self) -> Optional[float]:
-        """
-        Get the current bond price for the bond.
-        Returns
-        -------
-        Optional[float]
-            The current bond price, or None if not set.
-        """
-        return self._price
 
     def to_dataframe(
         self,
@@ -1021,62 +1209,6 @@ class BaseFixedIncomeInstrument(ABC):
 
         return df.sort_index()
 
-    def cash_flows(
-        self,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-    ) -> list[float]:
-        """
-        Return a list of all future cash flows (coupons + principal at maturity).
-
-        Parameters
-        ----------
-        settlement_date : str or datetime-like, optional
-            Date from which to consider future payments. Defaults to issue date.
-        adjust_to_business_days : bool, optional
-            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
-        day_count_convention : str or DayCountBase, optional
-            Day count convention. Defaults to value of self.day_count_convention.
-        following_coupons_day_count : str or DayCountBase, optional
-            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
-        yield_calculation_convention : str, optional
-            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
-
-        Returns
-        -------
-        flows : list of float
-            List of cash flows for each period.
-
-        Examples
-        --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.cash_flows('2022-01-01')
-        [5.0, 5.0, 105.0]
-        """
-        (
-            adjust_to_business_days,
-            day_count_convention,
-            following_coupons_day_count,
-            yield_calculation_convention,
-        ) = self._resolve_valuation_parameters(
-            adjust_to_business_days,
-            day_count_convention,
-            following_coupons_day_count,
-            yield_calculation_convention,
-        )
-
-        flows = self.filter_payment_flow(
-            settlement_date,
-            adjust_to_business_days=adjust_to_business_days,
-            following_coupons_day_count=following_coupons_day_count,
-            yield_calculation_convention=yield_calculation_convention,
-            day_count_convention=day_count_convention,
-        )
-        return list(flows.values())
-
     def price_from_yield(
         self,
         yield_to_maturity: float,
@@ -1146,82 +1278,6 @@ class BaseFixedIncomeInstrument(ABC):
         )
 
         return price
-
-    def clean_price(
-        self,
-        dirty_price: float,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-    ) -> float:
-        """
-        Convert dirty price to clean price.
-
-        The clean price is the price of the bond excluding any accrued interest.
-
-        The formula is as follows:
-
-        .. math::
-            CleanPrice = DirtyPrice - AccruedInterest
-
-        Parameters
-        ----------
-        dirty_price : float
-            Dirty price of the bond.
-        settlement_date : str or datetime-like, optional
-            Settlement date. Defaults to today.
-
-        Returns
-        -------
-        clean_price : float
-            Clean price of the bond.
-
-        Examples
-        --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.clean_price(102.5, '2024-07-02')
-        100.0
-        """
-        return dirty_price - self.accrued_interest(settlement_date)
-
-    def dirty_price(
-        self,
-        clean_price: float,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-    ) -> float:
-        """
-        Convert clean price to dirty price.
-
-        The dirty price is the price of the bond including accrued interest.
-
-        The formula is as follows:
-
-        .. math::
-            DirtyPrice = CleanPrice + AccruedInterest
-
-        Parameters
-        ----------
-        clean_price : float
-            Clean price of the bond.
-        settlement_date : str or datetime-like, optional
-            Settlement date. Defaults to today.
-
-        Returns
-        -------
-        dirty_price : float
-            Dirty price of the bond.
-
-        Examples
-        --------
-        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.dirty_price(100.0, '2024-07-02')
-        102.5
-        """
-        return clean_price + self.accrued_interest(settlement_date)
-
-    @abstractmethod
-    def accrued_interest(
-        self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
-    ) -> float:  # pragma: no cover
-        pass
 
     def effective_duration(
         self,

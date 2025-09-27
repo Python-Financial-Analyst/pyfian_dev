@@ -1,14 +1,5 @@
 """
 Unit tests for InterpolatedCurve class in interpolated_curve.py
-
-Examples
---------
->>> from pyfian.yield_curves.interpolated_curve import InterpolatedCurve
->>> curve = InterpolatedCurve(curve_date="2025-08-22", zero_rates=zero_rates)
->>> curve.discount_t(1)
-... # returns discount factor for 1 year
->>> curve.get_rate(1)
-... # returns zero-coupon rate for 1 year
 """
 
 import pytest

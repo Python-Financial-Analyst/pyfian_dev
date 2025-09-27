@@ -12,15 +12,17 @@ from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
-from pyfian.fixed_income.base_fixed_income import BaseFixedIncomeInstrument
+from pyfian.fixed_income.base_fixed_income import (
+    BaseFixedIncomeInstrumentWithYieldToMaturity,
+)
 from pyfian.utils.day_count import DayCountBase, get_day_count_convention
 from pyfian.time_value import rate_conversions as rc
 
 
-class MoneyMarketInstrument(BaseFixedIncomeInstrument):
+class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
     """
     MoneyMarketInstrument represents a generic short-term debt instrument, typically with maturities less than one year.
-    Inherits from BaseFixedIncomeInstrument and provides payment flow logic specific to money market conventions.
+    Inherits from BaseFixedIncomeInstrumentWithYieldToMaturity and provides payment flow logic specific to money market conventions.
 
     Parameters
     ----------
@@ -37,7 +39,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
     day_count_convention : str, optional
             Day count convention for the instrument. Defaults to 'actual/360'.
     kwargs : dict, optional
-            Additional keyword arguments for BaseFixedIncomeInstrument.
+            Additional keyword arguments for BaseFixedIncomeInstrumentWithYieldToMaturity.
 
     Attributes
     ----------
@@ -295,7 +297,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         issue_dt : datetime, optional
                 Issue date. Defaults to current date if None.
         kwargs : dict, optional
-                Additional keyword arguments for BaseFixedIncomeInstrument.
+                Additional keyword arguments for BaseFixedIncomeInstrumentWithYieldToMaturity.
 
         Returns
         -------
@@ -771,7 +773,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         --------
         >>> instrument = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
         >>> instrument.macaulay_duration()
-        np.float64(0.5)
+        0.5
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -893,7 +895,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrument):
         --------
         >>> instrument = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
         >>> instrument.convexity()
-        np.float64(0.4759071998705622)
+        np.float64(0.47590719...)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (

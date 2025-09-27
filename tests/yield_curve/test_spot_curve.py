@@ -1,14 +1,5 @@
 """
 Unit tests for SpotCurve class in spot_curve.py
-
-Examples
---------
->>> from pyfian.yield_curves.spot_curve import SpotCurve
->>> curve = SpotCurve(curve_date="2025-08-22", bonds=bonds)
->>> curve.discount_t(1)
-... # returns discount factor for 1 year
->>> curve.get_rate(1)
-... # returns spot rate for 1 year
 """
 
 import pytest

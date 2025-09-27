@@ -12,7 +12,9 @@ import numpy as np
 import pandas as pd
 from dateutil.relativedelta import relativedelta  # type: ignore
 
-from pyfian.fixed_income.base_fixed_income import BaseFixedIncomeInstrument
+from pyfian.fixed_income.base_fixed_income import (
+    BaseFixedIncomeInstrumentWithYieldToMaturity,
+)
 from pyfian.time_value import rate_conversions as rc
 from pyfian.time_value.irr import xirr_base
 from pyfian.time_value.rate_conversions import get_time_adjustment
@@ -20,7 +22,7 @@ from pyfian.utils.day_count import DayCountBase, get_day_count_convention
 from pyfian.yield_curves.base_curve import YieldCurveBase
 
 
-class FixedRateBullet(BaseFixedIncomeInstrument):
+class FixedRateBullet(BaseFixedIncomeInstrumentWithYieldToMaturity):
     """
     FixedRateBullet represents a bullet bond with fixed coupon payments and principal at maturity.
     It allows for payment flow generation, valuation, yield calculations, and other bond analytics.
@@ -577,7 +579,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         Parameters
         ----------
         price : float, optional
-            Price of the bond. If not provided, will use self.price if set.
+            Price of the bond. If not provided, will use self._price if set.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
         adjust_to_business_days : bool, optional
@@ -717,7 +719,7 @@ class FixedRateBullet(BaseFixedIncomeInstrument):
         Examples
         --------
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
-        >>> bond.effective_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
+        >>> bond.modified_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
         4.3760319684
         """
         settlement_date = self._resolve_settlement_date(settlement_date)

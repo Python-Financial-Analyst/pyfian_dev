@@ -1,14 +1,5 @@
 """
 Unit tests for ParCurve class in par_curve.py
-
-Examples
---------
->>> from pyfian.yield_curves.par_curve import ParCurve
->>> curve = ParCurve(curve_date="2025-08-22", par_rates=par_rates)
->>> curve.discount_t(1)
-... # returns discount factor for 1 year
->>> curve.get_rate(1)
-... # returns par rate for 1 year
 """
 
 import pytest
