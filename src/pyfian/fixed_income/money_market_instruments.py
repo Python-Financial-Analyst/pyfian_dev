@@ -722,6 +722,68 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
 
         return round(duration, 10)
 
+    def spread_duration(
+        self,
+        yield_to_maturity: Optional[float] = None,
+        price: Optional[float] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+    ) -> float:
+        """
+                Calculate spread duration of the instrument.
+
+        .. math::
+            Spread Duration = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t}{(1 + YTM)^{(t+1)}} \\cdot t
+        where:
+
+        - :math:`P` is the price of the instrument
+        - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date
+        - :math:`YTM` is the yield to maturity
+        - :math:`T` is the total number of periods
+
+        The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+        Parameters
+        ----------
+        yield_to_maturity : float, optional
+            Yield to maturity as a decimal. If not provided, will be calculated from price if given.
+        price : float, optional
+            Price of the instrument. Used to estimate YTM if yield_to_maturity is not provided.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+
+        Returns
+        -------
+        duration : float
+            Spread duration in years.
+
+        Examples
+        --------
+        >>> instrument = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
+        >>> instrument.spread_duration()
+        np.float64(0.487804878)
+        """
+        return self.modified_duration(
+            yield_to_maturity=yield_to_maturity,
+            price=price,
+            settlement_date=settlement_date,
+            adjust_to_business_days=adjust_to_business_days,
+            day_count_convention=day_count_convention,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+        )
+
     def macaulay_duration(
         self,
         yield_to_maturity: Optional[float] = None,
