@@ -24,7 +24,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="🧑‍💻 Contributing to Python Financial Analyst" href="../../contributing.html" />
+    <link rel="next" title="Bullet Bonds" href="02_bullet_bonds.html" />
     <link rel="prev" title="Economics of Interest Rates" href="00_economics_of_interest_rates.html" /> 
 </head>
 
@@ -55,18 +55,38 @@
 <li class="toctree-l3"><a class="reference internal" href="#learning-objectives">Learning Objectives</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#bond-terminology-and-structure">Bond Terminology and Structure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#types-of-bonds">Types of Bonds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#types-of-bonds">Types of Bonds</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#government-bonds">Government Bonds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#corporate-bonds">Corporate Bonds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#municipal-bonds">Municipal Bonds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zero-coupon-bonds">Zero-Coupon Bonds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#coupon-bonds">Coupon Bonds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#callable-bonds">Callable Bonds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#putable-bonds">Putable Bonds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#convertible-bonds">Convertible Bonds</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#cash-flow-patterns">Cash Flow Patterns</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#price-conventions">Price Conventions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#introduction-to-yield-concepts-preview">Introduction to Yield Concepts (Preview)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#irr-internal-rate-of-return">IRR: Internal Rate of Return</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#xirr-non-periodic-irr">XIRR: Non periodic IRR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#continuous-compounding">Continuous compounding</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#price-conventions">Price Conventions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#accrued-interest">Accrued Interest</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#clean-price">Clean Price</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dirty-price">Dirty Price</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1"></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#discount-rate">Discount Rate</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#introduction-to-yield-concepts-preview">Introduction to Yield Concepts (Preview)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#irr-internal-rate-of-return">IRR: Internal Rate of Return</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xirr-non-periodic-irr">XIRR: Non periodic IRR</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#continuous-compounding">Continuous compounding</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html">Bullet Bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#bond-day-counting-conventions">Bond Day-Counting Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#duration">Duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#convexity">Convexity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#effective-duration">Effective Duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_curves.html">Curves</a></li>
 </ul>
 </li>
 </ul>
@@ -181,6 +201,153 @@
 <li><p><strong>Putable Bonds</strong>: Holder can force issuer to repurchase before maturity.</p></li>
 <li><p><strong>Convertible Bonds</strong>: Can be converted into a predetermined number of shares.</p></li>
 </ul>
+<section id="government-bonds">
+<h3>Government Bonds<a class="headerlink" href="#government-bonds" title="Link to this heading"></a></h3>
+<p>Goverment bonds are typically issued in US Dollars, Euros or local currency. While local currency debt can be inflated away by printing money, foreign currency debt is considered safer by investors. Sometimes investors also demand additional protections such as issuing bonds in a different legal jurisdiction, such as New York or London. There is no international law governing these bonds, or equitization, therefore when a country defaults, investors must negotiate directly with the government on a haircut. While the government has an incentive to reduce the repayment amount, countries must deal with reputational concerns for borrowing in the future if investors are unsatisfied with the renegotiation outcome. Here are examples of how much different countries pay to borrow money for 10 years:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Country</p></th>
+<th class="head text-right"><p>10-Year Yield (%)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Argentina</p></td>
+<td class="text-right"><p>29.50</p></td>
+</tr>
+<tr class="row-odd"><td><p>Australia</p></td>
+<td class="text-right"><p>4.30</p></td>
+</tr>
+<tr class="row-even"><td><p>Brazil</p></td>
+<td class="text-right"><p>14.01</p></td>
+</tr>
+<tr class="row-odd"><td><p>Canada</p></td>
+<td class="text-right"><p>3.49</p></td>
+</tr>
+<tr class="row-even"><td><p>China</p></td>
+<td class="text-right"><p>1.68</p></td>
+</tr>
+<tr class="row-odd"><td><p>France</p></td>
+<td class="text-right"><p>3.27</p></td>
+</tr>
+<tr class="row-even"><td><p>Germany</p></td>
+<td class="text-right"><p>2.59</p></td>
+</tr>
+<tr class="row-odd"><td><p>India</p></td>
+<td class="text-right"><p>6.30</p></td>
+</tr>
+<tr class="row-even"><td><p>Indonesia</p></td>
+<td class="text-right"><p>6.95</p></td>
+</tr>
+<tr class="row-odd"><td><p>Italy</p></td>
+<td class="text-right"><p>3.44</p></td>
+</tr>
+<tr class="row-even"><td><p>Japan</p></td>
+<td class="text-right"><p>1.50</p></td>
+</tr>
+<tr class="row-odd"><td><p>Mexico</p></td>
+<td class="text-right"><p>9.44</p></td>
+</tr>
+<tr class="row-even"><td><p>Russia</p></td>
+<td class="text-right"><p>10.15</p></td>
+</tr>
+<tr class="row-odd"><td><p>Saudi Arabia</p></td>
+<td class="text-right"><p>5.50</p></td>
+</tr>
+<tr class="row-even"><td><p>South Africa</p></td>
+<td class="text-right"><p>10.10</p></td>
+</tr>
+<tr class="row-odd"><td><p>South Korea</p></td>
+<td class="text-right"><p>3.36</p></td>
+</tr>
+<tr class="row-even"><td><p>Turkey</p></td>
+<td class="text-right"><p>33.20</p></td>
+</tr>
+<tr class="row-odd"><td><p>United Kingdom</p></td>
+<td class="text-right"><p>4.58</p></td>
+</tr>
+<tr class="row-even"><td><p>United States</p></td>
+<td class="text-right"><p>4.35</p></td>
+</tr>
+<tr class="row-odd"><td><p>European Union</p></td>
+<td class="text-right"><p>2.59</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="corporate-bonds">
+<h3>Corporate Bonds<a class="headerlink" href="#corporate-bonds" title="Link to this heading"></a></h3>
+<p>The interest rate premium on corporate bonds depends on the credit rating of a firm. Firms such as Apple have very high credit ratings, which allows them to borrow at very low rates. Firms can create a capital structure by issuing different tranches of debt: senior, mezzanine, junior, convertible bonds, etc. In the US creditors are protected by Chaper 7 and Chapter 11 bankruptcy, and are first in line to get repaid, should a firm become insolvent. In case that a firm doesn’t have enough funds to repay, creditors absorb the equity in the firm via the process of equitization and can seize the firm’s assets.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Rating Category</strong></p></th>
+<th class="head"><p><strong>Typical Range</strong></p></th>
+<th class="head"><p><strong>Approx. Yield (Effective)</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Investment Grade</strong></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>AAA / Aaa</p></td>
+<td><p>Top-tier</p></td>
+<td><p>~4.8%</p></td>
+</tr>
+<tr class="row-even"><td><p>AA / Aa</p></td>
+<td><p>High-grade</p></td>
+<td><p>~4.8%</p></td>
+</tr>
+<tr class="row-odd"><td><p>A / A</p></td>
+<td><p>Upper-medium grade</p></td>
+<td><p>~4.9%</p></td>
+</tr>
+<tr class="row-even"><td><p>BBB / Baa (lowest IG)</p></td>
+<td><p>Lower medium grade</p></td>
+<td><p>~5.3%</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Speculative Grade (High Yield)</strong></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>BB / Ba</p></td>
+<td><p>BB‑level junk</p></td>
+<td><p>~6.8% (index average he creditHI‑Y Index)</p></td>
+</tr>
+<tr class="row-odd"><td><p>B / B (lower speculative)</p></td>
+<td><p>Speculative</p></td>
+<td><p>~7.2% (single‑B in HY Index)</p></td>
+</tr>
+<tr class="row-even"><td><p>CCC / Caa (distressed)</p></td>
+<td><p>Sub‑investment grade</p></td>
+<td><p>&gt;7.2%, often 10–12 %+</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="municipal-bonds">
+<h3>Municipal Bonds<a class="headerlink" href="#municipal-bonds" title="Link to this heading"></a></h3>
+<p>Municipal bonds are issued by states, provinces and cities. These bonds can be backed by the full faith of the state or government entity, or they can be tied a certain project.</p>
+</section>
+<section id="zero-coupon-bonds">
+<h3>Zero-Coupon Bonds<a class="headerlink" href="#zero-coupon-bonds" title="Link to this heading"></a></h3>
+<p>Zero-Coupon Bonds do not issue periodic coupon payments.</p>
+</section>
+<section id="coupon-bonds">
+<h3>Coupon Bonds<a class="headerlink" href="#coupon-bonds" title="Link to this heading"></a></h3>
+<p>Coupon Bonds issue interest periodically in the form of coupons. Coupons can be paid, every month, every quarter, semiannually or annually.</p>
+</section>
+<section id="callable-bonds">
+<h3>Callable Bonds<a class="headerlink" href="#callable-bonds" title="Link to this heading"></a></h3>
+<p>Callable Bonds are bonds that can be called back early. Typically these bonds have a higher interest rate to allow for this optionality. If interest rates happen to decrease, callable bonds can be recalled by the issuer for a penalty. Although not a callable bond in the traditional sense, conceptually a mortgage works the same way as a callable bond. Households have the option to prepay their bonds while interest rates are low, or they can refinance their mortgage. However, in practice, households do not always take advantage of this option.</p>
+</section>
+<section id="putable-bonds">
+<h3>Putable Bonds<a class="headerlink" href="#putable-bonds" title="Link to this heading"></a></h3>
+<p>Putable Bonds are bonds that can require an issuer to pay back the bond before maturity. In the same way as a callable bond, this optionality adds cost, and reduced the yield for the creditor.</p>
+</section>
+<section id="convertible-bonds">
+<h3>Convertible Bonds<a class="headerlink" href="#convertible-bonds" title="Link to this heading"></a></h3>
+<p>Convertible Bonds are bonds that can be converted or redeemed for equity in a firm. If the equity of a firm appreciates in value, then the creditor will exercise the option to convert their holdings into stock. There bonds have a conversion ratio and are typically traded at a discount relative to standard bonds.</p>
+</section>
 </section>
 <section id="cash-flow-patterns">
 <h2>Cash Flow Patterns<a class="headerlink" href="#cash-flow-patterns" title="Link to this heading"></a></h2>
@@ -197,6 +364,62 @@
 <li><p><strong>Dirty Price</strong>: Price including accrued interest.</p></li>
 <li><p><strong>Accrued Interest Calculation</strong>: Interest earned since last payment but not yet paid.</p></li>
 </ul>
+<section id="accrued-interest">
+<h3>Accrued Interest<a class="headerlink" href="#accrued-interest" title="Link to this heading"></a></h3>
+<p>Since interest is paid out just several times a year, we need to compute the interest that has accrued since the last coupon payment. The formula for accrued interest is:</p>
+<div class="math notranslate nohighlight">
+\[\text{Accrued Interest} = \frac{\text{Coupon Rate} \times \text{Face Value} \times \text{Days Accrued}}{\text{Days in Coupon Period}}\]</div>
+</section>
+<section id="clean-price">
+<h3>Clean Price<a class="headerlink" href="#clean-price" title="Link to this heading"></a></h3>
+<p>The prices that we see in the news is typically quoted as the clean price. The clean price is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[\text{Clean Price} = \text{Dirty Price} - \text{Accrued Interest}\]</div>
+</section>
+<section id="dirty-price">
+<h3>Dirty Price<a class="headerlink" href="#dirty-price" title="Link to this heading"></a></h3>
+<p>The dirty price includes the accrued interest.</p>
+<div class="math notranslate nohighlight">
+\[\text{Dirty Price} = \text{Clean Price} + \text{Accrued Interest}\]</div>
+</section>
+<section id="id1">
+<h3><a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+</section>
+<section id="discount-rate">
+<h3>Discount Rate<a class="headerlink" href="#discount-rate" title="Link to this heading"></a></h3>
+<p>Bonds can be sold at a discount, at par, or at a premium. When a bond is sold at a discount, the difference between its face value and the lower purchase price serves as additional compensation for the investor, reflecting a yield that exceeds the coupon rate. Conversely, when a bond is sold at par, the yield equals the coupon rate. When sold at a premium, the bond’s coupon rate exceeds the yield, and investors pay more upfront in exchange for higher coupon payments.</p>
+<p><strong>Table: Cash Flows for Discounted, Par, and Premium Bonds (Face Value = $1,000, YTM = 5%, 3-Year Maturity)</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bond Type</p></th>
+<th class="head"><p>Time 0 (Price)</p></th>
+<th class="head"><p>Year 1</p></th>
+<th class="head"><p>Year 2</p></th>
+<th class="head"><p>Year 3</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Discounted (3% Coupon)</p></td>
+<td><p>-999.18</p></td>
+<td><p>30.00</p></td>
+<td><p>30.00</p></td>
+<td><p>1030.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>Par (5% Coupon)</p></td>
+<td><p>-1000.00</p></td>
+<td><p>50.00</p></td>
+<td><p>50.00</p></td>
+<td><p>1050.00</p></td>
+</tr>
+<tr class="row-even"><td><p>Premium (7% Coupon)</p></td>
+<td><p>-1000.82</p></td>
+<td><p>70.00</p></td>
+<td><p>70.00</p></td>
+<td><p>1070.00</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 <section id="introduction-to-yield-concepts-preview">
 <h2>Introduction to Yield Concepts (Preview)<a class="headerlink" href="#introduction-to-yield-concepts-preview" title="Link to this heading"></a></h2>
@@ -234,16 +457,23 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.irr</span><span class="w"> </span><span class="kn">import</span> <span class="n">irr</span>
 
-<span class="n">principal</span> <span class="o">=</span> <span class="mi">1000</span>
-<span class="n">cash_flow_1</span> <span class="o">=</span> <span class="mi">400</span>
-<span class="n">cash_flow_2</span> <span class="o">=</span> <span class="mi">400</span>
-<span class="n">cash_flow_3</span> <span class="o">=</span> <span class="mi">400</span>
-<span class="n">irr</span><span class="p">([</span><span class="o">-</span><span class="n">principal</span><span class="p">,</span> <span class="n">cash_flow_1</span><span class="p">,</span> <span class="n">cash_flow_2</span><span class="p">,</span> <span class="n">cash_flow_3</span><span class="p">])</span>
+<span class="n">cf</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">]</span>
+<span class="n">irr</span><span class="p">(</span><span class="n">cf</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;The internal rate of return for investment with $&quot;</span><span class="p">,</span>
+    <span class="o">-</span><span class="n">cf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="s2">&quot;initial outflow, with&quot;</span><span class="p">,</span>
+    <span class="nb">len</span><span class="p">(</span><span class="n">cf</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;cash inflows, is&quot;</span><span class="p">,</span>
+    <span class="n">irr</span><span class="p">(</span><span class="n">cf</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.0970102574
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The internal rate of return for investment with $ 1000 initial outflow, with 4 cash inflows, is 24.88833566 %
 </pre></div>
 </div>
 </div>
@@ -252,6 +482,43 @@
 <section id="xirr-non-periodic-irr">
 <h2>XIRR: Non periodic IRR<a class="headerlink" href="#xirr-non-periodic-irr" title="Link to this heading"></a></h2>
 <p>XIRR, or Extended Internal Rate of Return, is a financial metric used to calculate the annualized rate of return for a series of cash flows that occur at irregular intervals.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.irr</span><span class="w"> </span><span class="kn">import</span> <span class="n">xirr</span>
+
+<span class="n">cf</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">]</span>
+<span class="n">dates</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">datetime</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">datetime</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">datetime</span><span class="p">(</span><span class="mi">2022</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">xirr</span><span class="p">(</span><span class="n">cf</span><span class="p">,</span> <span class="n">dates</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;The internal rate of return for investment with $&quot;</span><span class="p">,</span>
+    <span class="o">-</span><span class="n">cf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="s2">&quot;initial outflow and cash inflows from&quot;</span><span class="p">,</span>
+    <span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;to&quot;</span><span class="p">,</span>
+    <span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;is&quot;</span><span class="p">,</span>
+    <span class="n">xirr</span><span class="p">(</span><span class="n">cf</span><span class="p">,</span> <span class="n">dates</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="s2">&quot;%&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.5831820341312749
+The internal rate of return for investment with $ 1000 initial outflow and cash inflows from 2020-01-01 to 2022-01-01 is 58.31820341312749 %
+</pre></div>
+</div>
+</div>
+</div>
 </section>
 <section id="continuous-compounding">
 <h2>Continuous compounding<a class="headerlink" href="#continuous-compounding" title="Link to this heading"></a></h2>
@@ -270,15 +537,19 @@ $<span class="math notranslate nohighlight">\( FV = PV e^{rt} \)</span>$</p>
 <span class="n">i</span> <span class="o">=</span> <span class="mf">0.05</span>
 <span class="n">t</span> <span class="o">=</span> <span class="mi">1</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">present_value_continuous</span><span class="p">(</span><span class="n">FV</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">future_value_continuous</span><span class="p">(</span><span class="n">PV</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;The present value of a bond with $</span><span class="si">{</span><span class="n">FV</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2"> face value, </span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2"> interest rate, over </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2"> year(s) is $</span><span class="si">{</span><span class="n">present_value_continuous</span><span class="p">(</span><span class="n">FV</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;The future value of a bond with $</span><span class="si">{</span><span class="n">PV</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2"> face value, </span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2"> interest rate, over </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2"> year(s) is $</span><span class="si">{</span><span class="n">future_value_continuous</span><span class="p">(</span><span class="n">PV</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
 <span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.continuous_compounding</span><span class="w"> </span><span class="kn">import</span> <span class="n">present_value_continuous</span>
 <span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.continuous_compounding</span><span class="w"> </span><span class="kn">import</span> <span class="n">future_value_continuous</span>
 <span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">PV</span> <span class="o">=</span> <span class="mi">100</span>
@@ -288,41 +559,6 @@ $<span class="math notranslate nohighlight">\( FV = PV e^{rt} \)</span>$</p>
 </div>
 </div>
 </div>
-<section id="discount-rate">
-<h3>Discount Rate<a class="headerlink" href="#discount-rate" title="Link to this heading"></a></h3>
-<p>Bonds can be sold at a discount, at par, or at a premium. When a bond is sold at a discount, the difference between its face value and the lower purchase price serves as additional compensation for the investor, reflecting a yield that exceeds the coupon rate. Conversely, when a bond is sold at par, the yield equals the coupon rate. When sold at a premium, the bond’s coupon rate exceeds the yield, and investors pay more upfront in exchange for higher coupon payments.</p>
-<p><strong>Table: Cash Flows for Discounted, Par, and Premium Bonds (Face Value = $1,000, YTM = 5%, 3-Year Maturity)</strong></p>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Bond Type</p></th>
-<th class="head"><p>Time 0 (Price)</p></th>
-<th class="head"><p>Year 1</p></th>
-<th class="head"><p>Year 2</p></th>
-<th class="head"><p>Year 3</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Discounted (3% Coupon)</p></td>
-<td><p>-999.18</p></td>
-<td><p>30.00</p></td>
-<td><p>30.00</p></td>
-<td><p>1030.00</p></td>
-</tr>
-<tr class="row-odd"><td><p>Par (5% Coupon)</p></td>
-<td><p>-1000.00</p></td>
-<td><p>50.00</p></td>
-<td><p>50.00</p></td>
-<td><p>1050.00</p></td>
-</tr>
-<tr class="row-even"><td><p>Premium (7% Coupon)</p></td>
-<td><p>-1000.82</p></td>
-<td><p>70.00</p></td>
-<td><p>70.00</p></td>
-<td><p>1070.00</p></td>
-</tr>
-</tbody>
-</table>
-</section>
 </section>
 </section>
 
@@ -331,7 +567,7 @@ $<span class="math notranslate nohighlight">\( FV = PV e^{rt} \)</span>$</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="00_economics_of_interest_rates.html" class="btn btn-neutral float-left" title="Economics of Interest Rates" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../../contributing.html" class="btn btn-neutral float-right" title="🧑‍💻 Contributing to Python Financial Analyst" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="02_bullet_bonds.html" class="btn btn-neutral float-right" title="Bullet Bonds" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

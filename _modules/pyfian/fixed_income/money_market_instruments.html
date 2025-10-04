@@ -90,17 +90,19 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.base_fixed_income</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseFixedIncomeInstrument</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.base_fixed_income</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BaseFixedIncomeInstrumentWithYieldToMaturity</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.utils.day_count</span><span class="w"> </span><span class="kn">import</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="n">get_day_count_convention</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value</span><span class="w"> </span><span class="kn">import</span> <span class="n">rate_conversions</span> <span class="k">as</span> <span class="n">rc</span>
 
 
 <div class="viewcode-block" id="MoneyMarketInstrument">
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/money_market_instruments/index.html#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">MoneyMarketInstrument</span><span class="p">(</span><span class="n">BaseFixedIncomeInstrument</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MoneyMarketInstrument</span><span class="p">(</span><span class="n">BaseFixedIncomeInstrumentWithYieldToMaturity</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    MoneyMarketInstrument represents a generic short-term debt instrument, typically with maturities less than one year.</span>
-<span class="sd">    Inherits from BaseFixedIncomeInstrument and provides payment flow logic specific to money market conventions.</span>
+<span class="sd">    Inherits from BaseFixedIncomeInstrumentWithYieldToMaturity and provides payment flow logic specific to money market conventions.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -117,7 +119,7 @@
 <span class="sd">    day_count_convention : str, optional</span>
 <span class="sd">            Day count convention for the instrument. Defaults to &#39;actual/360&#39;.</span>
 <span class="sd">    kwargs : dict, optional</span>
-<span class="sd">            Additional keyword arguments for BaseFixedIncomeInstrument.</span>
+<span class="sd">            Additional keyword arguments for BaseFixedIncomeInstrumentWithYieldToMaturity.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
@@ -386,7 +388,7 @@
 <span class="sd">        issue_dt : datetime, optional</span>
 <span class="sd">                Issue date. Defaults to current date if None.</span>
 <span class="sd">        kwargs : dict, optional</span>
-<span class="sd">                Additional keyword arguments for BaseFixedIncomeInstrument.</span>
+<span class="sd">                Additional keyword arguments for BaseFixedIncomeInstrumentWithYieldToMaturity.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -833,6 +835,71 @@
         <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="MoneyMarketInstrument.spread_duration">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/money_market_instruments/index.html#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.spread_duration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">spread_duration</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">                Calculate spread duration of the instrument.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            Spread Duration = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t}{(1 + YTM)^{(t+1)}} \\cdot t</span>
+<span class="sd">        where:</span>
+
+<span class="sd">        - :math:`P` is the price of the instrument</span>
+<span class="sd">        - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date</span>
+<span class="sd">        - :math:`YTM` is the yield to maturity</span>
+<span class="sd">        - :math:`T` is the total number of periods</span>
+
+<span class="sd">        The times to payments are calculated from the settlement date to each payment date and need not be integer values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        yield_to_maturity : float, optional</span>
+<span class="sd">            Yield to maturity as a decimal. If not provided, will be calculated from price if given.</span>
+<span class="sd">        price : float, optional</span>
+<span class="sd">            Price of the instrument. Used to estimate YTM if yield_to_maturity is not provided.</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
+<span class="sd">            Settlement date. Defaults to issue date.</span>
+<span class="sd">        adjust_to_business_days : bool, optional</span>
+<span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
+<span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
+<span class="sd">        yield_calculation_convention : str, optional</span>
+<span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        duration : float</span>
+<span class="sd">            Spread duration in years.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; instrument = MoneyMarketInstrument(&#39;2020-01-01&#39;, &#39;2020-07-01&#39;, 5, 1, price=100, settlement_date=&#39;2020-01-01&#39;, day_count_convention=&#39;30/360&#39;, yield_calculation_convention=&#39;Add-On&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; instrument.spread_duration()</span>
+<span class="sd">        np.float64(0.487804878)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">modified_duration</span><span class="p">(</span>
+            <span class="n">yield_to_maturity</span><span class="o">=</span><span class="n">yield_to_maturity</span><span class="p">,</span>
+            <span class="n">price</span><span class="o">=</span><span class="n">price</span><span class="p">,</span>
+            <span class="n">settlement_date</span><span class="o">=</span><span class="n">settlement_date</span><span class="p">,</span>
+            <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
+            <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
+            <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="MoneyMarketInstrument.macaulay_duration">
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/money_market_instruments/index.html#pyfian.fixed_income.money_market_instruments.MoneyMarketInstrument.macaulay_duration">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">macaulay_duration</span><span class="p">(</span>
@@ -886,7 +953,7 @@
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; instrument = MoneyMarketInstrument(&#39;2020-01-01&#39;, &#39;2020-07-01&#39;, 5, 1, price=100, settlement_date=&#39;2020-01-01&#39;, day_count_convention=&#39;30/360&#39;, yield_calculation_convention=&#39;Add-On&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; instrument.macaulay_duration()</span>
-<span class="sd">        np.float64(0.5)</span>
+<span class="sd">        0.5</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="p">(</span>
@@ -1011,7 +1078,7 @@
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; instrument = MoneyMarketInstrument(&#39;2020-01-01&#39;, &#39;2020-07-01&#39;, 5, 1, price=100, settlement_date=&#39;2020-01-01&#39;, day_count_convention=&#39;30/360&#39;, yield_calculation_convention=&#39;Add-On&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; instrument.convexity()</span>
-<span class="sd">        np.float64(0.4759071998705622)</span>
+<span class="sd">        np.float64(0.47590719...)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="p">(</span>

@@ -60,6 +60,12 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html">Fixed Income Instruments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html">Bullet Bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#bond-day-counting-conventions">Bond Day-Counting Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#duration">Duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#convexity">Convexity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#effective-duration">Effective Duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_curves.html">Curves</a></li>
 </ul>
 </li>
 </ul>
@@ -156,10 +162,10 @@
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting git+https://github.com/pydata/pandas-datareader.git
-  Cloning https://github.com/pydata/pandas-datareader.git to /tmp/pip-req-build-2f_5tg_s
+  Cloning https://github.com/pydata/pandas-datareader.git to /tmp/pip-req-build-wq8t4ewb
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Running command git clone --filter=blob:none --quiet https://github.com/pydata/pandas-datareader.git /tmp/pip-req-build-2f_5tg_s
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Running command git clone --filter=blob:none --quiet https://github.com/pydata/pandas-datareader.git /tmp/pip-req-build-wq8t4ewb
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Resolved https://github.com/pydata/pandas-datareader.git to commit 4ff62149bb24f72d62874477b6688ddb0fd1f97c
@@ -178,7 +184,7 @@
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting lxml (from pandas-datareader==0.11.0.dev76+g4ff6214)
-  Downloading lxml-6.0.1-cp312-cp312-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl.metadata (3.8 kB)
+  Downloading lxml-6.0.2-cp312-cp312-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl.metadata (3.6 kB)
 Requirement already satisfied: pandas&gt;=1.5.3 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas-datareader==0.11.0.dev76+g4ff6214) (2.3.1)
 Requirement already satisfied: requests&gt;=2.19.0 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas-datareader==0.11.0.dev76+g4ff6214) (2.32.4)
 Requirement already satisfied: numpy&gt;=1.26.0 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas&gt;=1.5.3-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2.3.1)
@@ -190,16 +196,16 @@ Requirement already satisfied: charset_normalizer&lt;4,&gt;=2 in /home/runner/.c
 Requirement already satisfied: idna&lt;4,&gt;=2.5 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (3.10)
 Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2.5.0)
 Requirement already satisfied: certifi&gt;=2017.4.17 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2025.7.14)
-Downloading lxml-6.0.1-cp312-cp312-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl (5.3 MB)
+Downloading lxml-6.0.2-cp312-cp312-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl (5.3 MB)
 ?25l   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">0.0/5.3 MB</span> <span class=" -Color -Color-Red">?</span> eta <span class=" -Color -Color-Cyan">-:--:--</span>
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">5.3/5.3 MB</span> <span class=" -Color -Color-Red">214.2 MB/s</span>  <span class=" -Color -Color-Yellow">0:00:00</span>
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">5.3/5.3 MB</span> <span class=" -Color -Color-Red">133.9 MB/s</span>  <span class=" -Color -Color-Yellow">0:00:00</span>
 ?25hBuilding wheels for collected packages: pandas-datareader
   Building wheel for pandas-datareader (pyproject.toml): started
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Building wheel for pandas-datareader (pyproject.toml): finished with status &#39;done&#39;
-  Created wheel for pandas-datareader: filename=pandas_datareader-0.11.0.dev76+g4ff6214-py3-none-any.whl size=114770 sha256=0c552b666dcc278d43850351cca429d93ec6d43ca0d2bcc524c91c8a5e5babd4
-  Stored in directory: /tmp/pip-ephem-wheel-cache-fenkhbmx/wheels/68/09/2b/66ff2e878a27988531be41d35ba4495de3d8f800ebb5de1c07
+  Created wheel for pandas-datareader: filename=pandas_datareader-0.11.0.dev76+g4ff6214-py3-none-any.whl size=114770 sha256=a2bb84c433d8d376ce3355663b62723a4492d9a3b6f18950554004612e51ecd3
+  Stored in directory: /tmp/pip-ephem-wheel-cache-1qdlnk_a/wheels/68/09/2b/66ff2e878a27988531be41d35ba4495de3d8f800ebb5de1c07
 Successfully built pandas-datareader
 Installing collected packages: lxml, pandas-datareader
 ?25l
@@ -208,7 +214,7 @@ Installing collected packages: lxml, pandas-datareader
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   ━━━━━━━━━━━━━━━━━━━━╺━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">1/2</span> [pandas-datareader]
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">2/2</span> [pandas-datareader]
 ?25h
-Successfully installed lxml-6.0.1 pandas-datareader-0.11.0.dev76+g4ff6214
+Successfully installed lxml-6.0.2 pandas-datareader-0.11.0.dev76+g4ff6214
 </pre></div>
 </div>
 </div>
@@ -462,7 +468,7 @@ r_{\text{nom}} = r^\star + \pi + \text{Default} + \text{Liq} + \text{Mat} + \tex
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/b559fc951365b3d48efe574e7abce0ba578114220ea79e452e86a7209b6658c2.png" src="../../_images/b559fc951365b3d48efe574e7abce0ba578114220ea79e452e86a7209b6658c2.png" />
+<img alt="../../_images/96ebcae196b270427e3b5c86439ea5244eeb94c883407c958bfcd92cc818c240.png" src="../../_images/96ebcae196b270427e3b5c86439ea5244eeb94c883407c958bfcd92cc818c240.png" />
 </div>
 </div>
 <p>This difference, called Breakeven inflation, is also the inflation rate that would equalize returns between a traditional nominal bond and an inflation-protected bond.</p>
@@ -482,7 +488,7 @@ r_{\text{nom}} = r^\star + \pi + \text{Default} + \text{Liq} + \text{Mat} + \tex
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/0efbe7dacbc930d0b598331cb6e8ec79723137f6c2dac2751ac8a35c4390e150.png" src="../../_images/0efbe7dacbc930d0b598331cb6e8ec79723137f6c2dac2751ac8a35c4390e150.png" />
+<img alt="../../_images/1802615e59cc858de73c7442e123a2969345691bb2203876f05c641797e19e0f.png" src="../../_images/1802615e59cc858de73c7442e123a2969345691bb2203876f05c641797e19e0f.png" />
 </div>
 </div>
 <p>Looking at historical data, nominal rates and real rates have fluctuated significantly over time. In recent years, both have trended upwards. A key contributing factor to this rise has been persistently large government deficits, which can exert upward pressure on yields due to increased supply of government debt and potential concerns about inflation. This dynamic has led investors to demand higher compensation, both in nominal terms and increasingly in real terms, to hold government securities.</p>
@@ -509,7 +515,7 @@ r_{\text{nom}} = r^\star + \pi + \text{Default} + \text{Liq} + \text{Mat} + \tex
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/b96163ceb5e874f28893950aa6053393290e6e2a8c007d89421d8b5d5fadfe8e.png" src="../../_images/b96163ceb5e874f28893950aa6053393290e6e2a8c007d89421d8b5d5fadfe8e.png" />
+<img alt="../../_images/9eef4c4082e54fa9557ba1eb1a9eeead2b3abb818e451c7e3dc6debcc8066c05.png" src="../../_images/9eef4c4082e54fa9557ba1eb1a9eeead2b3abb818e451c7e3dc6debcc8066c05.png" />
 </div>
 </div>
 </section>

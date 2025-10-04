@@ -90,7 +90,9 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dateutil.relativedelta</span><span class="w"> </span><span class="kn">import</span> <span class="n">relativedelta</span>  <span class="c1"># type: ignore</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.base_fixed_income</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseFixedIncomeInstrument</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.base_fixed_income</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BaseFixedIncomeInstrumentWithYieldToMaturity</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value</span><span class="w"> </span><span class="kn">import</span> <span class="n">rate_conversions</span> <span class="k">as</span> <span class="n">rc</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.irr</span><span class="w"> </span><span class="kn">import</span> <span class="n">xirr_base</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.rate_conversions</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_time_adjustment</span>
@@ -100,7 +102,7 @@
 
 <div class="viewcode-block" id="FixedRateBullet">
 <a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/fixed_rate_bond/index.html#pyfian.fixed_income.fixed_rate_bond.FixedRateBullet">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">FixedRateBullet</span><span class="p">(</span><span class="n">BaseFixedIncomeInstrument</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FixedRateBullet</span><span class="p">(</span><span class="n">BaseFixedIncomeInstrumentWithYieldToMaturity</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    FixedRateBullet represents a bullet bond with fixed coupon payments and principal at maturity.</span>
 <span class="sd">    It allows for payment flow generation, valuation, yield calculations, and other bond analytics.</span>
@@ -674,7 +676,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        price : float, optional</span>
-<span class="sd">            Price of the bond. If not provided, will use self.price if set.</span>
+<span class="sd">            Price of the bond. If not provided, will use self._price if set.</span>
 <span class="sd">        settlement_date : str or datetime-like, optional</span>
 <span class="sd">            Settlement date. Defaults to issue date.</span>
 <span class="sd">        adjust_to_business_days : bool, optional</span>
@@ -817,7 +819,7 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2)</span>
-<span class="sd">        &gt;&gt;&gt; bond.effective_duration(yield_to_maturity=0.05, settlement_date=&#39;2020-01-01&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; bond.modified_duration(yield_to_maturity=0.05, settlement_date=&#39;2020-01-01&#39;)</span>
 <span class="sd">        4.3760319684</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>

@@ -1,0 +1,529 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bullet Bonds &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Curves" href="03_curves.html" />
+    <link rel="prev" title="Fixed Income Instruments" href="01_fixed_income_instruments.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Fixed Income</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00_economics_of_interest_rates.html">Economics of Interest Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html">Fixed Income Instruments</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Bullet Bonds</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#key-features">Key Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advantages">Advantages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#risks">Risks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#common-examples">Common Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#bond-day-counting-conventions">Bond Day-Counting Conventions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#calculating-bond-price-from-discount-curve">Calculating Bond Price from Discount Curve</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#identify-cash-flows">1) Identify Cash Flows</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apply-discount-curve">2) Apply Discount Curve</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#calculate-bond-price">3) Calculate Bond Price</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#duration">Duration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#macaulay-duration">Macaulay Duration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#modified-duration">Modified Duration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#convexity">Convexity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#effective-duration">Effective Duration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#spread-effective-duration">Spread Effective Duration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="03_curves.html">Curves</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Fixed Income</a></li>
+      <li class="breadcrumb-item active">Bullet Bonds</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Topics/fixed_income/02_bullet_bonds.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <a href="https://colab.research.google.com/github/Python-Financial-Analyst/pyfian_dev/blob/main/notebooks/fixed_income/02_bullet_bonds.ipynb" target="_blank">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab"/>
+</a><section id="bullet-bonds">
+<h1>Bullet Bonds<a class="headerlink" href="#bullet-bonds" title="Link to this heading"></a></h1>
+<p>A bullet bond is a type of fixed-income security with a very straightforward repayment structure.</p>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>No Amortization</strong></p>
+<ul class="simple">
+<li><p>The issuer does not repay any portion of the principal during the life of the bond.</p></li>
+<li><p>Only interest (coupon) payments are made periodically (e.g., semi-annual or annual).</p></li>
+</ul>
+</li>
+<li><p><strong>Principal Repaid at Maturity</strong></p>
+<ul class="simple">
+<li><p>The entire face value (principal) is repaid in one “bullet” payment at the end of the bond’s term.</p></li>
+<li><p>This makes it different from amortizing bonds (like many mortgages), where principal is gradually repaid.</p></li>
+</ul>
+</li>
+<li><p><strong>Predictable Cash Flow</strong></p>
+<ul class="simple">
+<li><p>Investors receive regular coupon payments and then a large lump sum at maturity.</p></li>
+<li><p>This makes bullet bonds relatively simple to understand and model.</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="advantages">
+<h2>Advantages<a class="headerlink" href="#advantages" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>For issuers</strong>: Lower cash outflow during the life of the bond since they don’t repay principal until maturity.</p></li>
+<li><p><strong>For investors</strong>: Predictable stream of income plus a known lump-sum repayment date.</p></li>
+</ul>
+</section>
+<section id="risks">
+<h2>Risks<a class="headerlink" href="#risks" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Credit risk</strong>: Since principal repayment is concentrated at the end, investors bear the risk that the issuer might default before maturity.</p></li>
+<li><p><strong>Refinancing risk for issuers</strong>: They must have sufficient liquidity or refinancing ability to repay the lump sum when due.</p></li>
+</ul>
+</section>
+<section id="common-examples">
+<h2>Common Examples<a class="headerlink" href="#common-examples" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Many <strong>corporate bonds</strong> and <strong>sovereign bonds</strong> are structured as bullet bonds.</p></li>
+<li><p>Eurobonds and U.S. Treasury notes/bonds are classic examples.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Markdown</span>
+
+<span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2025-01-01&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">notional</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">display_bond_cash_flows</span><span class="p">(</span><span class="n">cash_flow_dict</span><span class="p">):</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;## Bond Cash Flows Table</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+    <span class="n">table</span> <span class="o">+=</span> <span class="s2">&quot;| Date       | Cash Flow Value |</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">table</span> <span class="o">+=</span> <span class="s2">&quot;|------------|-----------------|</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">time</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">cash_flow_dict</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">table</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">            |</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">table</span><span class="p">))</span>
+
+
+<span class="n">display_bond_cash_flows</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">payment_flow</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p class="rubric" id="bond-cash-flows-table">Bond Cash Flows Table</p>
+<p>| Date       | Cash Flow Value |
+|————|—————–|
+| 2020-04-01 | 1.25            |
+| 2020-07-01 | 1.25            |
+| 2020-10-01 | 1.25            |
+| 2021-01-01 | 1.25            |
+| 2021-04-01 | 1.25            |
+| 2021-07-01 | 1.25            |
+| 2021-10-01 | 1.25            |
+| 2022-01-01 | 1.25            |
+| 2022-04-01 | 1.25            |
+| 2022-07-01 | 1.25            |
+| 2022-10-01 | 1.25            |
+| 2023-01-01 | 1.25            |
+| 2023-04-01 | 1.25            |
+| 2023-07-01 | 1.25            |
+| 2023-10-01 | 1.25            |
+| 2024-01-01 | 1.25            |
+| 2024-04-01 | 1.25            |
+| 2024-07-01 | 1.25            |
+| 2024-10-01 | 1.25            |
+| 2025-01-01 | 101.25            |</p>
+</div>
+</div>
+</section>
+</section>
+<section id="bond-day-counting-conventions">
+<h1>Bond Day-Counting Conventions<a class="headerlink" href="#bond-day-counting-conventions" title="Link to this heading"></a></h1>
+<p>These rules decide how to count days for calculating bond interest:</p>
+<ul class="simple">
+<li><p><strong>30/360</strong>: Counts each month as 30 days, year as 360 days. Simple but less accurate. Used in some corporate bonds.</p></li>
+<li><p><strong>30E/360</strong>: Like 30/360, but if a date is the 31st, it’s counted as the 30th. Used in Eurobonds.</p></li>
+<li><p><strong>Actual/Actual</strong>: Counts real days in the period and year (365 or 366). Most accurate. Used in US Treasuries (ISDA) or international bonds (ICMA).</p></li>
+<li><p><strong>Actual/360</strong>: Counts real days in the period, but uses a 360-day year. Common in money markets like loans.</p></li>
+<li><p><strong>Actual/365</strong>: Counts real days in the period, uses a 365-day year. Used in some bond markets.</p></li>
+<li><p><strong>30/365</strong>: Counts each month as 30 days, year as 365 days. Rare, used in specific financial contracts.</p></li>
+<li><p><strong>Actual/Actual-Bond</strong>: Same as Actual/Actual (ICMA), counts real days in period and coupon period (e.g., half-year). Used in bond markets.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+
+<span class="c1"># Define day-count conventions and their display labels</span>
+<span class="n">DAY_COUNT_CONVENTIONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;30/360&quot;</span><span class="p">:</span> <span class="s2">&quot;30/360&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;30e/360&quot;</span><span class="p">:</span> <span class="s2">&quot;30E/360&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;actual/360&quot;</span><span class="p">:</span> <span class="s2">&quot;ACT/360&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;actual/365&quot;</span><span class="p">:</span> <span class="s2">&quot;ACT/365&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;30/365&quot;</span><span class="p">:</span> <span class="s2">&quot;30/365&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;actual/actual-Bond&quot;</span><span class="p">:</span> <span class="s2">&quot;ACT/ACT (Bond)&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Create bonds with different day-count conventions</span>
+<span class="n">bonds</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="sa">f</span><span class="s2">&quot;bond_</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">FixedRateBullet</span><span class="p">(</span>
+        <span class="n">issue_dt</span><span class="o">=</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span>
+        <span class="n">maturity</span><span class="o">=</span><span class="s2">&quot;2025-01-01&quot;</span><span class="p">,</span>
+        <span class="n">cpn</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+        <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">notional</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="o">=</span><span class="n">dcc</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">dcc</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">DAY_COUNT_CONVENTIONS</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">dcc_label</span><span class="p">(</span><span class="n">dcc_obj</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a human-readable label for a day-count convention.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dcc_obj: String or object representing the day-count convention.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Clean label for the day-count convention.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dcc_obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DAY_COUNT_CONVENTIONS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dcc_obj</span><span class="p">,</span> <span class="n">dcc_obj</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">DAY_COUNT_CONVENTIONS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dcc_obj</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">dcc_obj</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">display_bond_accrued_interest</span><span class="p">(</span><span class="n">bonds</span><span class="p">,</span> <span class="n">settlement_date</span><span class="o">=</span><span class="s2">&quot;2023-03-01&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Display a Markdown table of accrued interest for bonds.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bonds: Dict of bond names to FixedRateBullet objects.</span>
+<span class="sd">        settlement_date: Date for accrued interest calculation (default: 2023-03-01).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Markdown: Table with bond names, day-count conventions, and accrued interest.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s2">&quot;## YTM Table (Settlement Date: </span><span class="si">{</span><span class="n">settlement_date</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;| Bond | Day Count Convention | YTM |&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;|------|---------------------|------------------|&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">bonds</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">dcc</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">bond</span><span class="p">,</span> <span class="s2">&quot;day_count_convention&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">dcc_label</span><span class="p">(</span><span class="n">dcc</span><span class="p">)</span> <span class="k">if</span> <span class="n">dcc</span> <span class="k">else</span> <span class="s2">&quot;Unknown&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ai</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">yield_to_maturity</span><span class="p">(</span><span class="n">price</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+            <span class="n">ai_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ai</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">ai_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">ai_str</span><span class="si">}</span><span class="s2"> |&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Markdown</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">table</span><span class="p">))</span>
+
+
+<span class="c1"># Display the accrued interest table</span>
+<span class="n">display</span><span class="p">(</span><span class="n">display_bond_accrued_interest</span><span class="p">(</span><span class="n">bonds</span><span class="p">,</span> <span class="n">settlement_date</span><span class="o">=</span><span class="s2">&quot;2023-03-01&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p class="rubric" id="ytm-table-settlement-date-2023-03-01">YTM Table (Settlement Date: 2023-03-01)</p>
+<p>| Bond | Day Count Convention | YTM |
+|——|———————|——————|
+| bond_1 | DayCount30360() | 0.050000 |
+| bond_2 | DayCount30E360() | 0.050000 |
+| bond_3 | DayCountActual360() | 0.050000 |
+| bond_4 | DayCountActual365() | 0.050000 |
+| bond_5 | DayCount30365() | 0.050000 |
+| bond_6 | DayCountActualActualBond() | 0.050000 |</p>
+</div>
+</div>
+<section id="calculating-bond-price-from-discount-curve">
+<h2>Calculating Bond Price from Discount Curve<a class="headerlink" href="#calculating-bond-price-from-discount-curve" title="Link to this heading"></a></h2>
+<p>The price of a bond is the present value of its future cash flows, which consist of periodic coupon payments and the face value paid at maturity. A discount curve provides the discount factors needed to compute these present values, accounting for the time value of money and interest rate risk. Each cash flow is multiplied by the discount factor corresponding to its payment time, and the sum of these discounted cash flows gives the bond’s price.</p>
+<p>Consider a 5-year bond with:</p>
+<ul class="simple">
+<li><p><strong>Face Value</strong>: $100</p></li>
+<li><p><strong>Annual Coupon Rate</strong>: 5% (paid semi-annually, so $2.50 every 6 months)</p></li>
+<li><p><strong>Maturity</strong>: 5 years</p></li>
+</ul>
+<section id="identify-cash-flows">
+<h3>1) Identify Cash Flows<a class="headerlink" href="#identify-cash-flows" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Coupon Payments</strong>: $2.50 at <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">0.5,</span> <span class="pre">1.0,</span> <span class="pre">...,</span> <span class="pre">4.5</span></code> years (semi-annual).</p></li>
+<li><p><strong>Final Payment</strong>: $102.50 at <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">5.0</span></code> years (face value + final coupon).</p></li>
+</ul>
+</section>
+<section id="apply-discount-curve">
+<h3>2) Apply Discount Curve<a class="headerlink" href="#apply-discount-curve" title="Link to this heading"></a></h3>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">DummyCurve</span></code> discount factor, defined as <code class="docutils literal notranslate"><span class="pre">discount_t(t)</span> <span class="pre">=</span> <span class="pre">1</span> <span class="pre">/</span> <span class="pre">(1</span> <span class="pre">+</span> <span class="pre">0.05</span> <span class="pre">*</span> <span class="pre">t)</span></code>, each cash flow is discounted:</p>
+<ul class="simple">
+<li><p>At <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">0.5</span></code>: <span class="math notranslate nohighlight">\(2.50 / (1 + 0.05 * 0.5) ≈ \)</span>2.439$</p></li>
+<li><p>At <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">5.0</span></code>: <span class="math notranslate nohighlight">\(102.50 / (1 + 0.05 * 5.0) = \)</span>102.50 / 1.25 = <span class="math notranslate nohighlight">\(82.0\)</span></p></li>
+</ul>
+</section>
+<section id="calculate-bond-price">
+<h3>3) Calculate Bond Price<a class="headerlink" href="#calculate-bond-price" title="Link to this heading"></a></h3>
+<p>Sum the discounted cash flows:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(2.439 + \)</span>2.381 + … + <span class="math notranslate nohighlight">\(82.0 ≈ \)</span>102.066$</p></li>
+</ul>
+<p>This total represents the bond’s price, reflecting the present value of all future payments adjusted by the discount curve.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+
+<span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span>
+    <span class="n">issue_dt</span><span class="o">=</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span>
+    <span class="n">maturity</span><span class="o">=</span><span class="s2">&quot;2025-01-01&quot;</span><span class="p">,</span>
+    <span class="n">cpn</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">notional</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">yield_to_maturity</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">settlement_date</span><span class="o">=</span><span class="s2">&quot;2021-01-01&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">get_price</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>4.488654508629179
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="duration">
+<h1>Duration<a class="headerlink" href="#duration" title="Link to this heading"></a></h1>
+<p>Duration measures a bond’s price sensitivity to changes in interest rates and represents the weighted average time to receive the bond’s cash flows. Mathematically, duration approximates the percentage change in a bond’s price for a small change in yield, expressed as:</p>
+<div class="math notranslate nohighlight">
+\[D = -\frac{1}{P} \cdot \frac{dP}{dr}\]</div>
+<p>The negative sign reflects the inverse relationship between bond prices and yields.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+
+<span class="n">bond_duration_example</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span>
+    <span class="n">issue_dt</span><span class="o">=</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span>
+    <span class="n">maturity</span><span class="o">=</span><span class="s2">&quot;2025-01-01&quot;</span><span class="p">,</span>
+    <span class="n">cpn</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">notional</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">yield_to_maturity</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">settlement_date</span><span class="o">=</span><span class="s2">&quot;2021-01-01&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="macaulay-duration">
+<h2>Macaulay Duration<a class="headerlink" href="#macaulay-duration" title="Link to this heading"></a></h2>
+<p>Macaulay duration is the weighted average time until a bond’s cash flows are received, expressed in years. It is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\sum_{t=1}^n \frac{t \cdot C_t}{(1 + y)^t} + \frac{n \cdot FV}{(1 + y)^n}}{P}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(C_t\)</span>: Cash flow (coupon payment) at time <span class="math notranslate nohighlight">\(t\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(FV\)</span>: Face value of the bond</p></li>
+<li><p><span class="math notranslate nohighlight">\(y\)</span>: Yield to maturity (per period)</p></li>
+<li><p><span class="math notranslate nohighlight">\(n\)</span>: Number of periods until maturity</p></li>
+<li><p><span class="math notranslate nohighlight">\(P\)</span>: Present value (current price) of the bond</p></li>
+</ul>
+<p>For a zero-coupon bond, since there are no coupon payments (<span class="math notranslate nohighlight">\(C_t = 0\)</span>), the Macaulay duration simplifies to the time to maturity, <span class="math notranslate nohighlight">\(T - t\)</span>, where <span class="math notranslate nohighlight">\(T\)</span> is the maturity date and <span class="math notranslate nohighlight">\(t\)</span> is the current date.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">macaulay_duration</span> <span class="o">=</span> <span class="n">bond_duration_example</span><span class="o">.</span><span class="n">macaulay_duration</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">macaulay_duration</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.1175133907
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="modified-duration">
+<h2>Modified Duration<a class="headerlink" href="#modified-duration" title="Link to this heading"></a></h2>
+<p>Modified duration directly measures the percentage change in a bond’s price for a 1% change in yield. It is derived from the Macaulay duration as:</p>
+<div class="math notranslate nohighlight">
+\[D^{\text{Mod}} = \frac{D^{\text{MC}}}{1 + \frac{y}{k}}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(y\)</span>: Annual yield to maturity</p></li>
+<li><p><span class="math notranslate nohighlight">\(k\)</span>: Number of compounding periods per year (e.g., <span class="math notranslate nohighlight">\(k = 2\)</span> for semi-annual, <span class="math notranslate nohighlight">\(k = 1\)</span> for annual)</p></li>
+</ul>
+<p>For a zero-coupon bond with annual compounding (<span class="math notranslate nohighlight">\(k = 1\)</span>), the modified duration is:</p>
+<div class="math notranslate nohighlight">
+\[D^{\text{Mod}} = \frac{T - t}{1 + y}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modified_duration</span> <span class="o">=</span> <span class="n">bond_duration_example</span><span class="o">.</span><span class="n">modified_duration</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">modified_duration</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.3192895402
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="convexity">
+<h1>Convexity<a class="headerlink" href="#convexity" title="Link to this heading"></a></h1>
+<p>Convexity measures the sensitivity of a bond’s duration to changes in interest rates and captures the non-linear relationship between bond prices and yields. It is the second derivative of the bond’s price with respect to the yield, scaled by the price:</p>
+<div class="math notranslate nohighlight">
+\[C = \frac{1}{P} \cdot \frac{d^2P}{dr^2}\]</div>
+<p>For a zero-coupon bond with annual compounding, the convexity is:</p>
+<div class="math notranslate nohighlight">
+\[C = \frac{(T - t)(T - t + 1)}{(1 + y)^2}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+
+<span class="n">convexity_example_bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span>
+    <span class="n">issue_dt</span><span class="o">=</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span>
+    <span class="n">maturity</span><span class="o">=</span><span class="s2">&quot;2025-01-01&quot;</span><span class="p">,</span>
+    <span class="n">cpn</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">notional</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">yield_to_maturity</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">settlement_date</span><span class="o">=</span><span class="s2">&quot;2021-01-01&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">convexity</span> <span class="o">=</span> <span class="n">convexity_example_bond</span><span class="o">.</span><span class="n">convexity</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">convexity</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.162101523
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="effective-duration">
+<h1>Effective Duration<a class="headerlink" href="#effective-duration" title="Link to this heading"></a></h1>
+<p>Effective Duration finds the duration for bonds that have options embedded into them. For example a callable bond is an example of a bonds that has an option embedded into it.</p>
+<section id="spread-effective-duration">
+<h2>Spread Effective Duration<a class="headerlink" href="#spread-effective-duration" title="Link to this heading"></a></h2>
+<p>The spread effective duration measures how much a bond price changes with respect to a change in the bond’s credit spread.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="01_fixed_income_instruments.html" class="btn btn-neutral float-left" title="Fixed Income Instruments" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="03_curves.html" class="btn btn-neutral float-right" title="Curves" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

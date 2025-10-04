@@ -8,4 +8,6 @@ This chapter introduces concepts of Fixed Income
 
 00_economics_of_interest_rates.ipynb
 01_fixed_income_instruments.ipynb
+02_bullet_bonds.ipynb
+03_curves.ipynb
 ```

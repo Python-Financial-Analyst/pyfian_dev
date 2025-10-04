@@ -25,7 +25,7 @@ Module Contents
 
 .. py:class:: FixedRateBullet(issue_dt: Union[str, pandas.Timestamp], maturity: Union[str, pandas.Timestamp], cpn: float, cpn_freq: int, notional: float = 100, settlement_convention_t_plus: int = 1, record_date_t_minus: int = 1, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, yield_to_maturity: Optional[float] = None, price: Optional[float] = None, adjust_to_business_days: bool = False, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/actual-Bond', following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase = '30/360', yield_calculation_convention: str = 'BEY')
 
-   Bases: :py:obj:`pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument`
+   Bases: :py:obj:`pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrumentWithYieldToMaturity`
 
 
    FixedRateBullet represents a bullet bond with fixed coupon payments and principal at maturity.
@@ -391,7 +391,7 @@ Module Contents
 
       The times to payments are calculated from the settlement date to each payment date and need not be integer values.
 
-      :param price: Price of the bond. If not provided, will use self.price if set.
+      :param price: Price of the bond. If not provided, will use self._price if set.
       :type price: float, optional
       :param settlement_date: Settlement date. Defaults to issue date.
       :type settlement_date: str or datetime-like, optional
@@ -458,7 +458,7 @@ Module Contents
       .. rubric:: Examples
 
       >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
-      >>> bond.effective_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
+      >>> bond.modified_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
       4.3760319684
 
 

@@ -30,11 +30,11 @@ Module Contents
 
 .. py:class:: MoneyMarketInstrument(issue_dt: Union[str, pandas.Timestamp], maturity: Union[str, pandas.Timestamp], cpn: float = 0, cpn_freq: int = 0, notional: float = 100, settlement_convention_t_plus: int = 1, record_date_t_minus: int = 1, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, yield_to_maturity: Optional[float] = None, price: Optional[float] = None, adjust_to_business_days: bool = False, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/365', following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase = '30/360', yield_calculation_convention: str = 'Add-On')
 
-   Bases: :py:obj:`pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument`
+   Bases: :py:obj:`pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrumentWithYieldToMaturity`
 
 
    MoneyMarketInstrument represents a generic short-term debt instrument, typically with maturities less than one year.
-   Inherits from BaseFixedIncomeInstrument and provides payment flow logic specific to money market conventions.
+   Inherits from BaseFixedIncomeInstrumentWithYieldToMaturity and provides payment flow logic specific to money market conventions.
 
    :param issue_dt: Issue date of the instrument.
    :type issue_dt: str or datetime-like
@@ -48,7 +48,7 @@ Module Contents
    :type notional: float, optional
    :param day_count_convention: Day count convention for the instrument. Defaults to 'actual/360'.
    :type day_count_convention: str, optional
-   :param kwargs: Additional keyword arguments for BaseFixedIncomeInstrument.
+   :param kwargs: Additional keyword arguments for BaseFixedIncomeInstrumentWithYieldToMaturity.
    :type kwargs: dict, optional
 
    .. attribute:: payment_flow
@@ -191,7 +191,7 @@ Module Contents
       :type day_count_convention: str, optional
       :param issue_dt: Issue date. Defaults to current date if None.
       :type issue_dt: datetime, optional
-      :param kwargs: Additional keyword arguments for BaseFixedIncomeInstrument.
+      :param kwargs: Additional keyword arguments for BaseFixedIncomeInstrumentWithYieldToMaturity.
       :type kwargs: dict, optional
 
       :returns: Instance with specified maturity.
@@ -331,6 +331,47 @@ Module Contents
 
 
 
+   .. py:method:: spread_duration(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
+
+              Calculate spread duration of the instrument.
+
+      .. math::
+          Spread Duration = \frac{1}{P} \sum_{t=1}^{T} \frac{C_t}{(1 + YTM)^{(t+1)}} \cdot t
+      where:
+
+      - :math:`P` is the price of the instrument
+      - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date
+      - :math:`YTM` is the yield to maturity
+      - :math:`T` is the total number of periods
+
+      The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+      :param yield_to_maturity: Yield to maturity as a decimal. If not provided, will be calculated from price if given.
+      :type yield_to_maturity: float, optional
+      :param price: Price of the instrument. Used to estimate YTM if yield_to_maturity is not provided.
+      :type price: float, optional
+      :param settlement_date: Settlement date. Defaults to issue date.
+      :type settlement_date: str or datetime-like, optional
+      :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+      :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
+      :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+      :type following_coupons_day_count: str or DayCountBase, optional
+      :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+      :type yield_calculation_convention: str, optional
+
+      :returns: **duration** -- Spread duration in years.
+      :rtype: float
+
+      .. rubric:: Examples
+
+      >>> instrument = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
+      >>> instrument.spread_duration()
+      np.float64(0.487804878)
+
+
+
    .. py:method:: macaulay_duration(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
 
               Calculate Macaulay duration of the instrument. It is the weighted average time to receive the instrument's cash flows, where the weights are the present values of the cash flows.
@@ -369,7 +410,7 @@ Module Contents
 
       >>> instrument = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
       >>> instrument.macaulay_duration()
-      np.float64(0.5)
+      0.5
 
 
 
@@ -410,7 +451,7 @@ Module Contents
 
       >>> instrument = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
       >>> instrument.convexity()
-      np.float64(0.4759071998705622)
+      np.float64(0.47590719...)
 
 
 

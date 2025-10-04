@@ -1,0 +1,303 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Curves &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="🧑‍💻 Contributing to Python Financial Analyst" href="../../contributing.html" />
+    <link rel="prev" title="Bullet Bonds" href="02_bullet_bonds.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Fixed Income</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00_economics_of_interest_rates.html">Economics of Interest Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html">Fixed Income Instruments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html">Bullet Bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#bond-day-counting-conventions">Bond Day-Counting Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#duration">Duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#convexity">Convexity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#effective-duration">Effective Duration</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Curves</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#curve-shapes">Curve Shapes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flat-curve">Flat Curve</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#upward-sloping-curve">Upward Sloping Curve</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inverted-yield-curve">Inverted Yield Curve</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#important-concepts">Important Concepts</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#logarithm-of-a-curve">Logarithm of a Curve</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#aer-annual-equivalent-rate">AER (Annual Equivalent Rate)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bey-bond-equivalent-yield">BEY (Bond Equivalent Yield)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Fixed Income</a></li>
+      <li class="breadcrumb-item active">Curves</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Topics/fixed_income/03_curves.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <a href="https://colab.research.google.com/github/Python-Financial-Analyst/pyfian_dev/blob/main/notebooks/fixed_income/03_curves.ipynb" target="_blank">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab"/>
+</a><section class="tex2jax_ignore mathjax_ignore" id="curves">
+<h1>Curves<a class="headerlink" href="#curves" title="Link to this heading"></a></h1>
+<p>A bond yield curve represents the yields of bonds with different maturities, providing insight into how investors value short-term versus long-term debt. The shape of the curve is closely tied to macroeconomic conditions and market expectations.
+For instance, an upward-sloping yield curve often signals economic growth: investors prefer short-term bonds (or cash equivalents) to fund projects and investments, pushing up short-term demand and yields. Conversely, an inverted yield curve may indicate economic uncertainty or a potential slowdown, as investors seek the safety of longer-term bonds, driving their yields lower relative to short-term bonds.
+Different types of curves—such as spot curves, forward curves, and par curves—highlight various aspects of bond pricing and interest rate expectations. By analyzing these curves, investors and policymakers gain valuable insights into market sentiment and the broader economic outlook. Here are some examples of curves we can look at:</p>
+<ul class="simple">
+<li><p><strong>Credit Spread</strong>: Difference in yield between bonds of similar maturity but different credit quality, typically corporate vs. Treasury.</p></li>
+<li><p><strong>Forward Curve</strong>: Shows forward rates, implied future interest rates for specific periods.</p></li>
+<li><p><strong>Interpolated Curve</strong>: Yields estimated between observed maturities using interpolation.</p></li>
+<li><p><strong>Par Curve</strong>: Coupon rates for bonds priced at par value across maturities.</p></li>
+<li><p><strong>Spot Curve</strong>: Yields on zero-coupon bonds for different maturities.</p></li>
+</ul>
+<section id="curve-shapes">
+<h2>Curve Shapes<a class="headerlink" href="#curve-shapes" title="Link to this heading"></a></h2>
+<section id="flat-curve">
+<h3>Flat Curve<a class="headerlink" href="#flat-curve" title="Link to this heading"></a></h3>
+<p>A flat yield curve occurs when short-term and long-term bond yields are nearly the same. This shape suggests uncertainty in the economy: investors do not strongly prefer one maturity over another, and the market is signaling that future growth and inflation expectations are unclear. Flat curves often appear during transitions in the business cycle, such as when the economy is shifting from expansion to slowdown.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.spot_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpotCurve</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+
+<span class="c1"># Define multiple bonds with different maturities</span>
+<span class="n">bonds</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">FixedRateBullet</span><span class="p">(</span>
+        <span class="n">issue_dt</span><span class="o">=</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span>
+        <span class="n">maturity</span><span class="o">=</span><span class="n">maturity</span><span class="p">,</span>
+        <span class="n">cpn</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+        <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">notional</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="o">=</span><span class="s2">&quot;2021-01-01&quot;</span><span class="p">,</span>
+        <span class="n">price</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>  <span class="c1"># Explicit price to ensure negative cash flow</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">maturity</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;2025-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2030-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2035-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2040-01-01&quot;</span><span class="p">]</span>
+<span class="p">]</span>
+
+<span class="c1"># Create SpotCurve with the settlement date of the first bond</span>
+<span class="n">flat_curve</span> <span class="o">=</span> <span class="n">SpotCurve</span><span class="p">(</span><span class="n">curve_date</span><span class="o">=</span><span class="n">bonds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_settlement_date</span><span class="p">(),</span> <span class="n">bonds</span><span class="o">=</span><span class="n">bonds</span><span class="p">)</span>
+
+<span class="c1"># Plot the discount factor curve</span>
+<span class="n">flat_curve</span><span class="o">.</span><span class="n">plot_curve</span><span class="p">(</span>
+    <span class="n">t_max</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;discount&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Discount Factor (5%)&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span>
+<span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">7</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="c1"># Define multiple bonds with different maturities</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">bonds</span> <span class="o">=</span> <span class="p">[</span>
+<span class="ne">----&gt; </span><span class="mi">7</span>     <span class="n">FixedRateBullet</span><span class="p">(</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span>         <span class="n">issue_dt</span><span class="o">=</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">,</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span>         <span class="n">maturity</span><span class="o">=</span><span class="n">maturity</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span>         <span class="n">cpn</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span>         <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">12</span>         <span class="n">notional</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span>         <span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">14</span>         <span class="n">settlement_date</span><span class="o">=</span><span class="s2">&quot;2021-01-01&quot;</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">15</span>         <span class="n">price</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>  <span class="c1"># Explicit price to ensure negative cash flow</span>
+<span class="g g-Whitespace">     </span><span class="mi">16</span>     <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="k">for</span> <span class="n">maturity</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;2025-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2030-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2035-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2040-01-01&quot;</span><span class="p">]</span>
+<span class="g g-Whitespace">     </span><span class="mi">18</span> <span class="p">]</span>
+<span class="g g-Whitespace">     </span><span class="mi">20</span> <span class="c1"># Create SpotCurve with the settlement date of the first bond</span>
+<span class="g g-Whitespace">     </span><span class="mi">21</span> <span class="n">flat_curve</span> <span class="o">=</span> <span class="n">SpotCurve</span><span class="p">(</span><span class="n">curve_date</span><span class="o">=</span><span class="n">bonds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_settlement_date</span><span class="p">(),</span> <span class="n">bonds</span><span class="o">=</span><span class="n">bonds</span><span class="p">)</span>
+
+<span class="nn">File ~/work/pyfian_dev/pyfian_dev/src/pyfian/fixed_income/fixed_rate_bond.py:245,</span> in <span class="ni">FixedRateBullet.__init__</span><span class="nt">(self, issue_dt, maturity, cpn, cpn_freq, notional, settlement_convention_t_plus, record_date_t_minus, settlement_date, yield_to_maturity, price, adjust_to_business_days, day_count_convention, following_coupons_day_count, yield_calculation_convention)</span>
+<span class="g g-Whitespace">    </span><span class="mi">239</span>     <span class="k">if</span> <span class="n">yield_to_maturity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">240</span>         <span class="c1"># Check if self._price is approximately equal to the price, else raise ValueError</span>
+<span class="g g-Whitespace">    </span><span class="mi">241</span>         <span class="k">if</span> <span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">242</span>             <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_price&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<span class="g g-Whitespace">    </span><span class="mi">243</span>             <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_price</span> <span class="o">-</span> <span class="n">price</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_price</span> <span class="o">&gt;</span> <span class="mf">1e-5</span>
+<span class="g g-Whitespace">    </span><span class="mi">244</span>         <span class="p">):</span>
+<span class="ne">--&gt; </span><span class="mi">245</span>             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">246</span>                 <span class="s2">&quot;Bond price calculated by yield to maturity does not match the current bond price.&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">247</span>                 <span class="sa">f</span><span class="s2">&quot; (calculated: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_price</span><span class="si">}</span><span class="s2">, given: </span><span class="si">{</span><span class="n">price</span><span class="si">}</span><span class="s2">)&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">248</span>             <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">249</span>     <span class="bp">self</span><span class="o">.</span><span class="n">set_price</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">250</span>         <span class="n">price</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">251</span>         <span class="n">settlement_date</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>    <span class="mi">254</span>         <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">255</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">256</span> <span class="k">elif</span> <span class="n">yield_to_maturity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">257</span>     <span class="c1"># If neither yield_to_maturity nor price is set, set bond price to None</span>
+
+<span class="ne">ValueError</span>: Bond price calculated by yield to maturity does not match the current bond price. (calculated: 4.488654508629179, given: 1000)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="upward-sloping-curve">
+<h3>Upward Sloping Curve<a class="headerlink" href="#upward-sloping-curve" title="Link to this heading"></a></h3>
+<p>An upward-sloping yield curve is the most common shape, where long-term bonds offer higher yields than short-term bonds. This reflects expectations of economic growth and potentially higher inflation in the future, leading investors to demand greater compensation for holding debt over longer horizons. It signals confidence in the economy, as short-term borrowing costs remain relatively low while long-term rates rise with stronger growth outlooks.</p>
+</section>
+<section id="inverted-yield-curve">
+<h3>Inverted Yield Curve<a class="headerlink" href="#inverted-yield-curve" title="Link to this heading"></a></h3>
+<p>An inverted yield curve occurs when short-term bond yields are higher than long-term yields. This unusual shape often signals investor concern about the economy, as demand for long-term bonds increases to lock in safer, stable returns. Inverted curves are commonly viewed as a warning of potential economic slowdown or recession, reflecting expectations of lower growth and inflation in the future.</p>
+</section>
+</section>
+<section id="important-concepts">
+<h2>Important Concepts<a class="headerlink" href="#important-concepts" title="Link to this heading"></a></h2>
+<section id="logarithm-of-a-curve">
+<h3>Logarithm of a Curve<a class="headerlink" href="#logarithm-of-a-curve" title="Link to this heading"></a></h3>
+<p>Taking the logarithm of a yield curve is a common technique to smooth out fluctuations and highlight relative differences between yields across maturities. This can make trends easier to analyze and help in fitting models to observed data.</p>
+</section>
+<section id="aer-annual-equivalent-rate">
+<h3>AER (Annual Equivalent Rate)<a class="headerlink" href="#aer-annual-equivalent-rate" title="Link to this heading"></a></h3>
+<p>The Annual Equivalent Rate (AER) represents the annualized interest rate that accounts for compounding over the year. It allows investors to compare returns on different investment products on a consistent annual basis, regardless of how frequently interest is compounded (monthly, quarterly, etc.).</p>
+<p>The formula for AER is:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{AER} = \left(1 + \frac{i}{n}\right)^n - 1
+\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p>(i) = nominal interest rate</p></li>
+<li><p>(n) = number of compounding periods per year</p></li>
+</ul>
+<p>Using AER, investors can directly compare accounts or bonds that compound at different frequencies, ensuring a like-for-like comparison.</p>
+</section>
+<section id="bey-bond-equivalent-yield">
+<h3>BEY (Bond Equivalent Yield)<a class="headerlink" href="#bey-bond-equivalent-yield" title="Link to this heading"></a></h3>
+<p>The Bond Equivalent Yield (BEY) converts the yield on a bond, often quoted on a discount or semi-annual basis, into an annualized yield that is comparable to standard coupon-bearing bonds. This is particularly useful for short-term securities like Treasury bills or zero-coupon bonds.</p>
+<p>For a discount bond (e.g., a T-bill), BEY is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{BEY} = \frac{F - P}{P} \cdot \frac{365}{t}
+\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p>(F) = face value of the bond</p></li>
+<li><p>(P) = purchase price</p></li>
+<li><p>(t) = days to maturity</p></li>
+</ul>
+<p>For a semi-annual coupon bond, BEY can also be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{BEY} = 2 \left[ \left(1 + \frac{YTM_{\text{semi-annual}}}{2}\right)^2 - 1 \right]
+\]</div>
+<p>Using BEY allows investors to compare yields of bonds with different maturities or coupon structures on a consistent annual basis, making it easier to assess relative value across instruments.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.flat_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlatCurveLog</span>
+
+<span class="n">curve_log</span> <span class="o">=</span> <span class="n">FlatCurveLog</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="02_bullet_bonds.html" class="btn btn-neutral float-left" title="Bullet Bonds" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../contributing.html" class="btn btn-neutral float-right" title="🧑‍💻 Contributing to Python Financial Analyst" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

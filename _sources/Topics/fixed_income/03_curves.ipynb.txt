@@ -1,0 +1,215 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "8dcc2b1e",
+   "metadata": {},
+   "source": [
+    "<a href=\"https://colab.research.google.com/github/Python-Financial-Analyst/pyfian_dev/blob/main/notebooks/fixed_income/03_curves.ipynb\" target=\"_blank\">\n",
+    "  <img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open in Colab\"/>\n",
+    "</a>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b7080b4e",
+   "metadata": {},
+   "source": [
+    "# Curves\n",
+    "\n",
+    "A bond yield curve represents the yields of bonds with different maturities, providing insight into how investors value short-term versus long-term debt. The shape of the curve is closely tied to macroeconomic conditions and market expectations.\n",
+    "For instance, an upward-sloping yield curve often signals economic growth: investors prefer short-term bonds (or cash equivalents) to fund projects and investments, pushing up short-term demand and yields. Conversely, an inverted yield curve may indicate economic uncertainty or a potential slowdown, as investors seek the safety of longer-term bonds, driving their yields lower relative to short-term bonds.\n",
+    "Different types of curves—such as spot curves, forward curves, and par curves—highlight various aspects of bond pricing and interest rate expectations. By analyzing these curves, investors and policymakers gain valuable insights into market sentiment and the broader economic outlook. Here are some examples of curves we can look at:\n",
+    "\n",
+    "- **Credit Spread**: Difference in yield between bonds of similar maturity but different credit quality, typically corporate vs. Treasury.  \n",
+    "\n",
+    "- **Forward Curve**: Shows forward rates, implied future interest rates for specific periods. \n",
+    "\n",
+    "- **Interpolated Curve**: Yields estimated between observed maturities using interpolation.  \n",
+    "\n",
+    "- **Par Curve**: Coupon rates for bonds priced at par value across maturities.  \n",
+    "\n",
+    "- **Spot Curve**: Yields on zero-coupon bonds for different maturities.  "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1d330816",
+   "metadata": {},
+   "source": [
+    "## Curve Shapes"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "71a4bbfa",
+   "metadata": {},
+   "source": [
+    "### Flat Curve\n",
+    "\n",
+    "A flat yield curve occurs when short-term and long-term bond yields are nearly the same. This shape suggests uncertainty in the economy: investors do not strongly prefer one maturity over another, and the market is signaling that future growth and inflation expectations are unclear. Flat curves often appear during transitions in the business cycle, such as when the economy is shifting from expansion to slowdown."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "763a560a",
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "ValueError",
+     "evalue": "Bond price calculated by yield to maturity does not match the current bond price. (calculated: 4.488654508629179, given: 1000)",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[31m---------------------------------------------------------------------------\u001b[39m",
+      "\u001b[31mValueError\u001b[39m                                Traceback (most recent call last)",
+      "\u001b[36mCell\u001b[39m\u001b[36m \u001b[39m\u001b[32mIn[15]\u001b[39m\u001b[32m, line 8\u001b[39m\n\u001b[32m      4\u001b[39m \u001b[38;5;28;01mfrom\u001b[39;00m\u001b[38;5;250m \u001b[39m\u001b[34;01mpyfian\u001b[39;00m\u001b[34;01m.\u001b[39;00m\u001b[34;01mfixed_income\u001b[39;00m\u001b[34;01m.\u001b[39;00m\u001b[34;01mfixed_rate_bond\u001b[39;00m\u001b[38;5;250m \u001b[39m\u001b[38;5;28;01mimport\u001b[39;00m FixedRateBullet\n\u001b[32m      6\u001b[39m \u001b[38;5;66;03m# Define multiple bonds with different maturities\u001b[39;00m\n\u001b[32m      7\u001b[39m bonds = [\n\u001b[32m----> \u001b[39m\u001b[32m8\u001b[39m     \u001b[43mFixedRateBullet\u001b[49m\u001b[43m(\u001b[49m\n\u001b[32m      9\u001b[39m \u001b[43m        \u001b[49m\u001b[43missue_dt\u001b[49m\u001b[43m=\u001b[49m\u001b[33;43m\"\u001b[39;49m\u001b[33;43m2020-01-01\u001b[39;49m\u001b[33;43m\"\u001b[39;49m\u001b[43m,\u001b[49m\n\u001b[32m     10\u001b[39m \u001b[43m        \u001b[49m\u001b[43mmaturity\u001b[49m\u001b[43m=\u001b[49m\u001b[43mmaturity\u001b[49m\u001b[43m,\u001b[49m\n\u001b[32m     11\u001b[39m \u001b[43m        \u001b[49m\u001b[43mcpn\u001b[49m\u001b[43m=\u001b[49m\u001b[32;43m5.0\u001b[39;49m\u001b[43m,\u001b[49m\n\u001b[32m     12\u001b[39m \u001b[43m        \u001b[49m\u001b[43mcpn_freq\u001b[49m\u001b[43m=\u001b[49m\u001b[32;43m1\u001b[39;49m\u001b[43m,\u001b[49m\n\u001b[32m     13\u001b[39m \u001b[43m        \u001b[49m\u001b[43mnotional\u001b[49m\u001b[43m=\u001b[49m\u001b[32;43m1000\u001b[39;49m\u001b[43m,\u001b[49m\n\u001b[32m     14\u001b[39m \u001b[43m        \u001b[49m\u001b[43myield_to_maturity\u001b[49m\u001b[43m=\u001b[49m\u001b[32;43m5.0\u001b[39;49m\u001b[43m,\u001b[49m\n\u001b[32m     15\u001b[39m \u001b[43m        \u001b[49m\u001b[43msettlement_date\u001b[49m\u001b[43m=\u001b[49m\u001b[33;43m\"\u001b[39;49m\u001b[33;43m2021-01-01\u001b[39;49m\u001b[33;43m\"\u001b[39;49m\u001b[43m,\u001b[49m\n\u001b[32m     16\u001b[39m \u001b[43m        \u001b[49m\u001b[43mprice\u001b[49m\u001b[43m=\u001b[49m\u001b[32;43m1000\u001b[39;49m\u001b[43m  \u001b[49m\u001b[38;5;66;43;03m# Explicit price to ensure negative cash flow\u001b[39;49;00m\n\u001b[32m     17\u001b[39m \u001b[43m    \u001b[49m\u001b[43m)\u001b[49m\n\u001b[32m     18\u001b[39m     \u001b[38;5;28;01mfor\u001b[39;00m maturity \u001b[38;5;129;01min\u001b[39;00m [\u001b[33m\"\u001b[39m\u001b[33m2025-01-01\u001b[39m\u001b[33m\"\u001b[39m, \u001b[33m\"\u001b[39m\u001b[33m2030-01-01\u001b[39m\u001b[33m\"\u001b[39m, \u001b[33m\"\u001b[39m\u001b[33m2035-01-01\u001b[39m\u001b[33m\"\u001b[39m, \u001b[33m\"\u001b[39m\u001b[33m2040-01-01\u001b[39m\u001b[33m\"\u001b[39m]\n\u001b[32m     19\u001b[39m ]\n\u001b[32m     21\u001b[39m \u001b[38;5;66;03m# Create SpotCurve with the settlement date of the first bond\u001b[39;00m\n\u001b[32m     22\u001b[39m flat_curve = SpotCurve(curve_date=bonds[\u001b[32m0\u001b[39m].get_settlement_date(), bonds=bonds)\n",
+      "\u001b[36mFile \u001b[39m\u001b[32m~/Documents/pyfian_dev/src/pyfian/fixed_income/fixed_rate_bond.py:245\u001b[39m, in \u001b[36mFixedRateBullet.__init__\u001b[39m\u001b[34m(self, issue_dt, maturity, cpn, cpn_freq, notional, settlement_convention_t_plus, record_date_t_minus, settlement_date, yield_to_maturity, price, adjust_to_business_days, day_count_convention, following_coupons_day_count, yield_calculation_convention)\u001b[39m\n\u001b[32m    239\u001b[39m     \u001b[38;5;28;01mif\u001b[39;00m yield_to_maturity \u001b[38;5;129;01mis\u001b[39;00m \u001b[38;5;129;01mnot\u001b[39;00m \u001b[38;5;28;01mNone\u001b[39;00m:\n\u001b[32m    240\u001b[39m         \u001b[38;5;66;03m# Check if self._price is approximately equal to the price, else raise ValueError\u001b[39;00m\n\u001b[32m    241\u001b[39m         \u001b[38;5;28;01mif\u001b[39;00m (\n\u001b[32m    242\u001b[39m             \u001b[38;5;28mgetattr\u001b[39m(\u001b[38;5;28mself\u001b[39m, \u001b[33m\"\u001b[39m\u001b[33m_price\u001b[39m\u001b[33m\"\u001b[39m, \u001b[38;5;28;01mNone\u001b[39;00m) \u001b[38;5;129;01mis\u001b[39;00m \u001b[38;5;129;01mnot\u001b[39;00m \u001b[38;5;28;01mNone\u001b[39;00m\n\u001b[32m    243\u001b[39m             \u001b[38;5;129;01mand\u001b[39;00m \u001b[38;5;28mabs\u001b[39m(\u001b[38;5;28mself\u001b[39m._price - price) / \u001b[38;5;28mself\u001b[39m._price > \u001b[32m1e-5\u001b[39m\n\u001b[32m    244\u001b[39m         ):\n\u001b[32m--> \u001b[39m\u001b[32m245\u001b[39m             \u001b[38;5;28;01mraise\u001b[39;00m \u001b[38;5;167;01mValueError\u001b[39;00m(\n\u001b[32m    246\u001b[39m                 \u001b[33m\"\u001b[39m\u001b[33mBond price calculated by yield to maturity does not match the current bond price.\u001b[39m\u001b[33m\"\u001b[39m\n\u001b[32m    247\u001b[39m                 \u001b[33mf\u001b[39m\u001b[33m\"\u001b[39m\u001b[33m (calculated: \u001b[39m\u001b[38;5;132;01m{\u001b[39;00m\u001b[38;5;28mself\u001b[39m._price\u001b[38;5;132;01m}\u001b[39;00m\u001b[33m, given: \u001b[39m\u001b[38;5;132;01m{\u001b[39;00mprice\u001b[38;5;132;01m}\u001b[39;00m\u001b[33m)\u001b[39m\u001b[33m\"\u001b[39m\n\u001b[32m    248\u001b[39m             )\n\u001b[32m    249\u001b[39m     \u001b[38;5;28mself\u001b[39m.set_price(\n\u001b[32m    250\u001b[39m         price,\n\u001b[32m    251\u001b[39m         settlement_date,\n\u001b[32m   (...)\u001b[39m\u001b[32m    254\u001b[39m         yield_calculation_convention=yield_calculation_convention,\n\u001b[32m    255\u001b[39m     )\n\u001b[32m    256\u001b[39m \u001b[38;5;28;01melif\u001b[39;00m yield_to_maturity \u001b[38;5;129;01mis\u001b[39;00m \u001b[38;5;28;01mNone\u001b[39;00m:\n\u001b[32m    257\u001b[39m     \u001b[38;5;66;03m# If neither yield_to_maturity nor price is set, set bond price to None\u001b[39;00m\n",
+      "\u001b[31mValueError\u001b[39m: Bond price calculated by yield to maturity does not match the current bond price. (calculated: 4.488654508629179, given: 1000)"
+     ]
+    }
+   ],
+   "source": [
+    "import matplotlib.pyplot as plt\n",
+    "from pyfian.yield_curves.spot_curve import SpotCurve\n",
+    "from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet\n",
+    "\n",
+    "# Define multiple bonds with different maturities\n",
+    "bonds = [\n",
+    "    FixedRateBullet(\n",
+    "        issue_dt=\"2020-01-01\",\n",
+    "        maturity=maturity,\n",
+    "        cpn=5.0,\n",
+    "        cpn_freq=1,\n",
+    "        notional=1000,\n",
+    "        yield_to_maturity=5.0,\n",
+    "        settlement_date=\"2021-01-01\",\n",
+    "        price=1000,  # Explicit price to ensure negative cash flow\n",
+    "    )\n",
+    "    for maturity in [\"2025-01-01\", \"2030-01-01\", \"2035-01-01\", \"2040-01-01\"]\n",
+    "]\n",
+    "\n",
+    "# Create SpotCurve with the settlement date of the first bond\n",
+    "flat_curve = SpotCurve(curve_date=bonds[0].get_settlement_date(), bonds=bonds)\n",
+    "\n",
+    "# Plot the discount factor curve\n",
+    "flat_curve.plot_curve(\n",
+    "    t_max=30, n=100, kind=\"discount\", label=\"Discount Factor (5%)\", color=\"red\"\n",
+    ")\n",
+    "\n",
+    "plt.legend()\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2264af20",
+   "metadata": {},
+   "source": [
+    "### Upward Sloping Curve\n",
+    "\n",
+    "An upward-sloping yield curve is the most common shape, where long-term bonds offer higher yields than short-term bonds. This reflects expectations of economic growth and potentially higher inflation in the future, leading investors to demand greater compensation for holding debt over longer horizons. It signals confidence in the economy, as short-term borrowing costs remain relatively low while long-term rates rise with stronger growth outlooks."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "be571305",
+   "metadata": {},
+   "source": [
+    "### Inverted Yield Curve\n",
+    "An inverted yield curve occurs when short-term bond yields are higher than long-term yields. This unusual shape often signals investor concern about the economy, as demand for long-term bonds increases to lock in safer, stable returns. Inverted curves are commonly viewed as a warning of potential economic slowdown or recession, reflecting expectations of lower growth and inflation in the future."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3efa28c3",
+   "metadata": {},
+   "source": [
+    "## Important Concepts"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "93e78dad",
+   "metadata": {},
+   "source": [
+    "\n",
+    "### Logarithm of a Curve\n",
+    "\n",
+    "Taking the logarithm of a yield curve is a common technique to smooth out fluctuations and highlight relative differences between yields across maturities. This can make trends easier to analyze and help in fitting models to observed data.\n",
+    "\n",
+    "### AER (Annual Equivalent Rate)\n",
+    "\n",
+    "The Annual Equivalent Rate (AER) represents the annualized interest rate that accounts for compounding over the year. It allows investors to compare returns on different investment products on a consistent annual basis, regardless of how frequently interest is compounded (monthly, quarterly, etc.).\n",
+    "\n",
+    "The formula for AER is:\n",
+    "\n",
+    "$$\n",
+    "\\text{AER} = \\left(1 + \\frac{i}{n}\\right)^n - 1\n",
+    "$$\n",
+    "\n",
+    "where:  \n",
+    "- \\(i\\) = nominal interest rate  \n",
+    "- \\(n\\) = number of compounding periods per year  \n",
+    "\n",
+    "Using AER, investors can directly compare accounts or bonds that compound at different frequencies, ensuring a like-for-like comparison.\n",
+    "\n",
+    "### BEY (Bond Equivalent Yield)\n",
+    "\n",
+    "The Bond Equivalent Yield (BEY) converts the yield on a bond, often quoted on a discount or semi-annual basis, into an annualized yield that is comparable to standard coupon-bearing bonds. This is particularly useful for short-term securities like Treasury bills or zero-coupon bonds.\n",
+    "\n",
+    "For a discount bond (e.g., a T-bill), BEY is calculated as:\n",
+    "\n",
+    "$$\n",
+    "\\text{BEY} = \\frac{F - P}{P} \\cdot \\frac{365}{t}\n",
+    "$$\n",
+    "\n",
+    "where:  \n",
+    "- \\(F\\) = face value of the bond  \n",
+    "- \\(P\\) = purchase price  \n",
+    "- \\(t\\) = days to maturity  \n",
+    "\n",
+    "For a semi-annual coupon bond, BEY can also be expressed as:\n",
+    "\n",
+    "$$\n",
+    "\\text{BEY} = 2 \\left[ \\left(1 + \\frac{YTM_{\\text{semi-annual}}}{2}\\right)^2 - 1 \\right]\n",
+    "$$\n",
+    "\n",
+    "Using BEY allows investors to compare yields of bonds with different maturities or coupon structures on a consistent annual basis, making it easier to assess relative value across instruments.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "d2ebce42",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from pyfian.yield_curves.flat_curve import FlatCurveLog\n",
+    "\n",
+    "curve_log = FlatCurveLog(0.05, \"2020-01-01\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "pyfian-zlII4RSX-py3.13",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.13.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
