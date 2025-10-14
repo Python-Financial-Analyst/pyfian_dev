@@ -487,7 +487,7 @@ class BaseFixedIncomeInstrument(ABC):
         pass
 
     @abstractmethod
-    def spread_effective_duration(self, *args, **kwargs) -> float:  # pragma: no cover
+    def effective_spread_duration(self, *args, **kwargs) -> float:  # pragma: no cover
         pass
 
     @abstractmethod
@@ -680,10 +680,12 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
         Parameters
         ----------
-        settlement_date : str or datetime-like, optional
-            Date from which to consider future payments. Defaults to issue date.
+        yield_to_maturity : float, optional
+            Yield to maturity as a decimal (e.g., 0.05 for 5%).
         price : float, optional
             If provided, includes bond price as a negative cash flow.
+        settlement_date : str or datetime-like, optional
+            Date from which to consider future payments. Defaults to issue date.
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
         day_count_convention : str or DayCountBase, optional
@@ -1385,7 +1387,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
         )
         return round(effective_duration, 10)
 
-    def spread_effective_duration(
+    def effective_spread_duration(
         self,
         yield_to_maturity: Optional[float] = None,
         price: Optional[float] = None,

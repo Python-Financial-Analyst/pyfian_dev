@@ -821,6 +821,38 @@ class TestFixedRateBullet:
             f"Expected modified duration to equal effective duration for continuous yield, but got: {mod_duration} vs {effective_duration}"
         )
 
+    # test spread_duration with yield to maturity already set
+    def test_spread_duration_with_yield(self):
+        bond = FixedRateBullet(
+            "2020-01-01",
+            "2025-01-01",
+            5,
+            2,
+            settlement_date="2022-01-01",
+            yield_to_maturity=0.05,
+        )
+        # assert bond modified duration equals spread duration
+        spread_duration = bond.spread_duration()
+        modified_duration = bond.modified_duration()
+        assert np.isclose(spread_duration, modified_duration, rtol=1e-5), (
+            f"Expected spread duration to equal modified duration, but got: {spread_duration} vs {modified_duration}"
+        )
+
+    def test_spread_duration_eq_effective_spread_duration(self):
+        bond = FixedRateBullet(
+            "2020-01-01",
+            "2025-01-01",
+            5,
+            2,
+            settlement_date="2022-01-01",
+            yield_to_maturity=0.05,
+        )
+        spread_duration = bond.spread_duration()
+        effective_spread_duration = bond.effective_spread_duration()
+        assert np.isclose(spread_duration, effective_spread_duration, rtol=1e-5), (
+            f"Expected spread duration to equal effective spread duration, but got: {spread_duration} vs {effective_spread_duration}"
+        )
+
     def test_macaulay_duration_without_yield_or_price(self):
         bond = FixedRateBullet(
             "2020-01-01", "2025-01-01", 5, 1, settlement_date="2022-01-01"

@@ -164,6 +164,19 @@ class TestMoneyMarketInstrument:
         with pytest.raises(ValueError, match="Unable to resolve yield to maturity"):
             mmi.modified_duration()
 
+    # test spread_duration equals modified_duration for money market instruments
+    def test_spread_duration_equals_modified_duration(self):
+        mmi = MoneyMarketInstrument(
+            "2025-01-01",
+            "2025-07-01",
+            notional=100,
+            settlement_date="2025-01-01",
+            price=98,
+        )
+        sd = mmi.effective_spread_duration()
+        md = mmi.modified_duration()
+        assert np.isclose(sd, md), f"Expected {md}, got {sd}"
+
     # Get price from yield for different conventions
     def test_price_from_yield(self):
         mmi = MoneyMarketInstrument(
