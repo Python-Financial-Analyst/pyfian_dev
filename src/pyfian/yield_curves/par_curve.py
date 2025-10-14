@@ -244,8 +244,11 @@ class ParCurve(SpotCurve):
                     if (
                         max_zero_rates_maturity is not None
                         and t <= max_zero_rates_maturity
-                    ):
-                        cumulative_present_value += self.discount_t(t) * payment
+                    ) or t == 0:
+                        if t == 0:
+                            cumulative_present_value += payment
+                        else:
+                            cumulative_present_value += self.discount_t(t) * payment
                     else:
                         non_valued_payments[t] = payment
                 # Now we have cumulative_present_value + sum(non_valued_payments discounted with spot rates) = price
