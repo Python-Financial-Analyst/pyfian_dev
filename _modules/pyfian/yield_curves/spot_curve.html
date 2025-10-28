@@ -310,8 +310,11 @@
                     <span class="k">if</span> <span class="p">(</span>
                         <span class="n">max_zero_rates_maturity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                         <span class="ow">and</span> <span class="n">t</span> <span class="o">&lt;=</span> <span class="n">max_zero_rates_maturity</span>
-                    <span class="p">):</span>
-                        <span class="n">cumulative_present_value</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">payment</span>
+                    <span class="p">)</span> <span class="ow">or</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">cumulative_present_value</span> <span class="o">+=</span> <span class="n">payment</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">cumulative_present_value</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_t</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">payment</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">non_valued_payments</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">payment</span>
                 <span class="c1"># Now we have cumulative_present_value + sum(non_valued_payments discounted with spot rates) = price</span>

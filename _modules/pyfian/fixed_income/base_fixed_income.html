@@ -629,10 +629,10 @@
         <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="BaseFixedIncomeInstrument.spread_effective_duration">
-<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/base_fixed_income/index.html#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument.spread_effective_duration">[docs]</a>
+<div class="viewcode-block" id="BaseFixedIncomeInstrument.effective_spread_duration">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/base_fixed_income/index.html#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument.effective_spread_duration">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">spread_effective_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">effective_spread_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
         <span class="k">pass</span></div>
 
 
@@ -864,10 +864,12 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        settlement_date : str or datetime-like, optional</span>
-<span class="sd">            Date from which to consider future payments. Defaults to issue date.</span>
+<span class="sd">        yield_to_maturity : float, optional</span>
+<span class="sd">            Yield to maturity as a decimal (e.g., 0.05 for 5%).</span>
 <span class="sd">        price : float, optional</span>
 <span class="sd">            If provided, includes bond price as a negative cash flow.</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
+<span class="sd">            Date from which to consider future payments. Defaults to issue date.</span>
 <span class="sd">        adjust_to_business_days : bool, optional</span>
 <span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
 <span class="sd">        day_count_convention : str or DayCountBase, optional</span>
@@ -1594,9 +1596,9 @@
         <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">effective_duration</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="BaseFixedIncomeInstrumentWithYieldToMaturity.spread_effective_duration">
-<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/base_fixed_income/index.html#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrumentWithYieldToMaturity.spread_effective_duration">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">spread_effective_duration</span><span class="p">(</span>
+<div class="viewcode-block" id="BaseFixedIncomeInstrumentWithYieldToMaturity.effective_spread_duration">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/base_fixed_income/index.html#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrumentWithYieldToMaturity.effective_spread_duration">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">effective_spread_duration</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
