@@ -173,8 +173,11 @@ class TestMoneyMarketInstrument:
             settlement_date="2025-01-01",
             price=98,
         )
-        sd = mmi.effective_spread_duration()
+        eff_sd = mmi.effective_spread_duration()
         md = mmi.modified_duration()
+        assert np.isclose(eff_sd, md), f"Expected {md}, got {eff_sd}"
+
+        sd = mmi.spread_duration()
         assert np.isclose(sd, md), f"Expected {md}, got {sd}"
 
     # Get price from yield for different conventions

@@ -232,7 +232,7 @@ class DayCountBase:
         float
             Day count fraction for the custom period (proportion of a period).
         """
-        return self.fraction(start, current, end) / periods_per_year
+        return self.fraction(start, current, end) * periods_per_year
 
 
 class DayCount30360(DayCountBase):

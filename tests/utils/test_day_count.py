@@ -94,7 +94,7 @@ class TestDayCount30360:
         end = pd.Timestamp("2024-02-28")
         # periods_per_year=2 (semiannual)
         result = dc.fraction_period_adjusted(start, end, periods_per_year=2)
-        expected = dc.fraction(start, end) / 2
+        expected = dc.fraction(start, end) * 2
         assert pytest.approx(result, 0.0001) == expected
 
 
@@ -120,7 +120,7 @@ class TestDayCount30E360:
         start = pd.Timestamp("2024-01-31")
         end = pd.Timestamp("2024-02-28")
         result = dc.fraction_period_adjusted(start, end, periods_per_year=4)
-        expected = dc.fraction(start, end) / 4
+        expected = dc.fraction(start, end) * 4
         assert pytest.approx(result, 0.0001) == expected
 
 
@@ -238,7 +238,7 @@ class TestDayCountActual360:
         start = pd.Timestamp("2024-01-01")
         end = pd.Timestamp("2024-07-01")
         result = dc.fraction_period_adjusted(start, end, periods_per_year=12)
-        expected = dc.fraction(start, end, end) / 12
+        expected = dc.fraction(start, end, end) * 12
         assert pytest.approx(result, 0.0001) == expected
 
 
@@ -282,7 +282,7 @@ class TestDayCountActual365:
         start = pd.Timestamp("2024-01-01")
         end = pd.Timestamp("2024-07-01")
         result = dc.fraction_period_adjusted(start, end, periods_per_year=4)
-        expected = dc.fraction(start, end, end) / 4
+        expected = dc.fraction(start, end, end) * 4
         assert pytest.approx(result, 0.0001) == expected
 
 
@@ -324,7 +324,7 @@ class TestDayCount30365:
         start = pd.Timestamp("2024-01-31")
         end = pd.Timestamp("2024-02-28")
         result = dc.fraction_period_adjusted(start, end, periods_per_year=2)
-        expected = dc.fraction(start, end, end) / 2
+        expected = dc.fraction(start, end, end) * 2
         assert pytest.approx(result, 0.0001) == expected
 
 

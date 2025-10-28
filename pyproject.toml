@@ -48,3 +48,6 @@ types-python-dateutil = "^2.9.0.20250708"
 
 [tool.flake8]
 max-line-length = 90
+
+[tool.pytest.ini_options]
+addopts = "--durations=10"

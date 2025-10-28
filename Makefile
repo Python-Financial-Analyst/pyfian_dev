@@ -47,5 +47,13 @@ coverage:
 	poetry run pytest --cov=pyfian --cov-report=html tests/
 	@echo "Coverage HTML report generated in htmlcov/index.html"
 
+coverage-file:
+	$(if $(FILE),,$(error Usage: make coverage-file FILE=path/to/test_file.py))
+	@echo Running coverage for $(FILE)...
+	coverage run --append --source=. -m pytest $(FILE)
+	coverage html
+	@echo ✅ Coverage updated. Open htmlcov/index.html to view the report.
+
 precommit:
 	poetry run pre-commit run --all-files
+

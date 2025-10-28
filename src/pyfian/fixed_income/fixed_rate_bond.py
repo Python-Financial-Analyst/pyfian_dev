@@ -1101,7 +1101,7 @@ class FixedRateBullet(BaseFixedIncomeInstrumentWithYieldToMaturity):
 
         prev_coupon: pd.Timestamp = self.previous_coupon_date(settlement_date)
         next_coupon: pd.Timestamp = self.next_coupon_date(settlement_date)
-        coupon = (self.cpn) * self.notional / 100
+        coupon = (self.cpn) * self.notional / 100 / self.cpn_freq
 
         # If before first coupon, accrue from issue date
         if prev_coupon is None and next_coupon is not None:
