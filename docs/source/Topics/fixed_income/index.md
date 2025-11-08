@@ -10,4 +10,5 @@ This chapter introduces concepts of Fixed Income
 01_fixed_income_instruments.ipynb
 02_bullet_bonds.ipynb
 03_curves.ipynb
+04_comparing_bonds.ipynb
 ```
