@@ -61,11 +61,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html">Fixed Income Instruments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html">Bullet Bonds</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#bond-day-counting-conventions">Bond Day-Counting Conventions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#duration">Duration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#convexity">Convexity</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html#effective-duration">Effective Duration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="03_curves.html">Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_comparing_bonds.html">Comparing Bonds</a></li>
 </ul>
 </li>
 </ul>
@@ -100,7 +97,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <a href="https://colab.research.google.com/github/Python-Financial-Analyst/pyfian_dev/blob/main/docs/source/Topics/fixed_income/00_economics_of_interest_rates.ipynb" target="_blank">
+  <a href="https://colab.research.google.com/github/Python-Financial-Analyst/pyfian_dev/blob/main/notebooks/fixed_income/00_economics_of_interest_rates.ipynb" target="_blank">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab"/>
 </a><section class="tex2jax_ignore mathjax_ignore" id="economics-of-interest-rates">
 <h1>Economics of Interest Rates<a class="headerlink" href="#economics-of-interest-rates" title="Link to this heading"></a></h1>
@@ -162,10 +159,10 @@
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting git+https://github.com/pydata/pandas-datareader.git
-  Cloning https://github.com/pydata/pandas-datareader.git to /tmp/pip-req-build-57oxcic7
+  Cloning https://github.com/pydata/pandas-datareader.git to /tmp/pip-req-build-3w485p4o
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Running command git clone --filter=blob:none --quiet https://github.com/pydata/pandas-datareader.git /tmp/pip-req-build-57oxcic7
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Running command git clone --filter=blob:none --quiet https://github.com/pydata/pandas-datareader.git /tmp/pip-req-build-3w485p4o
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Resolved https://github.com/pydata/pandas-datareader.git to commit 4ff62149bb24f72d62874477b6688ddb0fd1f97c
@@ -198,14 +195,16 @@ Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /home/runner/.cache/p
 Requirement already satisfied: certifi&gt;=2017.4.17 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2025.7.14)
 Downloading lxml-6.0.2-cp312-cp312-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl (5.3 MB)
 ?25l   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">0.0/5.3 MB</span> <span class=" -Color -Color-Red">?</span> eta <span class=" -Color -Color-Cyan">-:--:--</span>
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">5.3/5.3 MB</span> <span class=" -Color -Color-Red">186.4 MB/s</span>  <span class=" -Color -Color-Yellow">0:00:00</span>
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">5.3/5.3 MB</span> <span class=" -Color -Color-Red">75.4 MB/s</span>  <span class=" -Color -Color-Yellow">0:00:00</span>
 ?25hBuilding wheels for collected packages: pandas-datareader
   Building wheel for pandas-datareader (pyproject.toml): started
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Building wheel for pandas-datareader (pyproject.toml): finished with status &#39;done&#39;
-  Created wheel for pandas-datareader: filename=pandas_datareader-0.11.0.dev76+g4ff6214-py3-none-any.whl size=114770 sha256=b44a2d574549643400b6e525d4a6b21decaf9cba717eeb8354e7746d0a2fc983
-  Stored in directory: /tmp/pip-ephem-wheel-cache-jtjx71xw/wheels/68/09/2b/66ff2e878a27988531be41d35ba4495de3d8f800ebb5de1c07
+  Created wheel for pandas-datareader: filename=pandas_datareader-0.11.0.dev76+g4ff6214-py3-none-any.whl size=114770 sha256=f2e56c002afa7aa5b28ad086fd775366fa32784a3c986acc3a8d50b2d737fc9c
+  Stored in directory: /tmp/pip-ephem-wheel-cache-iecz2c0l/wheels/68/09/2b/66ff2e878a27988531be41d35ba4495de3d8f800ebb5de1c07
 Successfully built pandas-datareader
 Installing collected packages: lxml, pandas-datareader
 ?25l
