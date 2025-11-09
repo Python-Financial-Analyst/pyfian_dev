@@ -298,7 +298,7 @@ class TestFixedRateBullet:
         assert all(date >= pd.to_datetime("2022-01-01") for date in flows.keys())
 
     def test_calculate_time_to_payments(self):
-        bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 1)
+        bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 2)
         times = bond.calculate_time_to_payments("2022-01-01")
         assert all(isinstance(t, float) for t in times.keys())
 

@@ -404,7 +404,7 @@ class FixedRateBullet(BaseFixedIncomeInstrumentWithYieldToMaturity):
             (key for key in time_to_payments_keys if flows[key] > 0), None
         )
 
-        time_to_first_non_negative_key = day_count_convention.fraction_period_adjusted(
+        time_after_last_coupon = day_count_convention.fraction_period_adjusted(
             start=start,
             current=settlement_date,
             end=first_non_negative_key,
@@ -413,7 +413,7 @@ class FixedRateBullet(BaseFixedIncomeInstrumentWithYieldToMaturity):
 
         times: defaultdict[float, float] = defaultdict(float)
 
-        cpn_freq = max(1, self.cpn_freq)  # Avoid division by zero
+        time_adjustment = get_time_adjustment(yield_calculation_convention)
 
         for key in time_to_payments_keys:
             if key <= settlement_date:
@@ -424,7 +424,7 @@ class FixedRateBullet(BaseFixedIncomeInstrumentWithYieldToMaturity):
                         start=start,
                         current=key,
                     )
-                    - time_to_first_non_negative_key / cpn_freq
+                    - time_after_last_coupon / time_adjustment
                 )
             times[times_key] += flows[key]
 

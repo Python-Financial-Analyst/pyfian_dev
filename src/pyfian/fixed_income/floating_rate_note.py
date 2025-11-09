@@ -274,7 +274,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         Parameters
         ----------
         discount_margin : float, optional
-            The discount margin to set.
+            The discount margin to set in basis points.
         settlement_date : Union[str, pd.Timestamp], optional
             The settlement date to set.
         adjust_to_business_days : bool, optional
@@ -365,7 +365,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         Parameters
         ----------
         discount_margin : float, optional
-            The discount margin to set.
+            The discount margin to set in basis points.
         settlement_date : Union[str, pd.Timestamp], optional
             The settlement date to set.
         adjust_to_business_days : bool, optional
@@ -459,7 +459,9 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         # Calculate present value of each cash flow
         pv = {
-            d: ref_rate_curve.discount_date(d, spread=discount_margin + curve_delta)
+            d: ref_rate_curve.discount_date(
+                d, spread=discount_margin / 10000 + curve_delta
+            )
             * value
             for d, value in dated_payment_flow.items()
         }
@@ -550,22 +552,32 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         dict_amortization = {}
 
         # Final payment: principal + last spread
-        last_spread = (spread) / self.cpn_freq * notional
+        if cpn_freq == 0:
+            last_spread = 0.0
+        else:
+            last_spread = (spread) / cpn_freq * notional
 
         dict_amortization[maturity] = notional
         dict_payments[maturity] = notional + last_spread
 
         dict_spreads[maturity] = last_spread
-        next_date_processed = maturity - relativedelta(months=12 // cpn_freq)
+        if cpn_freq == 0:
+            next_date_processed = maturity
+        else:
+            next_date_processed = maturity - relativedelta(months=12 // cpn_freq)
 
-        for i in range(2, ((maturity - issue_dt) / 365).days * cpn_freq + 3):
-            if (next_date_processed - issue_dt).days < (365 * 0.99) // cpn_freq:
+        for i in range(2, ((maturity - issue_dt) / 365).days * (cpn_freq) + 3):
+            if (next_date_processed - issue_dt).days < (365 * 0.99) // (
+                cpn_freq if cpn_freq > 0 else 1
+            ):
                 break
-            coupon_spread = (spread) / self.cpn_freq * notional
+            coupon_spread = (spread) / (cpn_freq if cpn_freq > 0 else 1) * notional
             dict_payments[next_date_processed] = coupon_spread
             dict_spreads[next_date_processed] = coupon_spread
             dict_amortization[next_date_processed] = 0.0
-            next_date_processed = maturity - relativedelta(months=12 // cpn_freq * i)
+            next_date_processed = maturity - relativedelta(
+                months=12 // (cpn_freq if cpn_freq > 0 else 1) * i
+            )
 
         # Sort the payment dates
         dict_payments = dict(sorted(dict_payments.items()))
@@ -711,6 +723,11 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                     current_ref_rate = ref_rate_curve.forward_dates(
                         start_date=settlement_date,
                         end_date=next(iter(expected_cash_flow)),
+                    )
+                    current_ref_rate = rc.convert_yield(
+                        current_ref_rate,
+                        from_convention=ref_rate_curve.yield_calculation_convention,
+                        to_convention="Annual",
                     )
                     current_ref_rate = rc.effective_to_nominal_periods(
                         current_ref_rate, periods_per_year=self.cpn_freq
@@ -1051,9 +1068,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             max_iter = 100
         if price is None:
             if self._price is None:
-                raise ValueError(
-                    "Bond price must be set to calculate yield to maturity."
-                )
+                raise ValueError("Bond price must be set to calculate discount margin.")
             price = self._price
         # Prepare cash flows and dates
         settlement_date = self._resolve_settlement_date(settlement_date)
@@ -1110,7 +1125,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             )
 
         # Multiply all times by the coupon frequency to convert to BEY
-        initial_guess = self.quoted_margin if self.quoted_margin > 0 else 0.05
+        initial_guess = self.quoted_margin if self.quoted_margin > 0 else 0.005
         # find zero of the objective function using root_scalar
         z_spread = optimize.root_scalar(
             _price_difference, x0=initial_guess, method="newton"
@@ -1164,12 +1179,8 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         next_coupon_date = self.next_coupon_date(settlement_date)
 
         if ref_rate_curve is None:
-            if self.ref_rate_curve is None:
-                raise ValueError(
-                    "Either ref_rate_curve or self.ref_rate_curve must be provided."
-                )
-            else:
-                ref_rate_curve = self.ref_rate_curve
+            ref_rate_curve = self.ref_rate_curve
+            assert ref_rate_curve is not None
 
         rate_to_next_coupon = ref_rate_curve.date_rate(
             next_coupon_date,
@@ -1260,7 +1271,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         if price is None:
             if self._price is None:
                 raise ValueError(
-                    "Bond price must be set to calculate yield to maturity."
+                    "Bond price must be set to calculate expected yield to maturity."
                 )
             price = self._price
 
@@ -1324,7 +1335,9 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         return result
 
     def accrued_interest(
-        self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
+        self,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        current_ref_rate: Optional[float] = None,
     ) -> float:
         """
         Calculate accrued interest since last coupon payment.
@@ -1350,6 +1363,8 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         ----------
         settlement_date : str or datetime-like, optional
             Date for which to calculate accrued interest. Defaults to today.
+        current_ref_rate : float, optional
+            Current reference rate as a decimal. If not provided, will use self.current_ref_rate.
 
         Returns
         -------
@@ -1364,18 +1379,19 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
 
-        if self.cpn_freq == 0 or self.current_ref_rate is None:
+        if current_ref_rate is None:
+            if self.current_ref_rate is None:
+                raise ValueError(
+                    "Either current_ref_rate or self.current_ref_rate must be provided."
+                )
+            current_ref_rate = self.current_ref_rate
+        if self.cpn_freq == 0:
             return 0.0
-        if self.current_ref_rate is None:
-            raise ValueError(
-                "Current reference rate must be provided to calculate accrued interest."
-            )
 
         prev_coupon: pd.Timestamp = self.previous_coupon_date(settlement_date)
         next_coupon: pd.Timestamp = self.next_coupon_date(settlement_date)
 
-        self.current_ref_rate
-        coupon = (self.current_ref_rate + self.quoted_margin) * self.notional / 100
+        coupon = (current_ref_rate + self.quoted_margin) * self.notional / 100
 
         # If before first coupon, accrue from issue date
         if prev_coupon is None and next_coupon is not None:
@@ -1487,7 +1503,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         """
         return (
             f"FloatingRateNote(issue_dt={self.issue_dt}, maturity={self.maturity}, "
-            f"quoted_margin={self.quoted_margin}, cpn_freq={self.cpn_freq})"
+            f"quoted_margin={self.quoted_margin * 10000}, cpn_freq={self.cpn_freq})"
         )
 
     def modified_duration(
@@ -1512,7 +1528,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         Parameters
         ----------
         discount_margin : float, optional
-            Discount margin as a decimal. If not provided, will be calculated from price if given.
+            Discount margin in basis points. If not provided, will be calculated from price if given.
         price : float, optional
             Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
         settlement_date : str or datetime-like, optional
@@ -1571,11 +1587,17 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
+        start = self.previous_coupon_date(
+            settlement_date=settlement_date,
+        )
+        if start is None:
+            start = self.issue_dt
+
         # get next coupon date
         next_coupon_date = self.next_coupon_date(settlement_date)
 
-        t = day_count_convention.fraction_period_adjusted(
-            start=settlement_date,
+        t_passed = day_count_convention.fraction_period_adjusted(
+            start=start,
             current=settlement_date,
             end=next_coupon_date,
             periods_per_year=self.cpn_freq,
@@ -1583,15 +1605,24 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         time_adjustment = get_time_adjustment(yield_calculation_convention)
 
-        # modified_duration = t * cf / (1 + ytm / m)^(t*m) / p / (1 + ytm / m)^(t*m) =
+        # Calculate time to next coupon
+        t = (
+            following_coupons_day_count.fraction(
+                start=start,
+                current=next_coupon_date,
+            )
+            - t_passed / time_adjustment
+        )
+
+        # modified_duration = t * cf / (1 + ytm / m)^(t*m+1) / p / (1 + ytm / m)^(t*m) =
         # p = cf / (1 + ytm / m)^(t*m)
         # modified_duration = t * cf / (1 + ytm / m)^(t*m) / (cf / (1 + ytm / m)^(t*m)) / (1 + ytm / m) =
-        # modified_duration = t / (1 + ytm / m)^(t*m)
+        # modified_duration = t / (1 + ytm / m)
 
         if yield_calculation_convention == "Continuous":
-            duration = t * np.exp(-ytm * t)
+            duration = t
         else:
-            duration = t / (1 + ytm / time_adjustment) ** (t * time_adjustment + 1)
+            duration = t / (1 + ytm / time_adjustment)
         return round(duration, 10)
 
     def spread_duration(
@@ -1617,7 +1648,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         Parameters
         ----------
         discount_margin : float, optional
-            Discount margin as a decimal. If not provided, will be calculated from price if given.
+            Discount margin in basis points. If not provided, will be calculated from price if given.
         price : float, optional
             Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
         settlement_date : str or datetime-like, optional
@@ -1646,7 +1677,6 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         >>> bond.spread_duration()
         4.3760319684
         """
-
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
             adjust_to_business_days,
@@ -1700,11 +1730,6 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         time_adjustment = get_time_adjustment(yield_calculation_convention)
 
-        if expected_ytm is None or price is None:
-            raise ValueError(
-                "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
-            )
-
         if yield_calculation_convention == "Continuous":
             duration = sum(
                 [
@@ -1753,7 +1778,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         Parameters
         ----------
         discount_margin : float, optional
-            Discount margin as a decimal. If not provided, will be calculated from price if given.
+            Discount margin in basis points. If not provided, will be calculated from price if given.
         price : float, optional
             Price of the bond. Used to estimate discount_margin if not provided.
         settlement_date : str or datetime-like, optional
@@ -1811,10 +1836,17 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             raise ValueError("Unable to determine yield to maturity.")
 
         # get next coupon date
+        start = self.previous_coupon_date(
+            settlement_date=settlement_date,
+        )
+        if start is None:
+            start = self.issue_dt
+
+        # get next coupon date
         next_coupon_date = self.next_coupon_date(settlement_date)
 
-        t = day_count_convention.fraction_period_adjusted(
-            start=settlement_date,
+        t_passed = day_count_convention.fraction_period_adjusted(
+            start=start,
             current=settlement_date,
             end=next_coupon_date,
             periods_per_year=self.cpn_freq,
@@ -1822,6 +1854,14 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         time_adjustment = get_time_adjustment(yield_calculation_convention)
 
+        # Calculate time to next coupon
+        t = (
+            following_coupons_day_count.fraction(
+                start=start,
+                current=next_coupon_date,
+            )
+            - t_passed / time_adjustment
+        )
         # Calculate effective duration using a small epsilon
         epsilon = 0.0000001
 
@@ -1839,7 +1879,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             )
 
         effective_duration = (
-            -1 * (price_plus_epsilon - price_minus_epsilon) / (2 * epsilon * price_calc)
+            -1 * (price_plus_epsilon - price_minus_epsilon) / (2 * epsilon * price)
         )
         return round(effective_duration, 10)
 
@@ -1873,7 +1913,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         Parameters
         ----------
         discount_margin : float, optional
-            Discount margin as a decimal. If not provided, will be calculated from price if given.
+            Discount margin in basis points. If not provided, will be calculated from price if given.
         price : float, optional
             Price of the bond. Used to estimate discount_margin if not provided.
         settlement_date : str or datetime-like, optional
@@ -1940,7 +1980,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             assert price is not None
 
             # Calculate effective duration using a small epsilon
-            epsilon = 0.0000001
+            epsilon = 0.0001
             price_plus_epsilon = self._price_from_discount_margin_and_clean_parameters(
                 discount_margin + epsilon,
                 settlement_date,
@@ -1963,7 +2003,9 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             )
 
             effective_spread_duration = (
-                -1 * (price_plus_epsilon - price_minus_epsilon) / (2 * epsilon * price)
+                -1
+                * (price_plus_epsilon - price_minus_epsilon)
+                / (2 * epsilon / 10000 * price)
             )
             return round(effective_spread_duration, 10)
 
@@ -1988,7 +2030,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         Parameters
         ----------
         discount_margin : float, optional
-            Discount margin as a decimal (e.g., 0.05 for 5%).
+            Discount margin in basis points (e.g., 50 for 0.50%).
         price : float, optional
             Price of the bond. Used to estimate YTM if discount_margin is not provided.
         settlement_date : str or datetime-like, optional
@@ -2047,17 +2089,32 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
+        start = self.previous_coupon_date(
+            settlement_date=settlement_date,
+        )
+        if start is None:
+            start = self.issue_dt
+
         # get next coupon date
         next_coupon_date = self.next_coupon_date(settlement_date)
 
-        t = day_count_convention.fraction_period_adjusted(
-            start=settlement_date,
+        t_passed = day_count_convention.fraction_period_adjusted(
+            start=start,
             current=settlement_date,
             end=next_coupon_date,
             periods_per_year=self.cpn_freq,
         )
 
         time_adjustment = get_time_adjustment(yield_calculation_convention)
+
+        # Calculate time to next coupon
+        t = (
+            following_coupons_day_count.fraction(
+                start=start,
+                current=next_coupon_date,
+            )
+            - t_passed / time_adjustment
+        )
 
         if yield_calculation_convention == "Continuous":
             expected_price_reset = price_calc * np.exp(ytm * t)
@@ -2348,7 +2405,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         Parameters
         ----------
         discount_margin : float, optional
-            Discount margin as a decimal. If not provided, will be calculated from price if given.
+            Discount margin in basis points. If not provided, will be calculated from price if given.
         price : float, optional
             Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
         settlement_date : str or datetime-like, optional
@@ -2407,11 +2464,17 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
+        start = self.previous_coupon_date(
+            settlement_date=settlement_date,
+        )
+        if start is None:
+            start = self.issue_dt
+
         # get next coupon date
         next_coupon_date = self.next_coupon_date(settlement_date)
 
-        t = day_count_convention.fraction_period_adjusted(
-            start=settlement_date,
+        t_passed = day_count_convention.fraction_period_adjusted(
+            start=start,
             current=settlement_date,
             end=next_coupon_date,
             periods_per_year=self.cpn_freq,
@@ -2419,13 +2482,21 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         time_adjustment = get_time_adjustment(yield_calculation_convention)
 
+        # Calculate time to next coupon
+        t = (
+            following_coupons_day_count.fraction(
+                start=start,
+                current=next_coupon_date,
+            )
+            - t_passed / time_adjustment
+        )
         # modified_duration = t * cf / (1 + ytm / m)^(t*m) / p / (1 + ytm / m)^(t*m) =
         # p = cf / (1 + ytm / m)^(t*m)
         # modified_duration = t * cf / (1 + ytm / m)^(t*m) / (cf / (1 + ytm / m)^(t*m)) / (1 + ytm / m) =
         # modified_duration = t / (1 + ytm / m)^(t*m)
 
         if yield_calculation_convention == "Continuous":
-            duration = t * np.exp(-ytm * t)
+            duration = t
         else:
             duration = t / (1 + ytm / time_adjustment) ** (t * time_adjustment)
         return round(duration, 10)
@@ -2514,17 +2585,32 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 "Unable to resolve yield to maturity. You must input settlement_date and either yield_to_maturity or price. Previous information was not available."
             )
 
+        start = self.previous_coupon_date(
+            settlement_date=settlement_date,
+        )
+        if start is None:
+            start = self.issue_dt
+
         # get next coupon date
         next_coupon_date = self.next_coupon_date(settlement_date)
 
-        t = day_count_convention.fraction_period_adjusted(
-            start=settlement_date,
+        t_passed = day_count_convention.fraction_period_adjusted(
+            start=start,
             current=settlement_date,
             end=next_coupon_date,
             periods_per_year=self.cpn_freq,
         )
 
         time_adjustment = get_time_adjustment(yield_calculation_convention)
+
+        # Calculate time to next coupon
+        t = (
+            following_coupons_day_count.fraction(
+                start=start,
+                current=next_coupon_date,
+            )
+            - t_passed / time_adjustment
+        )
 
         # convexity = 1 / p * sum( cf * t * (t + 1) / (1 + ytm / m)^(t*m + 2) )
 
@@ -2558,7 +2644,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         Parameters
         ----------
         discount_margin : float, optional
-            Discount margin as a decimal. If not provided, will be calculated from price if given.
+            Discount margin in basis points. If not provided, will be calculated from price if given.
         price : float, optional
             If provided, includes bond price as a negative cash flow.
         settlement_date : str or datetime-like, optional
@@ -2662,7 +2748,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         settlement_date : str or datetime-like, optional
             Date from which to consider future payments. Defaults to issue date.
         discount_margin : float, optional
-            Discount margin as a decimal. If provided, it will be used to calculate the cash flows.
+            Discount margin in basis points. If provided, it will be used to calculate the cash flows.
         price : float, optional
             If provided, includes bond price as a negative cash flow.
         adjust_to_business_days : bool, optional

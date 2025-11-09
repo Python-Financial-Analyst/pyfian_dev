@@ -90,12 +90,12 @@ class TestInterpolatedCurve:
         # Use bonds to infer zero rates
         date = pd.Timestamp("2025-08-22")
         list_maturities_rates = [
-            (pd.DateOffset(years=1), 1, 3.95),
-            (pd.DateOffset(years=2), 2, 3.79),
-            (pd.DateOffset(years=5), 5, 3.86),
-            (pd.DateOffset(years=10), 10, 4.33),
-            (pd.DateOffset(years=30), 30, 4.92),
-            (pd.DateOffset(years=50), 50, 5.0),
+            (pd.DateOffset(years=1), 1, 4),
+            (pd.DateOffset(years=2), 2, 4),
+            (pd.DateOffset(years=5), 5, 4),
+            (pd.DateOffset(years=10), 10, 4),
+            (pd.DateOffset(years=30), 30, 4),
+            (pd.DateOffset(years=50), 50, 4),
         ]
         one_year_offset = date + pd.DateOffset(years=1)
         bonds = []
@@ -106,7 +106,7 @@ class TestInterpolatedCurve:
             bond = FixedRateBullet(
                 issue_dt=date,
                 maturity=date + offset,
-                cpn_freq=2 if not_zero_coupon else 0,
+                cpn_freq=1 if not_zero_coupon else 0,
                 cpn=cpn if not_zero_coupon else 0,
                 price=100 if not_zero_coupon else None,
                 yield_to_maturity=None if not_zero_coupon else cpn / 100,
