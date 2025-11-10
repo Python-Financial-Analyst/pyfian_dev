@@ -23,6 +23,102 @@ from pyfian.yield_curves.flat_curve import FlatCurveBEY
 
 
 class FloatingRateNote(BaseFixedIncomeInstrument):
+    """
+    FloatingRateNote represents a floating rate note (FRN) fixed income instrument.
+    It allows for payment flow generation, valuation, yield calculations, and other bond analytics.
+    The coupons of the FRN are based on a reference interest rate plus a quoted margin.
+
+    Parameters
+    ----------
+    issue_dt : Union[str, pd.Timestamp]
+        The issue date of the bond.
+    maturity : Union[str, pd.Timestamp]
+        The maturity date of the bond.
+    ref_rate_curve : Optional[YieldCurveBase]
+        The reference rate curve used for coupon calculations.
+    current_ref_rate : Optional[float]
+        The current reference rate used for pricing.
+    quoted_margin : float
+        The quoted margin over the reference rate.
+    cpn_freq : int
+        The frequency of coupon payments (e.g., 1 for annual, 2 for semi-annual).
+    notional : float
+        The notional amount of the bond.
+    settlement_convention_t_plus : int
+        The T+X settlement convention (e.g., T+1, T+2).
+    record_date_t_minus : int
+        The T-X record date convention (e.g., T-1, T-2).
+    settlement_date : Optional[Union[str, pd.Timestamp]]
+        The settlement date of the bond.
+    discount_margin : Optional[float]
+        The discount margin used for pricing.
+    price : Optional[float]
+        The price of the bond.
+    adjust_to_business_days : bool, optional
+        Whether to adjust dates to business days. Defaults to False.
+    day_count_convention : str, optional
+        Day count convention for the bond. Defaults to 'actual/actual-Bond'.
+        It is used to calculate the day count fraction for accrued interests and time to payments.
+        Supported conventions: '30/360', '30e/360', 'actual/actual', 'actual/360', 'actual/365', '30/365', 'actual/actual-Bond'.
+    following_coupons_day_count : str, optional
+        Day count convention for the following coupons. Defaults to '30/360', to match the common convention for bonds.
+        Convention "actual/365" might be the more relevant for Effective Annual Yield or Continuous Compounding.
+        valid_conventions are "30/360", "30e/360", "actual/360", "actual/365", "30/365"
+    yield_calculation_convention : str, optional
+        Yield convention for the bond yield calculation. By default, it is "BEY" (Bond Equivalent Yield).
+        Other options are "Annual", "Continuous", "BEY-Q", "BEY-M", "BEY-S".
+
+    Raises
+    ------
+    ValueError
+        If any of the input parameters are invalid.
+
+    Attributes
+    ----------
+    issue_dt : pd.Timestamp
+        The issue date of the bond.
+    maturity : pd.Timestamp
+        The maturity date of the bond.
+    ref_rate_curve : Optional[YieldCurveBase]
+        The reference rate curve used for coupon calculations.
+    current_ref_rate : Optional[float]
+        The current reference rate used for pricing.
+    quoted_margin : float
+        The quoted margin over the reference rate.
+    cpn_freq : int
+        The frequency of coupon payments (e.g., 1 for annual, 2 for semi-annual).
+    notional : float
+        The notional amount of the bond.
+    settlement_convention_t_plus : int
+        The T+X settlement convention (e.g., T+1, T+2).
+    record_date_t_minus : int
+        The T-X record date convention (e.g., T-1, T-2).
+    day_count_convention : DayCountBase
+        The day count convention used for the bond.
+    adjust_to_business_days : bool
+        Whether to adjust dates to business days.
+    following_coupons_day_count : DayCountBase
+        The day count convention for the following coupons.
+    yield_calculation_convention : str
+        The yield calculation convention used for the bond.
+    payment_flow : dict
+        Dictionary with payment dates as keys and cash flow amounts as values.
+    coupon_flow : dict
+        Dictionary with coupon payment dates as keys and coupon amounts as values. It will be zero for all since it is not determined a priori.
+    spread_flow : dict
+        Dictionary with spread payment dates as keys and spread amounts as values.
+    amortization_flow : dict
+        Dictionary with amortization payment dates as keys and amortization amounts as values.
+    _settlement_date : Optional[pd.Timestamp]
+        The settlement date of the bond.
+    _discount_margin : Optional[float]
+        The discount margin used for pricing.
+    _price : Optional[float]
+        The price of the bond.
+    _yield_to_maturity : Optional[float]
+        The yield to maturity of the bond.
+    """
+
     _yield_to_maturity: Optional[float] = None
 
     def __init__(

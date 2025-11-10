@@ -61,9 +61,10 @@ class FixedRateBullet(BaseFixedIncomeInstrumentWithYieldToMaturity):
     following_coupons_day_count : str, optional
         Day count convention for the following coupons. Defaults to '30/360', to match the common convention for bonds.
         Convention "actual/365" might be the more relevant for Effective Annual Yield or Continuous Compounding.
+        Valid conventions are "30/360", "30e/360", "actual/360", "actual/365", "30/365"
     yield_calculation_convention : str, optional
         Yield convention for the bond yield calculation. By default, it is "BEY" (Bond Equivalent Yield).
-        Other options are "Annual" or "Continuous".
+        Other options are "Annual", "Continuous", "BEY-Q", "BEY-M", "BEY-S".
 
     Raises
     ------
