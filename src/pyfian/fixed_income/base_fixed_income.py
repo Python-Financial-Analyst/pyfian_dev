@@ -784,7 +784,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
         --------
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.dv01(yield_to_maturity=0.05)
-        -0.0437603218
+        0.0437603218
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -830,7 +830,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
             yield_calculation_convention=yield_calculation_convention,
             day_count_convention=day_count_convention,
         )
-        return round((price_up - price_down) / 2, 10)
+        return round(-(price_up - price_down) / 2, 10)
 
     def set_settlement_date(
         self,

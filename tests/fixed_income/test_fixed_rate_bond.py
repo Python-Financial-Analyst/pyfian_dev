@@ -511,11 +511,12 @@ class TestFixedRateBullet:
         ytm = 0.05
         dv01 = bond.dv01(ytm)
         dv01_expected = (
-            bond.price_from_yield(ytm + 0.0001) - bond.price_from_yield(ytm - 0.0001)
-        ) / 2
+            -(bond.price_from_yield(ytm + 0.0001) - bond.price_from_yield(ytm - 0.0001))
+            / 2
+        )
 
-        # DV01 should be negative for a standard bond (price decreases as yield increases)
-        assert dv01 < 0
+        # DV01 should be positive for a standard bond (price decreases as yield increases)
+        assert dv01 > 0
         # Should be a small value in magnitude
         assert abs(dv01) < 5
         assert np.isclose(dv01, dv01_expected, rtol=1e-4), (

@@ -23,6 +23,8 @@ from pyfian.yield_curves.flat_curve import FlatCurveBEY
 
 
 class FloatingRateNote(BaseFixedIncomeInstrument):
+    _yield_to_maturity: Optional[float] = None
+
     def __init__(
         self,
         issue_dt: Union[str, pd.Timestamp],
@@ -126,7 +128,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         calculate, ref_rate_curve, current_ref_rate = self._should_calculate(
             settlement_date, ref_rate_curve, current_ref_rate
         )
-        if calculate:
+        if calculate and self._price:
             self._yield_to_maturity = self.yield_to_maturity(
                 settlement_date=self._settlement_date,
                 price=self._price,
@@ -574,7 +576,11 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             coupon_spread = (spread) / (cpn_freq if cpn_freq > 0 else 1) * notional
             dict_payments[next_date_processed] = coupon_spread
             dict_spreads[next_date_processed] = coupon_spread
-            dict_amortization[next_date_processed] = 0.0
+            dict_amortization[next_date_processed] = (
+                0.0
+                if next_date_processed not in dict_amortization
+                else dict_amortization[next_date_processed]
+            )
             next_date_processed = maturity - relativedelta(
                 months=12 // (cpn_freq if cpn_freq > 0 else 1) * i
             )
@@ -714,7 +720,9 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         }
 
         if current_ref_rate is None:
-            if self.current_ref_rate is None:
+            if self.cpn_freq == 0:
+                current_ref_rate = 0.0
+            elif self.current_ref_rate is None:
                 # extract the current reference rate from the curve at the settlement date
                 if (
                     self.issue_dt == settlement_date
@@ -779,7 +787,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             if dt in expected_cash_flow:
                 expected_cash_flow[dt] += amt
             else:
-                expected_cash_flow[dt] = amt
+                expected_cash_flow[dt] = amt  # pragma: no cover
 
         expected_cash_flow = dict(sorted(expected_cash_flow.items()))
 
@@ -2025,8 +2033,6 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         Calculate the DV01 (Dollar Value of a 1 basis point) for the bond. The DV01 measures the change in the bond's price for a 1 basis point (0.0001) change in yield.
         Since floating rate notes have coupons that adjust with market rates, their DV01 is typically lower than that of fixed-rate bonds.
 
-        If neither discount_margin nor price is provided, it is assumed that the clean price is equal to the notional.
-
         Parameters
         ----------
         discount_margin : float, optional
@@ -2135,7 +2141,119 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 1 + (ytm - 0.0001) / time_adjustment
             ) ** (t * time_adjustment)
 
-        return round((price_up - price_down) / 2, 10)
+        return round(-(price_up - price_down) / 2, 10)
+
+    def spread_dv01(
+        self,
+        discount_margin: Optional[float] = None,
+        price: Optional[float] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+        current_ref_rate: Optional[float] = None,
+        ref_rate_curve: Optional[YieldCurveBase] = None,
+    ) -> float:
+        """
+        Calculate the spread DV01 (Dollar Value of a 1 basis point) for the bond. The DV01 measures the change in the bond's price for a 1 basis point (0.0001) change in discount margin.
+        Since floating rate notes have coupons that adjust with market rates, their DV01 is typically lower than that of fixed-rate bonds.
+        In contrast, the spread DV01 can be more sensitive to changes in the discount margin and reflect real risk.
+
+        Parameters
+        ----------
+        discount_margin : float, optional
+            Discount margin in basis points (e.g., 50 for 0.50%).
+        price : float, optional
+            Price of the bond. Used to estimate YTM if discount_margin is not provided.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+        current_ref_rate : float, optional
+            Current reference rate as a decimal. If not provided, will use self.current_ref_rate.
+        ref_rate_curve : YieldCurveBase, optional
+            Reference rate curve. If not provided, will use self.ref_rate_curve.
+
+        Returns
+        -------
+        dv01 : float
+            The change in price for a 1 basis point (0.0001) change in yield.
+
+        Examples
+        --------
+        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
+        >>> bond.dv01()
+        -0.0437603218
+        """
+        settlement_date = self._resolve_settlement_date(settlement_date)
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = self._resolve_valuation_parameters(
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
+
+        calculate, ref_rate_curve, current_ref_rate = self._should_calculate(
+            settlement_date, ref_rate_curve, current_ref_rate
+        )
+
+        if not calculate:
+            raise ValueError(
+                "There is not enough information to calculate prices to calculate spread duration."
+                "Please provide a reference rate curve and a current reference rate if the settlement date is not the curve date."
+            )
+        else:
+            discount_margin, price = self._resolve_discount_margin_and_price(
+                discount_margin,
+                price,
+                settlement_date,
+                adjust_to_business_days=adjust_to_business_days,
+                following_coupons_day_count=following_coupons_day_count,
+                yield_calculation_convention=yield_calculation_convention,
+                day_count_convention=day_count_convention,
+                ref_rate_curve=ref_rate_curve,
+                current_ref_rate=current_ref_rate,
+            )
+            assert discount_margin is not None
+            assert price is not None
+
+            # Calculate effect of a basis point change in discount margin on price
+            epsilon = 1
+            price_plus_epsilon = self._price_from_discount_margin_and_clean_parameters(
+                discount_margin + epsilon,
+                settlement_date,
+                adjust_to_business_days=adjust_to_business_days,
+                following_coupons_day_count=following_coupons_day_count,
+                yield_calculation_convention=yield_calculation_convention,
+                day_count_convention=day_count_convention,
+                ref_rate_curve=ref_rate_curve,
+                current_ref_rate=current_ref_rate,
+            )
+            price_minus_epsilon = self._price_from_discount_margin_and_clean_parameters(
+                discount_margin - epsilon,
+                settlement_date,
+                adjust_to_business_days=adjust_to_business_days,
+                following_coupons_day_count=following_coupons_day_count,
+                yield_calculation_convention=yield_calculation_convention,
+                day_count_convention=day_count_convention,
+                ref_rate_curve=ref_rate_curve,
+                current_ref_rate=current_ref_rate,
+            )
+
+            spread_dv01 = -(price_plus_epsilon - price_minus_epsilon) / 2
+            return round(spread_dv01, 10)
 
     def _resolve_ytm_and_price(
         self,
@@ -2221,17 +2339,6 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 settlement_date, ref_rate_curve, current_ref_rate
             )
             if calculate:
-                yield_to_maturity = self.yield_to_maturity(
-                    price=price,
-                    settlement_date=settlement_date,
-                    adjust_to_business_days=adjust_to_business_days,
-                    following_coupons_day_count=following_coupons_day_count,
-                    yield_calculation_convention=yield_calculation_convention,
-                    day_count_convention=day_count_convention,
-                    ref_rate_curve=ref_rate_curve,
-                    current_ref_rate=current_ref_rate,
-                    curve_delta=curve_delta,
-                )
                 price_calc = self._price_from_discount_margin_and_clean_parameters(
                     discount_margin=discount_margin,
                     settlement_date=settlement_date,
@@ -2243,6 +2350,19 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                     current_ref_rate=current_ref_rate,
                     curve_delta=curve_delta,
                 )
+
+                yield_to_maturity = self.yield_to_maturity(
+                    price=price_calc,
+                    settlement_date=settlement_date,
+                    adjust_to_business_days=adjust_to_business_days,
+                    following_coupons_day_count=following_coupons_day_count,
+                    yield_calculation_convention=yield_calculation_convention,
+                    day_count_convention=day_count_convention,
+                    ref_rate_curve=ref_rate_curve,
+                    current_ref_rate=current_ref_rate,
+                    curve_delta=curve_delta,
+                )
+
                 return yield_to_maturity, price_calc
 
         # Case 4: use stored values if available and settlement date matches
@@ -2327,7 +2447,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 )
                 if abs(price_calc - price) / price > 0.001 / 100:
                     raise ValueError(
-                        "Bond price calculated by yield to maturity does not match the given bond price."
+                        "Bond price calculated by discount margin does not match the given bond price."
                         "Given bond price: {}, calculated bond price: {}".format(
                             price, price_calc
                         )
@@ -2493,12 +2613,12 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         # modified_duration = t * cf / (1 + ytm / m)^(t*m) / p / (1 + ytm / m)^(t*m) =
         # p = cf / (1 + ytm / m)^(t*m)
         # modified_duration = t * cf / (1 + ytm / m)^(t*m) / (cf / (1 + ytm / m)^(t*m)) / (1 + ytm / m) =
-        # modified_duration = t / (1 + ytm / m)^(t*m)
+        # modified_duration = t / (1 + ytm / m)^(1)
 
         if yield_calculation_convention == "Continuous":
             duration = t
         else:
-            duration = t / (1 + ytm / time_adjustment) ** (t * time_adjustment)
+            duration = t
         return round(duration, 10)
 
     def convexity(
@@ -2692,12 +2812,12 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         )
         x_labels = df.index.strftime("%Y-%m-%d")
         cost = -df["Cost"]
-        coupon = df["Coupon"]
+        coupon = df["Expected Coupon"]
         amortization = df["Amortization"]
 
-        plt.figure(figsize=(10, 6))
+        fig = plt.figure(figsize=(10, 6))
         plt.bar(x_labels, cost, width=0.6, label="Cost")
-        plt.bar(x_labels, coupon, width=0.6, bottom=cost, label="Coupon")
+        plt.bar(x_labels, coupon, width=0.6, bottom=cost, label="Expected Coupon")
         plt.bar(
             x_labels,
             amortization,
@@ -2712,6 +2832,9 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         plt.legend()
         plt.tight_layout()
         plt.show()
+
+        # return figure
+        return fig
 
     def to_dataframe(
         self,
@@ -2791,13 +2914,6 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             yield_calculation_convention,
         )
 
-        if price is None:
-            if self._price is None:
-                raise ValueError(
-                    "Bond price must be set to calculate yield to maturity."
-                )
-            price = self._price
-
         if ref_rate_curve is None:
             if self.ref_rate_curve is None:
                 raise ValueError(
@@ -2811,8 +2927,6 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             valid_price_calc = False
         else:
             valid_price_calc = True
-
-        #
 
         flows = self.filter_payment_flow(
             settlement_date,
@@ -2867,7 +2981,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             .astype(float)
             .fillna(0)
         )
-        df["Cost"] = df["Coupon"] + df["Amortization"] - df["Flows"]
+        df["Cost"] = df["Expected Coupon"] + df["Amortization"] - df["Flows"]
         df.index = pd.DatetimeIndex(df.index)
 
         return df.sort_index()
@@ -2875,6 +2989,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
     def z_spread(
         self,
         price: Optional[float] = None,
+        discount_margin: Optional[float] = None,
         settlement_date: Optional[Union[str, pd.Timestamp]] = None,
         adjust_to_business_days: Optional[bool] = None,
         day_count_convention: Optional[str | DayCountBase] = None,
@@ -2910,6 +3025,8 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         ----------
         price : float, optional
             Price of the bond. If not provided, will use self._price.
+        discount_margin : float, optional
+            Discount margin in basis points. If provided, it will be used to calculate the price.
         settlement_date : str or datetime-like, optional
             Settlement date. Defaults to issue date.
         adjust_to_business_days : bool, optional
@@ -2945,18 +3062,22 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         >>> bond.z_spread(price=95)
         np.float64(0.06100197251858131)
         """
+        settlement_date = self._resolve_settlement_date(settlement_date)
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = self._resolve_valuation_parameters(
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
         if tol is None:
             tol = 1e-6
         if max_iter is None:
             max_iter = 100
-        if price is None:
-            if self._price is None:
-                raise ValueError(
-                    "Bond price must be set to calculate yield to maturity."
-                )
-            price = self._price
-        # Prepare cash flows and dates
-        settlement_date = self._resolve_settlement_date(settlement_date)
 
         if ref_rate_curve is None:
             if self.ref_rate_curve is None:
@@ -2965,6 +3086,25 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 )
             else:
                 ref_rate_curve = self.ref_rate_curve
+
+        discount_margin, price = self._resolve_discount_margin_and_price(
+            discount_margin,
+            price,
+            settlement_date,
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+            ref_rate_curve=ref_rate_curve,
+            current_ref_rate=current_ref_rate,
+        )
+
+        if price is None:
+            if self._price is None:
+                raise ValueError("Bond price must be set to calculate spread.")
+            price = self._price
+        # Prepare cash flows and dates
+        settlement_date = self._resolve_settlement_date(settlement_date)
 
         return self._get_spread_from_price(
             price=price,
