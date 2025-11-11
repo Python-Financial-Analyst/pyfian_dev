@@ -202,6 +202,28 @@ class TestFixedRateBullet:
             f"Expected convexity: {effective_convexity}, but got: {convexity}"
         )
 
+    # test spread_convexity equals convexity
+    def test_spread_convexity_equals_convexity(self):
+        bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 2)
+        spread_convexity = bond.spread_convexity(yield_to_maturity=0.05)
+        convexity = bond.convexity(yield_to_maturity=0.05)
+        assert isinstance(convexity, float)
+        assert np.isclose(convexity, spread_convexity, rtol=1e-5), (
+            f"Expected convexity: {spread_convexity}, but got: {convexity}"
+        )
+
+    # test effective_spread_convexity equals effective_convexity
+    def test_effective_spread_convexity_equals_effective_convexity(self):
+        bond = FixedRateBullet("2020-01-01", "2025-01-01", 5, 2)
+        effective_spread_convexity = bond.effective_spread_convexity(
+            yield_to_maturity=0.05
+        )
+        effective_convexity = bond.effective_convexity(yield_to_maturity=0.05)
+        assert isinstance(effective_convexity, float)
+        assert np.isclose(effective_convexity, effective_spread_convexity, rtol=1e-5), (
+            f"Expected convexity: {effective_spread_convexity}, but got: {effective_convexity}"
+        )
+
     # test convexity with continuous compounding
     def test_convexity_with_continuous(self):
         bond = FixedRateBullet(

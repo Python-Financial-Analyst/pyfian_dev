@@ -1056,6 +1056,70 @@ class FixedRateBullet(BaseFixedIncomeInstrumentWithYieldToMaturity):
             else 0.0
         )
 
+    def spread_convexity(
+        self,
+        yield_to_maturity: Optional[float] = None,
+        price: Optional[float] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+    ) -> float:
+        """
+        Calculate the convexity of the bond.
+
+
+
+        .. math::
+            Convexity = \\frac{1}{P} \\sum_{t=1}^{T} \\frac{C_t \\cdot t \\cdot (t + 1)}{(1 + YTM)^{(t + 2)}}
+        where:
+
+        - :math:`P` is the price of the bond
+        - :math:`C_t` is the cash flow at time :math:`t`, where :math:`t` is the time in years from the settlement date
+        - :math:`YTM` is the yield to maturity
+        - :math:`T` is the total number of periods
+
+        The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+        Parameters
+        ----------
+        yield_to_maturity : float, optional
+            Yield to maturity as a decimal. If not provided, will be calculated from price if given.
+        price : float, optional
+            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+
+        Returns
+        -------
+        convexity : float
+            Bond convexity.
+
+        Examples
+        --------
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
+        >>> bond.spread_convexity(yield_to_maturity=0.05)
+        22.6123221851
+        """
+        return self.convexity(
+            price=price,
+            yield_to_maturity=yield_to_maturity,
+            settlement_date=settlement_date,
+            adjust_to_business_days=adjust_to_business_days,
+            day_count_convention=day_count_convention,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+        )
+
     def accrued_interest(
         self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
     ) -> float:

@@ -1562,10 +1562,74 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
             time_to_payments=time_to_payments,
             yield_calculation_convention=yield_calculation_convention,
         )
-        expected_convexity = (
+        effective_convexity = (
             price_plus_epsilon + price_minus_epsilon - 2 * price_calc
         ) / (epsilon**2 * price_calc)
-        return expected_convexity
+        return effective_convexity
+
+    def effective_spread_convexity(
+        self,
+        yield_to_maturity: Optional[float] = None,
+        price: Optional[float] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+    ) -> float:
+        """
+        Calculate the effective spread convexity of the bond.
+
+        .. math::
+            \text{Effective Convexity} = \frac{P_{+} + P_{-} - 2P}{\\epsilon^2 P}
+
+        where:
+
+        - :math:`P` is the price of the bond
+        - :math:`P_{+}` is the price if yield increases by :math:`\\epsilon`
+        - :math:`P_{-}` is the price if yield decreases by :math:`\\epsilon`
+        - :math:`\\epsilon` is a small change in yield
+
+        The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+        Parameters
+        ----------
+        yield_to_maturity : float, optional
+            Yield to maturity as a decimal. If not provided, will be calculated from price if given.
+        price : float, optional
+            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+
+        Returns
+        -------
+        spread_convexity : float
+            Bond effective spread convexity.
+
+        Examples
+        --------
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
+        >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
+        >>> bond.effective_spread_convexity(yield_to_maturity=0.05) # doctest: +ELLIPSIS
+        22.6123...
+        """
+        return self.effective_convexity(
+            yield_to_maturity=yield_to_maturity,
+            price=price,
+            settlement_date=settlement_date,
+            adjust_to_business_days=adjust_to_business_days,
+            day_count_convention=day_count_convention,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+        )
 
     def g_spread(
         self,

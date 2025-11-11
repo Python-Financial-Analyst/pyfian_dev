@@ -1857,6 +1857,132 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             )
         return round(duration / price if price != 0 else 0.0, 10)
 
+    def spread_convexity(
+        self,
+        discount_margin: Optional[float] = None,
+        price: Optional[float] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+        current_ref_rate: Optional[float] = None,
+        ref_rate_curve: Optional[YieldCurveBase] = None,
+    ) -> float:
+        """
+        Calculate spread convexity of the bond.
+        While convexity of a floating rate note is very low since the cash flows are reset periodically,
+        the spread convexity captures the risk in the spread. The interest rate risk is minimal as the coupon payments adjust with market rates.
+        However, there is risk in the spread, which is captured through the spread convexity.
+
+        The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+        Parameters
+        ----------
+        discount_margin : float, optional
+            Discount margin in basis points. If not provided, will be calculated from price if given.
+        price : float, optional
+            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+        current_ref_rate : float, optional
+            Current reference rate as a decimal. If not provided, will use self.current_ref_rate.
+        ref_rate_curve : YieldCurveBase, optional
+            Reference rate curve. If not provided, will use self.ref_rate_curve.
+
+        Returns
+        -------
+        spread convexity : float
+            Spread convexity in years.
+
+        Examples
+        --------
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, discount_margin=100, settlement_date="2020-01-01")
+        >>> note.spread_convexity(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+        np.float64(24.4284...)
+        """
+        settlement_date = self._resolve_settlement_date(settlement_date)
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = self._resolve_valuation_parameters(
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
+
+        discount_margin, price = self._resolve_discount_margin_and_price(
+            discount_margin,
+            price,
+            settlement_date,
+            adjust_to_business_days=adjust_to_business_days,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
+            ref_rate_curve=ref_rate_curve,
+            current_ref_rate=current_ref_rate,
+        )
+        expected_ytm = self.expected_yield_to_maturity(
+            price=price,
+            settlement_date=settlement_date,
+            adjust_to_business_days=adjust_to_business_days,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
+            ref_rate_curve=ref_rate_curve,
+            current_ref_rate=current_ref_rate,
+        )
+
+        dated_payment_flow = self.make_expected_cash_flow(
+            price=price,
+            settlement_date=settlement_date,
+            ref_rate_curve=ref_rate_curve,
+            current_ref_rate=current_ref_rate,
+        )
+        times_cashflows = self._calculate_time_to_payments(
+            settlement_date=settlement_date,
+            price=price,
+            adjust_to_business_days=adjust_to_business_days,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
+            payment_flow=dated_payment_flow,
+        )
+
+        time_adjustment = get_time_adjustment(yield_calculation_convention)
+
+        if yield_calculation_convention == "Continuous":
+            convexity = sum(
+                [
+                    cf * t**2 * np.exp(-expected_ytm * t)
+                    for t, cf in times_cashflows.items()
+                ]
+            )
+        else:
+            convexity = sum(
+                [
+                    cf
+                    * t
+                    * time_adjustment
+                    * (t * time_adjustment + 1)
+                    / (1 + expected_ytm / time_adjustment) ** (t * time_adjustment + 2)
+                    for t, cf in times_cashflows.items()
+                ]
+            )
+        return round(convexity / price / time_adjustment**2, 10) if price != 0 else 0.0
+
     def effective_duration(
         self,
         discount_margin: Optional[float] = None,
@@ -2072,7 +2198,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         )
         if not calculate:
             raise ValueError(
-                "There is not enough information to calculate prices to calculate spread duration."
+                "There is not enough information to calculate prices to calculate effective spread duration. "
                 "Please provide a reference rate curve and a current reference rate if the settlement date is not the curve date."
             )
         else:
@@ -2119,6 +2245,131 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 / (2 * epsilon / 10000 * price)
             )
             return round(effective_spread_duration, 10)
+
+    def effective_spread_convexity(
+        self,
+        discount_margin: Optional[float] = None,
+        price: Optional[float] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+        current_ref_rate: Optional[float] = None,
+        ref_rate_curve: Optional[YieldCurveBase] = None,
+    ) -> float:
+        """
+        Calculate spread effective convexity of the bond.
+
+        .. math::
+            \\text{Spread Effective Convexity} = \\frac{(P_{+} - 2P + P_{-})}{\\epsilon^{2} \\cdot P}
+
+        where:
+
+        - :math:`P` is the price of the bond
+        - :math:`P_{+}` is the price if spread increases by :math:`\\epsilon`
+        - :math:`P_{-}` is the price if spread decreases by :math:`\\epsilon`
+        - :math:`\\epsilon` is a small change in spread
+
+        The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+        Parameters
+        ----------
+        discount_margin : float, optional
+            Discount margin in basis points. If not provided, will be calculated from price if given.
+        price : float, optional
+            Price of the bond. Used to estimate discount_margin if not provided.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+        current_ref_rate : float, optional
+            Current reference rate as a decimal. If not provided, will use self.current_ref_rate.
+        ref_rate_curve : YieldCurveBase, optional
+            Reference rate curve. If not provided, will use self.ref_rate_curve.
+
+        Returns
+        -------
+        convexity : float
+            Effective spread convexity in years.
+
+        Examples
+        --------
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+        >>> note.effective_spread_convexity(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+        np.float64(24.428...)
+        """
+        settlement_date = self._resolve_settlement_date(settlement_date)
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = self._resolve_valuation_parameters(
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
+
+        # If calculate is False, raise ValueError since we cannot compute effective spread duration
+        calculate, ref_rate_curve, current_ref_rate = self._should_calculate(
+            settlement_date, ref_rate_curve, current_ref_rate
+        )
+        if not calculate:
+            raise ValueError(
+                "There is not enough information to calculate prices to calculate the effective spread convexity."
+                "Please provide a reference rate curve and a current reference rate if the settlement date is not the curve date."
+            )
+        else:
+            discount_margin, price = self._resolve_discount_margin_and_price(
+                discount_margin,
+                price,
+                settlement_date,
+                adjust_to_business_days=adjust_to_business_days,
+                following_coupons_day_count=following_coupons_day_count,
+                yield_calculation_convention=yield_calculation_convention,
+                day_count_convention=day_count_convention,
+                ref_rate_curve=ref_rate_curve,
+                current_ref_rate=current_ref_rate,
+            )
+            assert discount_margin is not None
+            assert price is not None
+
+            # Calculate effective duration using a small epsilon
+            epsilon = 0.1
+            price_plus_epsilon = self._price_from_discount_margin_and_clean_parameters(
+                discount_margin + epsilon,
+                settlement_date,
+                adjust_to_business_days=adjust_to_business_days,
+                following_coupons_day_count=following_coupons_day_count,
+                yield_calculation_convention=yield_calculation_convention,
+                day_count_convention=day_count_convention,
+                ref_rate_curve=ref_rate_curve,
+                current_ref_rate=current_ref_rate,
+            )
+            price_minus_epsilon = self._price_from_discount_margin_and_clean_parameters(
+                discount_margin - epsilon,
+                settlement_date,
+                adjust_to_business_days=adjust_to_business_days,
+                following_coupons_day_count=following_coupons_day_count,
+                yield_calculation_convention=yield_calculation_convention,
+                day_count_convention=day_count_convention,
+                ref_rate_curve=ref_rate_curve,
+                current_ref_rate=current_ref_rate,
+            )
+
+            effective_spread_convexity = (
+                price_plus_epsilon + price_minus_epsilon - 2 * price
+            ) / ((epsilon / 10000) ** 2 * price)
+            return round(effective_spread_convexity, 10)
 
     def dv01(
         self,
@@ -2914,7 +3165,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         Calculate the effective convexity of the bond.
 
         .. math::
-            \text{Effective Convexity} = \frac{P_{+} + P_{-} - 2P}{\\epsilon^2 P}
+            \\text{Effective Convexity} = \\frac{P_{+} + P_{-} - 2P}{\\epsilon^2 P}
 
         where:
 

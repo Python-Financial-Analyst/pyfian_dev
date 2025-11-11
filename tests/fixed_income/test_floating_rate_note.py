@@ -843,6 +843,104 @@ class TestFloatingRateNote:
             "Spread duration should equal effective spread duration."
         )
 
+    def test_spread_convexity_equals_effective_spread_convexity(self):
+        flat_curve = FlatCurveBEY(curve_date="2020-01-01", bey=0.02)
+        note = FloatingRateNote(
+            issue_dt="2020-01-01",
+            maturity="2025-01-01",
+            ref_rate_curve=flat_curve,
+            cpn_freq=2,
+            current_ref_rate=0.02,
+            settlement_date="2020-01-01",
+            quoted_margin=100,
+            discount_margin=100,
+        )
+
+        effective_spread_convexity = note.effective_spread_convexity()
+        spread_convexity = note.spread_convexity()
+
+        assert isinstance(spread_convexity, float)
+        assert abs(effective_spread_convexity - spread_convexity) < 1e-4, (
+            "Spread convexity should equal effective spread convexity."
+        )
+
+    # test effective_spread_convexity raises ValueError when you can not calculate yield to maturity
+    def test_effective_spread_convexity_without_yield_or_price(self):
+        note_without_settlement = FloatingRateNote(
+            issue_dt="2020-01-01",
+            maturity="2025-01-01",
+            quoted_margin=100,
+            cpn_freq=2,
+            notional=1000,
+        )
+        with pytest.raises(
+            ValueError,
+            match="There is not enough information to calculate prices to calculate the effective spread convexity.",
+        ):
+            note_without_settlement.effective_spread_convexity()
+
+    # test spread_convexity with Continuous compounding
+    def test_spread_convexity_continuous_compounding(self):
+        flat_curve = FlatCurveBEY(curve_date="2020-01-01", bey=0.02)
+        note = FloatingRateNote(
+            issue_dt="2020-01-01",
+            maturity="2025-01-01",
+            ref_rate_curve=flat_curve,
+            cpn_freq=2,
+            current_ref_rate=0.02,
+            settlement_date="2020-01-01",
+            quoted_margin=100,
+            discount_margin=100,
+        )
+        bond = FixedRateBullet(
+            issue_dt="2020-01-01",
+            maturity="2025-01-01",
+            cpn=3,
+            cpn_freq=2,
+            settlement_date="2020-01-01",
+            price=100,
+        )
+        convexity = bond.convexity(yield_calculation_convention="CONTINUOUS")
+
+        spread_convexity = note.spread_convexity(
+            yield_calculation_convention="CONTINUOUS"
+        )
+
+        assert isinstance(spread_convexity, float)
+        assert abs(spread_convexity - convexity) < 1e-5, (
+            "Spread convexity should equal convexity with continuous compounding."
+        )
+
+    # test effective_spread_convexity equals FixedRateBullet convexity
+    def test_effective_spread_convexity_equals_fixed_rate_bullet_convexity(self):
+        flat_curve = FlatCurveBEY(curve_date="2020-01-01", bey=0.02)
+        note = FloatingRateNote(
+            issue_dt="2020-01-01",
+            maturity="2025-01-01",
+            ref_rate_curve=flat_curve,
+            cpn_freq=2,
+            current_ref_rate=0.02,
+            settlement_date="2020-01-01",
+            quoted_margin=100,
+            discount_margin=100,
+        )
+        bond = FixedRateBullet(
+            issue_dt="2020-01-01",
+            maturity="2025-01-01",
+            cpn=3,
+            cpn_freq=2,
+            settlement_date="2020-01-01",
+            price=100,
+        )
+        convexity = bond.convexity()
+
+        effective_spread_convexity = note.effective_spread_convexity()
+
+        assert isinstance(effective_spread_convexity, float)
+        assert abs(effective_spread_convexity - convexity) < 1e-4, (
+            "Effective spread convexity should equal FixedRateBullet convexity."
+        )
+
     # test spread_duration with Continuous compounding
     def test_spread_duration_continuous_compounding(self):
         flat_curve = FlatCurveBEY(curve_date="2020-01-01", bey=0.02)
@@ -930,7 +1028,7 @@ class TestFloatingRateNote:
         )
         with pytest.raises(
             ValueError,
-            match="There is not enough information to calculate prices to calculate spread duration.",
+            match="There is not enough information to calculate prices to calculate effective spread duration.",
         ):
             note_without_settlement.effective_spread_duration()
 
