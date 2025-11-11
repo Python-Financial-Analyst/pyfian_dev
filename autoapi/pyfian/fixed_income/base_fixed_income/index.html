@@ -246,7 +246,8 @@ If <cite>adjust_to_business_days</cite> is True (default: value of self.adjust_t
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">filter_payment_flow</span><span class="p">(</span><span class="s1">&#39;2022-01-01&#39;</span><span class="p">)</span>
 <span class="go">{Timestamp(&#39;2023-01-01 00:00:00&#39;): 5.0, Timestamp(&#39;2024-01-01 00:00:00&#39;): 5.0,</span>
 <span class="go">Timestamp(&#39;2025-01-01 00:00:00&#39;): 105.0}</span>
@@ -287,7 +288,8 @@ The time is expressed in years.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">calculate_time_to_payments</span><span class="p">(</span><span class="s1">&#39;2022-01-01&#39;</span><span class="p">)</span>
 <span class="go">{0.5: 2.5, 1.0: 2.5, 1.5: 2.5, 2.0: 2.5, 2.5: 2.5, 3.0: 102.5}</span>
 </pre></div>
@@ -339,7 +341,8 @@ Raises ValueError if the bond price is negative.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">cash_flows</span><span class="p">(</span><span class="s1">&#39;2022-01-01&#39;</span><span class="p">)</span>
 <span class="go">[5.0, 5.0, 105.0]</span>
 </pre></div>
@@ -369,7 +372,8 @@ Raises ValueError if the bond price is negative.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">clean_price</span><span class="p">(</span><span class="mf">102.5</span><span class="p">,</span> <span class="s1">&#39;2024-07-02&#39;</span><span class="p">)</span>
 <span class="go">100.0</span>
 </pre></div>
@@ -399,7 +403,8 @@ Raises ValueError if the bond price is negative.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">dirty_price</span><span class="p">(</span><span class="mf">100.0</span><span class="p">,</span> <span class="s1">&#39;2024-07-02&#39;</span><span class="p">)</span>
 <span class="go">102.5</span>
 </pre></div>
@@ -536,7 +541,8 @@ Returns a tuple (ytm, price_calc), both float or None.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">plot_cash_flows</span><span class="p">(</span><span class="n">settlement_date</span><span class="o">=</span><span class="s1">&#39;2022-01-01&#39;</span><span class="p">)</span>
 <span class="go"># Shows a plot</span>
 </pre></div>
@@ -568,9 +574,10 @@ If neither yield_to_maturity nor price is provided, it is assumed that the clean
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">dv01</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
-<span class="go">-0.0437603218</span>
+<span class="go">0.0437603218</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -698,7 +705,8 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">(</span><span class="s1">&#39;2022-01-01&#39;</span><span class="p">)</span>
 <span class="go">date        Flows  Coupon  Amortization  Cost</span>
 <span class="go">2023-01-01  5.0    5.0          0.0           0.0</span>
@@ -741,7 +749,8 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">price_from_yield</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
 <span class="go">100.0...</span>
 </pre></div>
@@ -782,7 +791,8 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">effective_duration</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">settlement_date</span><span class="o">=</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">)</span>
 <span class="go">4.3760319684</span>
 </pre></div>
@@ -823,8 +833,9 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">spread_effective_duration</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">settlement_date</span><span class="o">=</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">effective_spread_duration</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">settlement_date</span><span class="o">=</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">)</span>
 <span class="go">4.3760319684</span>
 </pre></div>
 </div>
@@ -868,9 +879,57 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 <dt>convexity<span class="classifier">float</span></dt><dd><p>Bond effective convexity.</p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">effective_convexity</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
-<span class="go">22.61232265...</span>
+<span class="go">22.6123...</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrumentWithYieldToMaturity.effective_spread_convexity">
+<span class="sig-name descname"><span class="pre">effective_spread_convexity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yield_to_maturity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">price</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlement_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjust_to_business_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day_count_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yield_calculation_convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/base_fixed_income.html#BaseFixedIncomeInstrumentWithYieldToMaturity.effective_spread_convexity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrumentWithYieldToMaturity.effective_spread_convexity" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Calculate the effective spread convexity of the bond.</p>
+<div class="math notranslate nohighlight">
+\[ext{Effective Convexity} =\]</div>
+</div></blockquote>
+<p>rac{P_{+} + P_{-} - 2P}{epsilon^2 P}</p>
+<blockquote>
+<div><p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P\)</span> is the price of the bond</p></li>
+<li><p><span class="math notranslate nohighlight">\(P_{+}\)</span> is the price if yield increases by <span class="math notranslate nohighlight">\(\epsilon\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(P_{-}\)</span> is the price if yield decreases by <span class="math notranslate nohighlight">\(\epsilon\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\epsilon\)</span> is a small change in yield</p></li>
+</ul>
+<p>The times to payments are calculated from the settlement date to each payment date and need not be integer values.</p>
+<dl class="simple">
+<dt>yield_to_maturity<span class="classifier">float, optional</span></dt><dd><p>Yield to maturity as a decimal. If not provided, will be calculated from price if given.</p>
+</dd>
+<dt>price<span class="classifier">float, optional</span></dt><dd><p>Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.</p>
+</dd>
+<dt>settlement_date<span class="classifier">str or datetime-like, optional</span></dt><dd><p>Settlement date. Defaults to issue date.</p>
+</dd>
+<dt>adjust_to_business_days<span class="classifier">bool, optional</span></dt><dd><p>Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</p>
+</dd>
+<dt>day_count_convention<span class="classifier">str or DayCountBase, optional</span></dt><dd><p>Day count convention. Defaults to value of self.day_count_convention.</p>
+</dd>
+<dt>following_coupons_day_count<span class="classifier">str or DayCountBase, optional</span></dt><dd><p>Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</p>
+</dd>
+<dt>yield_calculation_convention<span class="classifier">str, optional</span></dt><dd><p>Yield calculation convention. Defaults to value of self.yield_calculation_convention.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>spread_convexity<span class="classifier">float</span></dt><dd><p>Bond effective spread convexity.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">effective_spread_convexity</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="go">22.6123...</span>
 </pre></div>
 </div>
 </div></blockquote>
@@ -905,7 +964,8 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">g_spread</span><span class="p">(</span><span class="n">benchmark_ytm</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">price</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
 <span class="go">np.float64(0.02)</span>
 </pre></div>
@@ -940,7 +1000,8 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">i_spread</span><span class="p">(</span><span class="n">benchmark_curve</span><span class="o">=</span><span class="n">swap_curve</span><span class="p">)</span>
 <span class="go">0.0185</span>
 </pre></div>
@@ -987,6 +1048,7 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.flat_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlatCurveBEY</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">price</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">settlement_date</span><span class="o">=</span><span class="s2">&quot;2020-01-01&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">z_spread</span><span class="p">(</span><span class="n">benchmark_curve</span><span class="o">=</span><span class="n">FlatCurveBEY</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s1">&#39;2020-01-01&#39;</span><span class="p">))</span>
 <span class="go">np.float64(1.9484576898804107e-16)</span>

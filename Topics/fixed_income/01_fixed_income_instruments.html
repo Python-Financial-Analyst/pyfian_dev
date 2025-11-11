@@ -24,7 +24,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Bullet Bonds" href="02_bullet_bonds.html" />
+    <link rel="next" title="Money Market Instruments" href="02_money_market_instruments.html" />
     <link rel="prev" title="Economics of Interest Rates" href="00_economics_of_interest_rates.html" /> 
 </head>
 
@@ -81,9 +81,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#continuous-compounding">Continuous compounding</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="02_bullet_bonds.html">Bullet Bonds</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03_curves.html">Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04_comparing_bonds.html">Comparing Bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_money_market_instruments.html">Money Market Instruments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_bullet_bonds.html">Bullet Bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_curves.html">Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_comparing_bonds.html">Comparing Bonds</a></li>
 </ul>
 </li>
 </ul>
@@ -201,125 +202,504 @@
 <section id="government-bonds">
 <h3>Government Bonds<a class="headerlink" href="#government-bonds" title="Link to this heading"></a></h3>
 <p>Goverment bonds are typically issued in US Dollars, Euros or local currency. While local currency debt can be inflated away by printing money, foreign currency debt is considered safer by investors. Sometimes investors also demand additional protections such as issuing bonds in a different legal jurisdiction, such as New York or London. There is no international law governing these bonds, or equitization, therefore when a country defaults, investors must negotiate directly with the government on a haircut. While the government has an incentive to reduce the repayment amount, countries must deal with reputational concerns for borrowing in the future if investors are unsatisfied with the renegotiation outcome. Here are examples of how much different countries pay to borrow money for 10 years:</p>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Country</p></th>
-<th class="head text-right"><p>10-Year Yield (%)</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Argentina</p></td>
-<td class="text-right"><p>29.50</p></td>
-</tr>
-<tr class="row-odd"><td><p>Australia</p></td>
-<td class="text-right"><p>4.30</p></td>
-</tr>
-<tr class="row-even"><td><p>Brazil</p></td>
-<td class="text-right"><p>14.01</p></td>
-</tr>
-<tr class="row-odd"><td><p>Canada</p></td>
-<td class="text-right"><p>3.49</p></td>
-</tr>
-<tr class="row-even"><td><p>China</p></td>
-<td class="text-right"><p>1.68</p></td>
-</tr>
-<tr class="row-odd"><td><p>France</p></td>
-<td class="text-right"><p>3.27</p></td>
-</tr>
-<tr class="row-even"><td><p>Germany</p></td>
-<td class="text-right"><p>2.59</p></td>
-</tr>
-<tr class="row-odd"><td><p>India</p></td>
-<td class="text-right"><p>6.30</p></td>
-</tr>
-<tr class="row-even"><td><p>Indonesia</p></td>
-<td class="text-right"><p>6.95</p></td>
-</tr>
-<tr class="row-odd"><td><p>Italy</p></td>
-<td class="text-right"><p>3.44</p></td>
-</tr>
-<tr class="row-even"><td><p>Japan</p></td>
-<td class="text-right"><p>1.50</p></td>
-</tr>
-<tr class="row-odd"><td><p>Mexico</p></td>
-<td class="text-right"><p>9.44</p></td>
-</tr>
-<tr class="row-even"><td><p>Russia</p></td>
-<td class="text-right"><p>10.15</p></td>
-</tr>
-<tr class="row-odd"><td><p>Saudi Arabia</p></td>
-<td class="text-right"><p>5.50</p></td>
-</tr>
-<tr class="row-even"><td><p>South Africa</p></td>
-<td class="text-right"><p>10.10</p></td>
-</tr>
-<tr class="row-odd"><td><p>South Korea</p></td>
-<td class="text-right"><p>3.36</p></td>
-</tr>
-<tr class="row-even"><td><p>Turkey</p></td>
-<td class="text-right"><p>33.20</p></td>
-</tr>
-<tr class="row-odd"><td><p>United Kingdom</p></td>
-<td class="text-right"><p>4.58</p></td>
-</tr>
-<tr class="row-even"><td><p>United States</p></td>
-<td class="text-right"><p>4.35</p></td>
-</tr>
-<tr class="row-odd"><td><p>European Union</p></td>
-<td class="text-right"><p>2.59</p></td>
-</tr>
-</tbody>
+<section id="country-spreads">
+<h4>Country Spreads<a class="headerlink" href="#country-spreads" title="Link to this heading"></a></h4>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Data collected from public sources (date of retrieval noted)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;Country&quot;</span><span class="p">:</span> <span class="s2">&quot;United States&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">:</span> <span class="mf">4.11</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;Country&quot;</span><span class="p">:</span> <span class="s2">&quot;United Kingdom&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">:</span> <span class="mf">4.47</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;Country&quot;</span><span class="p">:</span> <span class="s2">&quot;Germany&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">:</span> <span class="mf">2.67</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;Country&quot;</span><span class="p">:</span> <span class="s2">&quot;France&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">:</span> <span class="mf">3.46</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;Country&quot;</span><span class="p">:</span> <span class="s2">&quot;Japan&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">:</span> <span class="mf">1.67</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;Country&quot;</span><span class="p">:</span> <span class="s2">&quot;Australia&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">:</span> <span class="mf">4.35</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;Country&quot;</span><span class="p">:</span> <span class="s2">&quot;China&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">:</span> <span class="mf">1.67</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;Country&quot;</span><span class="p">:</span> <span class="s2">&quot;India&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">:</span> <span class="mf">6.33</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;Country&quot;</span><span class="p">:</span> <span class="s2">&quot;Brazil&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">:</span> <span class="mf">13.83</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;Country&quot;</span><span class="p">:</span> <span class="s2">&quot;Turkey&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">:</span> <span class="mf">29.68</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;Country&quot;</span><span class="p">:</span> <span class="s2">&quot;South Africa&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">:</span> <span class="mf">8.87</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="c1"># Build DataFrame</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="c1"># Benchmark US 10-year yield</span>
+<span class="n">us_yield</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;United States&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Calculate spread in basis points relative to US yield</span>
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;Spread (bps)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">us_yield</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>  <span class="c1"># 1% = 100 bps</span>
+
+<span class="c1"># Sort by 10-Year Yield descending</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Display</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Country</th>
+      <th>10-Year Yield (%)</th>
+      <th>Spread (bps)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Turkey</td>
+      <td>29.68</td>
+      <td>2557.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Brazil</td>
+      <td>13.83</td>
+      <td>972.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>South Africa</td>
+      <td>8.87</td>
+      <td>476.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>India</td>
+      <td>6.33</td>
+      <td>222.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>United Kingdom</td>
+      <td>4.47</td>
+      <td>36.0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Australia</td>
+      <td>4.35</td>
+      <td>24.0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>United States</td>
+      <td>4.11</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>France</td>
+      <td>3.46</td>
+      <td>-65.0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Germany</td>
+      <td>2.67</td>
+      <td>-144.0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>China</td>
+      <td>1.67</td>
+      <td>-244.0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>Japan</td>
+      <td>1.67</td>
+      <td>-244.0</td>
+    </tr>
+  </tbody>
 </table>
+</div></div></div>
+</div>
+</section>
 </section>
 <section id="corporate-bonds">
 <h3>Corporate Bonds<a class="headerlink" href="#corporate-bonds" title="Link to this heading"></a></h3>
 <p>The interest rate premium on corporate bonds depends on the credit rating of a firm. Firms such as Apple have very high credit ratings, which allows them to borrow at very low rates. Firms can create a capital structure by issuing different tranches of debt: senior, mezzanine, junior, convertible bonds, etc. In the US creditors are protected by Chaper 7 and Chapter 11 bankruptcy, and are first in line to get repaid, should a firm become insolvent. In case that a firm doesn’t have enough funds to repay, creditors absorb the equity in the firm via the process of equitization and can seize the firm’s assets.</p>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p><strong>Rating Category</strong></p></th>
-<th class="head"><p><strong>Typical Range</strong></p></th>
-<th class="head"><p><strong>Approx. Yield (Effective)</strong></p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><strong>Investment Grade</strong></p></td>
-<td><p></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p>AAA / Aaa</p></td>
-<td><p>Top-tier</p></td>
-<td><p>~4.8%</p></td>
-</tr>
-<tr class="row-even"><td><p>AA / Aa</p></td>
-<td><p>High-grade</p></td>
-<td><p>~4.8%</p></td>
-</tr>
-<tr class="row-odd"><td><p>A / A</p></td>
-<td><p>Upper-medium grade</p></td>
-<td><p>~4.9%</p></td>
-</tr>
-<tr class="row-even"><td><p>BBB / Baa (lowest IG)</p></td>
-<td><p>Lower medium grade</p></td>
-<td><p>~5.3%</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Speculative Grade (High Yield)</strong></p></td>
-<td><p></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p>BB / Ba</p></td>
-<td><p>BB‑level junk</p></td>
-<td><p>~6.8% (index average he creditHI‑Y Index)</p></td>
-</tr>
-<tr class="row-odd"><td><p>B / B (lower speculative)</p></td>
-<td><p>Speculative</p></td>
-<td><p>~7.2% (single‑B in HY Index)</p></td>
-</tr>
-<tr class="row-even"><td><p>CCC / Caa (distressed)</p></td>
-<td><p>Sub‑investment grade</p></td>
-<td><p>&gt;7.2%, often 10–12 %+</p></td>
-</tr>
-</tbody>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Ratings comparison</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Highest quality&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;AAA&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;Aaa&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;AAA&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;High quality&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;AA+&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;Aa1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;AA+&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;High quality&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;AA&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;Aa2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;AA&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;High quality&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;AA-&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;Aa3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;AA-&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Upper-medium&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;A+&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;A1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;A+&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Upper-medium&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;A2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Upper-medium&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;A-&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;A3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;A-&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Lower-medium&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;BBB+&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;Baa1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;BBB+&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Lower-medium&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;BBB&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;Baa2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;BBB&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Lowest IG&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;BBB-&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;Baa3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;BBB-&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Speculative&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;BB+&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;Ba1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;BB+&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Speculative&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;BB&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;Ba2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;BB&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Speculative&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;BB-&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;Ba3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;BB-&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Speculative&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;B+&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;B1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;B+&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Speculative&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;B2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Speculative&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;B-&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;B3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;B-&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Highly speculative&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;CCC+&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;Caa1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;CCC+&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Highly speculative&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;CCC&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;Caa2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;CCC&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Highly speculative&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;CCC-&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;Caa3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;CCC-&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;Default&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S&amp;P&quot;</span><span class="p">:</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Moody&#39;s&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Fitch&quot;</span><span class="p">:</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Investment Grade&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+
+<span class="c1"># Create DataFrame</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="c1"># Display</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.max_rows&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># Show all rows</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Category</th>
+      <th>S&amp;P</th>
+      <th>Moody's</th>
+      <th>Fitch</th>
+      <th>Investment Grade</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Highest quality</td>
+      <td>AAA</td>
+      <td>Aaa</td>
+      <td>AAA</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>High quality</td>
+      <td>AA+</td>
+      <td>Aa1</td>
+      <td>AA+</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>High quality</td>
+      <td>AA</td>
+      <td>Aa2</td>
+      <td>AA</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>High quality</td>
+      <td>AA-</td>
+      <td>Aa3</td>
+      <td>AA-</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Upper-medium</td>
+      <td>A+</td>
+      <td>A1</td>
+      <td>A+</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Upper-medium</td>
+      <td>A</td>
+      <td>A2</td>
+      <td>A</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Upper-medium</td>
+      <td>A-</td>
+      <td>A3</td>
+      <td>A-</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Lower-medium</td>
+      <td>BBB+</td>
+      <td>Baa1</td>
+      <td>BBB+</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Lower-medium</td>
+      <td>BBB</td>
+      <td>Baa2</td>
+      <td>BBB</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Lowest IG</td>
+      <td>BBB-</td>
+      <td>Baa3</td>
+      <td>BBB-</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>Speculative</td>
+      <td>BB+</td>
+      <td>Ba1</td>
+      <td>BB+</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>Speculative</td>
+      <td>BB</td>
+      <td>Ba2</td>
+      <td>BB</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>Speculative</td>
+      <td>BB-</td>
+      <td>Ba3</td>
+      <td>BB-</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>Speculative</td>
+      <td>B+</td>
+      <td>B1</td>
+      <td>B+</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>Speculative</td>
+      <td>B</td>
+      <td>B2</td>
+      <td>B</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>Speculative</td>
+      <td>B-</td>
+      <td>B3</td>
+      <td>B-</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>Highly speculative</td>
+      <td>CCC+</td>
+      <td>Caa1</td>
+      <td>CCC+</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>Highly speculative</td>
+      <td>CCC</td>
+      <td>Caa2</td>
+      <td>CCC</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>Highly speculative</td>
+      <td>CCC-</td>
+      <td>Caa3</td>
+      <td>CCC-</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>Default</td>
+      <td>D</td>
+      <td>C</td>
+      <td>D</td>
+      <td>False</td>
+    </tr>
+  </tbody>
 </table>
+</div></div></div>
+</div>
 </section>
 <section id="municipal-bonds">
 <h3>Municipal Bonds<a class="headerlink" href="#municipal-bonds" title="Link to this heading"></a></h3>
@@ -546,7 +926,7 @@ $<span class="math notranslate nohighlight">\( FV = PV e^{rt} \)</span>$</p>
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
 <span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.continuous_compounding</span><span class="w"> </span><span class="kn">import</span> <span class="n">present_value_continuous</span>
 <span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.continuous_compounding</span><span class="w"> </span><span class="kn">import</span> <span class="n">future_value_continuous</span>
 <span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">PV</span> <span class="o">=</span> <span class="mi">100</span>
@@ -564,7 +944,7 @@ $<span class="math notranslate nohighlight">\( FV = PV e^{rt} \)</span>$</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="00_economics_of_interest_rates.html" class="btn btn-neutral float-left" title="Economics of Interest Rates" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="02_bullet_bonds.html" class="btn btn-neutral float-right" title="Bullet Bonds" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="02_money_market_instruments.html" class="btn btn-neutral float-right" title="Money Market Instruments" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

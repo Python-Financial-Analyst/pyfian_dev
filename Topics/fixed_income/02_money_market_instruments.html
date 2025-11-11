@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Money Market Instruments &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Bullet Bonds" href="03_bullet_bonds.html" />
+    <link rel="prev" title="Fixed Income Instruments" href="01_fixed_income_instruments.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Fixed Income</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00_economics_of_interest_rates.html">Economics of Interest Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html">Fixed Income Instruments</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Money Market Instruments</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#learning-objectives">Learning Objectives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#money-market-instruments-vs-bonds">Money Market Instruments vs Bonds</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#t-bills-vs-treasuries">T-Bills vs Treasuries</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#types-of-mmis">Types of MMIs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#treasury-bills">Treasury Bills</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#certificates-of-deposit">Certificates of Deposit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commercial-papers">Commercial Papers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#banker-s-acceptance">Banker’s Acceptance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repurchase-agreements">Repurchase Agreements</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="03_bullet_bonds.html">Bullet Bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_curves.html">Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_comparing_bonds.html">Comparing Bonds</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Fixed Income</a></li>
+      <li class="breadcrumb-item active">Money Market Instruments</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Topics/fixed_income/02_money_market_instruments.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="money-market-instruments">
+<h1>Money Market Instruments<a class="headerlink" href="#money-market-instruments" title="Link to this heading"></a></h1>
+<section id="learning-objectives">
+<h2>Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Familiarize ourselves money market instruments that we will use for our analysis</p></li>
+<li><p>Learn about the purpose and structure of Treasury Bills, Certificates of Deposit, Commercial Papers, Banker’s Acceptance and Repurchase Agreements</p></li>
+<li><p>Understand difference between Money Market Instruments and Bonds</p></li>
+</ul>
+</section>
+<section id="money-market-instruments-vs-bonds">
+<h2>Money Market Instruments vs Bonds<a class="headerlink" href="#money-market-instruments-vs-bonds" title="Link to this heading"></a></h2>
+<p>Money market instruments (MMIs) are short-term debt securities, typically maturing in less than one year, used for liquidity management and low-risk investing. Examples include Treasury Bills, Commercial Paper, Certificates of Deposit, and Bankers’ Acceptances. Bonds, on the other hand, are long-term debt instruments with maturities often exceeding one year, paying periodic interest (coupons) and primarily used for long-term financing or investment. While MMIs prioritize safety and liquidity, bonds balance income potential with interest rate and credit risk.</p>
+<section id="t-bills-vs-treasuries">
+<h3>T-Bills vs Treasuries<a class="headerlink" href="#t-bills-vs-treasuries" title="Link to this heading"></a></h3>
+<p>Money market instruments (MMIs) are short-term debt securities, typically maturing in less than one year, used for liquidity management and low-risk investing. Examples include Treasury Bills, Commercial Paper, Certificates of Deposit, and Bankers’ Acceptances. Bonds, on the other hand, are long-term debt instruments with maturities often exceeding one year, paying periodic interest (coupons) and primarily used for long-term financing or investment. While MMIs prioritize safety and liquidity, bonds balance income potential with interest rate and credit risk.</p>
+</section>
+</section>
+<section id="types-of-mmis">
+<h2>Types of MMIs<a class="headerlink" href="#types-of-mmis" title="Link to this heading"></a></h2>
+<section id="treasury-bills">
+<h3>Treasury Bills<a class="headerlink" href="#treasury-bills" title="Link to this heading"></a></h3>
+<p>Treasury Bills (T-Bills) are short-term government securities, typically issued with maturities ranging from 4 to 52 weeks. They are sold at a discount to their face value and redeemed at par, so investors earn a return from the difference between purchase price and face value rather than periodic interest payments. T-Bills are highly liquid and considered very low-risk, as they are backed by the full faith and credit of the government. They are commonly used for short-term cash management by investors, corporations, and governments. Additionally, in many countries, the interest income from T-Bills is exempt from state and local taxes, making them a safe and tax-efficient investment.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.money_market_instruments</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TreasuryBill</span><span class="p">,</span>
+    <span class="n">CertificateOfDeposit</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">tbill</span> <span class="o">=</span> <span class="n">TreasuryBill</span><span class="p">(</span>
+    <span class="n">issue_dt</span><span class="o">=</span><span class="s2">&quot;2025-12-01&quot;</span><span class="p">,</span>
+    <span class="n">maturity</span><span class="o">=</span><span class="s2">&quot;2026-02-01&quot;</span><span class="p">,</span>
+    <span class="n">settlement_date</span><span class="o">=</span><span class="s2">&quot;2026-01-01&quot;</span><span class="p">,</span>
+    <span class="n">price</span><span class="o">=</span><span class="mf">99.5</span><span class="p">,</span>
+    <span class="n">notional</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">tbill_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Instrument&quot;</span><span class="p">:</span> <span class="n">tbill</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+    <span class="s2">&quot;Issue Date&quot;</span><span class="p">:</span> <span class="n">tbill</span><span class="o">.</span><span class="n">issue_dt</span><span class="p">,</span>
+    <span class="s2">&quot;Maturity Date&quot;</span><span class="p">:</span> <span class="n">tbill</span><span class="o">.</span><span class="n">maturity</span><span class="p">,</span>
+    <span class="s2">&quot;Settlement Date&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">tbill</span><span class="p">,</span> <span class="s2">&quot;settlement_date&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+    <span class="s2">&quot;Notional&quot;</span><span class="p">:</span> <span class="n">tbill</span><span class="o">.</span><span class="n">notional</span><span class="p">,</span>
+    <span class="s2">&quot;Price&quot;</span><span class="p">:</span> <span class="n">tbill</span><span class="o">.</span><span class="n">get_price</span><span class="p">(),</span>
+    <span class="s2">&quot;Yield (%)&quot;</span><span class="p">:</span> <span class="n">tbill</span><span class="o">.</span><span class="n">get_yield_to_maturity</span><span class="p">(),</span>
+    <span class="s2">&quot;Day Count Convention&quot;</span><span class="p">:</span> <span class="n">tbill</span><span class="o">.</span><span class="n">day_count_convention</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+    <span class="s2">&quot;Yield Convention&quot;</span><span class="p">:</span> <span class="n">tbill</span><span class="o">.</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">tbill_data</span><span class="p">])</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+
+<span class="n">tbill</span><span class="o">.</span><span class="n">cash_flows</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Instrument</th>
+      <th>Issue Date</th>
+      <th>Maturity Date</th>
+      <th>Settlement Date</th>
+      <th>Notional</th>
+      <th>Price</th>
+      <th>Yield (%)</th>
+      <th>Day Count Convention</th>
+      <th>Yield Convention</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>TreasuryBill</td>
+      <td>2025-12-01</td>
+      <td>2026-02-01</td>
+      <td>None</td>
+      <td>100</td>
+      <td>99.5</td>
+      <td>0.058065</td>
+      <td>DayCountActual360</td>
+      <td>Discount</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[100]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="certificates-of-deposit">
+<h3>Certificates of Deposit<a class="headerlink" href="#certificates-of-deposit" title="Link to this heading"></a></h3>
+<p>Certificates of Deposit (CDs) are short- to medium-term time deposits issued by banks that pay a fixed interest rate over a specified period. Unlike Treasury Bills, CDs do pay interest (coupon) periodically or at maturity, depending on the terms. They are considered low-risk investments, typically insured up to certain limits in many countries, and are sold at face value rather than at a discount. The investor agrees to leave the funds deposited for a fixed term, and early withdrawal may result in penalties. CDs can have different maturities, ranging from a few weeks to several years, and their yield depends on the interest rate environment and the issuing bank’s creditworthiness.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+
+<span class="n">cd</span> <span class="o">=</span> <span class="n">CertificateOfDeposit</span><span class="p">(</span>
+    <span class="n">issue_dt</span><span class="o">=</span><span class="s2">&quot;2025-05-07&quot;</span><span class="p">,</span>
+    <span class="n">maturity</span><span class="o">=</span><span class="s2">&quot;2026-08-07&quot;</span><span class="p">,</span>
+    <span class="n">settlement_date</span><span class="o">=</span><span class="s2">&quot;2025-05-07&quot;</span><span class="p">,</span>
+    <span class="n">price</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">notional</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">cpn</span><span class="o">=</span><span class="mf">4.05</span><span class="p">,</span>  <span class="c1"># Annual coupon rate in %</span>
+    <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Instrument&quot;</span><span class="p">:</span> <span class="s2">&quot;Certificate of Deposit&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Issue Date&quot;</span><span class="p">:</span> <span class="n">cd</span><span class="o">.</span><span class="n">issue_dt</span><span class="p">,</span>
+        <span class="s2">&quot;Maturity Date&quot;</span><span class="p">:</span> <span class="n">cd</span><span class="o">.</span><span class="n">maturity</span><span class="p">,</span>
+        <span class="s2">&quot;Settlement Date&quot;</span><span class="p">:</span> <span class="n">cd</span><span class="o">.</span><span class="n">get_settlement_date</span><span class="p">(),</span>
+        <span class="s2">&quot;Notional&quot;</span><span class="p">:</span> <span class="n">cd</span><span class="o">.</span><span class="n">notional</span><span class="p">,</span>
+        <span class="s2">&quot;Price&quot;</span><span class="p">:</span> <span class="n">cd</span><span class="o">.</span><span class="n">get_price</span><span class="p">(),</span>
+        <span class="s2">&quot;Coupon (%)&quot;</span><span class="p">:</span> <span class="n">cd</span><span class="o">.</span><span class="n">cpn</span><span class="p">,</span>
+        <span class="s2">&quot;Coupon Frequency&quot;</span><span class="p">:</span> <span class="n">cd</span><span class="o">.</span><span class="n">cpn_freq</span><span class="p">,</span>
+        <span class="s2">&quot;Day Count Convention&quot;</span><span class="p">:</span> <span class="n">cd</span><span class="o">.</span><span class="n">day_count_convention</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+        <span class="s2">&quot;Yield Convention&quot;</span><span class="p">:</span> <span class="n">cd</span><span class="o">.</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
+        <span class="s2">&quot;Yield to Maturity (%)&quot;</span><span class="p">:</span> <span class="n">cd</span><span class="o">.</span><span class="n">get_yield_to_maturity</span><span class="p">(),</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;Cash Flows&quot;</span><span class="p">:</span> <span class="n">cd</span><span class="o">.</span><span class="n">cash_flows</span><span class="p">(</span><span class="s2">&quot;2026-04-04&quot;</span><span class="p">)}))</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Instrument</th>
+      <th>Issue Date</th>
+      <th>Maturity Date</th>
+      <th>Settlement Date</th>
+      <th>Notional</th>
+      <th>Price</th>
+      <th>Coupon (%)</th>
+      <th>Coupon Frequency</th>
+      <th>Day Count Convention</th>
+      <th>Yield Convention</th>
+      <th>Yield to Maturity (%)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Certificate of Deposit</td>
+      <td>2025-05-07</td>
+      <td>2026-08-07</td>
+      <td>2025-05-07</td>
+      <td>1000</td>
+      <td>1000</td>
+      <td>4.05</td>
+      <td>12</td>
+      <td>DayCountActual360</td>
+      <td>Add-On</td>
+      <td>0.003375</td>
+    </tr>
+  </tbody>
+</table>
+</div></div><div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Cash Flows</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1004.284375</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+</section>
+<section id="commercial-papers">
+<h3>Commercial Papers<a class="headerlink" href="#commercial-papers" title="Link to this heading"></a></h3>
+<p>Commercial papers are short-term, unsecured debt instruments issued by corporations to raise funds for immediate financial needs, such as working capital or inventory purchases. They typically have maturities ranging from a few days up to 270 days and are sold at a discount, meaning the issuer repays the face value at maturity. Because they are unsecured, only financially strong companies with high credit ratings can issue them at favorable rates. Commercial papers are a common tool for efficient, short-term corporate financing.</p>
+</section>
+<section id="banker-s-acceptance">
+<h3>Banker’s Acceptance<a class="headerlink" href="#banker-s-acceptance" title="Link to this heading"></a></h3>
+<p>A Bankers’ Acceptance is a short-term, negotiable financial instrument issued by a company but guaranteed by a bank. It represents a promise that the bank will pay a specified amount to the holder at a future date, typically used in international trade to finance the import or export of goods. Since the payment is backed by a bank, it carries low risk and can be traded in the money market, providing liquidity to both businesses and investors.</p>
+</section>
+<section id="repurchase-agreements">
+<h3>Repurchase Agreements<a class="headerlink" href="#repurchase-agreements" title="Link to this heading"></a></h3>
+<p>A Repurchase Agreement (Repo) is a short-term borrowing arrangement where one party sells securities (usually government bonds) to another with a promise to repurchase them at a later date for a higher price. Essentially, it functions as a collateralized loan: the seller gets immediate cash, and the buyer earns interest through the repurchase price. Repos are widely used in money markets to manage short-term liquidity and fund investments safely.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="01_fixed_income_instruments.html" class="btn btn-neutral float-left" title="Fixed Income Instruments" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="03_bullet_bonds.html" class="btn btn-neutral float-right" title="Bullet Bonds" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

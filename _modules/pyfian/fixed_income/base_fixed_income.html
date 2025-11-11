@@ -296,6 +296,7 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
 <span class="sd">        &gt;&gt;&gt; bond.filter_payment_flow(&#39;2022-01-01&#39;) # doctest: +SKIP</span>
 <span class="sd">        {Timestamp(&#39;2023-01-01 00:00:00&#39;): 5.0, Timestamp(&#39;2024-01-01 00:00:00&#39;): 5.0,</span>
@@ -379,6 +380,7 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2)</span>
 <span class="sd">        &gt;&gt;&gt; bond.calculate_time_to_payments(&#39;2022-01-01&#39;)</span>
 <span class="sd">        {0.5: 2.5, 1.0: 2.5, 1.5: 2.5, 2.0: 2.5, 2.5: 2.5, 3.0: 102.5}</span>
@@ -476,6 +478,7 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
 <span class="sd">        &gt;&gt;&gt; bond.cash_flows(&#39;2022-01-01&#39;)</span>
 <span class="sd">        [5.0, 5.0, 105.0]</span>
@@ -533,6 +536,7 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
 <span class="sd">        &gt;&gt;&gt; bond.clean_price(102.5, &#39;2024-07-02&#39;)</span>
 <span class="sd">        100.0</span>
@@ -571,6 +575,7 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
 <span class="sd">        &gt;&gt;&gt; bond.dirty_price(100.0, &#39;2024-07-02&#39;)</span>
 <span class="sd">        102.5</span>
@@ -881,6 +886,7 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2)</span>
 <span class="sd">        &gt;&gt;&gt; bond.plot_cash_flows(settlement_date=&#39;2022-01-01&#39;) # doctest: +SKIP</span>
 <span class="sd">        # Shows a plot</span>
@@ -969,9 +975,10 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2)</span>
 <span class="sd">        &gt;&gt;&gt; bond.dv01(yield_to_maturity=0.05)</span>
-<span class="sd">        -0.0437603218</span>
+<span class="sd">        0.0437603218</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="p">(</span>
@@ -1017,7 +1024,7 @@
             <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
             <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="nb">round</span><span class="p">((</span><span class="n">price_up</span> <span class="o">-</span> <span class="n">price_down</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">price_up</span> <span class="o">-</span> <span class="n">price_down</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BaseFixedIncomeInstrumentWithYieldToMaturity.set_settlement_date">
@@ -1332,6 +1339,7 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
 <span class="sd">        &gt;&gt;&gt; bond.to_dataframe(&#39;2022-01-01&#39;) # doctest: +SKIP</span>
 <span class="sd">        date        Flows  Coupon  Amortization  Cost</span>
@@ -1458,6 +1466,7 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2)</span>
 <span class="sd">        &gt;&gt;&gt; bond.price_from_yield(0.05) # doctest: +ELLIPSIS</span>
 <span class="sd">        100.0...</span>
@@ -1538,6 +1547,7 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2)</span>
 <span class="sd">        &gt;&gt;&gt; bond.effective_duration(yield_to_maturity=0.05, settlement_date=&#39;2020-01-01&#39;)</span>
 <span class="sd">        4.3760319684</span>
@@ -1647,8 +1657,9 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2)</span>
-<span class="sd">        &gt;&gt;&gt; bond.spread_effective_duration(yield_to_maturity=0.05, settlement_date=&#39;2020-01-01&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; bond.effective_spread_duration(yield_to_maturity=0.05, settlement_date=&#39;2020-01-01&#39;)</span>
 <span class="sd">        4.3760319684</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">effective_duration</span><span class="p">(</span>
@@ -1713,9 +1724,10 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2)</span>
 <span class="sd">        &gt;&gt;&gt; bond.effective_convexity(yield_to_maturity=0.05) # doctest: +ELLIPSIS</span>
-<span class="sd">        22.61232265...</span>
+<span class="sd">        22.6123...</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">settlement_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_settlement_date</span><span class="p">(</span><span class="n">settlement_date</span><span class="p">)</span>
         <span class="p">(</span>
@@ -1764,10 +1776,77 @@
             <span class="n">time_to_payments</span><span class="o">=</span><span class="n">time_to_payments</span><span class="p">,</span>
             <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">expected_convexity</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">effective_convexity</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">price_plus_epsilon</span> <span class="o">+</span> <span class="n">price_minus_epsilon</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">price_calc</span>
         <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">epsilon</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">price_calc</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">expected_convexity</span></div>
+        <span class="k">return</span> <span class="n">effective_convexity</span></div>
+
+
+<div class="viewcode-block" id="BaseFixedIncomeInstrumentWithYieldToMaturity.effective_spread_convexity">
+<a class="viewcode-back" href="../../../autoapi/pyfian/fixed_income/base_fixed_income/index.html#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrumentWithYieldToMaturity.effective_spread_convexity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">effective_spread_convexity</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">yield_to_maturity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">price</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">adjust_to_business_days</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">following_coupons_day_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the effective spread convexity of the bond.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \text{Effective Convexity} = \frac{P_{+} + P_{-} - 2P}{\\epsilon^2 P}</span>
+
+<span class="sd">        where:</span>
+
+<span class="sd">        - :math:`P` is the price of the bond</span>
+<span class="sd">        - :math:`P_{+}` is the price if yield increases by :math:`\\epsilon`</span>
+<span class="sd">        - :math:`P_{-}` is the price if yield decreases by :math:`\\epsilon`</span>
+<span class="sd">        - :math:`\\epsilon` is a small change in yield</span>
+
+<span class="sd">        The times to payments are calculated from the settlement date to each payment date and need not be integer values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        yield_to_maturity : float, optional</span>
+<span class="sd">            Yield to maturity as a decimal. If not provided, will be calculated from price if given.</span>
+<span class="sd">        price : float, optional</span>
+<span class="sd">            Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.</span>
+<span class="sd">        settlement_date : str or datetime-like, optional</span>
+<span class="sd">            Settlement date. Defaults to issue date.</span>
+<span class="sd">        adjust_to_business_days : bool, optional</span>
+<span class="sd">            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</span>
+<span class="sd">        day_count_convention : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention. Defaults to value of self.day_count_convention.</span>
+<span class="sd">        following_coupons_day_count : str or DayCountBase, optional</span>
+<span class="sd">            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.</span>
+<span class="sd">        yield_calculation_convention : str, optional</span>
+<span class="sd">            Yield calculation convention. Defaults to value of self.yield_calculation_convention.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        spread_convexity : float</span>
+<span class="sd">            Bond effective spread convexity.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
+<span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2)</span>
+<span class="sd">        &gt;&gt;&gt; bond.effective_spread_convexity(yield_to_maturity=0.05) # doctest: +ELLIPSIS</span>
+<span class="sd">        22.6123...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">effective_convexity</span><span class="p">(</span>
+            <span class="n">yield_to_maturity</span><span class="o">=</span><span class="n">yield_to_maturity</span><span class="p">,</span>
+            <span class="n">price</span><span class="o">=</span><span class="n">price</span><span class="p">,</span>
+            <span class="n">settlement_date</span><span class="o">=</span><span class="n">settlement_date</span><span class="p">,</span>
+            <span class="n">adjust_to_business_days</span><span class="o">=</span><span class="n">adjust_to_business_days</span><span class="p">,</span>
+            <span class="n">day_count_convention</span><span class="o">=</span><span class="n">day_count_convention</span><span class="p">,</span>
+            <span class="n">following_coupons_day_count</span><span class="o">=</span><span class="n">following_coupons_day_count</span><span class="p">,</span>
+            <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="n">yield_calculation_convention</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BaseFixedIncomeInstrumentWithYieldToMaturity.g_spread">
@@ -1821,6 +1900,7 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2)</span>
 <span class="sd">        &gt;&gt;&gt; bond.g_spread(benchmark_ytm=0.03, price=100)</span>
 <span class="sd">        np.float64(0.02)</span>
@@ -1914,6 +1994,7 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 1)</span>
 <span class="sd">        &gt;&gt;&gt; bond.i_spread(benchmark_curve=swap_curve) # doctest: +SKIP</span>
 <span class="sd">        0.0185</span>
@@ -2015,6 +2096,7 @@
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; from pyfian.yield_curves.flat_curve import FlatCurveBEY</span>
+<span class="sd">        &gt;&gt;&gt; from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet</span>
 <span class="sd">        &gt;&gt;&gt; bond = FixedRateBullet(&#39;2020-01-01&#39;, &#39;2025-01-01&#39;, 5, 2, price=100, settlement_date=&quot;2020-01-01&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; bond.z_spread(benchmark_curve=FlatCurveBEY(0.05, &#39;2020-01-01&#39;))</span>
 <span class="sd">        np.float64(1.9484576898804107e-16)</span>

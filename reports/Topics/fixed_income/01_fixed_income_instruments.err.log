@@ -44,7 +44,7 @@ print(
 
 [31m---------------------------------------------------------------------------[39m
 [31mModuleNotFoundError[39m                       Traceback (most recent call last)
-[36mCell[39m[36m [39m[32mIn[5][39m[32m, line 1[39m
+[36mCell[39m[36m [39m[32mIn[7][39m[32m, line 1[39m
 [32m----> [39m[32m1[39m [38;5;28;01mfrom[39;00m[38;5;250m [39m[34;01mpyfian[39;00m[34;01m.[39;00m[34;01mtime_value[39;00m[34;01m.[39;00m[34;01mcontinuous_compounding[39;00m[38;5;250m [39m[38;5;28;01mimport[39;00m present_value_continuous
 [32m      2[39m [38;5;28;01mfrom[39;00m[38;5;250m [39m[34;01mpyfian[39;00m[34;01m.[39;00m[34;01mtime_value[39;00m[34;01m.[39;00m[34;01mcontinuous_compounding[39;00m[38;5;250m [39m[38;5;28;01mimport[39;00m future_value_continuous
 [32m      4[39m PV = [32m100[39m

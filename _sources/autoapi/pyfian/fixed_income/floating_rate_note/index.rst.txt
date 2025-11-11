@@ -36,8 +36,181 @@ Module Contents
    Bases: :py:obj:`pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument`
 
 
-   Helper class that provides a standard way to create an ABC using
-   inheritance.
+   FloatingRateNote represents a floating rate note (FRN) fixed income instrument.
+   It allows for payment flow generation, valuation, yield calculations, and other bond analytics.
+   The coupons of the FRN are based on a reference interest rate plus a quoted margin.
+
+   :param issue_dt: The issue date of the bond.
+   :type issue_dt: Union[str, pd.Timestamp]
+   :param maturity: The maturity date of the bond.
+   :type maturity: Union[str, pd.Timestamp]
+   :param ref_rate_curve: The reference rate curve used for coupon calculations.
+   :type ref_rate_curve: Optional[YieldCurveBase]
+   :param current_ref_rate: The current reference rate used for pricing.
+   :type current_ref_rate: Optional[float]
+   :param quoted_margin: The quoted margin over the reference rate.
+   :type quoted_margin: float
+   :param cpn_freq: The frequency of coupon payments (e.g., 1 for annual, 2 for semi-annual).
+   :type cpn_freq: int
+   :param notional: The notional amount of the bond.
+   :type notional: float
+   :param settlement_convention_t_plus: The T+X settlement convention (e.g., T+1, T+2).
+   :type settlement_convention_t_plus: int
+   :param record_date_t_minus: The T-X record date convention (e.g., T-1, T-2).
+   :type record_date_t_minus: int
+   :param settlement_date: The settlement date of the bond.
+   :type settlement_date: Optional[Union[str, pd.Timestamp]]
+   :param discount_margin: The discount margin used for pricing.
+   :type discount_margin: Optional[float]
+   :param price: The price of the bond.
+   :type price: Optional[float]
+   :param adjust_to_business_days: Whether to adjust dates to business days. Defaults to False.
+   :type adjust_to_business_days: bool, optional
+   :param day_count_convention: Day count convention for the bond. Defaults to 'actual/actual-Bond'.
+                                It is used to calculate the day count fraction for accrued interests and time to payments.
+                                Supported conventions: '30/360', '30e/360', 'actual/actual', 'actual/360', 'actual/365', '30/365', 'actual/actual-Bond'.
+   :type day_count_convention: str, optional
+   :param following_coupons_day_count: Day count convention for the following coupons. Defaults to '30/360', to match the common convention for bonds.
+                                       Convention "actual/365" might be the more relevant for Effective Annual Yield or Continuous Compounding.
+                                       valid_conventions are "30/360", "30e/360", "actual/360", "actual/365", "30/365"
+   :type following_coupons_day_count: str, optional
+   :param yield_calculation_convention: Yield convention for the bond yield calculation. By default, it is "BEY" (Bond Equivalent Yield).
+                                        Other options are "Annual", "Continuous", "BEY-Q", "BEY-M", "BEY-S".
+   :type yield_calculation_convention: str, optional
+
+   :raises ValueError: If any of the input parameters are invalid.
+
+   .. attribute:: issue_dt
+
+      The issue date of the bond.
+
+      :type: pd.Timestamp
+
+   .. attribute:: maturity
+
+      The maturity date of the bond.
+
+      :type: pd.Timestamp
+
+   .. attribute:: ref_rate_curve
+
+      The reference rate curve used for coupon calculations.
+
+      :type: Optional[YieldCurveBase]
+
+   .. attribute:: current_ref_rate
+
+      The current reference rate used for pricing.
+
+      :type: Optional[float]
+
+   .. attribute:: quoted_margin
+
+      The quoted margin over the reference rate.
+
+      :type: float
+
+   .. attribute:: cpn_freq
+
+      The frequency of coupon payments (e.g., 1 for annual, 2 for semi-annual).
+
+      :type: int
+
+   .. attribute:: notional
+
+      The notional amount of the bond.
+
+      :type: float
+
+   .. attribute:: settlement_convention_t_plus
+
+      The T+X settlement convention (e.g., T+1, T+2).
+
+      :type: int
+
+   .. attribute:: record_date_t_minus
+
+      The T-X record date convention (e.g., T-1, T-2).
+
+      :type: int
+
+   .. attribute:: day_count_convention
+
+      The day count convention used for the bond.
+
+      :type: DayCountBase
+
+   .. attribute:: adjust_to_business_days
+
+      Whether to adjust dates to business days.
+
+      :type: bool
+
+   .. attribute:: following_coupons_day_count
+
+      The day count convention for the following coupons.
+
+      :type: DayCountBase
+
+   .. attribute:: yield_calculation_convention
+
+      The yield calculation convention used for the bond.
+
+      :type: str
+
+   .. attribute:: payment_flow
+
+      Dictionary with payment dates as keys and cash flow amounts as values.
+
+      :type: dict
+
+   .. attribute:: coupon_flow
+
+      Dictionary with coupon payment dates as keys and coupon amounts as values. It will be zero for all since it is not determined a priori.
+
+      :type: dict
+
+   .. attribute:: spread_flow
+
+      Dictionary with spread payment dates as keys and spread amounts as values.
+
+      :type: dict
+
+   .. attribute:: amortization_flow
+
+      Dictionary with amortization payment dates as keys and amortization amounts as values.
+
+      :type: dict
+
+   .. attribute:: _settlement_date
+
+      The settlement date of the bond.
+
+      :type: Optional[pd.Timestamp]
+
+   .. attribute:: _discount_margin
+
+      The discount margin used for pricing.
+
+      :type: Optional[float]
+
+   .. attribute:: _price
+
+      The price of the bond.
+
+      :type: Optional[float]
+
+   .. attribute:: _yield_to_maturity
+
+      The yield to maturity of the bond.
+
+      :type: Optional[float]
+
+
+   .. py:attribute:: _yield_to_maturity
+      :type:  Optional[float]
+      :value: None
+
 
 
    .. py:attribute:: issue_dt
@@ -179,7 +352,7 @@ Module Contents
 
       Set the default discount_margin for the bond. Updates bond price accordingly if reference rate curve is provided.
 
-      :param discount_margin: The discount margin to set.
+      :param discount_margin: The discount margin to set in basis points.
       :type discount_margin: float, optional
       :param settlement_date: The settlement date to set.
       :type settlement_date: Union[str, pd.Timestamp], optional
@@ -205,7 +378,7 @@ Module Contents
 
       Set the default discount margin for the bond. Updates bond price accordingly.
 
-      :param discount_margin: The discount margin to set.
+      :param discount_margin: The discount margin to set in basis points.
       :type discount_margin: float, optional
       :param settlement_date: The settlement date to set.
       :type settlement_date: Union[str, pd.Timestamp], optional
@@ -291,9 +464,10 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', ref_rate_curve, current_ref_rate=0.02, quoted_margin=50, cpn_freq=2)
-      >>> bond.make_real_payment_flow(settlement_date='2022-01-01') # doctest: +SKIP
-      {Timestamp('2022-07-01 00:00:00'): 1.25, Timestamp('2023-01-01 00:00:00'): 1.25, ...}
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01"), current_ref_rate=0.02, quoted_margin=50, cpn_freq=2)
+      >>> note.make_expected_cash_flow() # doctest: +SKIP
+      {Timestamp('2020-07-01 00:00:00'): 1.25, Timestamp('2023-01-01 00:00:00'): 1.25, ...}
 
 
 
@@ -422,9 +596,10 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', 5, 1)
-      >>> bond.required_margin(price=95)
-      np.float64(0.06100197251858131)
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+      >>> note.required_margin(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+      np.float64(100.0...)
 
 
 
@@ -478,9 +653,10 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', 5, 1)
-      >>> bond.discount_margin(price=95)
-      np.float64(0.06100197251858131)
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+      >>> note.discount_margin(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+      np.float64(100.0...)
 
 
 
@@ -541,13 +717,13 @@ Module Contents
       .. rubric:: Examples
 
       >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', 5, 1)
-      >>> bond.expected_yield_to_maturity(price=95)
-      np.float64(0.06100197251858131)
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+      >>> note.expected_yield_to_maturity(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01"), price=100) # doctest: +ELLIPSIS
+      np.float64(0.03...)
 
 
 
-   .. py:method:: accrued_interest(settlement_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
+   .. py:method:: accrued_interest(settlement_date: Optional[Union[str, pandas.Timestamp]] = None, current_ref_rate: Optional[float] = None) -> float
 
       Calculate accrued interest since last coupon payment.
       This is the interest that has accumulated on the bond since the last coupon payment date
@@ -570,15 +746,17 @@ Module Contents
 
       :param settlement_date: Date for which to calculate accrued interest. Defaults to today.
       :type settlement_date: str or datetime-like, optional
+      :param current_ref_rate: Current reference rate as a decimal. If not provided, will use self.current_ref_rate.
+      :type current_ref_rate: float, optional
 
       :returns: **accrued** -- Accrued interest amount.
       :rtype: float
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2)
-      >>> bond.accrued_interest('2024-07-02')
-      2.5
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2)
+      >>> note.accrued_interest('2020-04-01', current_ref_rate=0.04)
+      1.0
 
 
 
@@ -597,9 +775,9 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2)
-      >>> bond.next_coupon_date('2023-06-01')
-      Timestamp('2024-01-01 00:00:00')
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2)
+      >>> note.next_coupon_date('2023-06-01')
+      Timestamp('2023-07-01 00:00:00')
 
 
 
@@ -633,9 +811,9 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', 100, 2)
+      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0.01, cpn_freq=2)
       >>> print(bond)
-      FloatingRateNote(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, quoted_margin=100, cpn_freq=2)
+      FloatingRateNote(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, quoted_margin=0.01, cpn_freq=2)
 
 
 
@@ -647,7 +825,7 @@ Module Contents
 
       The times to payments are calculated from the settlement date to each payment date and need not be integer values.
 
-      :param discount_margin: Discount margin as a decimal. If not provided, will be calculated from price if given.
+      :param discount_margin: Discount margin in basis points. If not provided, will be calculated from price if given.
       :type discount_margin: float, optional
       :param price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
       :type price: float, optional
@@ -671,9 +849,10 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-      >>> bond.modified_duration()
-      4.3760319684
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
+      >>> note.modified_duration(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+      np.float64(0.495...)
 
 
 
@@ -686,7 +865,7 @@ Module Contents
 
       The times to payments are calculated from the settlement date to each payment date and need not be integer values.
 
-      :param discount_margin: Discount margin as a decimal. If not provided, will be calculated from price if given.
+      :param discount_margin: Discount margin in basis points. If not provided, will be calculated from price if given.
       :type discount_margin: float, optional
       :param price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
       :type price: float, optional
@@ -710,9 +889,50 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-      >>> bond.spread_duration()
-      4.3760319684
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, discount_margin=100, settlement_date="2020-01-01")
+      >>> note.spread_duration(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+      np.float64(4.61109...)
+
+
+
+   .. py:method:: spread_convexity(discount_margin: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, current_ref_rate: Optional[float] = None, ref_rate_curve: Optional[pyfian.yield_curves.base_curve.YieldCurveBase] = None) -> float
+
+      Calculate spread convexity of the bond.
+      While convexity of a floating rate note is very low since the cash flows are reset periodically,
+      the spread convexity captures the risk in the spread. The interest rate risk is minimal as the coupon payments adjust with market rates.
+      However, there is risk in the spread, which is captured through the spread convexity.
+
+      The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+      :param discount_margin: Discount margin in basis points. If not provided, will be calculated from price if given.
+      :type discount_margin: float, optional
+      :param price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
+      :type price: float, optional
+      :param settlement_date: Settlement date. Defaults to issue date.
+      :type settlement_date: str or datetime-like, optional
+      :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+      :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
+      :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+      :type following_coupons_day_count: str or DayCountBase, optional
+      :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+      :type yield_calculation_convention: str, optional
+      :param current_ref_rate: Current reference rate as a decimal. If not provided, will use self.current_ref_rate.
+      :type current_ref_rate: float, optional
+      :param ref_rate_curve: Reference rate curve. If not provided, will use self.ref_rate_curve.
+      :type ref_rate_curve: YieldCurveBase, optional
+
+      :returns: **spread convexity** -- Spread convexity in years.
+      :rtype: float
+
+      .. rubric:: Examples
+
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, discount_margin=100, settlement_date="2020-01-01")
+      >>> note.spread_convexity(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+      np.float64(24.4284...)
 
 
 
@@ -732,7 +952,7 @@ Module Contents
 
       The times to payments are calculated from the settlement date to each payment date and need not be integer values.
 
-      :param discount_margin: Discount margin as a decimal. If not provided, will be calculated from price if given.
+      :param discount_margin: Discount margin in basis points. If not provided, will be calculated from price if given.
       :type discount_margin: float, optional
       :param price: Price of the bond. Used to estimate discount_margin if not provided.
       :type price: float, optional
@@ -756,9 +976,10 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-      >>> bond.effective_duration()
-      4.3760319684
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
+      >>> note.effective_duration(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+      np.float64(0.495049...)
 
 
 
@@ -778,7 +999,7 @@ Module Contents
 
       The times to payments are calculated from the settlement date to each payment date and need not be integer values.
 
-      :param discount_margin: Discount margin as a decimal. If not provided, will be calculated from price if given.
+      :param discount_margin: Discount margin in basis points. If not provided, will be calculated from price if given.
       :type discount_margin: float, optional
       :param price: Price of the bond. Used to estimate discount_margin if not provided.
       :type price: float, optional
@@ -802,9 +1023,57 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-      >>> bond.effective_spread_duration()
-      4.3760319684
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+      >>> note.effective_spread_duration(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+      np.float64(4.61109...)
+
+
+
+   .. py:method:: effective_spread_convexity(discount_margin: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, current_ref_rate: Optional[float] = None, ref_rate_curve: Optional[pyfian.yield_curves.base_curve.YieldCurveBase] = None) -> float
+
+      Calculate spread effective convexity of the bond.
+
+      .. math::
+          \text{Spread Effective Convexity} = \frac{(P_{+} - 2P + P_{-})}{\epsilon^{2} \cdot P}
+
+      where:
+
+      - :math:`P` is the price of the bond
+      - :math:`P_{+}` is the price if spread increases by :math:`\epsilon`
+      - :math:`P_{-}` is the price if spread decreases by :math:`\epsilon`
+      - :math:`\epsilon` is a small change in spread
+
+      The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+      :param discount_margin: Discount margin in basis points. If not provided, will be calculated from price if given.
+      :type discount_margin: float, optional
+      :param price: Price of the bond. Used to estimate discount_margin if not provided.
+      :type price: float, optional
+      :param settlement_date: Settlement date. Defaults to issue date.
+      :type settlement_date: str or datetime-like, optional
+      :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+      :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
+      :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+      :type following_coupons_day_count: str or DayCountBase, optional
+      :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+      :type yield_calculation_convention: str, optional
+      :param current_ref_rate: Current reference rate as a decimal. If not provided, will use self.current_ref_rate.
+      :type current_ref_rate: float, optional
+      :param ref_rate_curve: Reference rate curve. If not provided, will use self.ref_rate_curve.
+      :type ref_rate_curve: YieldCurveBase, optional
+
+      :returns: **convexity** -- Effective spread convexity in years.
+      :rtype: float
+
+      .. rubric:: Examples
+
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+      >>> note.effective_spread_convexity(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+      np.float64(24.428...)
 
 
 
@@ -813,9 +1082,7 @@ Module Contents
       Calculate the DV01 (Dollar Value of a 1 basis point) for the bond. The DV01 measures the change in the bond's price for a 1 basis point (0.0001) change in yield.
       Since floating rate notes have coupons that adjust with market rates, their DV01 is typically lower than that of fixed-rate bonds.
 
-      If neither discount_margin nor price is provided, it is assumed that the clean price is equal to the notional.
-
-      :param discount_margin: Discount margin as a decimal (e.g., 0.05 for 5%).
+      :param discount_margin: Discount margin in basis points (e.g., 50 for 0.50%).
       :type discount_margin: float, optional
       :param price: Price of the bond. Used to estimate YTM if discount_margin is not provided.
       :type price: float, optional
@@ -839,9 +1106,47 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-      >>> bond.dv01()
-      -0.0437603218
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+      >>> note.dv01(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+      np.float64(0.004926...)
+
+
+
+   .. py:method:: spread_dv01(discount_margin: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, current_ref_rate: Optional[float] = None, ref_rate_curve: Optional[pyfian.yield_curves.base_curve.YieldCurveBase] = None) -> float
+
+      Calculate the spread DV01 (Dollar Value of a 1 basis point) for the bond. The DV01 measures the change in the bond's price for a 1 basis point (0.0001) change in discount margin.
+      Since floating rate notes have coupons that adjust with market rates, their DV01 is typically lower than that of fixed-rate bonds.
+      In contrast, the spread DV01 can be more sensitive to changes in the discount margin and reflect real risk.
+
+      :param discount_margin: Discount margin in basis points (e.g., 50 for 0.50%).
+      :type discount_margin: float, optional
+      :param price: Price of the bond. Used to estimate YTM if discount_margin is not provided.
+      :type price: float, optional
+      :param settlement_date: Settlement date. Defaults to issue date.
+      :type settlement_date: str or datetime-like, optional
+      :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+      :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
+      :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+      :type following_coupons_day_count: str or DayCountBase, optional
+      :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+      :type yield_calculation_convention: str, optional
+      :param current_ref_rate: Current reference rate as a decimal. If not provided, will use self.current_ref_rate.
+      :type current_ref_rate: float, optional
+      :param ref_rate_curve: Reference rate curve. If not provided, will use self.ref_rate_curve.
+      :type ref_rate_curve: YieldCurveBase, optional
+
+      :returns: **dv01** -- The change in price for a 1 basis point (0.0001) change in yield.
+      :rtype: float
+
+      .. rubric:: Examples
+
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+      >>> note.spread_dv01(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+      np.float64(0.04611...)
 
 
 
@@ -867,7 +1172,7 @@ Module Contents
 
       The times to payments are calculated from the settlement date to each payment date and need not be integer values.
 
-      :param discount_margin: Discount margin as a decimal. If not provided, will be calculated from price if given.
+      :param discount_margin: Discount margin in basis points. If not provided, will be calculated from price if given.
       :type discount_margin: float, optional
       :param price: Price of the bond. Used to estimate YTM if yield_to_maturity is not provided.
       :type price: float, optional
@@ -891,9 +1196,10 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-      >>> bond.macaulay_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
-      4.3760319684
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+      >>> note.macaulay_duration(settlement_date='2020-01-01', ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01"))  # doctest: +ELLIPSIS
+      0.5
 
 
 
@@ -932,9 +1238,57 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-      >>> bond.convexity()
-      22.6123221851
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+      >>> note.convexity(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+      np.float64(0.48533...)
+
+
+
+   .. py:method:: effective_convexity(discount_margin: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, current_ref_rate: Optional[float] = None, ref_rate_curve: Optional[pyfian.yield_curves.base_curve.YieldCurveBase] = None) -> float
+
+      Calculate the effective convexity of the bond.
+
+      .. math::
+          \text{Effective Convexity} = \frac{P_{+} + P_{-} - 2P}{\epsilon^2 P}
+
+      where:
+
+      - :math:`P` is the price of the bond
+      - :math:`P_{+}` is the price if yield increases by :math:`\epsilon`
+      - :math:`P_{-}` is the price if yield decreases by :math:`\epsilon`
+      - :math:`\epsilon` is a small change in yield
+
+      The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+      :param discount_margin: Discount margin as a decimal. If not provided, will be calculated from price if given.
+      :type discount_margin: float, optional
+      :param price: Price of the bond. Used to estimate discount_margin if not provided.
+      :type price: float, optional
+      :param settlement_date: Settlement date. Defaults to issue date.
+      :type settlement_date: str or datetime-like, optional
+      :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+      :type adjust_to_business_days: bool, optional
+      :param day_count_convention: Day count convention. Defaults to value of self.day_count_convention.
+      :type day_count_convention: str or DayCountBase, optional
+      :param following_coupons_day_count: Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+      :type following_coupons_day_count: str or DayCountBase, optional
+      :param yield_calculation_convention: Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+      :type yield_calculation_convention: str, optional
+      :param current_ref_rate: Current reference rate as a decimal. If not provided, will use self.current_ref_rate.
+      :type current_ref_rate: float, optional
+      :param ref_rate_curve: Reference rate curve. If not provided, will use self.ref_rate_curve.
+      :type ref_rate_curve: YieldCurveBase, optional
+
+      :returns: **convexity** -- Bond effective convexity.
+      :rtype: float
+
+      .. rubric:: Examples
+
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+      >>> note.effective_convexity(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+      np.float64(0.48533...)
 
 
 
@@ -942,7 +1296,7 @@ Module Contents
 
       Visualize the cash flow schedule using matplotlib as stacked bars.
 
-      :param discount_margin: Discount margin as a decimal. If not provided, will be calculated from price if given.
+      :param discount_margin: Discount margin in basis points. If not provided, will be calculated from price if given.
       :type discount_margin: float, optional
       :param price: If provided, includes bond price as a negative cash flow.
       :type price: float, optional
@@ -963,8 +1317,9 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100)
-      >>> bond.plot_cash_flows(settlement_date='2022-01-01') # doctest: +SKIP
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2022-01-01")
+      >>> note.plot_cash_flows(settlement_date='2022-01-01', ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2022-01-01")) # doctest: +SKIP
       # Shows a plot
 
 
@@ -990,7 +1345,7 @@ Module Contents
 
       :param settlement_date: Date from which to consider future payments. Defaults to issue date.
       :type settlement_date: str or datetime-like, optional
-      :param discount_margin: Discount margin as a decimal. If provided, it will be used to calculate the cash flows.
+      :param discount_margin: Discount margin in basis points. If provided, it will be used to calculate the cash flows.
       :type discount_margin: float, optional
       :param price: If provided, includes bond price as a negative cash flow.
       :type price: float, optional
@@ -1012,16 +1367,17 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100)
-      >>> bond.to_dataframe('2022-01-01') # doctest: +SKIP
-      date        Flows  Coupon  Amortization  Cost
-      2023-01-01  5.0    5.0          0.0           0.0
-      2024-01-01  5.0    5.0          0.0           0.0
-      2025-01-01  105.0  5.0        100.0           0.0
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=1, price=100, settlement_date="2022-01-01")
+      >>> note.to_dataframe(ref_rate_curve=FlatCurveBEY(curve_date='2022-01-01', bey=0.01)) # doctest: +SKIP
+      date        Flows  Expected Coupon  Spread  Amortization  Cost
+      2023-01-01  0.0    5.0              0.0     0.0           0.0
+      2024-01-01  0.0    5.0              0.0     0.0           0.0
+      2025-01-01  105.0  5.0              0.0     100.0         0.0
 
 
 
-   .. py:method:: z_spread(price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, current_ref_rate: Optional[float] = None, ref_rate_curve: Optional[pyfian.yield_curves.base_curve.YieldCurveBase] = None, tol: Optional[float] = 1e-06, max_iter: Optional[int] = 100) -> float
+   .. py:method:: z_spread(price: Optional[float] = None, discount_margin: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, current_ref_rate: Optional[float] = None, ref_rate_curve: Optional[pyfian.yield_curves.base_curve.YieldCurveBase] = None, tol: Optional[float] = 1e-06, max_iter: Optional[int] = 100) -> float
 
       Estimate the spread over the reference rate curve using the xirr function from pyfian.time_value.irr.
 
@@ -1045,6 +1401,8 @@ Module Contents
 
       :param price: Price of the bond. If not provided, will use self._price.
       :type price: float, optional
+      :param discount_margin: Discount margin in basis points. If provided, it will be used to calculate the price.
+      :type discount_margin: float, optional
       :param settlement_date: Settlement date. Defaults to issue date.
       :type settlement_date: str or datetime-like, optional
       :param adjust_to_business_days: Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
@@ -1071,9 +1429,10 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', 5, 1)
-      >>> bond.z_spread(price=95)
-      np.float64(0.06100197251858131)
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+      >>> bond.z_spread(price=100, ref_rate_curve=FlatCurveBEY(curve_date="2020-01-01", bey=0.03))
+      np.float64(0.01)
 
 
 
@@ -1157,9 +1516,10 @@ Module Contents
 
       .. rubric:: Examples
 
-      >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-      >>> bond.g_spread(benchmark_ytm=0.03, price=100)
-      np.float64(0.02)
+      >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+      >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+      >>> note.g_spread(benchmark_ytm=0.02, ref_rate_curve=FlatCurveBEY(curve_date="2020-01-01", bey=0.02)) # doctest: +ELLIPSIS
+      np.float64(0.01...)
 
 
 
