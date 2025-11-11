@@ -1281,6 +1281,83 @@ class TestFloatingRateNote:
                 yield_calculation_convention=yield_calculation_convention,
             )
 
+    # test _resolve_ytm_and_price taking price or discount_margin from initialization
+    def test_resolve_ytm_and_price_from_initialization(self):
+        flat_curve = FlatCurveBEY(curve_date="2020-01-01", bey=0.02)
+        note = FloatingRateNote(
+            issue_dt="2020-01-01",
+            maturity="2025-01-01",
+            quoted_margin=100,
+            cpn_freq=2,
+            notional=100,
+            discount_margin=100.0,
+            settlement_date="2020-01-01",
+        )
+        settlement_date = note._resolve_settlement_date(None)
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = note._resolve_valuation_parameters(
+            None,
+            None,
+            None,
+            None,
+        )
+        ytm, price = note._resolve_ytm_and_price(
+            settlement_date=settlement_date,
+            discount_margin=None,
+            price=None,
+            ref_rate_curve=flat_curve,
+            current_ref_rate=0.02,
+            adjust_to_business_days=adjust_to_business_days,
+            day_count_convention=day_count_convention,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+        )
+        assert isinstance(ytm, float)
+        assert isinstance(price, float)
+        assert abs(price - 100.0) < 1e-8, "Price should be equal to initialized price."
+
+    def test_resolve_ytm_and_price_from_initialization_new_yield_convention(self):
+        flat_curve = FlatCurveBEY(curve_date="2020-01-01", bey=0.02)
+        note = FloatingRateNote(
+            issue_dt="2020-01-01",
+            maturity="2025-01-01",
+            quoted_margin=100,
+            cpn_freq=2,
+            notional=100,
+            discount_margin=100.0,
+            settlement_date="2020-01-01",
+        )
+        settlement_date = note._resolve_settlement_date(None)
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = note._resolve_valuation_parameters(
+            None,
+            None,
+            None,
+            None,
+        )
+        ytm, price = note._resolve_ytm_and_price(
+            settlement_date=settlement_date,
+            discount_margin=None,
+            price=None,
+            ref_rate_curve=flat_curve,
+            current_ref_rate=0.02,
+            adjust_to_business_days=adjust_to_business_days,
+            day_count_convention=day_count_convention,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention="Continuous",
+        )
+        assert isinstance(ytm, float)
+        assert isinstance(price, float)
+        assert abs(price - 100.0) < 1e-8, "Price should be equal to initialized price."
+
     # test _resolve_discount_margin_and_price with price but None discount_margin
     def test_resolve_discount_margin_and_price_none_discount_margin(self):
         flat_curve = FlatCurveBEY(curve_date="2020-01-01", bey=0.03)
@@ -1503,6 +1580,45 @@ class TestFloatingRateNote:
         assert discount_margin is None
         assert price is None
 
+    # test _resolve_discount_margin_and_price with prices from before
+    def test_resolve_discount_margin_and_price_with_prices_from_before(self):
+        flat_curve = FlatCurveBEY(curve_date="2020-01-01", bey=0.03)
+        note = FloatingRateNote(
+            issue_dt="2020-01-01",
+            maturity="2025-01-01",
+            quoted_margin=100,
+            cpn_freq=2,
+            notional=100,
+            price=100,
+            settlement_date="2020-01-01",
+        )
+        settlement_date = note._resolve_settlement_date(None)
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = note._resolve_valuation_parameters(
+            None,
+            None,
+            None,
+            "continuous",
+        )
+        # first get price from discount margin
+        discount_margin, price = note._resolve_discount_margin_and_price(
+            settlement_date=settlement_date,
+            discount_margin=None,
+            price=None,
+            ref_rate_curve=flat_curve,
+            current_ref_rate=0.02,
+            adjust_to_business_days=adjust_to_business_days,
+            day_count_convention=day_count_convention,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+        )
+        assert isinstance(price, float | int)
+        assert isinstance(discount_margin, float | int)
+
     # test macaulay_duration
     def test_macaulay_duration(self):
         flat_curve = FlatCurveBEY(curve_date="2020-01-01", bey=0.02)
@@ -1592,6 +1708,78 @@ class TestFloatingRateNote:
             match="Unable to resolve yield to maturity.",
         ):
             note_without_settlement.convexity()
+
+    # test convexity equals effective_convexity
+    def test_convexity_equals_effective_convexity(self):
+        flat_curve = FlatCurveBEY(curve_date="2020-01-01", bey=0.02)
+        note = FloatingRateNote(
+            issue_dt="2020-01-01",
+            maturity="2025-01-01",
+            ref_rate_curve=flat_curve,
+            cpn_freq=2,
+            current_ref_rate=0.02,
+            settlement_date="2020-01-01",
+            quoted_margin=100,
+            discount_margin=100,
+        )
+
+        effective_convexity = note.effective_convexity()
+        convexity = note.convexity()
+
+        assert isinstance(effective_convexity, float)
+        assert abs(effective_convexity - convexity) < 1e-6, (
+            "Effective convexity should equal convexity."
+        )
+
+    # test effective_convexity raises ValueError when you can not calculate yield to maturity
+    def test_effective_convexity_without_yield_or_price(self):
+        note_without_settlement = FloatingRateNote(
+            issue_dt="2020-01-01",
+            maturity="2025-01-01",
+            quoted_margin=50,
+            cpn_freq=2,
+            notional=1000,
+        )
+        with pytest.raises(
+            ValueError,
+            match="Unable to determine yield to maturity.",
+        ):
+            note_without_settlement.effective_convexity()
+
+    # test effective_convexity with continuous compounding
+    def test_effective_convexity_continuous_compounding(self):
+        note = FloatingRateNote(
+            issue_dt="2020-01-01",
+            maturity="2025-01-01",
+            ref_rate_curve=FlatCurveLog(curve_date="2020-01-01", log_rate=0.02),
+            cpn_freq=1,
+            settlement_date="2020-01-01",
+            price=100,
+            current_ref_rate=0.02,
+            yield_calculation_convention="CONTINUOUS",
+        )
+
+        effective_convexity = note.effective_convexity(
+            yield_calculation_convention="CONTINUOUS"
+        )
+
+        assert isinstance(effective_convexity, float)
+
+        bond = FixedRateBullet(
+            issue_dt="2020-01-01",
+            maturity="2021-01-01",
+            cpn=2,
+            cpn_freq=1,
+            settlement_date="2020-01-01",
+            price=100,
+        )
+        effective_convexity_fixed = bond.effective_convexity(
+            yield_calculation_convention="CONTINUOUS"
+        )
+
+        assert abs(effective_convexity - effective_convexity_fixed) < 1e-4, (
+            "Effective convexity should equal effective convexity for one period bond within margin of error with continuous compounding."
+        )
 
     # test to_dataframe
     def test_to_dataframe(self):
@@ -1692,7 +1880,7 @@ class TestFloatingRateNote:
             current_ref_rate=0.02,
             settlement_date="2020-01-01",
             quoted_margin=100,
-            discount_margin=100,
+            price=100,
         )
 
         z_spread = note.z_spread(

@@ -2502,6 +2502,8 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                     following_coupons_day_count=following_coupons_day_count,
                     yield_calculation_convention=yield_calculation_convention,
                     day_count_convention=day_count_convention,
+                    ref_rate_curve=ref_rate_curve,
+                    current_ref_rate=current_ref_rate,
                     curve_delta=curve_delta,
                 )
             else:
@@ -2519,7 +2521,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                     current_ref_rate=current_ref_rate,
                 )
 
-            return ytm, self._price
+            return ytm, price
 
         # Case 5: cannot determine, return None, None
         return None, None
@@ -3384,7 +3386,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         if price is None:
             if self._price is None:
                 raise ValueError("Bond price must be set to calculate spread.")
-            price = self._price
+            price = self._price  # pragma: no cover
         # Prepare cash flows and dates
         settlement_date = self._resolve_settlement_date(settlement_date)
 
