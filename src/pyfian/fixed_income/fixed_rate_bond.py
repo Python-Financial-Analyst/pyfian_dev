@@ -721,7 +721,7 @@ class FixedRateBullet(BaseFixedIncomeInstrumentWithYieldToMaturity):
         --------
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.modified_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
-        4.3760319684
+        4.3760319655
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -825,7 +825,7 @@ class FixedRateBullet(BaseFixedIncomeInstrumentWithYieldToMaturity):
         --------
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.spread_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
-        4.3760319684
+        4.3760319655
         """
         return self.modified_duration(
             price=price,

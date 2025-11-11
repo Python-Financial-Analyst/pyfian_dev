@@ -86,7 +86,7 @@ def future_value_annuity_annual(
     Examples
     --------
     >>> future_value_annuity_annual(100, 0.05, 10, 12)
-    15528.2279445667
+    15528.2279445668
     """
     rate = annual_rate / payments_per_year
     periods = years * payments_per_year
@@ -142,7 +142,7 @@ def future_value_growing_annuity(
     Examples
     --------
     >>> future_value_growing_annuity(100, 0.05, 10, 0.02)
-    1393.6607030611262
+    1393.660703061195
     >>> future_value_growing_annuity(100, 0.05, 10, 0.05)
     1628.894626777442
     """

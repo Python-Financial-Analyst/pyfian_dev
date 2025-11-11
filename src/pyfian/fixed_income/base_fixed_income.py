@@ -196,6 +196,7 @@ class BaseFixedIncomeInstrument(ABC):
 
         Examples
         --------
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.filter_payment_flow('2022-01-01') # doctest: +SKIP
         {Timestamp('2023-01-01 00:00:00'): 5.0, Timestamp('2024-01-01 00:00:00'): 5.0,
@@ -276,6 +277,7 @@ class BaseFixedIncomeInstrument(ABC):
 
         Examples
         --------
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.calculate_time_to_payments('2022-01-01')
         {0.5: 2.5, 1.0: 2.5, 1.5: 2.5, 2.0: 2.5, 2.5: 2.5, 3.0: 102.5}
@@ -361,6 +363,7 @@ class BaseFixedIncomeInstrument(ABC):
 
         Examples
         --------
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.cash_flows('2022-01-01')
         [5.0, 5.0, 105.0]
@@ -415,6 +418,7 @@ class BaseFixedIncomeInstrument(ABC):
 
         Examples
         --------
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.clean_price(102.5, '2024-07-02')
         100.0
@@ -450,6 +454,7 @@ class BaseFixedIncomeInstrument(ABC):
 
         Examples
         --------
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.dirty_price(100.0, '2024-07-02')
         102.5
@@ -697,6 +702,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
         Examples
         --------
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.plot_cash_flows(settlement_date='2022-01-01') # doctest: +SKIP
         # Shows a plot
@@ -782,6 +788,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
         Examples
         --------
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.dv01(yield_to_maturity=0.05)
         0.0437603218
@@ -1130,6 +1137,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
         Examples
         --------
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.to_dataframe('2022-01-01') # doctest: +SKIP
         date        Flows  Coupon  Amortization  Cost
@@ -1253,6 +1261,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
         Examples
         --------
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.price_from_yield(0.05) # doctest: +ELLIPSIS
         100.0...
@@ -1330,6 +1339,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
         Examples
         --------
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.effective_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
         4.3760319684
@@ -1436,8 +1446,9 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
         Examples
         --------
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
-        >>> bond.spread_effective_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
+        >>> bond.effective_spread_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
         4.3760319684
         """
         return self.effective_duration(
@@ -1499,9 +1510,10 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
         Examples
         --------
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.effective_convexity(yield_to_maturity=0.05) # doctest: +ELLIPSIS
-        22.61232265...
+        22.6123...
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -1604,6 +1616,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
         Examples
         --------
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.g_spread(benchmark_ytm=0.03, price=100)
         np.float64(0.02)
@@ -1694,6 +1707,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
         Examples
         --------
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1)
         >>> bond.i_spread(benchmark_curve=swap_curve) # doctest: +SKIP
         0.0185
@@ -1792,6 +1806,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
         Examples
         --------
         >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2, price=100, settlement_date="2020-01-01")
         >>> bond.z_spread(benchmark_curve=FlatCurveBEY(0.05, '2020-01-01'))
         np.float64(1.9484576898804107e-16)

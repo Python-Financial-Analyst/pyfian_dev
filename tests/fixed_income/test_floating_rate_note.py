@@ -1610,7 +1610,7 @@ class TestFloatingRateNote:
 
         assert isinstance(df, pd.DataFrame)
         assert not df.empty
-        assert "Flows" in df.columns
+        assert "Expected Cash Flows" in df.columns
         # amortization should equal notional
         assert df["Amortization"].sum() == note.notional
         # values with positive coupon should equal quoted margin plus 2%
@@ -1651,7 +1651,7 @@ class TestFloatingRateNote:
         df = note.to_dataframe()
         assert isinstance(df, pd.DataFrame)
         assert not df.empty
-        assert "Flows" in df.columns
+        assert "Expected Cash Flows" in df.columns
         # amortization should equal notional
         assert df["Amortization"].sum() == note.notional
         # values with positive coupon should equal quoted margin plus 2%

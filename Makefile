@@ -57,3 +57,6 @@ coverage-file:
 precommit:
 	poetry run pre-commit run --all-files
 
+doctest:
+    $(if $(FILES),,$(error Usage: make doctest FILES="path/to/file1.py path/to/file2.py"))
+    poetry run python -m doctest $(FILES)

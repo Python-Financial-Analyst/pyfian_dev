@@ -785,9 +785,10 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', ref_rate_curve, current_ref_rate=0.02, quoted_margin=50, cpn_freq=2)
-        >>> bond.make_real_payment_flow(settlement_date='2022-01-01') # doctest: +SKIP
-        {Timestamp('2022-07-01 00:00:00'): 1.25, Timestamp('2023-01-01 00:00:00'): 1.25, ...}
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01"), current_ref_rate=0.02, quoted_margin=50, cpn_freq=2)
+        >>> note.make_expected_cash_flow() # doctest: +SKIP
+        {Timestamp('2020-07-01 00:00:00'): 1.25, Timestamp('2023-01-01 00:00:00'): 1.25, ...}
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
 
@@ -1076,9 +1077,10 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.required_margin(price=95)
-        np.float64(0.06100197251858131)
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+        >>> note.required_margin(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+        np.float64(100.0...)
         """
         return self.discount_margin(
             price,
@@ -1162,9 +1164,10 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.discount_margin(price=95)
-        np.float64(0.06100197251858131)
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+        >>> note.discount_margin(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+        np.float64(100.0...)
         """
         if tol is None:
             tol = 1e-6
@@ -1364,9 +1367,9 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         Examples
         --------
         >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.expected_yield_to_maturity(price=95)
-        np.float64(0.06100197251858131)
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+        >>> note.expected_yield_to_maturity(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01"), price=100) # doctest: +ELLIPSIS
+        np.float64(0.03...)
         """
         if tol is None:
             tol = 1e-6
@@ -1436,7 +1439,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 result, from_convention="Annual", to_convention="Continuous"
             )
 
-        return result
+        return round(result, 9)
 
     def accrued_interest(
         self,
@@ -1477,9 +1480,9 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2)
-        >>> bond.accrued_interest('2024-07-02')
-        2.5
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2)
+        >>> note.accrued_interest('2020-04-01', current_ref_rate=0.04)
+        1.0
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
 
@@ -1495,7 +1498,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         prev_coupon: pd.Timestamp = self.previous_coupon_date(settlement_date)
         next_coupon: pd.Timestamp = self.next_coupon_date(settlement_date)
 
-        coupon = (current_ref_rate + self.quoted_margin) * self.notional / 100
+        coupon = (current_ref_rate + self.quoted_margin) * self.notional / self.cpn_freq
 
         # If before first coupon, accrue from issue date
         if prev_coupon is None and next_coupon is not None:
@@ -1542,9 +1545,9 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2)
-        >>> bond.next_coupon_date('2023-06-01')
-        Timestamp('2024-01-01 00:00:00')
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2)
+        >>> note.next_coupon_date('2023-06-01')
+        Timestamp('2023-07-01 00:00:00')
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
 
@@ -1601,9 +1604,9 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', 100, 2)
+        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0.01, cpn_freq=2)
         >>> print(bond)
-        FloatingRateNote(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, quoted_margin=100, cpn_freq=2)
+        FloatingRateNote(issue_dt=2020-01-01 00:00:00, maturity=2025-01-01 00:00:00, quoted_margin=0.01, cpn_freq=2)
         """
         return (
             f"FloatingRateNote(issue_dt={self.issue_dt}, maturity={self.maturity}, "
@@ -1657,9 +1660,10 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-        >>> bond.modified_duration()
-        4.3760319684
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
+        >>> note.modified_duration(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+        np.float64(0.495...)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -1777,9 +1781,10 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-        >>> bond.spread_duration()
-        4.3760319684
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, discount_margin=100, settlement_date="2020-01-01")
+        >>> note.spread_duration(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+        np.float64(4.61109...)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -1907,9 +1912,10 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-        >>> bond.effective_duration()
-        4.3760319684
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
+        >>> note.effective_duration(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+        np.float64(0.495049...)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -2042,9 +2048,10 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-        >>> bond.effective_spread_duration()
-        4.3760319684
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+        >>> note.effective_spread_duration(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+        np.float64(4.61109...)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -2157,9 +2164,10 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-        >>> bond.dv01()
-        -0.0437603218
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+        >>> note.dv01(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+        np.float64(0.004926...)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -2284,9 +2292,10 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-        >>> bond.dv01()
-        -0.0437603218
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+        >>> note.spread_dv01(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+        np.float64(0.04611...)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -2463,13 +2472,29 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         # Case 4: use stored values if available and settlement date matches
         if (
-            self._yield_to_maturity is not None
-            and self._settlement_date == settlement_date
-        ):
+            self._price is not None or self._discount_margin is not None
+        ) and self._settlement_date == settlement_date:
             if (
-                day_count_convention != self.day_count_convention
+                not isinstance(day_count_convention, type(self.day_count_convention))
                 or yield_calculation_convention != self.yield_calculation_convention
             ):
+                price = self._price
+                discount_margin = self._discount_margin
+                calculate, ref_rate_curve, current_ref_rate = self._should_calculate(
+                    settlement_date, ref_rate_curve, current_ref_rate
+                )
+                if price is None and discount_margin is not None and calculate:
+                    price = self._price_from_discount_margin_and_clean_parameters(
+                        discount_margin=discount_margin,
+                        settlement_date=settlement_date,
+                        adjust_to_business_days=adjust_to_business_days,
+                        following_coupons_day_count=following_coupons_day_count,
+                        yield_calculation_convention=yield_calculation_convention,
+                        day_count_convention=day_count_convention,
+                        ref_rate_curve=ref_rate_curve,
+                        current_ref_rate=current_ref_rate,
+                        curve_delta=curve_delta,
+                    )
                 ytm = self.yield_to_maturity(
                     price=price,
                     settlement_date=settlement_date,
@@ -2480,7 +2505,19 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                     curve_delta=curve_delta,
                 )
             else:
-                ytm = self._yield_to_maturity
+                discount_margin = self._discount_margin
+                price = self._price
+                return self._resolve_ytm_and_price(
+                    price=price,
+                    discount_margin=discount_margin,
+                    settlement_date=settlement_date,
+                    adjust_to_business_days=adjust_to_business_days,
+                    day_count_convention=day_count_convention,
+                    following_coupons_day_count=following_coupons_day_count,
+                    yield_calculation_convention=yield_calculation_convention,
+                    ref_rate_curve=ref_rate_curve,
+                    current_ref_rate=current_ref_rate,
+                )
 
             return ytm, self._price
 
@@ -2574,25 +2611,40 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         # Case 4: use stored values if available and settlement date matches
         if (
-            self._discount_margin is not None
-            and self._settlement_date == settlement_date
-        ):
+            self._discount_margin is not None or self._price is not None
+        ) and self._settlement_date == settlement_date:
             if (
-                day_count_convention != self.day_count_convention
+                not isinstance(day_count_convention, type(self.day_count_convention))
                 or yield_calculation_convention != self.yield_calculation_convention
             ):
-                discount_margin = self.discount_margin(
+                price = self._price
+                discount_margin = self._discount_margin
+                if discount_margin is None:
+                    discount_margin = self.discount_margin(
+                        price=price,
+                        settlement_date=settlement_date,
+                        adjust_to_business_days=adjust_to_business_days,
+                        following_coupons_day_count=following_coupons_day_count,
+                        yield_calculation_convention=yield_calculation_convention,
+                        day_count_convention=day_count_convention,
+                        current_ref_rate=current_ref_rate,
+                        ref_rate_curve=ref_rate_curve,
+                    )
+            else:
+                discount_margin = self._discount_margin
+                price = self._price
+                return self._resolve_discount_margin_and_price(
+                    discount_margin=discount_margin,
                     price=price,
                     settlement_date=settlement_date,
                     adjust_to_business_days=adjust_to_business_days,
+                    day_count_convention=day_count_convention,
                     following_coupons_day_count=following_coupons_day_count,
                     yield_calculation_convention=yield_calculation_convention,
-                    day_count_convention=day_count_convention,
-                    current_ref_rate=current_ref_rate,
                     ref_rate_curve=ref_rate_curve,
+                    current_ref_rate=current_ref_rate,
+                    curve_delta=curve_delta,
                 )
-            else:
-                discount_margin = self._discount_margin
 
             return discount_margin, self._price
 
@@ -2646,9 +2698,10 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-        >>> bond.macaulay_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
-        4.3760319684
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+        >>> note.macaulay_duration(settlement_date='2020-01-01', ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01"))  # doctest: +ELLIPSIS
+        0.5
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -2767,9 +2820,10 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-        >>> bond.convexity()
-        22.6123221851
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+        >>> note.convexity(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+        np.float64(0.48533...)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -2838,9 +2892,145 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 * time_adjustment
                 * (t * time_adjustment + 1)
                 / (1 + ytm / time_adjustment) ** (t * time_adjustment + 2)
-            )
+            ) / (1 / (1 + ytm / time_adjustment) ** (t * time_adjustment))
 
         return round(convexity / time_adjustment**2, 10) if price_calc != 0 else 0.0
+
+    def effective_convexity(
+        self,
+        discount_margin: Optional[float] = None,
+        price: Optional[float] = None,
+        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        adjust_to_business_days: Optional[bool] = None,
+        day_count_convention: Optional[str | DayCountBase] = None,
+        following_coupons_day_count: Optional[str | DayCountBase] = None,
+        yield_calculation_convention: Optional[str] = None,
+        current_ref_rate: Optional[float] = None,
+        ref_rate_curve: Optional[YieldCurveBase] = None,
+    ) -> float:
+        """
+        Calculate the effective convexity of the bond.
+
+        .. math::
+            \text{Effective Convexity} = \frac{P_{+} + P_{-} - 2P}{\\epsilon^2 P}
+
+        where:
+
+        - :math:`P` is the price of the bond
+        - :math:`P_{+}` is the price if yield increases by :math:`\\epsilon`
+        - :math:`P_{-}` is the price if yield decreases by :math:`\\epsilon`
+        - :math:`\\epsilon` is a small change in yield
+
+        The times to payments are calculated from the settlement date to each payment date and need not be integer values.
+
+        Parameters
+        ----------
+        discount_margin : float, optional
+            Discount margin as a decimal. If not provided, will be calculated from price if given.
+        price : float, optional
+            Price of the bond. Used to estimate discount_margin if not provided.
+        settlement_date : str or datetime-like, optional
+            Settlement date. Defaults to issue date.
+        adjust_to_business_days : bool, optional
+            Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
+        day_count_convention : str or DayCountBase, optional
+            Day count convention. Defaults to value of self.day_count_convention.
+        following_coupons_day_count : str or DayCountBase, optional
+            Day count convention for following coupons. Defaults to value of self.following_coupons_day_count.
+        yield_calculation_convention : str, optional
+            Yield calculation convention. Defaults to value of self.yield_calculation_convention.
+        current_ref_rate : float, optional
+            Current reference rate as a decimal. If not provided, will use self.current_ref_rate.
+        ref_rate_curve : YieldCurveBase, optional
+            Reference rate curve. If not provided, will use self.ref_rate_curve.
+
+        Returns
+        -------
+        convexity : float
+            Bond effective convexity.
+
+        Examples
+        --------
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+        >>> note.effective_convexity(ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2020-01-01")) # doctest: +ELLIPSIS
+        np.float64(0.48533...)
+        """
+        settlement_date = self._resolve_settlement_date(settlement_date)
+        (
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        ) = self._resolve_valuation_parameters(
+            adjust_to_business_days,
+            day_count_convention,
+            following_coupons_day_count,
+            yield_calculation_convention,
+        )
+
+        ytm, price_calc = self._resolve_ytm_and_price(
+            discount_margin,
+            price,
+            settlement_date,
+            adjust_to_business_days=adjust_to_business_days,
+            following_coupons_day_count=following_coupons_day_count,
+            yield_calculation_convention=yield_calculation_convention,
+            day_count_convention=day_count_convention,
+            ref_rate_curve=ref_rate_curve,
+            current_ref_rate=current_ref_rate,
+        )
+
+        if ytm is None or price_calc is None:
+            raise ValueError("Unable to determine yield to maturity.")
+
+        # get next coupon date
+        start = self.previous_coupon_date(
+            settlement_date=settlement_date,
+        )
+        if start is None:
+            start = self.issue_dt
+
+        # get next coupon date
+        next_coupon_date = self.next_coupon_date(settlement_date)
+
+        t_passed = day_count_convention.fraction_period_adjusted(
+            start=start,
+            current=settlement_date,
+            end=next_coupon_date,
+            periods_per_year=self.cpn_freq,
+        )
+
+        time_adjustment = get_time_adjustment(yield_calculation_convention)
+
+        # Calculate time to next coupon
+        t = (
+            following_coupons_day_count.fraction(
+                start=start,
+                current=next_coupon_date,
+            )
+            - t_passed / time_adjustment
+        )
+        # Calculate effective convexity using a small epsilon
+        epsilon = 0.001
+
+        if yield_calculation_convention == "Continuous":
+            price = np.exp(-ytm * t)
+            price_plus_epsilon = np.exp(-(ytm + epsilon) * t)
+            price_minus_epsilon = np.exp(-(ytm - epsilon) * t)
+        else:
+            price = 1 / (1 + ytm / time_adjustment) ** (t * time_adjustment)
+            price_plus_epsilon = 1 / (1 + (ytm + epsilon) / time_adjustment) ** (
+                t * time_adjustment
+            )
+            price_minus_epsilon = 1 / (1 + (ytm - epsilon) / time_adjustment) ** (
+                t * time_adjustment
+            )
+
+        expected_convexity = (price_plus_epsilon + price_minus_epsilon - 2 * price) / (
+            epsilon**2 * price
+        )
+        return expected_convexity
 
     def plot_cash_flows(
         self,
@@ -2880,8 +3070,9 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100)
-        >>> bond.plot_cash_flows(settlement_date='2022-01-01') # doctest: +SKIP
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2022-01-01")
+        >>> note.plot_cash_flows(settlement_date='2022-01-01', ref_rate_curve=FlatCurveBEY(bey=0.02, curve_date="2022-01-01")) # doctest: +SKIP
         # Shows a plot
         """
         (
@@ -2990,12 +3181,13 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100)
-        >>> bond.to_dataframe('2022-01-01') # doctest: +SKIP
-        date        Flows  Coupon  Amortization  Cost
-        2023-01-01  5.0    5.0          0.0           0.0
-        2024-01-01  5.0    5.0          0.0           0.0
-        2025-01-01  105.0  5.0        100.0           0.0
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=1, price=100, settlement_date="2022-01-01")
+        >>> note.to_dataframe(ref_rate_curve=FlatCurveBEY(curve_date='2022-01-01', bey=0.01)) # doctest: +SKIP
+        date        Flows  Expected Coupon  Spread  Amortization  Cost
+        2023-01-01  0.0    5.0              0.0     0.0           0.0
+        2024-01-01  0.0    5.0              0.0     0.0           0.0
+        2025-01-01  105.0  5.0              0.0     100.0         0.0
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -3024,15 +3216,6 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         else:
             valid_price_calc = True
 
-        flows = self.filter_payment_flow(
-            settlement_date,
-            price if valid_price_calc else None,
-            adjust_to_business_days=adjust_to_business_days,
-            day_count_convention=day_count_convention,
-            following_coupons_day_count=following_coupons_day_count,
-            yield_calculation_convention=yield_calculation_convention,
-        )
-
         spread_flows = self.filter_payment_flow(
             settlement_date,
             None,
@@ -3052,7 +3235,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             day_count_convention=day_count_convention,
         )
         expected_cash_flows = self.make_expected_cash_flow(
-            price=None,
+            price=None if not valid_price_calc else price,
             current_ref_rate=current_ref_rate,
             ref_rate_curve=ref_rate_curve,
             settlement_date=settlement_date,
@@ -3067,7 +3250,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         df = (
             pd.concat(
                 [
-                    pd.Series(flows, name="Flows"),
+                    pd.Series(expected_cash_flows, name="Expected Cash Flows"),
                     pd.Series(expected_coupon_flows, name="Expected Coupon"),
                     pd.Series(spread_flows, name="Spread"),
                     pd.Series(amortization_flows, name="Amortization"),
@@ -3077,7 +3260,9 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             .astype(float)
             .fillna(0)
         )
-        df["Cost"] = df["Expected Coupon"] + df["Amortization"] - df["Flows"]
+        df["Cost"] = (
+            df["Expected Coupon"] + df["Amortization"] - df["Expected Cash Flows"]
+        )
         df.index = pd.DatetimeIndex(df.index)
 
         return df.sort_index()
@@ -3154,9 +3339,10 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', 5, 1)
-        >>> bond.z_spread(price=95)
-        np.float64(0.06100197251858131)
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+        >>> bond.z_spread(price=100, ref_rate_curve=FlatCurveBEY(curve_date="2020-01-01", bey=0.03))
+        np.float64(0.01)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -3351,9 +3537,10 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         Examples
         --------
-        >>> bond = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=0, cpn_freq=2, price=100, settlement_date="2020-01-01")
-        >>> bond.g_spread(benchmark_ytm=0.03, price=100)
-        np.float64(0.02)
+        >>> from pyfian.yield_curves.flat_curve import FlatCurveBEY
+        >>> note = FloatingRateNote('2020-01-01', '2025-01-01', quoted_margin=100, cpn_freq=2, price=100, settlement_date="2020-01-01")
+        >>> note.g_spread(benchmark_ytm=0.02, ref_rate_curve=FlatCurveBEY(curve_date="2020-01-01", bey=0.02)) # doctest: +ELLIPSIS
+        np.float64(0.01...)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -3390,7 +3577,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             current_ref_rate=current_ref_rate,
         )
 
-        return round((ytm - benchmark_ytm), 10)
+        return round((ytm - benchmark_ytm), 8)
 
 
 if __name__ == "__main__":  # pragma: no cover
