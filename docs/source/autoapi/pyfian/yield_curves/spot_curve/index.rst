@@ -1,0 +1,240 @@
+pyfian.yield_curves.spot_curve
+==============================
+
+.. py:module:: pyfian.yield_curves.spot_curve
+
+.. autoapi-nested-parse::
+
+   spot_curve.py
+
+   Module for bootstrapping zero-coupon rates from a series of bonds. Implements:
+
+   - SpotCurve: Bootstraps zero-coupon rates from a series of bonds using their prices and cash flows.
+
+   .. rubric:: Examples
+
+   >>> from pyfian.yield_curves.spot_curve import SpotCurve
+   >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
+   >>> curve = SpotCurve(curve_date="2025-08-22", bonds=bonds) # doctest: +SKIP
+   >>> curve.discount_t(1) # doctest: +SKIP
+   ... # returns discount factor for 1 year
+   >>> curve.get_rate(1) # doctest: +SKIP
+   ... # returns spot rate for 1 year
+
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   pyfian.yield_curves.spot_curve.list_maturities_rates
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   pyfian.yield_curves.spot_curve.SpotCurve
+
+
+Module Contents
+---------------
+
+.. py:class:: SpotCurve(curve_date: pandas.Timestamp, bonds: Optional[list[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet] | tuple[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet]] = None, zero_rates: Optional[dict[float, float]] = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/365', yield_calculation_convention: Optional[str] = None)
+
+   Bases: :py:obj:`pyfian.yield_curves.zero_coupon_curve.ZeroCouponCurve`
+
+
+   SpotCurve bootstraps zero-coupon rates from a series of bonds.
+
+   This class provides a mechanism for constructing a spot rate curve from market bond prices, which is essential for fixed income analytics, pricing, and risk management.
+
+   :param curve_date: Date of the curve.
+   :type curve_date: str or datetime-like
+   :param bonds: Each bond must have keys: 'get_price', 'calculate_time_to_payments', 'get_settlement_date'
+   :type bonds: list of Bonds
+   :param zero_rates: Zero-coupon rates, keyed by maturity (in years).
+   :type zero_rates: dict
+   :param day_count_convention: Day count convention to use (default is "actual/365").
+   :type day_count_convention: str or DayCountBase, optional
+   :param yield_calculation_convention: Yield calculation convention to use (default is None). If not specified, "Annual" will be used.
+   :type yield_calculation_convention: str, optional
+
+   .. attribute:: bonds
+
+      List of bonds used for bootstrapping the curve, sorted by maturity.
+
+      :type: list of FixedRateBullet or None
+
+   .. attribute:: curve_date
+
+      Date of the curve.
+
+      :type: pd.Timestamp
+
+   .. attribute:: zero_rates
+
+      Dictionary of zero-coupon rates keyed by maturity (in years).
+
+      :type: dict
+
+   .. attribute:: day_count_convention
+
+      Day count convention used for calculations.
+
+      :type: DayCountBase
+
+   .. attribute:: yield_calculation_convention
+
+      Yield calculation convention used for rate conversions.
+
+      :type: str
+
+   .. attribute:: maturities
+
+      List of maturities (in years) for which spot rates are available.
+
+      :type: list of float
+
+   .. method:: as_dict()
+
+      Convert the curve to a dictionary.
+
+   .. method:: discount_t(t)
+
+      Return the discount factor for time t (in years).
+
+   .. method:: get_rate(t)
+
+      Return the spot rate for time t (in years).
+
+   .. method:: to_dataframe()
+
+      Return the curve as a pandas DataFrame.
+
+   .. method:: _bootstrap_spot_rates()
+
+      Bootstrap spot rates from the provided bonds.
+
+   .. method:: _get_optimal_rate(next_t, non_valued_payments)
+
+      Find the optimal spot rate for a given maturity using non-valued payments.
+
+
+   .. rubric:: Example
+
+   .. code-block:: python
+
+       import pandas as pd
+       from pyfian.yield_curves.spot_curve import SpotCurve
+       from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
+
+       # Par rates for different periods
+       list_maturities_rates = [
+           (pd.DateOffset(months=1), 4.49),
+           (pd.DateOffset(months=3), 4.32),
+           (pd.DateOffset(months=6), 4.14),
+           (pd.DateOffset(years=1), 3.95),
+           (pd.DateOffset(years=2), 3.79),
+           (pd.DateOffset(years=3), 3.75),
+           (pd.DateOffset(years=5), 3.86),
+           (pd.DateOffset(years=7), 4.07),
+           (pd.DateOffset(years=10), 4.33),
+           (pd.DateOffset(years=20), 4.89),
+           (pd.DateOffset(years=30), 4.92),
+       ]
+       date = pd.Timestamp("2025-08-22")
+       one_year_offset = date + pd.DateOffset(years=1)
+       bonds = []
+       for offset, cpn in list_maturities_rates:
+           not_zero_coupon = date + offset > one_year_offset
+           bond = FixedRateBullet(
+               issue_dt=date,
+               maturity=date + offset,
+               cpn_freq=2 if not_zero_coupon else 0,
+               cpn=cpn if not_zero_coupon else 0,
+               price=100 if not_zero_coupon else None,
+               yield_to_maturity=None if not_zero_coupon else cpn / 100,
+               settlement_date=date,
+           )
+           bonds.append(bond)
+
+       curve = SpotCurve(curve_date="2025-08-22", bonds=bonds)
+       print(curve.to_dataframe())
+
+       for bond in bonds:
+           price = bond.get_price()
+           if price is None:
+               continue
+           pv, flows_pv = bond.value_with_curve(curve)
+           maturity_date = bond.maturity
+           print(
+               f"Maturity Date: {maturity_date}, Bond Price: {price}, PV: {pv}, Difference: {price - pv}"
+           )
+
+
+   .. py:attribute:: bonds
+
+
+   .. py:attribute:: curve_date
+      :value: None
+
+
+
+   .. py:attribute:: day_count_convention
+      :type:  pyfian.utils.day_count.DayCountBase
+
+
+   .. py:attribute:: yield_calculation_convention
+      :type:  str
+      :value: 'Annual'
+
+
+
+   .. py:attribute:: maturities
+
+
+   .. py:method:: as_dict()
+
+      Convert the curve to a dictionary.
+
+      :returns: Dictionary containing curve parameters and metadata.
+      :rtype: dict
+
+
+
+   .. py:method:: _bootstrap_spot_rates()
+
+      Bootstrap spot rates from the provided bonds.
+
+      Populates self.zero_rates with calculated spot rates for each bond maturity.
+
+
+
+   .. py:method:: _get_optimal_rate(next_t, non_valued_payments)
+
+      Find the optimal spot rate for a given maturity using non-valued payments.
+
+      :param next_t: Maturity for which to solve the spot rate.
+      :type next_t: float
+      :param non_valued_payments: Payments not valued by previous spot rates.
+      :type non_valued_payments: dict
+
+      :returns: Optimal spot rate for the given maturity.
+      :rtype: float
+
+
+
+   .. py:method:: __repr__()
+
+      Return string representation of the SpotCurve.
+
+      :returns: String representation of the curve.
+      :rtype: str
+
+
+
+.. py:data:: list_maturities_rates
+

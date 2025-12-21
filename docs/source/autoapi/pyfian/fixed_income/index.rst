@@ -1,0 +1,19 @@
+pyfian.fixed_income
+===================
+
+.. py:module:: pyfian.fixed_income
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/pyfian/fixed_income/base_fixed_income/index
+   /autoapi/pyfian/fixed_income/custom_flow_bond/index
+   /autoapi/pyfian/fixed_income/fixed_rate_bond/index
+   /autoapi/pyfian/fixed_income/floating_rate_note/index
+   /autoapi/pyfian/fixed_income/money_market_instruments/index
+
+
