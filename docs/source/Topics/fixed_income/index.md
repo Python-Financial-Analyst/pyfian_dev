@@ -13,4 +13,6 @@ This chapter introduces concepts of Fixed Income
 04_bullet_bonds.ipynb
 05_curves.ipynb
 06_comparing_bonds.ipynb
+07_floating_rates.ipynb
+08_bootstrapping.ipynb
 ```
