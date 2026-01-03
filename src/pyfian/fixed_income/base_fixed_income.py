@@ -26,6 +26,7 @@ class BaseFixedIncomeInstrument(ABC):
     coupon_flow: dict
     amortization_flow: dict
     maturity: pd.Timestamp
+    currency: str
 
     @abstractmethod
     def _validate_following_coupons_day_count(

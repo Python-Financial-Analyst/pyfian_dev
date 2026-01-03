@@ -65,6 +65,8 @@ class FixedRateBullet(BaseFixedIncomeInstrumentWithYieldToMaturity):
     yield_calculation_convention : str, optional
         Yield convention for the bond yield calculation. By default, it is "BEY" (Bond Equivalent Yield).
         Other options are "Annual", "Continuous", "BEY-Q", "BEY-M", "BEY-S".
+    currency : str, optional
+        Currency of the bond. Defaults to 'USD'.
 
     Raises
     ------
@@ -110,6 +112,8 @@ class FixedRateBullet(BaseFixedIncomeInstrumentWithYieldToMaturity):
     yield_calculation_convention : str
         Yield convention for the bond yield calculation. By default, it is "BEY" (Bond Equivalent Yield).
         Other options are "Annual" or "Continuous".
+    currency : str
+        Currency of the bond.
 
     Examples
     --------
@@ -134,6 +138,7 @@ class FixedRateBullet(BaseFixedIncomeInstrumentWithYieldToMaturity):
         day_count_convention: str | DayCountBase = "actual/actual-Bond",
         following_coupons_day_count: str | DayCountBase = "30/360",
         yield_calculation_convention: str = "BEY",
+        currency: str = "USD",
     ) -> None:
         # Input validation
         if cpn_freq < 0:
@@ -172,6 +177,7 @@ class FixedRateBullet(BaseFixedIncomeInstrumentWithYieldToMaturity):
         self.notional: float = notional
         self.settlement_convention_t_plus: int = settlement_convention_t_plus
         self.record_date_t_minus: int = record_date_t_minus
+        self.currency: str = currency
 
         # Raise if day_count_convention is neither str nor DayCountBase
         if not isinstance(day_count_convention, (str, DayCountBase)):

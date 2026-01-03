@@ -67,6 +67,8 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
     yield_calculation_convention : str, optional
         Yield convention for the bond yield calculation. By default, it is "BEY" (Bond Equivalent Yield).
         Other options are "Annual", "Continuous", "BEY-Q", "BEY-M", "BEY-S".
+    currency : str, optional
+        Currency of the bond. Defaults to 'USD'.
 
     Raises
     ------
@@ -109,6 +111,8 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         Dictionary with spread payment dates as keys and spread amounts as values.
     amortization_flow : dict
         Dictionary with amortization payment dates as keys and amortization amounts as values.
+    currency : str
+        Currency of the bond.
     _settlement_date : Optional[pd.Timestamp]
         The settlement date of the bond.
     _discount_margin : Optional[float]
@@ -139,6 +143,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         day_count_convention: str | DayCountBase = "actual/actual-Bond",
         following_coupons_day_count: str | DayCountBase = "30/360",
         yield_calculation_convention: str = "BEY",
+        currency: str = "USD",
     ) -> None:
         self.issue_dt: pd.Timestamp = pd.to_datetime(issue_dt)
         self.maturity: pd.Timestamp = pd.to_datetime(maturity)
@@ -149,6 +154,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         self.notional = notional
         self.settlement_convention_t_plus = settlement_convention_t_plus
         self.record_date_t_minus = record_date_t_minus
+        self.currency: str = currency
         if not isinstance(day_count_convention, (str, DayCountBase)):
             raise TypeError(
                 "day_count_convention must be either a string or a DayCountBase instance."
