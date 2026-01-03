@@ -60,10 +60,13 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html">Fixed Income Instruments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02_money_market_instruments.html">Money Market Instruments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03_bullet_bonds.html">Bullet Bonds</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04_curves.html">Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="05_comparing_bonds.html">Comparing Bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bond_pricing_and_yields.html">Bond Pricing and Yields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_money_market_instruments.html">Money Market Instruments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_bullet_bonds.html">Bullet Bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_curves.html">Plotting the Yield Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_comparing_bonds.html">Comparing Bond Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_floating_rates.html">Floating Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_bootstrapping.html">Bootstrapping</a></li>
 </ul>
 </li>
 </ul>
@@ -160,10 +163,10 @@
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting git+https://github.com/pydata/pandas-datareader.git
-  Cloning https://github.com/pydata/pandas-datareader.git to /tmp/pip-req-build-sf09cev1
+  Cloning https://github.com/pydata/pandas-datareader.git to /tmp/pip-req-build-xk5x3caz
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Running command git clone --filter=blob:none --quiet https://github.com/pydata/pandas-datareader.git /tmp/pip-req-build-sf09cev1
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Running command git clone --filter=blob:none --quiet https://github.com/pydata/pandas-datareader.git /tmp/pip-req-build-xk5x3caz
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Resolved https://github.com/pydata/pandas-datareader.git to commit 4ff62149bb24f72d62874477b6688ddb0fd1f97c
@@ -183,30 +186,29 @@
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting lxml (from pandas-datareader==0.11.0.dev76+g4ff6214)
   Downloading lxml-6.0.2-cp312-cp312-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl.metadata (3.6 kB)
-Requirement already satisfied: pandas&gt;=1.5.3 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas-datareader==0.11.0.dev76+g4ff6214) (2.3.1)
-Requirement already satisfied: requests&gt;=2.19.0 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas-datareader==0.11.0.dev76+g4ff6214) (2.32.4)
-Requirement already satisfied: numpy&gt;=1.26.0 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas&gt;=1.5.3-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2.3.1)
+Requirement already satisfied: pandas&gt;=1.5.3 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas-datareader==0.11.0.dev76+g4ff6214) (2.3.3)
+Requirement already satisfied: requests&gt;=2.19.0 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas-datareader==0.11.0.dev76+g4ff6214) (2.32.5)
+Requirement already satisfied: numpy&gt;=1.26.0 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas&gt;=1.5.3-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2.3.5)
 Requirement already satisfied: python-dateutil&gt;=2.8.2 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas&gt;=1.5.3-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2.9.0.post0)
 Requirement already satisfied: pytz&gt;=2020.1 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas&gt;=1.5.3-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2025.2)
 Requirement already satisfied: tzdata&gt;=2022.7 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas&gt;=1.5.3-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2025.2)
 Requirement already satisfied: six&gt;=1.5 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas&gt;=1.5.3-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (1.17.0)
-Requirement already satisfied: charset_normalizer&lt;4,&gt;=2 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (3.4.2)
-Requirement already satisfied: idna&lt;4,&gt;=2.5 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (3.10)
+Requirement already satisfied: charset_normalizer&lt;4,&gt;=2 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (3.4.4)
+Requirement already satisfied: idna&lt;4,&gt;=2.5 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (3.11)
 Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2.5.0)
-Requirement already satisfied: certifi&gt;=2017.4.17 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2025.7.14)
+Requirement already satisfied: certifi&gt;=2017.4.17 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2025.11.12)
 Downloading lxml-6.0.2-cp312-cp312-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl (5.3 MB)
 ?25l   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">0.0/5.3 MB</span> <span class=" -Color -Color-Red">?</span> eta <span class=" -Color -Color-Cyan">-:--:--</span>
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   ━━━━━━━━━━━━━━━━━╸━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">2.4/5.3 MB</span> <span class=" -Color -Color-Red">13.9 MB/s</span> eta <span class=" -Color -Color-Cyan">0:00:01</span>
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">5.3/5.3 MB</span> <span class=" -Color -Color-Red">16.9 MB/s</span>  <span class=" -Color -Color-Yellow">0:00:00</span>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">5.3/5.3 MB</span> <span class=" -Color -Color-Red">37.9 MB/s</span>  <span class=" -Color -Color-Yellow">0:00:00</span>
 ?25hBuilding wheels for collected packages: pandas-datareader
   Building wheel for pandas-datareader (pyproject.toml): started
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Building wheel for pandas-datareader (pyproject.toml): finished with status &#39;done&#39;
-  Created wheel for pandas-datareader: filename=pandas_datareader-0.11.0.dev76+g4ff6214-py3-none-any.whl size=114770 sha256=d083ae1924f8ceaf341054c8bb8f906e0fa2af08fa1fd47487f2a50ba5959d12
-  Stored in directory: /tmp/pip-ephem-wheel-cache-_jm8xg0r/wheels/68/09/2b/66ff2e878a27988531be41d35ba4495de3d8f800ebb5de1c07
+  Created wheel for pandas-datareader: filename=pandas_datareader-0.11.0.dev76+g4ff6214-py3-none-any.whl size=114770 sha256=24695fba824c9fabdfba545d7f7f39e9b0e20e008cd0669c6c86babf2cb0f7ca
+  Stored in directory: /tmp/pip-ephem-wheel-cache-xscpepn3/wheels/68/09/2b/66ff2e878a27988531be41d35ba4495de3d8f800ebb5de1c07
 Successfully built pandas-datareader
 Installing collected packages: lxml, pandas-datareader
 ?25l
@@ -308,7 +310,7 @@ r_{\text{nom}} = r^\star + \pi + \text{Default} + \text{Liq} + \text{Mat} + \tex
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/703b76f6929368c7473aaa1939f4f1fa10214a31c504198a0aa12649e4ab20c5.png" src="../../_images/703b76f6929368c7473aaa1939f4f1fa10214a31c504198a0aa12649e4ab20c5.png" />
+<img alt="../../_images/9af37bf98098950f905054321efb14a64d338dcfd8f92fad4763c6b32ba5b1c6.png" src="../../_images/9af37bf98098950f905054321efb14a64d338dcfd8f92fad4763c6b32ba5b1c6.png" />
 </div>
 </div>
 </section>
@@ -469,7 +471,7 @@ r_{\text{nom}} = r^\star + \pi + \text{Default} + \text{Liq} + \text{Mat} + \tex
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/807f86fd8d837cf8057a8e31711b7f6e902fde856eefb62118fb5291a2a4aede.png" src="../../_images/807f86fd8d837cf8057a8e31711b7f6e902fde856eefb62118fb5291a2a4aede.png" />
+<img alt="../../_images/6e598629f00d4210377ee5278904bacf576d37124107f895f13d8d8996674dd2.png" src="../../_images/6e598629f00d4210377ee5278904bacf576d37124107f895f13d8d8996674dd2.png" />
 </div>
 </div>
 <p>This difference, called Breakeven inflation, is also the inflation rate that would equalize returns between a traditional nominal bond and an inflation-protected bond.</p>
@@ -489,7 +491,7 @@ r_{\text{nom}} = r^\star + \pi + \text{Default} + \text{Liq} + \text{Mat} + \tex
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/5806089a242fd1cbaee56bc3502e5cb121fd94eee60666e1df9bc91dde47e03e.png" src="../../_images/5806089a242fd1cbaee56bc3502e5cb121fd94eee60666e1df9bc91dde47e03e.png" />
+<img alt="../../_images/17eaa9cccf7a7f77907b58630cc49b080740b42d73509241925dd206a18b1ae1.png" src="../../_images/17eaa9cccf7a7f77907b58630cc49b080740b42d73509241925dd206a18b1ae1.png" />
 </div>
 </div>
 <p>Looking at historical data, nominal rates and real rates have fluctuated significantly over time. In recent years, both have trended upwards. A key contributing factor to this rise has been persistently large government deficits, which can exert upward pressure on yields due to increased supply of government debt and potential concerns about inflation. This dynamic has led investors to demand higher compensation, both in nominal terms and increasingly in real terms, to hold government securities.</p>
@@ -516,7 +518,7 @@ r_{\text{nom}} = r^\star + \pi + \text{Default} + \text{Liq} + \text{Mat} + \tex
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/b65056565b6f624934202ccd380e5583ab93ec87ae9e11caf18b89cc14320fc5.png" src="../../_images/b65056565b6f624934202ccd380e5583ab93ec87ae9e11caf18b89cc14320fc5.png" />
+<img alt="../../_images/56cb1f2a42bcb483e83ab478bda025805390dbd7a2c14213fc7200387a108362.png" src="../../_images/56cb1f2a42bcb483e83ab478bda025805390dbd7a2c14213fc7200387a108362.png" />
 </div>
 </div>
 </section>

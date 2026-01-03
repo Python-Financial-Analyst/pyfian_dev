@@ -1,0 +1,221 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Floating Rates &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Bootstrapping" href="08_bootstrapping.html" />
+    <link rel="prev" title="Comparing Bond Returns" href="06_comparing_bonds.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Fixed Income</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00_economics_of_interest_rates.html">Economics of Interest Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html">Fixed Income Instruments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bond_pricing_and_yields.html">Bond Pricing and Yields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_money_market_instruments.html">Money Market Instruments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_bullet_bonds.html">Bullet Bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_curves.html">Plotting the Yield Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_comparing_bonds.html">Comparing Bond Returns</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Floating Rates</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#learning-objectives">Learning Objectives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-the-floating-rate-class">Using the Floating Rate Class</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="08_bootstrapping.html">Bootstrapping</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Fixed Income</a></li>
+      <li class="breadcrumb-item active">Floating Rates</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Topics/fixed_income/07_floating_rates.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="floating-rates">
+<h1>Floating Rates<a class="headerlink" href="#floating-rates" title="Link to this heading"></a></h1>
+<section id="learning-objectives">
+<h2>Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Define a Floating Rate Bond.</p></li>
+<li><p>Introduce the FloatingRateNoteClass.</p></li>
+</ul>
+</section>
+<section id="using-the-floating-rate-class">
+<h2>Using the Floating Rate Class<a class="headerlink" href="#using-the-floating-rate-class" title="Link to this heading"></a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.floating_rate_note</span><span class="w"> </span><span class="kn">import</span> <span class="n">FloatingRateNote</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ipd</span>
+
+<span class="c1"># Define a minimal floating rate note</span>
+<span class="n">frn</span> <span class="o">=</span> <span class="n">FloatingRateNote</span><span class="p">(</span>
+    <span class="n">issue_dt</span><span class="o">=</span><span class="s2">&quot;2025-01-01&quot;</span><span class="p">,</span>
+    <span class="n">maturity</span><span class="o">=</span><span class="s2">&quot;2030-01-01&quot;</span><span class="p">,</span>
+    <span class="n">ref_rate_curve</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># Optional, can be left None for minimal input</span>
+    <span class="n">quoted_margin</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>  <span class="c1"># 2% over reference rate</span>
+    <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># Semi-annual coupons</span>
+    <span class="n">notional</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>  <span class="c1"># Face value</span>
+    <span class="n">settlement_date</span><span class="o">=</span><span class="s2">&quot;2025-12-01&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Build a table with minimum necessary inputs</span>
+<span class="n">inputs_data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;Attribute&quot;</span><span class="p">:</span> <span class="s2">&quot;Instrument&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">:</span> <span class="n">frn</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;Attribute&quot;</span><span class="p">:</span> <span class="s2">&quot;Issue Date&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">:</span> <span class="n">frn</span><span class="o">.</span><span class="n">issue_dt</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;Attribute&quot;</span><span class="p">:</span> <span class="s2">&quot;Maturity Date&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">:</span> <span class="n">frn</span><span class="o">.</span><span class="n">maturity</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;Attribute&quot;</span><span class="p">:</span> <span class="s2">&quot;Settlement Date&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">:</span> <span class="n">frn</span><span class="o">.</span><span class="n">get_settlement_date</span><span class="p">()},</span>
+    <span class="p">{</span><span class="s2">&quot;Attribute&quot;</span><span class="p">:</span> <span class="s2">&quot;Notional&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">:</span> <span class="n">frn</span><span class="o">.</span><span class="n">notional</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;Attribute&quot;</span><span class="p">:</span> <span class="s2">&quot;Coupon Frequency&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">:</span> <span class="n">frn</span><span class="o">.</span><span class="n">cpn_freq</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;Attribute&quot;</span><span class="p">:</span> <span class="s2">&quot;Quoted Margin&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">:</span> <span class="n">frn</span><span class="o">.</span><span class="n">quoted_margin</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="c1"># Convert to DataFrame</span>
+<span class="n">df_inputs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">inputs_data</span><span class="p">)</span>
+
+<span class="c1"># Display table without index</span>
+<span class="n">ipd</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">df_inputs</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">hide</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style type="text/css">
+</style>
+<table id="T_7bc8c">
+  <thead>
+    <tr>
+      <th id="T_7bc8c_level0_col0" class="col_heading level0 col0" >Attribute</th>
+      <th id="T_7bc8c_level0_col1" class="col_heading level0 col1" >Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td id="T_7bc8c_row0_col0" class="data row0 col0" >Instrument</td>
+      <td id="T_7bc8c_row0_col1" class="data row0 col1" >FloatingRateNote</td>
+    </tr>
+    <tr>
+      <td id="T_7bc8c_row1_col0" class="data row1 col0" >Issue Date</td>
+      <td id="T_7bc8c_row1_col1" class="data row1 col1" >2025-01-01 00:00:00</td>
+    </tr>
+    <tr>
+      <td id="T_7bc8c_row2_col0" class="data row2 col0" >Maturity Date</td>
+      <td id="T_7bc8c_row2_col1" class="data row2 col1" >2030-01-01 00:00:00</td>
+    </tr>
+    <tr>
+      <td id="T_7bc8c_row3_col0" class="data row3 col0" >Settlement Date</td>
+      <td id="T_7bc8c_row3_col1" class="data row3 col1" >2025-12-01 00:00:00</td>
+    </tr>
+    <tr>
+      <td id="T_7bc8c_row4_col0" class="data row4 col0" >Notional</td>
+      <td id="T_7bc8c_row4_col1" class="data row4 col1" >1000</td>
+    </tr>
+    <tr>
+      <td id="T_7bc8c_row5_col0" class="data row5 col0" >Coupon Frequency</td>
+      <td id="T_7bc8c_row5_col1" class="data row5 col1" >2</td>
+    </tr>
+    <tr>
+      <td id="T_7bc8c_row6_col0" class="data row6 col0" >Quoted Margin</td>
+      <td id="T_7bc8c_row6_col1" class="data row6 col1" >0.000002</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="06_comparing_bonds.html" class="btn btn-neutral float-left" title="Comparing Bond Returns" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="08_bootstrapping.html" class="btn btn-neutral float-right" title="Bootstrapping" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

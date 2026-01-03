@@ -49,10 +49,13 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Fixed Income</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="00_economics_of_interest_rates.html">Economics of Interest Rates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html">Fixed Income Instruments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02_money_market_instruments.html">Money Market Instruments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03_bullet_bonds.html">Bullet Bonds</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04_curves.html">Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="05_comparing_bonds.html">Comparing Bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bond_pricing_and_yields.html">Bond Pricing and Yields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_money_market_instruments.html">Money Market Instruments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_bullet_bonds.html">Bullet Bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_curves.html">Plotting the Yield Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_comparing_bonds.html">Comparing Bond Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_floating_rates.html">Floating Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_bootstrapping.html">Bootstrapping</a></li>
 </ul>
 </li>
 </ul>
@@ -106,42 +109,59 @@
 <li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html#installation">Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html#bond-terminology-and-structure">Bond Terminology and Structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html#types-of-bonds">Types of Bonds</a></li>
-<li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html#cash-flow-patterns">Cash Flow Patterns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html#price-conventions">Price Conventions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html#introduction-to-yield-concepts-preview">Introduction to Yield Concepts (Preview)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html#irr-internal-rate-of-return">IRR: Internal Rate of Return</a></li>
-<li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html#xirr-non-periodic-irr">XIRR: Non periodic IRR</a></li>
-<li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html#continuous-compounding">Continuous compounding</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="02_money_market_instruments.html">Money Market Instruments</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="02_money_market_instruments.html#learning-objectives">Learning Objectives</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02_money_market_instruments.html#money-market-instruments-vs-bonds">Money Market Instruments vs Bonds</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02_money_market_instruments.html#types-of-mmis">Types of MMIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_bond_pricing_and_yields.html">Bond Pricing and Yields</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="02_bond_pricing_and_yields.html#learning-objectives">Learning Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bond_pricing_and_yields.html#using-the-bond-class">Using the Bond Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bond_pricing_and_yields.html#discount-par-premium">Discount, Par &amp; Premium</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bond_pricing_and_yields.html#quoting-the-price-of-a-bond">Quoting the price of a bond</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bond_pricing_and_yields.html#discrete-periods-vs-continuous-compounding">Discrete Periods vs Continuous compounding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bond_pricing_and_yields.html#introduction-to-yield-concepts">Introduction to Yield Concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bond_pricing_and_yields.html#calculating-yields-and-prices">Calculating yields and prices</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="03_bullet_bonds.html">Bullet Bonds</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="03_bullet_bonds.html#learning-objectives">Learning Objectives</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03_bullet_bonds.html#bond-day-counting-conventions">Bond Day-Counting Conventions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03_bullet_bonds.html#calculating-bond-price-from-discount-curve">Calculating Bond Price from Discount Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03_bullet_bonds.html#discount-rate">Discount Rate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03_bullet_bonds.html#duration">Duration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03_bullet_bonds.html#convexity">Convexity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_money_market_instruments.html">Money Market Instruments</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="03_money_market_instruments.html#learning-objectives">Learning Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_money_market_instruments.html#money-market-instruments-vs-bonds">Money Market Instruments vs Bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_money_market_instruments.html#types-of-mmis">Types of MMIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_money_market_instruments.html#bond-day-counting-conventions">Bond Day-Counting Conventions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="04_curves.html">Curves</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="04_curves.html#learning-objectives">Learning Objectives</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04_curves.html#characteristics">Characteristics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04_curves.html#curve-shapes">Curve Shapes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04_curves.html#central-banks-and-interest-rates-managing-demand-shocks">Central Banks and Interest Rates: Managing Demand Shocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_bullet_bonds.html">Bullet Bonds</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="04_bullet_bonds.html#learning-objectives">Learning Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_bullet_bonds.html#cash-flow-structure">Cash Flow Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_bullet_bonds.html#bond-price">Bond Price</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_bullet_bonds.html#duration">Duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_bullet_bonds.html#convexity">Convexity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_bullet_bonds.html#calculating-price-duration-convexity">Calculating Price, Duration, Convexity</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="05_comparing_bonds.html">Comparing Bonds</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="05_comparing_bonds.html#logarithm-of-a-curve">Logarithm of a Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="05_comparing_bonds.html#aer-annual-equivalent-rate">AER (Annual Equivalent Rate)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="05_comparing_bonds.html#bey-bond-equivalent-yield">BEY (Bond Equivalent Yield)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_curves.html">Plotting the Yield Curve</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="05_curves.html#learning-objectives">Learning Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_curves.html#characteristics">Characteristics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_curves.html#spot-curves">Spot Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_curves.html#other-yield-curves">Other Yield Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_curves.html#central-banks-and-interest-rates-managing-demand-shocks">Central Banks and Interest Rates: Managing Demand Shocks</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="06_comparing_bonds.html">Comparing Bond Returns</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="06_comparing_bonds.html#learning-objectives">Learning Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_comparing_bonds.html#yield-to-maturity-ytm">Yield to Maturity (YTM)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_comparing_bonds.html#current-yield">Current Yield</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_comparing_bonds.html#irr-internal-rate-of-return">IRR (Internal Rate of Return)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_comparing_bonds.html#xirr-extended-irr">XIRR (Extended IRR)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_comparing_bonds.html#aer-annual-equivalent-rate">AER (Annual Equivalent Rate)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_comparing_bonds.html#bey-bond-equivalent-yield">BEY (Bond Equivalent Yield)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_comparing_bonds.html#pvbp-price-value-of-a-basis-point">PVBP (Price Value of a Basis Point)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="07_floating_rates.html">Floating Rates</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="07_floating_rates.html#learning-objectives">Learning Objectives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_floating_rates.html#using-the-floating-rate-class">Using the Floating Rate Class</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="08_bootstrapping.html">Bootstrapping</a></li>
 </ul>
 </div>
 </section>

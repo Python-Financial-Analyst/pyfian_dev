@@ -1,0 +1,491 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "fd1e58c6",
+   "metadata": {},
+   "source": [
+    "<a href=\"https://colab.research.google.com/github/Python-Financial-Analyst/pyfian_dev/blob/main/notebooks/fixed_income/02_bullet_bonds.ipynb\" target=\"_blank\">\n",
+    "  <img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open in Colab\"/>\n",
+    "</a>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "26db6fee",
+   "metadata": {},
+   "source": [
+    "# Bullet Bonds"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c9fb188d",
+   "metadata": {},
+   "source": [
+    "## Learning Objectives\n",
+    "\n",
+    "- Define the cash flows of a bullet bond. \n",
+    "- Understand how the price of a bond is quoted.\n",
+    "- Calculating bond price from the discount rate. \n",
+    "- Learn about duration and convexity of a bullet bond. \n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0fe11205",
+   "metadata": {},
+   "source": [
+    "## Cash Flow Structure\n",
+    "\n",
+    "A bullet bond returns the principal at maturity. This is an example of a bullet bond and its cash flows:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "id": "2988cd7e",
+   "metadata": {
+    "tags": [
+     "hide-input"
+    ]
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<style type=\"text/css\">\n",
+       "</style>\n",
+       "<table id=\"T_bbbde\">\n",
+       "  <thead>\n",
+       "    <tr>\n",
+       "      <th id=\"T_bbbde_level0_col0\" class=\"col_heading level0 col0\" >Attribute</th>\n",
+       "      <th id=\"T_bbbde_level0_col1\" class=\"col_heading level0 col1\" >Value</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <td id=\"T_bbbde_row0_col0\" class=\"data row0 col0\" >Instrument</td>\n",
+       "      <td id=\"T_bbbde_row0_col1\" class=\"data row0 col1\" >FixedRateBullet</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_bbbde_row1_col0\" class=\"data row1 col0\" >Issue Date</td>\n",
+       "      <td id=\"T_bbbde_row1_col1\" class=\"data row1 col1\" >2026-01-01 00:00:00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_bbbde_row2_col0\" class=\"data row2 col0\" >Maturity Date</td>\n",
+       "      <td id=\"T_bbbde_row2_col1\" class=\"data row2 col1\" >2031-01-01 00:00:00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_bbbde_row3_col0\" class=\"data row3 col0\" >Settlement Date</td>\n",
+       "      <td id=\"T_bbbde_row3_col1\" class=\"data row3 col1\" >2027-01-01 00:00:00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_bbbde_row4_col0\" class=\"data row4 col0\" >Notional</td>\n",
+       "      <td id=\"T_bbbde_row4_col1\" class=\"data row4 col1\" >100</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_bbbde_row5_col0\" class=\"data row5 col0\" >Coupon (%)</td>\n",
+       "      <td id=\"T_bbbde_row5_col1\" class=\"data row5 col1\" >5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_bbbde_row6_col0\" class=\"data row6 col0\" >Coupon Frequency</td>\n",
+       "      <td id=\"T_bbbde_row6_col1\" class=\"data row6 col1\" >1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_bbbde_row7_col0\" class=\"data row7 col0\" >Day Count Convention</td>\n",
+       "      <td id=\"T_bbbde_row7_col1\" class=\"data row7 col1\" >DayCountActualActualBond</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_bbbde_row8_col0\" class=\"data row8 col0\" >Yield to Maturity (%)</td>\n",
+       "      <td id=\"T_bbbde_row8_col1\" class=\"data row8 col1\" >5.00</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n"
+      ],
+      "text/plain": [
+       "<pandas.io.formats.style.Styler at 0x11e4f1590>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet\n",
+    "import IPython.display as display\n",
+    "\n",
+    "# Define the bond\n",
+    "bond = FixedRateBullet(\n",
+    "    issue_dt=\"2026-01-01\",\n",
+    "    maturity=\"2031-01-01\",\n",
+    "    cpn=5,  # Coupon rate (%)\n",
+    "    cpn_freq=1,  # Annual coupon\n",
+    "    notional=100,  # Face value\n",
+    "    yield_to_maturity=0.05,  # YTM\n",
+    "    settlement_date=\"2027-01-01\",\n",
+    ")\n",
+    "\n",
+    "# Build table with only inputs\n",
+    "inputs_data = [\n",
+    "    {\"Attribute\": \"Instrument\", \"Value\": bond.__class__.__name__},\n",
+    "    {\"Attribute\": \"Issue Date\", \"Value\": bond.issue_dt},\n",
+    "    {\"Attribute\": \"Maturity Date\", \"Value\": bond.maturity},\n",
+    "    {\"Attribute\": \"Settlement Date\", \"Value\": bond.get_settlement_date()},\n",
+    "    {\"Attribute\": \"Notional\", \"Value\": bond.notional},\n",
+    "    {\"Attribute\": \"Coupon (%)\", \"Value\": bond.cpn},\n",
+    "    {\"Attribute\": \"Coupon Frequency\", \"Value\": bond.cpn_freq},\n",
+    "    {\n",
+    "        \"Attribute\": \"Day Count Convention\",\n",
+    "        \"Value\": bond.day_count_convention.__class__.__name__,\n",
+    "    },\n",
+    "    {\n",
+    "        \"Attribute\": \"Yield to Maturity (%)\",\n",
+    "        \"Value\": f\"{bond.yield_to_maturity() * 100:.2f}\",\n",
+    "    },\n",
+    "]\n",
+    "\n",
+    "df_inputs = pd.DataFrame(inputs_data)\n",
+    "\n",
+    "# Display table without index\n",
+    "display.display(df_inputs.style.hide(axis=\"index\"))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "14b83f0b",
+   "metadata": {},
+   "source": [
+    "The cash flow structure is:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "id": "d86340c3",
+   "metadata": {
+    "tags": [
+     "hide-input"
+    ]
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<style type=\"text/css\">\n",
+       "</style>\n",
+       "<table id=\"T_badbb\">\n",
+       "  <thead>\n",
+       "    <tr>\n",
+       "      <th id=\"T_badbb_level0_col0\" class=\"col_heading level0 col0\" >Value</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <td id=\"T_badbb_row0_col0\" class=\"data row0 col0\" >5.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_badbb_row1_col0\" class=\"data row1 col0\" >5.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_badbb_row2_col0\" class=\"data row2 col0\" >5.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_badbb_row3_col0\" class=\"data row3 col0\" >105.000000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n"
+      ],
+      "text/plain": [
+       "<pandas.io.formats.style.Styler at 0x11e4bfbd0>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet\n",
+    "import pandas as pd\n",
+    "from IPython.display import display\n",
+    "\n",
+    "df = pd.DataFrame(bond.cash_flows())\n",
+    "df.columns = [\"Value\"]\n",
+    "display(df.style.hide(axis=\"index\"))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e14885e9",
+   "metadata": {},
+   "source": [
+    "## Bond Price\n",
+    "\n",
+    "In order to price a bond correctly, we just need to compute the present value of the future cash flows. The cash flows consist of the periodic coupon payments and the face value paid at maturity, in the case of the bullet bond. In order to discount the cash flows we need to find the discount rate, which is found using the exponential function: $P = F \\times e^{-rt}$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "362d93c9",
+   "metadata": {},
+   "source": [
+    "## Duration\n",
+    "\n",
+    "Duration measures a bond's price sensitivity to changes in interest rates and represents the weighted average time to receive the bond's cash flows. Mathematically, duration approximates the percentage change in a bond's price for a small change in yield, expressed as:\n",
+    "\n",
+    "$$D = -\\frac{1}{P} \\cdot \\frac{dP}{dr}$$\n",
+    "\n",
+    "The negative sign reflects the inverse relationship between bond prices and yields."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6a8a645f",
+   "metadata": {},
+   "source": [
+    "### Macaulay Duration\n",
+    "\n",
+    "Macaulay duration is the weighted average time until a bond's cash flows are received, expressed in years. It is calculated as:\n",
+    "\n",
+    "$$\\frac{\\sum_{t=1}^n \\frac{t \\cdot C_t}{(1 + y)^t} + \\frac{n \\cdot FV}{(1 + y)^n}}{P}$$\n",
+    "\n",
+    "where:\n",
+    "- $C_t$: Cash flow (coupon payment) at time $t$\n",
+    "- $FV$: Face value of the bond\n",
+    "- $y$: Yield to maturity (per period)\n",
+    "- $n$: Number of periods until maturity\n",
+    "- $P$: Present value (current price) of the bond\n",
+    "\n",
+    "For a zero-coupon bond, since there are no coupon payments ($C_t = 0$), the Macaulay duration simplifies to the time to maturity, $T - t$, where $T$ is the maturity date and $t$ is the current date."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4081217e",
+   "metadata": {},
+   "source": [
+    "### Modified Duration\n",
+    "\n",
+    "Modified duration directly measures the percentage change in a bond's price for a 1% change in yield. It is derived from the Macaulay duration as:\n",
+    "\n",
+    "$$D^{\\text{Mod}} = \\frac{D^{\\text{MC}}}{1 + \\frac{y}{k}}$$\n",
+    "\n",
+    "where:\n",
+    "- $y$: Annual yield to maturity\n",
+    "- $k$: Number of compounding periods per year (e.g., $k = 2$ for semi-annual, $k = 1$ for annual)\n",
+    "\n",
+    "For a zero-coupon bond with annual compounding ($k = 1$), the modified duration is:\n",
+    "\n",
+    "$$D^{\\text{Mod}} = \\frac{T - t}{1 + y}$$\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8f5672ba",
+   "metadata": {},
+   "source": [
+    "\n",
+    "## Convexity\n",
+    "\n",
+    "Convexity measures the sensitivity of a bond’s duration to changes in interest rates and captures the non-linear relationship between bond prices and yields. It is the second derivative of the bond’s price with respect to the yield, scaled by the price:\n",
+    "\n",
+    "$$C = \\frac{1}{P} \\cdot \\frac{d^2P}{dr^2}$$\n",
+    "\n",
+    "For a zero-coupon bond with annual compounding, the convexity is:\n",
+    "\n",
+    "$$C = \\frac{(T - t)(T - t + 1)}{(1 + y)^2}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d2758071",
+   "metadata": {},
+   "source": [
+    "## Calculating Price, Duration, Convexity\n",
+    "\n",
+    "Initially we used the fixed rate bullet class to program a bond. Now we can use the functions in the FixedRateBullet class to calculate the price, duration and convexity of a bond. Initially we list the inputs, and the calculated variables are marked with a star. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "id": "2e941dda",
+   "metadata": {
+    "tags": [
+     "hide-input"
+    ]
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<style type=\"text/css\">\n",
+       "</style>\n",
+       "<table id=\"T_262da\">\n",
+       "  <thead>\n",
+       "    <tr>\n",
+       "      <th id=\"T_262da_level0_col0\" class=\"col_heading level0 col0\" >Attribute</th>\n",
+       "      <th id=\"T_262da_level0_col1\" class=\"col_heading level0 col1\" >Value</th>\n",
+       "      <th id=\"T_262da_level0_col2\" class=\"col_heading level0 col2\" >Category</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <td id=\"T_262da_row0_col0\" class=\"data row0 col0\" >Instrument</td>\n",
+       "      <td id=\"T_262da_row0_col1\" class=\"data row0 col1\" >FixedRateBullet</td>\n",
+       "      <td id=\"T_262da_row0_col2\" class=\"data row0 col2\" ></td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_262da_row1_col0\" class=\"data row1 col0\" >Issue Date</td>\n",
+       "      <td id=\"T_262da_row1_col1\" class=\"data row1 col1\" >2026-01-01 00:00:00</td>\n",
+       "      <td id=\"T_262da_row1_col2\" class=\"data row1 col2\" ></td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_262da_row2_col0\" class=\"data row2 col0\" >Maturity Date</td>\n",
+       "      <td id=\"T_262da_row2_col1\" class=\"data row2 col1\" >2031-01-01 00:00:00</td>\n",
+       "      <td id=\"T_262da_row2_col2\" class=\"data row2 col2\" ></td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_262da_row3_col0\" class=\"data row3 col0\" >Settlement Date</td>\n",
+       "      <td id=\"T_262da_row3_col1\" class=\"data row3 col1\" >2027-01-01 00:00:00</td>\n",
+       "      <td id=\"T_262da_row3_col2\" class=\"data row3 col2\" ></td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_262da_row4_col0\" class=\"data row4 col0\" >Notional</td>\n",
+       "      <td id=\"T_262da_row4_col1\" class=\"data row4 col1\" >100</td>\n",
+       "      <td id=\"T_262da_row4_col2\" class=\"data row4 col2\" ></td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_262da_row5_col0\" class=\"data row5 col0\" >Coupon (%)</td>\n",
+       "      <td id=\"T_262da_row5_col1\" class=\"data row5 col1\" >5</td>\n",
+       "      <td id=\"T_262da_row5_col2\" class=\"data row5 col2\" ></td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_262da_row6_col0\" class=\"data row6 col0\" >Coupon Frequency</td>\n",
+       "      <td id=\"T_262da_row6_col1\" class=\"data row6 col1\" >1</td>\n",
+       "      <td id=\"T_262da_row6_col2\" class=\"data row6 col2\" ></td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_262da_row7_col0\" class=\"data row7 col0\" >Day Count Convention</td>\n",
+       "      <td id=\"T_262da_row7_col1\" class=\"data row7 col1\" >DayCountActualActualBond</td>\n",
+       "      <td id=\"T_262da_row7_col2\" class=\"data row7 col2\" ></td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_262da_row8_col0\" class=\"data row8 col0\" >Yield to Maturity (%)</td>\n",
+       "      <td id=\"T_262da_row8_col1\" class=\"data row8 col1\" >5.00</td>\n",
+       "      <td id=\"T_262da_row8_col2\" class=\"data row8 col2\" ></td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_262da_row9_col0\" class=\"data row9 col0\" >Price</td>\n",
+       "      <td id=\"T_262da_row9_col1\" class=\"data row9 col1\" >99.78</td>\n",
+       "      <td id=\"T_262da_row9_col2\" class=\"data row9 col2\" >★</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_262da_row10_col0\" class=\"data row10 col0\" >Macaulay Duration (Years)</td>\n",
+       "      <td id=\"T_262da_row10_col1\" class=\"data row10 col1\" >3.72</td>\n",
+       "      <td id=\"T_262da_row10_col2\" class=\"data row10 col2\" >★</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_262da_row11_col0\" class=\"data row11 col0\" >Modified Duration (Years)</td>\n",
+       "      <td id=\"T_262da_row11_col1\" class=\"data row11 col1\" >3.63</td>\n",
+       "      <td id=\"T_262da_row11_col2\" class=\"data row11 col2\" >★</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <td id=\"T_262da_row12_col0\" class=\"data row12 col0\" >Convexity</td>\n",
+       "      <td id=\"T_262da_row12_col1\" class=\"data row12 col1\" >15.5134</td>\n",
+       "      <td id=\"T_262da_row12_col2\" class=\"data row12 col2\" >★</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n"
+      ],
+      "text/plain": [
+       "<pandas.io.formats.style.Styler at 0x12883dc50>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet\n",
+    "import IPython.display as display\n",
+    "\n",
+    "# Calculate outputs\n",
+    "price = bond.get_price()\n",
+    "ytm = bond.get_yield_to_maturity()\n",
+    "macaulay_duration = bond.macaulay_duration()\n",
+    "modified_duration = bond.modified_duration()\n",
+    "convexity = bond.convexity()  # Convexity calculation\n",
+    "\n",
+    "# Build table\n",
+    "data = [\n",
+    "    # Inputs\n",
+    "    {\"Attribute\": \"Instrument\", \"Value\": bond.__class__.__name__, \"Category\": \"\"},\n",
+    "    {\"Attribute\": \"Issue Date\", \"Value\": bond.issue_dt, \"Category\": \"\"},\n",
+    "    {\"Attribute\": \"Maturity Date\", \"Value\": bond.maturity, \"Category\": \"\"},\n",
+    "    {\n",
+    "        \"Attribute\": \"Settlement Date\",\n",
+    "        \"Value\": bond.get_settlement_date(),\n",
+    "        \"Category\": \"\",\n",
+    "    },\n",
+    "    {\"Attribute\": \"Notional\", \"Value\": bond.notional, \"Category\": \"\"},\n",
+    "    {\"Attribute\": \"Coupon (%)\", \"Value\": bond.cpn, \"Category\": \"\"},\n",
+    "    {\"Attribute\": \"Coupon Frequency\", \"Value\": bond.cpn_freq, \"Category\": \"\"},\n",
+    "    {\n",
+    "        \"Attribute\": \"Day Count Convention\",\n",
+    "        \"Value\": bond.day_count_convention.__class__.__name__,\n",
+    "        \"Category\": \"\",\n",
+    "    },\n",
+    "    {\n",
+    "        \"Attribute\": \"Yield to Maturity (%)\",\n",
+    "        \"Value\": f\"{bond.yield_to_maturity() * 100:.2f}\",\n",
+    "        \"Category\": \"\",\n",
+    "    },\n",
+    "    # Calculated\n",
+    "    {\"Attribute\": \"Price\", \"Value\": f\"{price:.2f}\", \"Category\": \"★\"},\n",
+    "    {\n",
+    "        \"Attribute\": \"Macaulay Duration (Years)\",\n",
+    "        \"Value\": f\"{macaulay_duration:.2f}\",\n",
+    "        \"Category\": \"★\",\n",
+    "    },\n",
+    "    {\n",
+    "        \"Attribute\": \"Modified Duration (Years)\",\n",
+    "        \"Value\": f\"{modified_duration:.2f}\",\n",
+    "        \"Category\": \"★\",\n",
+    "    },\n",
+    "    {\"Attribute\": \"Convexity\", \"Value\": f\"{convexity:.4f}\", \"Category\": \"★\"},\n",
+    "]\n",
+    "\n",
+    "# Convert to DataFrame\n",
+    "df = pd.DataFrame(data)\n",
+    "\n",
+    "# Display table without index\n",
+    "display.display(df.style.hide(axis=\"index\"))"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "pyfian",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.13"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

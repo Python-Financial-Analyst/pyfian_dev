@@ -1,0 +1,615 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plotting the Yield Curve &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Comparing Bond Returns" href="06_comparing_bonds.html" />
+    <link rel="prev" title="Bullet Bonds" href="04_bullet_bonds.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Fixed Income</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00_economics_of_interest_rates.html">Economics of Interest Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html">Fixed Income Instruments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bond_pricing_and_yields.html">Bond Pricing and Yields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_money_market_instruments.html">Money Market Instruments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_bullet_bonds.html">Bullet Bonds</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Plotting the Yield Curve</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#learning-objectives">Learning Objectives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#characteristics">Characteristics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spot-curves">Spot Curves</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#flat-curve">Flat Curve</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#upward-sloping-curve">Upward Sloping Curve</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inverted-yield-curve">Inverted Yield Curve</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#other-yield-curves">Other Yield Curves</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#credit-spread">Credit Spread</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#forward-curve">Forward Curve</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#interpolated-curve">Interpolated Curve</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#par-curve">Par Curve</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#central-banks-and-interest-rates-managing-demand-shocks">Central Banks and Interest Rates: Managing Demand Shocks</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#aggregate-demand-and-supply-framework">Aggregate Demand and Supply Framework</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#balancing-inflation-and-employment">Balancing Inflation and Employment</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="06_comparing_bonds.html">Comparing Bond Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_floating_rates.html">Floating Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_bootstrapping.html">Bootstrapping</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Fixed Income</a></li>
+      <li class="breadcrumb-item active">Plotting the Yield Curve</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Topics/fixed_income/05_curves.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <a href="https://colab.research.google.com/github/Python-Financial-Analyst/pyfian_dev/blob/main/notebooks/fixed_income/03_curves.ipynb" target="_blank">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab"/>
+</a><section class="tex2jax_ignore mathjax_ignore" id="plotting-the-yield-curve">
+<h1>Plotting the Yield Curve<a class="headerlink" href="#plotting-the-yield-curve" title="Link to this heading"></a></h1>
+<section id="learning-objectives">
+<h2>Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Understand what a yield curve looks like.</p></li>
+<li><p>Interpret economic significance of flat, normal and inverted curves.</p></li>
+<li><p>Understand how interest rates are determined.</p></li>
+</ul>
+</section>
+<section id="characteristics">
+<h2>Characteristics<a class="headerlink" href="#characteristics" title="Link to this heading"></a></h2>
+<p>A bond yield curve represents the yields of bonds with different maturities, providing insight into how investors value short-term versus long-term debt. The shape of the curve is closely tied to macroeconomic conditions and market expectations.
+For instance, an upward-sloping yield curve often signals economic growth: investors prefer short-term bonds (or cash equivalents) to fund projects and investments, pushing up short-term demand and yields. Conversely, an inverted yield curve may indicate economic uncertainty or a potential slowdown, as investors seek the safety of longer-term bonds, driving their yields lower relative to short-term bonds.
+Different types of curves—such as spot curves, forward curves, and par curves—highlight various aspects of bond pricing and interest rate expectations. By analyzing these curves, investors and policymakers gain valuable insights into market sentiment and the broader economic outlook. Here are some examples of curves we can look at:</p>
+<ul class="simple">
+<li><p>Credit Spread</p></li>
+<li><p>Forward Curve</p></li>
+<li><p>Interpolated Curve</p></li>
+<li><p>Par Curve</p></li>
+<li><p>Yields on zero-coupon bonds for different maturities.</p></li>
+</ul>
+</section>
+<section id="spot-curves">
+<h2>Spot Curves<a class="headerlink" href="#spot-curves" title="Link to this heading"></a></h2>
+<section id="flat-curve">
+<h3>Flat Curve<a class="headerlink" href="#flat-curve" title="Link to this heading"></a></h3>
+<p>A flat yield curve occurs when short-term and long-term bond yields are nearly the same. This shape suggests uncertainty in the economy: investors do not strongly prefer one maturity over another, and the market is signaling that future growth and inflation expectations are unclear. Flat curves often appear during transitions in the business cycle, such as when the economy is shifting from expansion to slowdown.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.spot_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpotCurve</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.flat_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlatCurveLog</span>
+
+<span class="n">bonds</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">FixedRateBullet</span><span class="p">(</span>
+        <span class="n">issue_dt</span><span class="o">=</span><span class="s2">&quot;2025-01-01&quot;</span><span class="p">,</span>
+        <span class="n">maturity</span><span class="o">=</span><span class="n">maturity</span><span class="p">,</span>
+        <span class="n">cpn</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">notional</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">settlement_date</span><span class="o">=</span><span class="s2">&quot;2025-10-18&quot;</span><span class="p">,</span>
+        <span class="n">price</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">maturity</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;2026-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2027-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2028-01-01&quot;</span><span class="p">,</span> <span class="s2">&quot;2029-01-01&quot;</span><span class="p">]</span>
+<span class="p">]</span>
+
+
+<span class="n">flat_curve</span> <span class="o">=</span> <span class="n">FlatCurveLog</span><span class="p">(</span><span class="n">log_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">curve_date</span><span class="o">=</span><span class="s2">&quot;2025-10-18&quot;</span><span class="p">)</span>
+<span class="n">flat_curve</span><span class="o">.</span><span class="n">plot_curve</span><span class="p">(</span><span class="n">t_max</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;rate&quot;</span><span class="p">)</span>
+<span class="n">flat_curve</span><span class="o">.</span><span class="n">plot_curve</span><span class="p">(</span><span class="n">t_max</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;discount&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="../../_images/767a26a960b980afe38976cb1568de812cb52b79dde7a62ad961b279047d72f3.png" src="../../_images/767a26a960b980afe38976cb1568de812cb52b79dde7a62ad961b279047d72f3.png" />
+<img alt="../../_images/07002dd0d73ef021871ef772f21dbcdf4091152a6ac7cbd7c11fb79c537af6bb.png" src="../../_images/07002dd0d73ef021871ef772f21dbcdf4091152a6ac7cbd7c11fb79c537af6bb.png" />
+</div>
+</div>
+</section>
+<section id="upward-sloping-curve">
+<h3>Upward Sloping Curve<a class="headerlink" href="#upward-sloping-curve" title="Link to this heading"></a></h3>
+<p>An upward-sloping yield curve is the most common shape, where long-term bonds offer higher yields than short-term bonds. This reflects expectations of economic growth and potentially higher inflation in the future, leading investors to demand greater compensation for holding debt over longer horizons. It signals confidence in the economy, as short-term borrowing costs remain relatively low while long-term rates rise with stronger growth outlooks.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># U.S. Treasury constant maturity yields (Dec 18, 2025)</span>
+<span class="n">market_zero_rates</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mf">0.25</span><span class="p">:</span> <span class="mf">0.0361</span><span class="p">,</span>  <span class="c1"># 3 month</span>
+    <span class="mf">1.0</span><span class="p">:</span> <span class="mf">0.0349</span><span class="p">,</span>  <span class="c1"># 1-year</span>
+    <span class="mf">2.0</span><span class="p">:</span> <span class="mf">0.0347</span><span class="p">,</span>  <span class="c1"># 2-year</span>
+    <span class="mf">3.0</span><span class="p">:</span> <span class="mf">0.0350</span><span class="p">,</span>  <span class="c1"># 3-year</span>
+    <span class="mf">5.0</span><span class="p">:</span> <span class="mf">0.0367</span><span class="p">,</span>  <span class="c1"># 5-year</span>
+    <span class="mf">7.0</span><span class="p">:</span> <span class="mf">0.0387</span><span class="p">,</span>  <span class="c1"># 7-year</span>
+    <span class="mf">10.0</span><span class="p">:</span> <span class="mf">0.0412</span><span class="p">,</span>  <span class="c1"># 10-year</span>
+    <span class="mf">30.0</span><span class="p">:</span> <span class="mf">0.0480</span><span class="p">,</span>  <span class="c1"># 30-year</span>
+<span class="p">}</span>
+
+<span class="n">spot_curve</span> <span class="o">=</span> <span class="n">SpotCurve</span><span class="p">(</span><span class="n">curve_date</span><span class="o">=</span><span class="s2">&quot;2025-12-18&quot;</span><span class="p">,</span> <span class="n">zero_rates</span><span class="o">=</span><span class="n">market_zero_rates</span><span class="p">)</span>
+
+<span class="c1"># Plot the yield curve</span>
+<span class="n">spot_curve</span><span class="o">.</span><span class="n">plot_curve</span><span class="p">(</span>
+    <span class="n">t_max</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;rate&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;U.S. Treasury Yield Curve (Market)&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Plot the discount curve</span>
+<span class="n">spot_curve</span><span class="o">.</span><span class="n">plot_curve</span><span class="p">(</span>
+    <span class="n">t_max</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;discount&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;U.S. Treasury Discount Factor Curve (Market)&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="../../_images/c4484ea30ce53a5c19cfd7944746acd71b5f47b7bb733de4297618c3a0ec9b94.png" src="../../_images/c4484ea30ce53a5c19cfd7944746acd71b5f47b7bb733de4297618c3a0ec9b94.png" />
+<img alt="../../_images/de0e0a9128d364a9c1f024c9605fc6b736ee6207e9f57ccce28c59c2863e5f59.png" src="../../_images/de0e0a9128d364a9c1f024c9605fc6b736ee6207e9f57ccce28c59c2863e5f59.png" />
+</div>
+</div>
+</section>
+<section id="inverted-yield-curve">
+<h3>Inverted Yield Curve<a class="headerlink" href="#inverted-yield-curve" title="Link to this heading"></a></h3>
+<p>An inverted yield curve occurs when short-term bond yields are higher than long-term yields. This unusual shape often signals investor concern about the economy, as demand for long-term bonds increases to lock in safer, stable returns. Inverted curves are commonly viewed as a warning of potential economic slowdown or recession, reflecting expectations of lower growth and inflation in the future.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.spot_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpotCurve</span>
+
+<span class="c1"># Real U.S. Treasury inverted yield snapshot (example from Dec 7, 2022)</span>
+<span class="n">inverted_zero_rates</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mf">0.25</span><span class="p">:</span> <span class="mf">0.0437</span><span class="p">,</span>  <span class="c1"># 3-month</span>
+    <span class="mf">0.5</span><span class="p">:</span> <span class="mf">0.0474</span><span class="p">,</span>  <span class="c1"># 6-month</span>
+    <span class="mf">1.0</span><span class="p">:</span> <span class="mf">0.0473</span><span class="p">,</span>  <span class="c1"># 1-year</span>
+    <span class="mf">2.0</span><span class="p">:</span> <span class="mf">0.0434</span><span class="p">,</span>  <span class="c1"># 2-year</span>
+    <span class="mf">5.0</span><span class="p">:</span> <span class="mf">0.0373</span><span class="p">,</span>  <span class="c1"># 5-year</span>
+    <span class="mf">10.0</span><span class="p">:</span> <span class="mf">0.0351</span><span class="p">,</span>  <span class="c1"># 10-year</span>
+    <span class="mf">30.0</span><span class="p">:</span> <span class="mf">0.0352</span><span class="p">,</span>  <span class="c1"># 30-year</span>
+<span class="p">}</span>
+
+<span class="n">inverted_spot_curve</span> <span class="o">=</span> <span class="n">SpotCurve</span><span class="p">(</span><span class="n">curve_date</span><span class="o">=</span><span class="s2">&quot;2022-12-07&quot;</span><span class="p">,</span> <span class="n">zero_rates</span><span class="o">=</span><span class="n">inverted_zero_rates</span><span class="p">)</span>
+
+<span class="c1"># Plot the inverted yield (spot rate) curve</span>
+<span class="n">inverted_spot_curve</span><span class="o">.</span><span class="n">plot_curve</span><span class="p">(</span>
+    <span class="n">t_max</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;rate&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;U.S. Treasury Inverted Yield Curve (Dec 7, 2022)&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;maroon&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Plot discount factor curve</span>
+<span class="n">inverted_spot_curve</span><span class="o">.</span><span class="n">plot_curve</span><span class="p">(</span>
+    <span class="n">t_max</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;discount&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;U.S. Treasury Discount Curve (Dec 7, 2022)&quot;</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="../../_images/5b6f346058a8f6866640438fb279dcf3342fd9f17ff3d44f41f1bbcafd83a548.png" src="../../_images/5b6f346058a8f6866640438fb279dcf3342fd9f17ff3d44f41f1bbcafd83a548.png" />
+<img alt="../../_images/b539af7fa3ec87abe3fb47ab2825f32ddc3fe55018967008eda8b16898f39e88.png" src="../../_images/b539af7fa3ec87abe3fb47ab2825f32ddc3fe55018967008eda8b16898f39e88.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="other-yield-curves">
+<h2>Other Yield Curves<a class="headerlink" href="#other-yield-curves" title="Link to this heading"></a></h2>
+<section id="credit-spread">
+<h3>Credit Spread<a class="headerlink" href="#credit-spread" title="Link to this heading"></a></h3>
+<p>Difference in yield between bonds of similar maturity but different credit quality, typically corporate vs. Treasury.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Treasury yields (U.S. Treasuries, Dec 2008) - hypothetical example</span>
+<span class="n">treasury_yields</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mf">0.25</span><span class="p">:</span> <span class="mf">0.0015</span><span class="p">,</span>  <span class="c1"># 3 months</span>
+    <span class="mf">1.0</span><span class="p">:</span> <span class="mf">0.0080</span><span class="p">,</span>  <span class="c1"># 1-year</span>
+    <span class="mf">2.0</span><span class="p">:</span> <span class="mf">0.0150</span><span class="p">,</span>
+    <span class="mf">3.0</span><span class="p">:</span> <span class="mf">0.0200</span><span class="p">,</span>
+    <span class="mf">5.0</span><span class="p">:</span> <span class="mf">0.0300</span><span class="p">,</span>
+    <span class="mf">7.0</span><span class="p">:</span> <span class="mf">0.0350</span><span class="p">,</span>
+    <span class="mf">10.0</span><span class="p">:</span> <span class="mf">0.0400</span><span class="p">,</span>
+    <span class="mf">30.0</span><span class="p">:</span> <span class="mf">0.0450</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Corporate AAA yields (Dec 2008) - hypothetical</span>
+<span class="n">corporate_aaa_yields</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mf">0.25</span><span class="p">:</span> <span class="mf">0.0200</span><span class="p">,</span>
+    <span class="mf">1.0</span><span class="p">:</span> <span class="mf">0.0300</span><span class="p">,</span>
+    <span class="mf">2.0</span><span class="p">:</span> <span class="mf">0.0450</span><span class="p">,</span>
+    <span class="mf">3.0</span><span class="p">:</span> <span class="mf">0.0550</span><span class="p">,</span>
+    <span class="mf">5.0</span><span class="p">:</span> <span class="mf">0.0650</span><span class="p">,</span>
+    <span class="mf">7.0</span><span class="p">:</span> <span class="mf">0.0700</span><span class="p">,</span>
+    <span class="mf">10.0</span><span class="p">:</span> <span class="mf">0.0750</span><span class="p">,</span>
+    <span class="mf">30.0</span><span class="p">:</span> <span class="mf">0.0800</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Convert to DataFrame</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;Treasury&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">treasury_yields</span><span class="p">),</span>
+        <span class="s2">&quot;Corporate AAA&quot;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">corporate_aaa_yields</span><span class="p">),</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Calculate spread in basis points</span>
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;Credit Spread (bps)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;Corporate AAA&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Treasury&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span>
+
+<span class="c1"># Plot credit spread</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Credit Spread (bps)&quot;</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;purple&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;U.S. Credit Spread (Corporate AAA vs Treasury) - Dec 2008&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Maturity (Years)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Credit Spread (bps)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="../../_images/5aff930a05b43a424bf93474b8d3e8193469888d67f88a23fa3ee5dae0ca0d77.png" src="../../_images/5aff930a05b43a424bf93474b8d3e8193469888d67f88a23fa3ee5dae0ca0d77.png" />
+</div>
+</div>
+</section>
+<section id="forward-curve">
+<h3>Forward Curve<a class="headerlink" href="#forward-curve" title="Link to this heading"></a></h3>
+<p>A forward curve shows the expected future interest rates implied by the current yield (spot) curve. It is calculated from the spot rates and tells investors what short-term rates are expected to be in the future.</p>
+<p>We can calculate the foward rates using the following formula:</p>
+<div class="math notranslate nohighlight">
+\[f_{t_1, t_2} = \left( \frac{(1 + s_2)^{t_2}}{(1 + s_1)^{t_1}} \right)^{\frac{1}{t_2 - t_1}} - 1\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(s_1\)</span> = spot rate for maturity <span class="math notranslate nohighlight">\(t_1\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(s_2\)</span> = spot rate for maturity <span class="math notranslate nohighlight">\(t_2\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(t_1, t_2\)</span> = times to maturity (in years)</p></li>
+<li><p><span class="math notranslate nohighlight">\(f_{t_1, t_2}\)</span> = forward rate from <span class="math notranslate nohighlight">\(t_1\)</span> to <span class="math notranslate nohighlight">\(t_2\)</span></p></li>
+</ul>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves.spot_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpotCurve</span>
+
+<span class="c1"># Example U.S. Treasury spot rates (in decimal)</span>
+<span class="n">market_zero_rates</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mf">0.25</span><span class="p">:</span> <span class="mf">0.0361</span><span class="p">,</span>  <span class="c1"># 3 months</span>
+    <span class="mf">1.0</span><span class="p">:</span> <span class="mf">0.0349</span><span class="p">,</span>
+    <span class="mf">2.0</span><span class="p">:</span> <span class="mf">0.0347</span><span class="p">,</span>
+    <span class="mf">3.0</span><span class="p">:</span> <span class="mf">0.0350</span><span class="p">,</span>
+    <span class="mf">5.0</span><span class="p">:</span> <span class="mf">0.0367</span><span class="p">,</span>
+    <span class="mf">7.0</span><span class="p">:</span> <span class="mf">0.0387</span><span class="p">,</span>
+    <span class="mf">10.0</span><span class="p">:</span> <span class="mf">0.0412</span><span class="p">,</span>
+    <span class="mf">30.0</span><span class="p">:</span> <span class="mf">0.0480</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Create SpotCurve</span>
+<span class="n">spot_curve</span> <span class="o">=</span> <span class="n">SpotCurve</span><span class="p">(</span><span class="n">curve_date</span><span class="o">=</span><span class="s2">&quot;2025-12-18&quot;</span><span class="p">,</span> <span class="n">zero_rates</span><span class="o">=</span><span class="n">market_zero_rates</span><span class="p">)</span>
+
+
+<span class="c1"># Generate forward rates from spot rates</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">forward_rate</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    s1: spot rate for t1</span>
+<span class="sd">    s2: spot rate for t2</span>
+<span class="sd">    t1, t2: maturities in years</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">s2</span><span class="p">)</span> <span class="o">**</span> <span class="n">t2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">s1</span><span class="p">)</span> <span class="o">**</span> <span class="n">t1</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">t2</span> <span class="o">-</span> <span class="n">t1</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
+
+
+<span class="c1"># Prepare forward rates</span>
+<span class="n">maturities</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">market_zero_rates</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="n">forward_rates</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">maturities</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">maturities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">maturities</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">s1</span> <span class="o">=</span> <span class="n">market_zero_rates</span><span class="p">[</span><span class="n">t1</span><span class="p">]</span>
+    <span class="n">s2</span> <span class="o">=</span> <span class="n">market_zero_rates</span><span class="p">[</span><span class="n">t2</span><span class="p">]</span>
+    <span class="n">fwd</span> <span class="o">=</span> <span class="n">forward_rate</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span>
+    <span class="n">forward_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fwd</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>  <span class="c1"># convert to %</span>
+
+<span class="n">forward_maturities</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">maturities</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">maturities</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">maturities</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="c1"># Plot forward curve</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">forward_maturities</span><span class="p">,</span> <span class="n">forward_rates</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Forward Curve (Implied from Spot Rates)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Time (Years)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Forward Rate (%)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="../../_images/afb06163026e6bbf3c3ec3e5d13e0423572dbd91a18185e34a3df2b7f87ef344.png" src="../../_images/afb06163026e6bbf3c3ec3e5d13e0423572dbd91a18185e34a3df2b7f87ef344.png" />
+</div>
+</div>
+</section>
+<section id="interpolated-curve">
+<h3>Interpolated Curve<a class="headerlink" href="#interpolated-curve" title="Link to this heading"></a></h3>
+<p>An interpolated curve is a smooth curve that estimates interest rates (or zero rates) for maturities that are not directly observed in the market.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">interp1d</span>
+
+<span class="c1"># Example market zero-coupon rates (spot rates) for certain maturities</span>
+<span class="n">market_zero_rates</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mf">0.25</span><span class="p">:</span> <span class="mf">0.0361</span><span class="p">,</span>  <span class="c1"># 3 months</span>
+    <span class="mf">1.0</span><span class="p">:</span> <span class="mf">0.0349</span><span class="p">,</span>  <span class="c1"># 1 year</span>
+    <span class="mf">2.0</span><span class="p">:</span> <span class="mf">0.0347</span><span class="p">,</span>  <span class="c1"># 2 years</span>
+    <span class="mf">3.0</span><span class="p">:</span> <span class="mf">0.0350</span><span class="p">,</span>  <span class="c1"># 3 years</span>
+    <span class="mf">5.0</span><span class="p">:</span> <span class="mf">0.0367</span><span class="p">,</span>  <span class="c1"># 5 years</span>
+    <span class="mf">7.0</span><span class="p">:</span> <span class="mf">0.0387</span><span class="p">,</span>  <span class="c1"># 7 years</span>
+    <span class="mf">10.0</span><span class="p">:</span> <span class="mf">0.0412</span><span class="p">,</span>  <span class="c1"># 10 years</span>
+    <span class="mf">30.0</span><span class="p">:</span> <span class="mf">0.0480</span><span class="p">,</span>  <span class="c1"># 30 years</span>
+<span class="p">}</span>
+
+<span class="c1"># Convert to arrays for interpolation</span>
+<span class="n">maturities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">market_zero_rates</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+<span class="n">rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">market_zero_rates</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+<span class="c1"># Create an interpolating function (linear)</span>
+<span class="n">interp_func</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">maturities</span><span class="p">,</span> <span class="n">rates</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
+
+<span class="c1"># Generate intermediate maturities for smooth curve</span>
+<span class="n">t_plot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">maturities</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">maturities</span><span class="p">),</span> <span class="mi">500</span><span class="p">)</span>
+<span class="n">rates_interp</span> <span class="o">=</span> <span class="n">interp_func</span><span class="p">(</span><span class="n">t_plot</span><span class="p">)</span>
+
+<span class="c1"># Plot the interpolated yield curve</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t_plot</span><span class="p">,</span> <span class="n">rates_interp</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Interpolated Yield Curve&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">maturities</span><span class="p">,</span> <span class="n">rates</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Market Rates&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Interpolated Yield Curve&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Maturity (Years)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Spot Rate (%)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="../../_images/8b7b73002a93e894fcfdc8a2b299b7f924d132964ed3e268d26ee4673fff041d.png" src="../../_images/8b7b73002a93e894fcfdc8a2b299b7f924d132964ed3e268d26ee4673fff041d.png" />
+</div>
+</div>
+</section>
+<section id="par-curve">
+<h3>Par Curve<a class="headerlink" href="#par-curve" title="Link to this heading"></a></h3>
+<p>The par yield curve (or par curve) shows the coupon rates at which bonds of different maturities would trade at par value (i.e., price = 100) in the market.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">interp1d</span>
+
+<span class="c1"># Example spot rates (annual, decimal)</span>
+<span class="n">spot_rates</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="mf">0.0349</span><span class="p">,</span>  <span class="c1"># 1-year</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="mf">0.0347</span><span class="p">,</span>  <span class="c1"># 2-year</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="mf">0.0350</span><span class="p">,</span>  <span class="c1"># 3-year</span>
+    <span class="mi">5</span><span class="p">:</span> <span class="mf">0.0367</span><span class="p">,</span>  <span class="c1"># 5-year</span>
+    <span class="mi">7</span><span class="p">:</span> <span class="mf">0.0387</span><span class="p">,</span>  <span class="c1"># 7-year</span>
+    <span class="mi">10</span><span class="p">:</span> <span class="mf">0.0412</span><span class="p">,</span>  <span class="c1"># 10-year</span>
+<span class="p">}</span>
+
+<span class="c1"># Interpolate spot rates for all integer maturities</span>
+<span class="n">maturities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">spot_rates</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+<span class="n">rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">spot_rates</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+<span class="n">interp_func</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">maturities</span><span class="p">,</span> <span class="n">rates</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="s2">&quot;extrapolate&quot;</span><span class="p">)</span>
+
+<span class="n">all_years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">maturities</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">all_spot_rates</span> <span class="o">=</span> <span class="n">interp_func</span><span class="p">(</span><span class="n">all_years</span><span class="p">)</span>
+
+<span class="c1"># Compute par yields</span>
+<span class="n">par_yields</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">all_years</span><span class="p">:</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">all_spot_rates</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>  <span class="c1"># spot rates for years 1..n</span>
+    <span class="n">numerator</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">([(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">s</span><span class="p">])</span>
+    <span class="n">denominator</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+        <span class="p">[</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">([(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+    <span class="p">)</span>
+    <span class="n">c_n</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span>
+    <span class="n">par_yields</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">c_n</span>
+
+<span class="c1"># Convert to percentages</span>
+<span class="n">years</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">par_yields</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="n">yields</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="o">*</span> <span class="mi">100</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">par_yields</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+
+<span class="c1"># Plot par curve</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">yields</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Par Yield Curve&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Par Yield Curve&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Maturity (Years)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Par Yield (%)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="../../_images/382ecc89ab7d4a50ae3dcf21fc226bea63c974eae727fee19fd2e1c4a9664cb4.png" src="../../_images/382ecc89ab7d4a50ae3dcf21fc226bea63c974eae727fee19fd2e1c4a9664cb4.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="central-banks-and-interest-rates-managing-demand-shocks">
+<h2>Central Banks and Interest Rates: Managing Demand Shocks<a class="headerlink" href="#central-banks-and-interest-rates-managing-demand-shocks" title="Link to this heading"></a></h2>
+<p>Interest rates are primarily determined by market forces, but central banks, such as the Federal Reserve, play a crucial role in influencing them to stabilize the economy during macroeconomic shocks. Their primary goals are to maintain stable inflation and employment, guided by the economy’s position relative to its full potential output, as represented by the long-run aggregate supply (LRAS) curve.</p>
+<section id="aggregate-demand-and-supply-framework">
+<h3>Aggregate Demand and Supply Framework<a class="headerlink" href="#aggregate-demand-and-supply-framework" title="Link to this heading"></a></h3>
+<p>The aggregate demand (AD) curve illustrates the relationship between the price level and total output demanded, sloping downward as lower prices boost demand. The short-run aggregate supply (SRAS) curve shows the output supplied at various price levels, sloping upward due to higher prices incentivizing production. The LRAS curve is vertical, marking the economy’s full potential output, where resources are fully utilized.
+Responding to Demand Shocks
+Central banks adjust interest rates to counteract demand shocks, which shift the AD curve and affect output and prices:</p>
+<ul class="simple">
+<li><p><strong>Negative Demand Shock</strong> : A decrease in demand (e.g., reduced consumer spending) shifts the AD curve left, lowering output and prices. If the economy operates below its full potential (to the left of LRAS), the central bank may lower interest rates. This stimulates demand, shifting AD rightward to restore output without causing excessive inflation.</p></li>
+<li><p><strong>Positive Demand Shock</strong>: An increase in demand (e.g., excessive spending) shifts the AD curve right, raising output and prices. If output exceeds full potential (to the right of LRAS), inflation accelerates. The central bank may raise interest rates to reduce demand, shifting AD leftward to control inflation.</p></li>
+</ul>
+</section>
+<section id="balancing-inflation-and-employment">
+<h3>Balancing Inflation and Employment<a class="headerlink" href="#balancing-inflation-and-employment" title="Link to this heading"></a></h3>
+<p>Central banks aim to keep the economy near its full potential output:</p>
+<p>When output is below potential, lowering interest rates encourages borrowing and spending, boosting AD to close the output gap.
+When output exceeds potential, raising interest rates discourages spending, reducing AD to prevent overheating and runaway inflation.</p>
+<p>This dynamic interplay is effectively visualized using the AD-AS model, which demonstrates how interest rate adjustments stabilize output and prices in response to demand shocks.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="04_bullet_bonds.html" class="btn btn-neutral float-left" title="Bullet Bonds" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="06_comparing_bonds.html" class="btn btn-neutral float-right" title="Comparing Bond Returns" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

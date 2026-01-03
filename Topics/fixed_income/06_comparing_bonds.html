@@ -1,0 +1,463 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comparing Bond Returns &mdash; Python Financial Analyst 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Floating Rates" href="07_floating_rates.html" />
+    <link rel="prev" title="Plotting the Yield Curve" href="05_curves.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Python Financial Analyst
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Fixed Income</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00_economics_of_interest_rates.html">Economics of Interest Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html">Fixed Income Instruments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bond_pricing_and_yields.html">Bond Pricing and Yields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_money_market_instruments.html">Money Market Instruments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_bullet_bonds.html">Bullet Bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_curves.html">Plotting the Yield Curve</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Comparing Bond Returns</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#learning-objectives">Learning Objectives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#yield-to-maturity-ytm">Yield to Maturity (YTM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#current-yield">Current Yield</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#irr-internal-rate-of-return">IRR (Internal Rate of Return)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xirr-extended-irr">XIRR (Extended IRR)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#aer-annual-equivalent-rate">AER (Annual Equivalent Rate)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bey-bond-equivalent-yield">BEY (Bond Equivalent Yield)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pvbp-price-value-of-a-basis-point">PVBP (Price Value of a Basis Point)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="07_floating_rates.html">Floating Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_bootstrapping.html">Bootstrapping</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">🧑‍💻 Contributing to Python Financial Analyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoapi/index.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Python Financial Analyst</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Fixed Income</a></li>
+      <li class="breadcrumb-item active">Comparing Bond Returns</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/Topics/fixed_income/06_comparing_bonds.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <a href="https://colab.research.google.com/github/Python-Financial-Analyst/pyfian_dev/blob/main/notebooks/fixed_income/04_bootstrapping.ipynb" target="_blank">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab"/>
+</a><section class="tex2jax_ignore mathjax_ignore" id="comparing-bond-returns">
+<h1>Comparing Bond Returns<a class="headerlink" href="#comparing-bond-returns" title="Link to this heading"></a></h1>
+<section id="learning-objectives">
+<h2>Learning Objectives<a class="headerlink" href="#learning-objectives" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Compare different metrics for bond returns.</p></li>
+</ul>
+</section>
+<section id="yield-to-maturity-ytm">
+<h2>Yield to Maturity (YTM)<a class="headerlink" href="#yield-to-maturity-ytm" title="Link to this heading"></a></h2>
+<p>Yield to Maturity (YTM) is the internal rate of return (IRR) of a bond assuming it is held until maturity and all coupon payments are reinvested at the same rate. It represents the annualized return an investor can expect to earn if the bond is held to maturity.</p>
+<p>YTM can be found by solving the following equation for (YTM):</p>
+<div class="math notranslate nohighlight">
+\[
+P = \sum_{t=1}^{N} \frac{C}{(1 + YTM)^t} + \frac{F}{(1 + YTM)^N}
+\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P\)</span> = current price of the bond</p></li>
+<li><p><span class="math notranslate nohighlight">\(C\)</span> = coupon payment</p></li>
+<li><p><span class="math notranslate nohighlight">\(F\)</span> = face value</p></li>
+<li><p><span class="math notranslate nohighlight">\(N\)</span> = number of periods until maturity</p></li>
+</ul>
+</section>
+<section id="current-yield">
+<h2>Current Yield<a class="headerlink" href="#current-yield" title="Link to this heading"></a></h2>
+<p>Current Yield is a simple measure of the annual income (coupon) of a bond relative to its current price. It does not account for capital gains/losses due to discount or premium pricing.</p>
+<div class="math notranslate nohighlight">
+\[
+\text{Current Yield} = \frac{\text{Annual Coupon Payment}}{\text{Current Bond Price}} \times 100
+\]</div>
+</section>
+<section id="irr-internal-rate-of-return">
+<h2>IRR (Internal Rate of Return)<a class="headerlink" href="#irr-internal-rate-of-return" title="Link to this heading"></a></h2>
+<p>IRR is the discount rate that makes the net present value (NPV) of all cash flows from a bond equal to zero. For a bond:</p>
+<div class="math notranslate nohighlight">
+\[
+NPV = \sum_{t=1}^{N} \frac{CF_t}{(1 + IRR)^t} - P_0 = 0
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(CF_t\)</span> are the cash flows, and <span class="math notranslate nohighlight">\(P_0\)</span> is the initial investment (price). IRR reflects the true annualized return considering the timing and size of cash flows.</p>
+</section>
+<section id="xirr-extended-irr">
+<h2>XIRR (Extended IRR)<a class="headerlink" href="#xirr-extended-irr" title="Link to this heading"></a></h2>
+<p>XIRR is similar to IRR but accounts for irregular time periods between cash flows. This is especially useful if coupon payments or settlement dates are not perfectly regular.</p>
+<p>In practice, XIRR is calculated numerically using all actual dates of cash flows.</p>
+</section>
+<section id="aer-annual-equivalent-rate">
+<h2>AER (Annual Equivalent Rate)<a class="headerlink" href="#aer-annual-equivalent-rate" title="Link to this heading"></a></h2>
+<p>The Annual Equivalent Rate (AER) represents the annualized interest rate that accounts for compounding over the year. It allows investors to compare returns on different investment products on a consistent annual basis, regardless of how frequently interest is compounded (monthly, quarterly, etc.).</p>
+<p>The formula for AER is:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{AER} = \left(1 + \frac{i}{n}\right)^n - 1
+\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(i\)</span> = nominal interest rate</p></li>
+<li><p><span class="math notranslate nohighlight">\(n\)</span> = number of compounding periods per year</p></li>
+</ul>
+<p>Using AER, investors can directly compare accounts or bonds that compound at different frequencies, ensuring a like-for-like comparison.</p>
+</section>
+<section id="bey-bond-equivalent-yield">
+<h2>BEY (Bond Equivalent Yield)<a class="headerlink" href="#bey-bond-equivalent-yield" title="Link to this heading"></a></h2>
+<p>The Bond Equivalent Yield (BEY) converts the yield on a bond, often quoted on a discount or semi-annual basis, into an annualized yield that is comparable to standard coupon-bearing bonds. This is particularly useful for short-term securities like Treasury bills or zero-coupon bonds.</p>
+<p>For a discount bond (e.g., a T-bill), BEY is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{BEY} = \frac{F - P}{P} \cdot \frac{365}{t}
+\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(F\)</span> = face value of the bond</p></li>
+<li><p><span class="math notranslate nohighlight">\(P\)</span> = purchase price</p></li>
+<li><p><span class="math notranslate nohighlight">\(t\)</span> = days to maturity</p></li>
+</ul>
+<p>For a semi-annual coupon bond, BEY can also be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[
+\text{BEY} = 2 \left[ \left(1 + \frac{YTM_{\text{semi-annual}}}{2}\right)^2 - 1 \right]
+\]</div>
+<p>Using BEY allows investors to compare yields of bonds with different maturities or coupon structures on a consistent annual basis, making it easier to assess relative value across instruments.</p>
+</section>
+<section id="pvbp-price-value-of-a-basis-point">
+<h2>PVBP (Price Value of a Basis Point)<a class="headerlink" href="#pvbp-price-value-of-a-basis-point" title="Link to this heading"></a></h2>
+<p>PVBP measures the price change of a bond for a 1 basis point (0.01%) change in yield. It is a risk metric used to assess interest rate sensitivity.</p>
+<div class="math notranslate nohighlight">
+\[
+PVBP = \frac{\Delta P}{\Delta y} \cdot 0.0001
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Delta P\)</span> is the change in bond price corresponding to a 1 bp change in yield.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ipd</span>
+
+<span class="c1"># Define two example bonds</span>
+<span class="n">bond1</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span>
+    <span class="n">issue_dt</span><span class="o">=</span><span class="s2">&quot;2025-01-01&quot;</span><span class="p">,</span>
+    <span class="n">maturity</span><span class="o">=</span><span class="s2">&quot;2030-01-01&quot;</span><span class="p">,</span>
+    <span class="n">cpn</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># Semi-annual coupon</span>
+    <span class="n">notional</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">settlement_date</span><span class="o">=</span><span class="s2">&quot;2025-12-01&quot;</span><span class="p">,</span>
+    <span class="n">price</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">bond2</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span>
+    <span class="n">issue_dt</span><span class="o">=</span><span class="s2">&quot;2025-01-01&quot;</span><span class="p">,</span>
+    <span class="n">maturity</span><span class="o">=</span><span class="s2">&quot;2030-01-01&quot;</span><span class="p">,</span>
+    <span class="n">cpn</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">cpn_freq</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>  <span class="c1"># Quarterly coupon</span>
+    <span class="n">notional</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">settlement_date</span><span class="o">=</span><span class="s2">&quot;2025-12-01&quot;</span><span class="p">,</span>
+    <span class="n">price</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">bonds</span> <span class="o">=</span> <span class="p">[</span><span class="n">bond1</span><span class="p">,</span> <span class="n">bond2</span><span class="p">]</span>
+<span class="n">bond_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Bond 1&quot;</span><span class="p">,</span> <span class="s2">&quot;Bond 2&quot;</span><span class="p">]</span>
+
+<span class="c1"># List of attributes</span>
+<span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Instrument&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Issue Date&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Maturity Date&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Settlement Date&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Notional&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Coupon (%)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Coupon Frequency&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Day Count Convention&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Price (Input)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Yield to Maturity (%)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Current Yield (%)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PVBP&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;IRR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;XIRR&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;BEY (%)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AER (%)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Macaulay Duration (Years)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Modified Duration (Years)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Convexity&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="c1"># Helper functions for BEY and AER</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_bey</span><span class="p">(</span><span class="n">ytm</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Bond Equivalent Yield for a semi-annual or other periodic bond&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_aer</span><span class="p">(</span><span class="n">ytm</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Annual Equivalent Rate&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">0</span>
+
+
+<span class="c1"># Build table dictionary</span>
+<span class="n">table_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Attribute&quot;</span><span class="p">:</span> <span class="n">attributes</span><span class="p">}</span>
+
+<span class="k">for</span> <span class="n">b_name</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bond_names</span><span class="p">,</span> <span class="n">bonds</span><span class="p">):</span>
+    <span class="n">clean_price</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">get_price</span><span class="p">()</span>
+    <span class="n">accrued_interest</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">accrued_interest</span><span class="p">()</span>
+    <span class="n">dirty_price</span> <span class="o">=</span> <span class="n">clean_price</span> <span class="o">+</span> <span class="n">accrued_interest</span>
+    <span class="n">ytm</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">get_yield_to_maturity</span><span class="p">()</span>
+    <span class="n">current_yield</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">cpn</span> <span class="o">/</span> <span class="n">clean_price</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="n">macaulay_duration</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">macaulay_duration</span><span class="p">()</span>
+    <span class="n">modified_duration</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">modified_duration</span><span class="p">()</span>
+    <span class="n">convexity</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">convexity</span><span class="p">()</span>
+    <span class="n">pvbp</span> <span class="o">=</span> <span class="n">modified_duration</span> <span class="o">*</span> <span class="n">clean_price</span> <span class="o">/</span> <span class="mi">10000</span>
+
+    <span class="n">bey</span> <span class="o">=</span> <span class="n">calculate_bey</span><span class="p">(</span><span class="n">ytm</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">cpn_freq</span><span class="p">)</span>
+    <span class="n">aer</span> <span class="o">=</span> <span class="n">calculate_aer</span><span class="p">(</span><span class="n">ytm</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">cpn_freq</span><span class="p">)</span>
+
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">b</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>  <span class="c1"># Instrument</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">issue_dt</span><span class="p">,</span>  <span class="c1"># Issue Date</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">maturity</span><span class="p">,</span>  <span class="c1"># Maturity Date</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">get_settlement_date</span><span class="p">(),</span>  <span class="c1"># Settlement Date</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">notional</span><span class="p">,</span>  <span class="c1"># Notional</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">cpn</span><span class="p">,</span>  <span class="c1"># Coupon (%)</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">cpn_freq</span><span class="p">,</span>  <span class="c1"># Coupon Frequency</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">day_count_convention</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>  <span class="c1"># Day Count</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">clean_price</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>  <span class="c1"># Price input</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ytm</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ★&quot;</span><span class="p">,</span>  <span class="c1"># YTM</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">current_yield</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ★&quot;</span><span class="p">,</span>  <span class="c1"># Current Yield</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pvbp</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> ★&quot;</span><span class="p">,</span>  <span class="c1"># PVBP</span>
+        <span class="s2">&quot;0 ★&quot;</span><span class="p">,</span>  <span class="c1"># IRR placeholder</span>
+        <span class="s2">&quot;0 ★&quot;</span><span class="p">,</span>  <span class="c1"># XIRR placeholder</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bey</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ★&quot;</span><span class="p">,</span>  <span class="c1"># BEY</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">aer</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ★&quot;</span><span class="p">,</span>  <span class="c1"># AER</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">macaulay_duration</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ★&quot;</span><span class="p">,</span>  <span class="c1"># Macaulay Duration</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">modified_duration</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ★&quot;</span><span class="p">,</span>  <span class="c1"># Modified Duration</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">convexity</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> ★&quot;</span><span class="p">,</span>  <span class="c1"># Convexity</span>
+    <span class="p">]</span>
+
+    <span class="n">table_dict</span><span class="p">[</span><span class="n">b_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+
+<span class="c1"># Convert to DataFrame</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">table_dict</span><span class="p">)</span>
+
+<span class="c1"># Display table without index</span>
+<span class="n">ipd</span><span class="o">.</span><span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">hide</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<div class="output text_html"><style type="text/css">
+</style>
+<table id="T_87631">
+  <thead>
+    <tr>
+      <th id="T_87631_level0_col0" class="col_heading level0 col0" >Attribute</th>
+      <th id="T_87631_level0_col1" class="col_heading level0 col1" >Bond 1</th>
+      <th id="T_87631_level0_col2" class="col_heading level0 col2" >Bond 2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td id="T_87631_row0_col0" class="data row0 col0" >Instrument</td>
+      <td id="T_87631_row0_col1" class="data row0 col1" >FixedRateBullet</td>
+      <td id="T_87631_row0_col2" class="data row0 col2" >FixedRateBullet</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row1_col0" class="data row1 col0" >Issue Date</td>
+      <td id="T_87631_row1_col1" class="data row1 col1" >2025-01-01 00:00:00</td>
+      <td id="T_87631_row1_col2" class="data row1 col2" >2025-01-01 00:00:00</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row2_col0" class="data row2 col0" >Maturity Date</td>
+      <td id="T_87631_row2_col1" class="data row2 col1" >2030-01-01 00:00:00</td>
+      <td id="T_87631_row2_col2" class="data row2 col2" >2030-01-01 00:00:00</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row3_col0" class="data row3 col0" >Settlement Date</td>
+      <td id="T_87631_row3_col1" class="data row3 col1" >2025-12-01 00:00:00</td>
+      <td id="T_87631_row3_col2" class="data row3 col2" >2025-12-01 00:00:00</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row4_col0" class="data row4 col0" >Notional</td>
+      <td id="T_87631_row4_col1" class="data row4 col1" >100</td>
+      <td id="T_87631_row4_col2" class="data row4 col2" >100</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row5_col0" class="data row5 col0" >Coupon (%)</td>
+      <td id="T_87631_row5_col1" class="data row5 col1" >10</td>
+      <td id="T_87631_row5_col2" class="data row5 col2" >10</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row6_col0" class="data row6 col0" >Coupon Frequency</td>
+      <td id="T_87631_row6_col1" class="data row6 col1" >2</td>
+      <td id="T_87631_row6_col2" class="data row6 col2" >4</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row7_col0" class="data row7 col0" >Day Count Convention</td>
+      <td id="T_87631_row7_col1" class="data row7 col1" >DayCountActualActualBond</td>
+      <td id="T_87631_row7_col2" class="data row7 col2" >DayCountActualActualBond</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row8_col0" class="data row8 col0" >Price (Input)</td>
+      <td id="T_87631_row8_col1" class="data row8 col1" >100.00</td>
+      <td id="T_87631_row8_col2" class="data row8 col2" >100.00</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row9_col0" class="data row9 col0" >Yield to Maturity (%)</td>
+      <td id="T_87631_row9_col1" class="data row9 col1" >11.29 ★</td>
+      <td id="T_87631_row9_col2" class="data row9 col2" >11.21 ★</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row10_col0" class="data row10 col0" >Current Yield (%)</td>
+      <td id="T_87631_row10_col1" class="data row10 col1" >10.00 ★</td>
+      <td id="T_87631_row10_col2" class="data row10 col2" >10.00 ★</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row11_col0" class="data row11 col0" >PVBP</td>
+      <td id="T_87631_row11_col1" class="data row11 col1" >0.0312 ★</td>
+      <td id="T_87631_row11_col2" class="data row11 col2" >0.0300 ★</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row12_col0" class="data row12 col0" >IRR</td>
+      <td id="T_87631_row12_col1" class="data row12 col1" >0 ★</td>
+      <td id="T_87631_row12_col2" class="data row12 col2" >0 ★</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row13_col0" class="data row13 col0" >XIRR</td>
+      <td id="T_87631_row13_col1" class="data row13 col1" >0 ★</td>
+      <td id="T_87631_row13_col2" class="data row13 col2" >0 ★</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row14_col0" class="data row14 col0" >BEY (%)</td>
+      <td id="T_87631_row14_col1" class="data row14 col1" >0.00 ★</td>
+      <td id="T_87631_row14_col2" class="data row14 col2" >0.00 ★</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row15_col0" class="data row15 col0" >AER (%)</td>
+      <td id="T_87631_row15_col1" class="data row15 col1" >0.00 ★</td>
+      <td id="T_87631_row15_col2" class="data row15 col2" >0.00 ★</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row16_col0" class="data row16 col0" >Macaulay Duration (Years)</td>
+      <td id="T_87631_row16_col1" class="data row16 col1" >3.30 ★</td>
+      <td id="T_87631_row16_col2" class="data row16 col2" >3.17 ★</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row17_col0" class="data row17 col0" >Modified Duration (Years)</td>
+      <td id="T_87631_row17_col1" class="data row17 col1" >3.12 ★</td>
+      <td id="T_87631_row17_col2" class="data row17 col2" >3.00 ★</td>
+    </tr>
+    <tr>
+      <td id="T_87631_row18_col0" class="data row18 col0" >Convexity</td>
+      <td id="T_87631_row18_col1" class="data row18 col1" >12.7236 ★</td>
+      <td id="T_87631_row18_col2" class="data row18 col2" >11.8222 ★</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="05_curves.html" class="btn btn-neutral float-left" title="Plotting the Yield Curve" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="07_floating_rates.html" class="btn btn-neutral float-right" title="Floating Rates" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Pablo Orazi/Panteleymon Semka.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

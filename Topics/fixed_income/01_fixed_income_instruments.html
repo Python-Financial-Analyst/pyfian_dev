@@ -18,13 +18,10 @@
       <script src="../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
-      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Money Market Instruments" href="02_money_market_instruments.html" />
+    <link rel="next" title="Bond Pricing and Yields" href="02_bond_pricing_and_yields.html" />
     <link rel="prev" title="Economics of Interest Rates" href="00_economics_of_interest_rates.html" /> 
 </head>
 
@@ -66,25 +63,15 @@
 <li class="toctree-l4"><a class="reference internal" href="#convertible-bonds">Convertible Bonds</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#cash-flow-patterns">Cash Flow Patterns</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#price-conventions">Price Conventions</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#accrued-interest">Accrued Interest</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#clean-price">Clean Price</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#dirty-price">Dirty Price</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id1"></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#discount-rate">Discount Rate</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#introduction-to-yield-concepts-preview">Introduction to Yield Concepts (Preview)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#irr-internal-rate-of-return">IRR: Internal Rate of Return</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#xirr-non-periodic-irr">XIRR: Non periodic IRR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#continuous-compounding">Continuous compounding</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="02_money_market_instruments.html">Money Market Instruments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03_bullet_bonds.html">Bullet Bonds</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04_curves.html">Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="05_comparing_bonds.html">Comparing Bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_bond_pricing_and_yields.html">Bond Pricing and Yields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_money_market_instruments.html">Money Market Instruments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_bullet_bonds.html">Bullet Bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_curves.html">Plotting the Yield Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_comparing_bonds.html">Comparing Bond Returns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_floating_rates.html">Floating Rates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_bootstrapping.html">Bootstrapping</a></li>
 </ul>
 </li>
 </ul>
@@ -213,7 +200,6 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="c1"># Data collected from public sources (date of retrieval noted)</span>
 <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">{</span><span class="s2">&quot;Country&quot;</span><span class="p">:</span> <span class="s2">&quot;United States&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">:</span> <span class="mf">4.11</span><span class="p">},</span>
     <span class="p">{</span><span class="s2">&quot;Country&quot;</span><span class="p">:</span> <span class="s2">&quot;United Kingdom&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">:</span> <span class="mf">4.47</span><span class="p">},</span>
@@ -228,118 +214,74 @@
     <span class="p">{</span><span class="s2">&quot;Country&quot;</span><span class="p">:</span> <span class="s2">&quot;South Africa&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">:</span> <span class="mf">8.87</span><span class="p">},</span>
 <span class="p">]</span>
 
-<span class="c1"># Build DataFrame</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-<span class="c1"># Benchmark US 10-year yield</span>
-<span class="n">us_yield</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;Country&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;United States&quot;</span><span class="p">,</span> <span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1"># Sort by yield (highest to lowest)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="c1"># Calculate spread in basis points relative to US yield</span>
-<span class="n">df</span><span class="p">[</span><span class="s2">&quot;Spread (bps)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">us_yield</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>  <span class="c1"># 1% = 100 bps</span>
-
-<span class="c1"># Sort by 10-Year Yield descending</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;10-Year Yield (%)&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># Display</span>
-<span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">hide</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
+<div class="output text_html"><style type="text/css">
 </style>
-<table border="1" class="dataframe">
+<table id="T_ebfdf">
   <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Country</th>
-      <th>10-Year Yield (%)</th>
-      <th>Spread (bps)</th>
+    <tr>
+      <th id="T_ebfdf_level0_col0" class="col_heading level0 col0" >Country</th>
+      <th id="T_ebfdf_level0_col1" class="col_heading level0 col1" >10-Year Yield (%)</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
-      <td>Turkey</td>
-      <td>29.68</td>
-      <td>2557.0</td>
+      <td id="T_ebfdf_row0_col0" class="data row0 col0" >China</td>
+      <td id="T_ebfdf_row0_col1" class="data row0 col1" >1.670000</td>
     </tr>
     <tr>
-      <th>1</th>
-      <td>Brazil</td>
-      <td>13.83</td>
-      <td>972.0</td>
+      <td id="T_ebfdf_row1_col0" class="data row1 col0" >Japan</td>
+      <td id="T_ebfdf_row1_col1" class="data row1 col1" >1.670000</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>South Africa</td>
-      <td>8.87</td>
-      <td>476.0</td>
+      <td id="T_ebfdf_row2_col0" class="data row2 col0" >Germany</td>
+      <td id="T_ebfdf_row2_col1" class="data row2 col1" >2.670000</td>
     </tr>
     <tr>
-      <th>3</th>
-      <td>India</td>
-      <td>6.33</td>
-      <td>222.0</td>
+      <td id="T_ebfdf_row3_col0" class="data row3 col0" >France</td>
+      <td id="T_ebfdf_row3_col1" class="data row3 col1" >3.460000</td>
     </tr>
     <tr>
-      <th>4</th>
-      <td>United Kingdom</td>
-      <td>4.47</td>
-      <td>36.0</td>
+      <td id="T_ebfdf_row4_col0" class="data row4 col0" >United States</td>
+      <td id="T_ebfdf_row4_col1" class="data row4 col1" >4.110000</td>
     </tr>
     <tr>
-      <th>5</th>
-      <td>Australia</td>
-      <td>4.35</td>
-      <td>24.0</td>
+      <td id="T_ebfdf_row5_col0" class="data row5 col0" >Australia</td>
+      <td id="T_ebfdf_row5_col1" class="data row5 col1" >4.350000</td>
     </tr>
     <tr>
-      <th>6</th>
-      <td>United States</td>
-      <td>4.11</td>
-      <td>0.0</td>
+      <td id="T_ebfdf_row6_col0" class="data row6 col0" >United Kingdom</td>
+      <td id="T_ebfdf_row6_col1" class="data row6 col1" >4.470000</td>
     </tr>
     <tr>
-      <th>7</th>
-      <td>France</td>
-      <td>3.46</td>
-      <td>-65.0</td>
+      <td id="T_ebfdf_row7_col0" class="data row7 col0" >India</td>
+      <td id="T_ebfdf_row7_col1" class="data row7 col1" >6.330000</td>
     </tr>
     <tr>
-      <th>8</th>
-      <td>Germany</td>
-      <td>2.67</td>
-      <td>-144.0</td>
+      <td id="T_ebfdf_row8_col0" class="data row8 col0" >South Africa</td>
+      <td id="T_ebfdf_row8_col1" class="data row8 col1" >8.870000</td>
     </tr>
     <tr>
-      <th>9</th>
-      <td>China</td>
-      <td>1.67</td>
-      <td>-244.0</td>
+      <td id="T_ebfdf_row9_col0" class="data row9 col0" >Brazil</td>
+      <td id="T_ebfdf_row9_col1" class="data row9 col1" >13.830000</td>
     </tr>
     <tr>
-      <th>10</th>
-      <td>Japan</td>
-      <td>1.67</td>
-      <td>-244.0</td>
+      <td id="T_ebfdf_row10_col0" class="data row10 col0" >Turkey</td>
+      <td id="T_ebfdf_row10_col1" class="data row10 col1" >29.680000</td>
     </tr>
   </tbody>
 </table>
-</div></div></div>
+</div></div>
 </div>
 </section>
 </section>
@@ -504,201 +446,168 @@
 
 <span class="c1"># Display</span>
 <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.max_rows&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># Show all rows</span>
-<span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">hide</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
+<div class="output text_html"><style type="text/css">
 </style>
-<table border="1" class="dataframe">
+<table id="T_4fe6b">
   <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Category</th>
-      <th>S&amp;P</th>
-      <th>Moody's</th>
-      <th>Fitch</th>
-      <th>Investment Grade</th>
+    <tr>
+      <th id="T_4fe6b_level0_col0" class="col_heading level0 col0" >Category</th>
+      <th id="T_4fe6b_level0_col1" class="col_heading level0 col1" >S&P</th>
+      <th id="T_4fe6b_level0_col2" class="col_heading level0 col2" >Moody's</th>
+      <th id="T_4fe6b_level0_col3" class="col_heading level0 col3" >Fitch</th>
+      <th id="T_4fe6b_level0_col4" class="col_heading level0 col4" >Investment Grade</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
-      <td>Highest quality</td>
-      <td>AAA</td>
-      <td>Aaa</td>
-      <td>AAA</td>
-      <td>True</td>
+      <td id="T_4fe6b_row0_col0" class="data row0 col0" >Highest quality</td>
+      <td id="T_4fe6b_row0_col1" class="data row0 col1" >AAA</td>
+      <td id="T_4fe6b_row0_col2" class="data row0 col2" >Aaa</td>
+      <td id="T_4fe6b_row0_col3" class="data row0 col3" >AAA</td>
+      <td id="T_4fe6b_row0_col4" class="data row0 col4" >True</td>
     </tr>
     <tr>
-      <th>1</th>
-      <td>High quality</td>
-      <td>AA+</td>
-      <td>Aa1</td>
-      <td>AA+</td>
-      <td>True</td>
+      <td id="T_4fe6b_row1_col0" class="data row1 col0" >High quality</td>
+      <td id="T_4fe6b_row1_col1" class="data row1 col1" >AA+</td>
+      <td id="T_4fe6b_row1_col2" class="data row1 col2" >Aa1</td>
+      <td id="T_4fe6b_row1_col3" class="data row1 col3" >AA+</td>
+      <td id="T_4fe6b_row1_col4" class="data row1 col4" >True</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>High quality</td>
-      <td>AA</td>
-      <td>Aa2</td>
-      <td>AA</td>
-      <td>True</td>
+      <td id="T_4fe6b_row2_col0" class="data row2 col0" >High quality</td>
+      <td id="T_4fe6b_row2_col1" class="data row2 col1" >AA</td>
+      <td id="T_4fe6b_row2_col2" class="data row2 col2" >Aa2</td>
+      <td id="T_4fe6b_row2_col3" class="data row2 col3" >AA</td>
+      <td id="T_4fe6b_row2_col4" class="data row2 col4" >True</td>
     </tr>
     <tr>
-      <th>3</th>
-      <td>High quality</td>
-      <td>AA-</td>
-      <td>Aa3</td>
-      <td>AA-</td>
-      <td>True</td>
+      <td id="T_4fe6b_row3_col0" class="data row3 col0" >High quality</td>
+      <td id="T_4fe6b_row3_col1" class="data row3 col1" >AA-</td>
+      <td id="T_4fe6b_row3_col2" class="data row3 col2" >Aa3</td>
+      <td id="T_4fe6b_row3_col3" class="data row3 col3" >AA-</td>
+      <td id="T_4fe6b_row3_col4" class="data row3 col4" >True</td>
     </tr>
     <tr>
-      <th>4</th>
-      <td>Upper-medium</td>
-      <td>A+</td>
-      <td>A1</td>
-      <td>A+</td>
-      <td>True</td>
+      <td id="T_4fe6b_row4_col0" class="data row4 col0" >Upper-medium</td>
+      <td id="T_4fe6b_row4_col1" class="data row4 col1" >A+</td>
+      <td id="T_4fe6b_row4_col2" class="data row4 col2" >A1</td>
+      <td id="T_4fe6b_row4_col3" class="data row4 col3" >A+</td>
+      <td id="T_4fe6b_row4_col4" class="data row4 col4" >True</td>
     </tr>
     <tr>
-      <th>5</th>
-      <td>Upper-medium</td>
-      <td>A</td>
-      <td>A2</td>
-      <td>A</td>
-      <td>True</td>
+      <td id="T_4fe6b_row5_col0" class="data row5 col0" >Upper-medium</td>
+      <td id="T_4fe6b_row5_col1" class="data row5 col1" >A</td>
+      <td id="T_4fe6b_row5_col2" class="data row5 col2" >A2</td>
+      <td id="T_4fe6b_row5_col3" class="data row5 col3" >A</td>
+      <td id="T_4fe6b_row5_col4" class="data row5 col4" >True</td>
     </tr>
     <tr>
-      <th>6</th>
-      <td>Upper-medium</td>
-      <td>A-</td>
-      <td>A3</td>
-      <td>A-</td>
-      <td>True</td>
+      <td id="T_4fe6b_row6_col0" class="data row6 col0" >Upper-medium</td>
+      <td id="T_4fe6b_row6_col1" class="data row6 col1" >A-</td>
+      <td id="T_4fe6b_row6_col2" class="data row6 col2" >A3</td>
+      <td id="T_4fe6b_row6_col3" class="data row6 col3" >A-</td>
+      <td id="T_4fe6b_row6_col4" class="data row6 col4" >True</td>
     </tr>
     <tr>
-      <th>7</th>
-      <td>Lower-medium</td>
-      <td>BBB+</td>
-      <td>Baa1</td>
-      <td>BBB+</td>
-      <td>True</td>
+      <td id="T_4fe6b_row7_col0" class="data row7 col0" >Lower-medium</td>
+      <td id="T_4fe6b_row7_col1" class="data row7 col1" >BBB+</td>
+      <td id="T_4fe6b_row7_col2" class="data row7 col2" >Baa1</td>
+      <td id="T_4fe6b_row7_col3" class="data row7 col3" >BBB+</td>
+      <td id="T_4fe6b_row7_col4" class="data row7 col4" >True</td>
     </tr>
     <tr>
-      <th>8</th>
-      <td>Lower-medium</td>
-      <td>BBB</td>
-      <td>Baa2</td>
-      <td>BBB</td>
-      <td>True</td>
+      <td id="T_4fe6b_row8_col0" class="data row8 col0" >Lower-medium</td>
+      <td id="T_4fe6b_row8_col1" class="data row8 col1" >BBB</td>
+      <td id="T_4fe6b_row8_col2" class="data row8 col2" >Baa2</td>
+      <td id="T_4fe6b_row8_col3" class="data row8 col3" >BBB</td>
+      <td id="T_4fe6b_row8_col4" class="data row8 col4" >True</td>
     </tr>
     <tr>
-      <th>9</th>
-      <td>Lowest IG</td>
-      <td>BBB-</td>
-      <td>Baa3</td>
-      <td>BBB-</td>
-      <td>True</td>
+      <td id="T_4fe6b_row9_col0" class="data row9 col0" >Lowest IG</td>
+      <td id="T_4fe6b_row9_col1" class="data row9 col1" >BBB-</td>
+      <td id="T_4fe6b_row9_col2" class="data row9 col2" >Baa3</td>
+      <td id="T_4fe6b_row9_col3" class="data row9 col3" >BBB-</td>
+      <td id="T_4fe6b_row9_col4" class="data row9 col4" >True</td>
     </tr>
     <tr>
-      <th>10</th>
-      <td>Speculative</td>
-      <td>BB+</td>
-      <td>Ba1</td>
-      <td>BB+</td>
-      <td>False</td>
+      <td id="T_4fe6b_row10_col0" class="data row10 col0" >Speculative</td>
+      <td id="T_4fe6b_row10_col1" class="data row10 col1" >BB+</td>
+      <td id="T_4fe6b_row10_col2" class="data row10 col2" >Ba1</td>
+      <td id="T_4fe6b_row10_col3" class="data row10 col3" >BB+</td>
+      <td id="T_4fe6b_row10_col4" class="data row10 col4" >False</td>
     </tr>
     <tr>
-      <th>11</th>
-      <td>Speculative</td>
-      <td>BB</td>
-      <td>Ba2</td>
-      <td>BB</td>
-      <td>False</td>
+      <td id="T_4fe6b_row11_col0" class="data row11 col0" >Speculative</td>
+      <td id="T_4fe6b_row11_col1" class="data row11 col1" >BB</td>
+      <td id="T_4fe6b_row11_col2" class="data row11 col2" >Ba2</td>
+      <td id="T_4fe6b_row11_col3" class="data row11 col3" >BB</td>
+      <td id="T_4fe6b_row11_col4" class="data row11 col4" >False</td>
     </tr>
     <tr>
-      <th>12</th>
-      <td>Speculative</td>
-      <td>BB-</td>
-      <td>Ba3</td>
-      <td>BB-</td>
-      <td>False</td>
+      <td id="T_4fe6b_row12_col0" class="data row12 col0" >Speculative</td>
+      <td id="T_4fe6b_row12_col1" class="data row12 col1" >BB-</td>
+      <td id="T_4fe6b_row12_col2" class="data row12 col2" >Ba3</td>
+      <td id="T_4fe6b_row12_col3" class="data row12 col3" >BB-</td>
+      <td id="T_4fe6b_row12_col4" class="data row12 col4" >False</td>
     </tr>
     <tr>
-      <th>13</th>
-      <td>Speculative</td>
-      <td>B+</td>
-      <td>B1</td>
-      <td>B+</td>
-      <td>False</td>
+      <td id="T_4fe6b_row13_col0" class="data row13 col0" >Speculative</td>
+      <td id="T_4fe6b_row13_col1" class="data row13 col1" >B+</td>
+      <td id="T_4fe6b_row13_col2" class="data row13 col2" >B1</td>
+      <td id="T_4fe6b_row13_col3" class="data row13 col3" >B+</td>
+      <td id="T_4fe6b_row13_col4" class="data row13 col4" >False</td>
     </tr>
     <tr>
-      <th>14</th>
-      <td>Speculative</td>
-      <td>B</td>
-      <td>B2</td>
-      <td>B</td>
-      <td>False</td>
+      <td id="T_4fe6b_row14_col0" class="data row14 col0" >Speculative</td>
+      <td id="T_4fe6b_row14_col1" class="data row14 col1" >B</td>
+      <td id="T_4fe6b_row14_col2" class="data row14 col2" >B2</td>
+      <td id="T_4fe6b_row14_col3" class="data row14 col3" >B</td>
+      <td id="T_4fe6b_row14_col4" class="data row14 col4" >False</td>
     </tr>
     <tr>
-      <th>15</th>
-      <td>Speculative</td>
-      <td>B-</td>
-      <td>B3</td>
-      <td>B-</td>
-      <td>False</td>
+      <td id="T_4fe6b_row15_col0" class="data row15 col0" >Speculative</td>
+      <td id="T_4fe6b_row15_col1" class="data row15 col1" >B-</td>
+      <td id="T_4fe6b_row15_col2" class="data row15 col2" >B3</td>
+      <td id="T_4fe6b_row15_col3" class="data row15 col3" >B-</td>
+      <td id="T_4fe6b_row15_col4" class="data row15 col4" >False</td>
     </tr>
     <tr>
-      <th>16</th>
-      <td>Highly speculative</td>
-      <td>CCC+</td>
-      <td>Caa1</td>
-      <td>CCC+</td>
-      <td>False</td>
+      <td id="T_4fe6b_row16_col0" class="data row16 col0" >Highly speculative</td>
+      <td id="T_4fe6b_row16_col1" class="data row16 col1" >CCC+</td>
+      <td id="T_4fe6b_row16_col2" class="data row16 col2" >Caa1</td>
+      <td id="T_4fe6b_row16_col3" class="data row16 col3" >CCC+</td>
+      <td id="T_4fe6b_row16_col4" class="data row16 col4" >False</td>
     </tr>
     <tr>
-      <th>17</th>
-      <td>Highly speculative</td>
-      <td>CCC</td>
-      <td>Caa2</td>
-      <td>CCC</td>
-      <td>False</td>
+      <td id="T_4fe6b_row17_col0" class="data row17 col0" >Highly speculative</td>
+      <td id="T_4fe6b_row17_col1" class="data row17 col1" >CCC</td>
+      <td id="T_4fe6b_row17_col2" class="data row17 col2" >Caa2</td>
+      <td id="T_4fe6b_row17_col3" class="data row17 col3" >CCC</td>
+      <td id="T_4fe6b_row17_col4" class="data row17 col4" >False</td>
     </tr>
     <tr>
-      <th>18</th>
-      <td>Highly speculative</td>
-      <td>CCC-</td>
-      <td>Caa3</td>
-      <td>CCC-</td>
-      <td>False</td>
+      <td id="T_4fe6b_row18_col0" class="data row18 col0" >Highly speculative</td>
+      <td id="T_4fe6b_row18_col1" class="data row18 col1" >CCC-</td>
+      <td id="T_4fe6b_row18_col2" class="data row18 col2" >Caa3</td>
+      <td id="T_4fe6b_row18_col3" class="data row18 col3" >CCC-</td>
+      <td id="T_4fe6b_row18_col4" class="data row18 col4" >False</td>
     </tr>
     <tr>
-      <th>19</th>
-      <td>Default</td>
-      <td>D</td>
-      <td>C</td>
-      <td>D</td>
-      <td>False</td>
+      <td id="T_4fe6b_row19_col0" class="data row19 col0" >Default</td>
+      <td id="T_4fe6b_row19_col1" class="data row19 col1" >D</td>
+      <td id="T_4fe6b_row19_col2" class="data row19 col2" >C</td>
+      <td id="T_4fe6b_row19_col3" class="data row19 col3" >D</td>
+      <td id="T_4fe6b_row19_col4" class="data row19 col4" >False</td>
     </tr>
   </tbody>
 </table>
-</div></div></div>
+</div></div>
 </div>
 </section>
 <section id="municipal-bonds">
@@ -726,217 +635,6 @@
 <p>Convertible Bonds are bonds that can be converted or redeemed for equity in a firm. If the equity of a firm appreciates in value, then the creditor will exercise the option to convert their holdings into stock. There bonds have a conversion ratio and are typically traded at a discount relative to standard bonds.</p>
 </section>
 </section>
-<section id="cash-flow-patterns">
-<h2>Cash Flow Patterns<a class="headerlink" href="#cash-flow-patterns" title="Link to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Level Coupon Bonds</strong>: Pay fixed interest at regular intervals.</p></li>
-<li><p><strong>Amortizing Bonds</strong>: Pay both interest and part of principal over time.</p></li>
-<li><p><strong>Perpetual Bonds</strong>: Pay interest forever, no maturity date.</p></li>
-</ul>
-</section>
-<section id="price-conventions">
-<h2>Price Conventions<a class="headerlink" href="#price-conventions" title="Link to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Clean Price</strong>: Price excluding accrued interest.</p></li>
-<li><p><strong>Dirty Price</strong>: Price including accrued interest.</p></li>
-<li><p><strong>Accrued Interest Calculation</strong>: Interest earned since last payment but not yet paid.</p></li>
-</ul>
-<section id="accrued-interest">
-<h3>Accrued Interest<a class="headerlink" href="#accrued-interest" title="Link to this heading"></a></h3>
-<p>Since interest is paid out just several times a year, we need to compute the interest that has accrued since the last coupon payment. The formula for accrued interest is:</p>
-<div class="math notranslate nohighlight">
-\[\text{Accrued Interest} = \frac{\text{Coupon Rate} \times \text{Face Value} \times \text{Days Accrued}}{\text{Days in Coupon Period}}\]</div>
-</section>
-<section id="clean-price">
-<h3>Clean Price<a class="headerlink" href="#clean-price" title="Link to this heading"></a></h3>
-<p>The prices that we see in the news is typically quoted as the clean price. The clean price is calculated as:</p>
-<div class="math notranslate nohighlight">
-\[\text{Clean Price} = \text{Dirty Price} - \text{Accrued Interest}\]</div>
-</section>
-<section id="dirty-price">
-<h3>Dirty Price<a class="headerlink" href="#dirty-price" title="Link to this heading"></a></h3>
-<p>The dirty price includes the accrued interest.</p>
-<div class="math notranslate nohighlight">
-\[\text{Dirty Price} = \text{Clean Price} + \text{Accrued Interest}\]</div>
-</section>
-<section id="id1">
-<h3><a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
-</section>
-<section id="discount-rate">
-<h3>Discount Rate<a class="headerlink" href="#discount-rate" title="Link to this heading"></a></h3>
-<p>Bonds can be sold at a discount, at par, or at a premium. When a bond is sold at a discount, the difference between its face value and the lower purchase price serves as additional compensation for the investor, reflecting a yield that exceeds the coupon rate. Conversely, when a bond is sold at par, the yield equals the coupon rate. When sold at a premium, the bond’s coupon rate exceeds the yield, and investors pay more upfront in exchange for higher coupon payments.</p>
-<p><strong>Table: Cash Flows for Discounted, Par, and Premium Bonds (Face Value = $1,000, YTM = 5%, 3-Year Maturity)</strong></p>
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Bond Type</p></th>
-<th class="head"><p>Time 0 (Price)</p></th>
-<th class="head"><p>Year 1</p></th>
-<th class="head"><p>Year 2</p></th>
-<th class="head"><p>Year 3</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Discounted (3% Coupon)</p></td>
-<td><p>-999.18</p></td>
-<td><p>30.00</p></td>
-<td><p>30.00</p></td>
-<td><p>1030.00</p></td>
-</tr>
-<tr class="row-odd"><td><p>Par (5% Coupon)</p></td>
-<td><p>-1000.00</p></td>
-<td><p>50.00</p></td>
-<td><p>50.00</p></td>
-<td><p>1050.00</p></td>
-</tr>
-<tr class="row-even"><td><p>Premium (7% Coupon)</p></td>
-<td><p>-1000.82</p></td>
-<td><p>70.00</p></td>
-<td><p>70.00</p></td>
-<td><p>1070.00</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-</section>
-<section id="introduction-to-yield-concepts-preview">
-<h2>Introduction to Yield Concepts (Preview)<a class="headerlink" href="#introduction-to-yield-concepts-preview" title="Link to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Current Yield</strong>: Annual coupon divided by current price.</p></li>
-<li><p><strong>Yield to Maturity (YTM)</strong>: The total return anticipated if the bond is held to maturity (conceptual introduction; details in future classes).</p></li>
-</ul>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example: Calculate accrued interest for a bond</span>
-<span class="n">face_value</span> <span class="o">=</span> <span class="mi">1000</span>
-<span class="n">coupon_rate</span> <span class="o">=</span> <span class="mf">0.05</span>  <span class="c1"># 5% annual coupon</span>
-<span class="n">payment_frequency</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># semiannual</span>
-<span class="n">days_since_last_payment</span> <span class="o">=</span> <span class="mi">60</span>
-<span class="n">days_in_period</span> <span class="o">=</span> <span class="mi">182</span>  <span class="c1"># typical for semiannual</span>
-
-<span class="n">accrued_interest</span> <span class="o">=</span> <span class="p">(</span><span class="n">face_value</span> <span class="o">*</span> <span class="n">coupon_rate</span> <span class="o">/</span> <span class="n">payment_frequency</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
-    <span class="n">days_since_last_payment</span> <span class="o">/</span> <span class="n">days_in_period</span>
-<span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accrued Interest: $</span><span class="si">{</span><span class="n">accrued_interest</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Accrued Interest: $8.24
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="irr-internal-rate-of-return">
-<h2>IRR: Internal Rate of Return<a class="headerlink" href="#irr-internal-rate-of-return" title="Link to this heading"></a></h2>
-<p>IRR is the discount rate that makes the net present value (NPV) of a series of cash flows equal to zero. When a bond is held to maturity, it is equal to the YTM.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.irr</span><span class="w"> </span><span class="kn">import</span> <span class="n">irr</span>
-
-<span class="n">cf</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">]</span>
-<span class="n">irr</span><span class="p">(</span><span class="n">cf</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span>
-    <span class="s2">&quot;The internal rate of return for investment with $&quot;</span><span class="p">,</span>
-    <span class="o">-</span><span class="n">cf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-    <span class="s2">&quot;initial outflow, with&quot;</span><span class="p">,</span>
-    <span class="nb">len</span><span class="p">(</span><span class="n">cf</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;cash inflows, is&quot;</span><span class="p">,</span>
-    <span class="n">irr</span><span class="p">(</span><span class="n">cf</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
-    <span class="s2">&quot;%&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The internal rate of return for investment with $ 1000 initial outflow, with 4 cash inflows, is 24.88833566 %
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="xirr-non-periodic-irr">
-<h2>XIRR: Non periodic IRR<a class="headerlink" href="#xirr-non-periodic-irr" title="Link to this heading"></a></h2>
-<p>XIRR, or Extended Internal Rate of Return, is a financial metric used to calculate the annualized rate of return for a series of cash flows that occur at irregular intervals.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.irr</span><span class="w"> </span><span class="kn">import</span> <span class="n">xirr</span>
-
-<span class="n">cf</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">600</span><span class="p">]</span>
-<span class="n">dates</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-    <span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-    <span class="n">datetime</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-    <span class="n">datetime</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-    <span class="n">datetime</span><span class="p">(</span><span class="mi">2022</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-<span class="p">]</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">xirr</span><span class="p">(</span><span class="n">cf</span><span class="p">,</span> <span class="n">dates</span><span class="p">))</span>
-
-<span class="nb">print</span><span class="p">(</span>
-    <span class="s2">&quot;The internal rate of return for investment with $&quot;</span><span class="p">,</span>
-    <span class="o">-</span><span class="n">cf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-    <span class="s2">&quot;initial outflow and cash inflows from&quot;</span><span class="p">,</span>
-    <span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">),</span>
-    <span class="s2">&quot;to&quot;</span><span class="p">,</span>
-    <span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">),</span>
-    <span class="s2">&quot;is&quot;</span><span class="p">,</span>
-    <span class="n">xirr</span><span class="p">(</span><span class="n">cf</span><span class="p">,</span> <span class="n">dates</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
-    <span class="s2">&quot;%&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.5831820341312749
-The internal rate of return for investment with $ 1000 initial outflow and cash inflows from 2020-01-01 to 2022-01-01 is 58.31820341312749 %
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="continuous-compounding">
-<h2>Continuous compounding<a class="headerlink" href="#continuous-compounding" title="Link to this heading"></a></h2>
-<p>We can compound interest using either discrete periods or continuous compounding. For instance, when calculating accrued interest between two periods, such as for a bond, we can use the continuously compounded interest formula for greater precision.</p>
-<p>The formula for present value of continuous compounding interest is:
-$<span class="math notranslate nohighlight">\( PV = FV e^{-rt} \)</span>$</p>
-<p>The formula for future value of continuous compounding interest is:
-$<span class="math notranslate nohighlight">\( FV = PV e^{rt} \)</span>$</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.continuous_compounding</span><span class="w"> </span><span class="kn">import</span> <span class="n">present_value_continuous</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.continuous_compounding</span><span class="w"> </span><span class="kn">import</span> <span class="n">future_value_continuous</span>
-
-<span class="n">PV</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="n">FV</span> <span class="o">=</span> <span class="mi">200</span>
-<span class="n">i</span> <span class="o">=</span> <span class="mf">0.05</span>
-<span class="n">t</span> <span class="o">=</span> <span class="mi">1</span>
-
-<span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">&quot;The present value of a bond with $</span><span class="si">{</span><span class="n">FV</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2"> face value, </span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2"> interest rate, over </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2"> year(s) is $</span><span class="si">{</span><span class="n">present_value_continuous</span><span class="p">(</span><span class="n">FV</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span>
-    <span class="sa">f</span><span class="s2">&quot;The future value of a bond with $</span><span class="si">{</span><span class="n">PV</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2"> face value, </span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">.2%</span><span class="si">}</span><span class="s2"> interest rate, over </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2"> year(s) is $</span><span class="si">{</span><span class="n">future_value_continuous</span><span class="p">(</span><span class="n">PV</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="si">:</span><span class="s2">,.2f</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.continuous_compounding</span><span class="w"> </span><span class="kn">import</span> <span class="n">present_value_continuous</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value.continuous_compounding</span><span class="w"> </span><span class="kn">import</span> <span class="n">future_value_continuous</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">PV</span> <span class="o">=</span> <span class="mi">100</span>
-
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;pyfian.time_value.continuous_compounding&#39;
-</pre></div>
-</div>
-</div>
-</div>
-</section>
 </section>
 
 
@@ -944,7 +642,7 @@ $<span class="math notranslate nohighlight">\( FV = PV e^{rt} \)</span>$</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="00_economics_of_interest_rates.html" class="btn btn-neutral float-left" title="Economics of Interest Rates" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="02_money_market_instruments.html" class="btn btn-neutral float-right" title="Money Market Instruments" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="02_bond_pricing_and_yields.html" class="btn btn-neutral float-right" title="Bond Pricing and Yields" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
