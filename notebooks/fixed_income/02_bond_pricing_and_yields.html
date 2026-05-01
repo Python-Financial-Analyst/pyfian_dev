@@ -49,7 +49,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Fixed Income</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../Topics/fixed_income/index.html">Fixed Income</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="00_economics_of_interest_rates.html">Economics of Interest Rates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="01_fixed_income_instruments.html">Fixed Income Instruments</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Bond Pricing and Yields</a><ul>
@@ -60,6 +60,12 @@
 <li class="toctree-l4"><a class="reference internal" href="#clean-price">Clean Price</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#dirty-price">Dirty Price</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#accrued-interest">Accrued Interest</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#bond-pricing">Bond Pricing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#one-flow-fixed-income-instrument">One Flow Fixed Income Instrument</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#two-flows-fixed-income-instrument">Two Flows Fixed Income Instrument</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#generalized-fixed-income-pricing-formula">Generalized Fixed Income Pricing Formula</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#discrete-periods-vs-continuous-compounding">Discrete Periods vs Continuous compounding</a></li>
@@ -102,10 +108,10 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="index.html">Fixed Income</a></li>
+          <li class="breadcrumb-item"><a href="../../Topics/fixed_income/index.html">Fixed Income</a></li>
       <li class="breadcrumb-item active">Bond Pricing and Yields</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/Topics/fixed_income/02_bond_pricing_and_yields.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/notebooks/fixed_income/02_bond_pricing_and_yields.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -173,49 +179,49 @@
 <div class="cell_output docutils container">
 <div class="output text_html"><style type="text/css">
 </style>
-<table id="T_f7fad">
+<table id="T_bc06c">
   <thead>
     <tr>
-      <th id="T_f7fad_level0_col0" class="col_heading level0 col0" >Attribute</th>
-      <th id="T_f7fad_level0_col1" class="col_heading level0 col1" >Value</th>
+      <th id="T_bc06c_level0_col0" class="col_heading level0 col0" >Attribute</th>
+      <th id="T_bc06c_level0_col1" class="col_heading level0 col1" >Value</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td id="T_f7fad_row0_col0" class="data row0 col0" >Instrument</td>
-      <td id="T_f7fad_row0_col1" class="data row0 col1" >FixedRateBullet</td>
+      <td id="T_bc06c_row0_col0" class="data row0 col0" >Instrument</td>
+      <td id="T_bc06c_row0_col1" class="data row0 col1" >FixedRateBullet</td>
     </tr>
     <tr>
-      <td id="T_f7fad_row1_col0" class="data row1 col0" >Issue Date</td>
-      <td id="T_f7fad_row1_col1" class="data row1 col1" >2025-01-01 00:00:00</td>
+      <td id="T_bc06c_row1_col0" class="data row1 col0" >Issue Date</td>
+      <td id="T_bc06c_row1_col1" class="data row1 col1" >2025-01-01 00:00:00</td>
     </tr>
     <tr>
-      <td id="T_f7fad_row2_col0" class="data row2 col0" >Maturity Date</td>
-      <td id="T_f7fad_row2_col1" class="data row2 col1" >2030-01-01 00:00:00</td>
+      <td id="T_bc06c_row2_col0" class="data row2 col0" >Maturity Date</td>
+      <td id="T_bc06c_row2_col1" class="data row2 col1" >2030-01-01 00:00:00</td>
     </tr>
     <tr>
-      <td id="T_f7fad_row3_col0" class="data row3 col0" >Settlement Date</td>
-      <td id="T_f7fad_row3_col1" class="data row3 col1" >2025-12-01 00:00:00</td>
+      <td id="T_bc06c_row3_col0" class="data row3 col0" >Settlement Date</td>
+      <td id="T_bc06c_row3_col1" class="data row3 col1" >2025-12-01 00:00:00</td>
     </tr>
     <tr>
-      <td id="T_f7fad_row4_col0" class="data row4 col0" >Notional</td>
-      <td id="T_f7fad_row4_col1" class="data row4 col1" >100</td>
+      <td id="T_bc06c_row4_col0" class="data row4 col0" >Notional</td>
+      <td id="T_bc06c_row4_col1" class="data row4 col1" >100</td>
     </tr>
     <tr>
-      <td id="T_f7fad_row5_col0" class="data row5 col0" >Coupon (%)</td>
-      <td id="T_f7fad_row5_col1" class="data row5 col1" >4</td>
+      <td id="T_bc06c_row5_col0" class="data row5 col0" >Coupon (%)</td>
+      <td id="T_bc06c_row5_col1" class="data row5 col1" >4</td>
     </tr>
     <tr>
-      <td id="T_f7fad_row6_col0" class="data row6 col0" >Coupon Frequency</td>
-      <td id="T_f7fad_row6_col1" class="data row6 col1" >2</td>
+      <td id="T_bc06c_row6_col0" class="data row6 col0" >Coupon Frequency</td>
+      <td id="T_bc06c_row6_col1" class="data row6 col1" >2</td>
     </tr>
     <tr>
-      <td id="T_f7fad_row7_col0" class="data row7 col0" >Day Count Convention</td>
-      <td id="T_f7fad_row7_col1" class="data row7 col1" >DayCountActualActualBond</td>
+      <td id="T_bc06c_row7_col0" class="data row7 col0" >Day Count Convention</td>
+      <td id="T_bc06c_row7_col1" class="data row7 col1" >DayCountActualActualBond</td>
     </tr>
     <tr>
-      <td id="T_f7fad_row8_col0" class="data row8 col0" >Price</td>
-      <td id="T_f7fad_row8_col1" class="data row8 col1" >95</td>
+      <td id="T_bc06c_row8_col0" class="data row8 col0" >Price</td>
+      <td id="T_bc06c_row8_col1" class="data row8 col1" >95</td>
     </tr>
   </tbody>
 </table>
@@ -379,6 +385,36 @@
 \[\text{Accrued Interest} = \frac{\text{Coupon Rate} \times \text{Face Value} \times \text{Days Accrued}}{\text{Days in Coupon Period}}\]</div>
 </section>
 </section>
+<section id="bond-pricing">
+<h2>Bond Pricing<a class="headerlink" href="#bond-pricing" title="Link to this heading"></a></h2>
+<section id="one-flow-fixed-income-instrument">
+<h3>One Flow Fixed Income Instrument<a class="headerlink" href="#one-flow-fixed-income-instrument" title="Link to this heading"></a></h3>
+<p>In the case that the bond doesn’t pay any coupons before maturity, the formula simplifies to:</p>
+<p><span class="math notranslate nohighlight">\(PV = \frac{A + C_1}{1+r}\)</span></p>
+<p>Where:</p>
+<p><span class="math notranslate nohighlight">\(A = \text{Amortization (Principal)}\)</span></p>
+<p><span class="math notranslate nohighlight">\(C_1 = \text{Final coupon (if any)}\)</span></p>
+<p><span class="math notranslate nohighlight">\(r = \text{Discount Rate (Yield)}\)</span></p>
+</section>
+<section id="two-flows-fixed-income-instrument">
+<h3>Two Flows Fixed Income Instrument<a class="headerlink" href="#two-flows-fixed-income-instrument" title="Link to this heading"></a></h3>
+<p>In order to price a bond we need to look at the present value of its cash flows. The formula for finding the present value of a bond’s cash flows is:</p>
+<p><span class="math notranslate nohighlight">\(PV = \frac{C_1}{1+r} + \frac{C_2 + A}{(1+r)^2}\)</span></p>
+<p>Where:</p>
+<p><span class="math notranslate nohighlight">\(C_1, C_2 = \text{Coupons}\)</span></p>
+<p><span class="math notranslate nohighlight">\(A = \text{Amortization (Principal)}\)</span></p>
+<p><span class="math notranslate nohighlight">\(r = \text{Discount Rate (Yield)}\)</span></p>
+</section>
+<section id="generalized-fixed-income-pricing-formula">
+<h3>Generalized Fixed Income Pricing Formula<a class="headerlink" href="#generalized-fixed-income-pricing-formula" title="Link to this heading"></a></h3>
+<p>More generally, for a bond with <span class="math notranslate nohighlight">\(n\)</span> cash flows, the present value is:</p>
+<p><span class="math notranslate nohighlight">\(PV = \sum_{t=1}^{n} \frac{CF_t}{(1+r)^t} = \sum_{t=1}^{n} \frac{C_t}{(1+r)^t} + \frac{A}{(1+r)^n}\)</span></p>
+<p>Where:</p>
+<p><span class="math notranslate nohighlight">\(CF_t = \text{Cash flow at time } t\)</span></p>
+<p><span class="math notranslate nohighlight">\(n = \text{Number of periods}\)</span></p>
+<p><span class="math notranslate nohighlight">\(r = \text{Discount Rate (Yield)}\)</span></p>
+</section>
+</section>
 <section id="discrete-periods-vs-continuous-compounding">
 <h2>Discrete Periods vs Continuous compounding<a class="headerlink" href="#discrete-periods-vs-continuous-compounding" title="Link to this heading"></a></h2>
 <p>We can compound interest using either discrete periods or continuous compounding. For instance, when calculating accrued interest between two periods, we can use the following formulas for computing the present or future value of the instrument.</p>
@@ -500,89 +536,89 @@
 <div class="cell_output docutils container">
 <div class="output text_html"><style type="text/css">
 </style>
-<table id="T_df3f9">
+<table id="T_3a171">
   <thead>
     <tr>
-      <th id="T_df3f9_level0_col0" class="col_heading level0 col0" >Attribute</th>
-      <th id="T_df3f9_level0_col1" class="col_heading level0 col1" >Value</th>
-      <th id="T_df3f9_level0_col2" class="col_heading level0 col2" >Calculated</th>
+      <th id="T_3a171_level0_col0" class="col_heading level0 col0" >Attribute</th>
+      <th id="T_3a171_level0_col1" class="col_heading level0 col1" >Value</th>
+      <th id="T_3a171_level0_col2" class="col_heading level0 col2" >Calculated</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td id="T_df3f9_row0_col0" class="data row0 col0" >Instrument</td>
-      <td id="T_df3f9_row0_col1" class="data row0 col1" >FixedRateBullet</td>
-      <td id="T_df3f9_row0_col2" class="data row0 col2" ></td>
+      <td id="T_3a171_row0_col0" class="data row0 col0" >Instrument</td>
+      <td id="T_3a171_row0_col1" class="data row0 col1" >FixedRateBullet</td>
+      <td id="T_3a171_row0_col2" class="data row0 col2" ></td>
     </tr>
     <tr>
-      <td id="T_df3f9_row1_col0" class="data row1 col0" >Issue Date</td>
-      <td id="T_df3f9_row1_col1" class="data row1 col1" >2025-01-01 00:00:00</td>
-      <td id="T_df3f9_row1_col2" class="data row1 col2" ></td>
+      <td id="T_3a171_row1_col0" class="data row1 col0" >Issue Date</td>
+      <td id="T_3a171_row1_col1" class="data row1 col1" >2025-01-01 00:00:00</td>
+      <td id="T_3a171_row1_col2" class="data row1 col2" ></td>
     </tr>
     <tr>
-      <td id="T_df3f9_row2_col0" class="data row2 col0" >Maturity Date</td>
-      <td id="T_df3f9_row2_col1" class="data row2 col1" >2030-01-01 00:00:00</td>
-      <td id="T_df3f9_row2_col2" class="data row2 col2" ></td>
+      <td id="T_3a171_row2_col0" class="data row2 col0" >Maturity Date</td>
+      <td id="T_3a171_row2_col1" class="data row2 col1" >2030-01-01 00:00:00</td>
+      <td id="T_3a171_row2_col2" class="data row2 col2" ></td>
     </tr>
     <tr>
-      <td id="T_df3f9_row3_col0" class="data row3 col0" >Settlement Date</td>
-      <td id="T_df3f9_row3_col1" class="data row3 col1" >2025-12-01 00:00:00</td>
-      <td id="T_df3f9_row3_col2" class="data row3 col2" ></td>
+      <td id="T_3a171_row3_col0" class="data row3 col0" >Settlement Date</td>
+      <td id="T_3a171_row3_col1" class="data row3 col1" >2025-12-01 00:00:00</td>
+      <td id="T_3a171_row3_col2" class="data row3 col2" ></td>
     </tr>
     <tr>
-      <td id="T_df3f9_row4_col0" class="data row4 col0" >Notional</td>
-      <td id="T_df3f9_row4_col1" class="data row4 col1" >100</td>
-      <td id="T_df3f9_row4_col2" class="data row4 col2" ></td>
+      <td id="T_3a171_row4_col0" class="data row4 col0" >Notional</td>
+      <td id="T_3a171_row4_col1" class="data row4 col1" >100</td>
+      <td id="T_3a171_row4_col2" class="data row4 col2" ></td>
     </tr>
     <tr>
-      <td id="T_df3f9_row5_col0" class="data row5 col0" >Coupon (%)</td>
-      <td id="T_df3f9_row5_col1" class="data row5 col1" >4</td>
-      <td id="T_df3f9_row5_col2" class="data row5 col2" ></td>
+      <td id="T_3a171_row5_col0" class="data row5 col0" >Coupon (%)</td>
+      <td id="T_3a171_row5_col1" class="data row5 col1" >4</td>
+      <td id="T_3a171_row5_col2" class="data row5 col2" ></td>
     </tr>
     <tr>
-      <td id="T_df3f9_row6_col0" class="data row6 col0" >Coupon Frequency</td>
-      <td id="T_df3f9_row6_col1" class="data row6 col1" >2</td>
-      <td id="T_df3f9_row6_col2" class="data row6 col2" ></td>
+      <td id="T_3a171_row6_col0" class="data row6 col0" >Coupon Frequency</td>
+      <td id="T_3a171_row6_col1" class="data row6 col1" >2</td>
+      <td id="T_3a171_row6_col2" class="data row6 col2" ></td>
     </tr>
     <tr>
-      <td id="T_df3f9_row7_col0" class="data row7 col0" >Day Count Convention</td>
-      <td id="T_df3f9_row7_col1" class="data row7 col1" >DayCountActualActualBond</td>
-      <td id="T_df3f9_row7_col2" class="data row7 col2" ></td>
+      <td id="T_3a171_row7_col0" class="data row7 col0" >Day Count Convention</td>
+      <td id="T_3a171_row7_col1" class="data row7 col1" >DayCountActualActualBond</td>
+      <td id="T_3a171_row7_col2" class="data row7 col2" ></td>
     </tr>
     <tr>
-      <td id="T_df3f9_row8_col0" class="data row8 col0" >Price</td>
-      <td id="T_df3f9_row8_col1" class="data row8 col1" >95</td>
-      <td id="T_df3f9_row8_col2" class="data row8 col2" ></td>
+      <td id="T_3a171_row8_col0" class="data row8 col0" >Price</td>
+      <td id="T_3a171_row8_col1" class="data row8 col1" >95</td>
+      <td id="T_3a171_row8_col2" class="data row8 col2" ></td>
     </tr>
     <tr>
-      <td id="T_df3f9_row9_col0" class="data row9 col0" >Clean Price</td>
-      <td id="T_df3f9_row9_col1" class="data row9 col1" >95.00</td>
-      <td id="T_df3f9_row9_col2" class="data row9 col2" >★</td>
+      <td id="T_3a171_row9_col0" class="data row9 col0" >Clean Price</td>
+      <td id="T_3a171_row9_col1" class="data row9 col1" >95.00</td>
+      <td id="T_3a171_row9_col2" class="data row9 col2" >★</td>
     </tr>
     <tr>
-      <td id="T_df3f9_row10_col0" class="data row10 col0" >Accrued Interest</td>
-      <td id="T_df3f9_row10_col1" class="data row10 col1" >1.66</td>
-      <td id="T_df3f9_row10_col2" class="data row10 col2" >★</td>
+      <td id="T_3a171_row10_col0" class="data row10 col0" >Accrued Interest</td>
+      <td id="T_3a171_row10_col1" class="data row10 col1" >1.66</td>
+      <td id="T_3a171_row10_col2" class="data row10 col2" >★</td>
     </tr>
     <tr>
-      <td id="T_df3f9_row11_col0" class="data row11 col0" >Dirty Price</td>
-      <td id="T_df3f9_row11_col1" class="data row11 col1" >96.66</td>
-      <td id="T_df3f9_row11_col2" class="data row11 col2" >★</td>
+      <td id="T_3a171_row11_col0" class="data row11 col0" >Dirty Price</td>
+      <td id="T_3a171_row11_col1" class="data row11 col1" >96.66</td>
+      <td id="T_3a171_row11_col2" class="data row11 col2" >★</td>
     </tr>
     <tr>
-      <td id="T_df3f9_row12_col0" class="data row12 col0" >Yield to Maturity (%, BEY)</td>
-      <td id="T_df3f9_row12_col1" class="data row12 col1" >5.86</td>
-      <td id="T_df3f9_row12_col2" class="data row12 col2" >★</td>
+      <td id="T_3a171_row12_col0" class="data row12 col0" >Yield to Maturity (%, BEY)</td>
+      <td id="T_3a171_row12_col1" class="data row12 col1" >5.86</td>
+      <td id="T_3a171_row12_col2" class="data row12 col2" >★</td>
     </tr>
     <tr>
-      <td id="T_df3f9_row13_col0" class="data row13 col0" >Current Yield (%)</td>
-      <td id="T_df3f9_row13_col1" class="data row13 col1" >4.21</td>
-      <td id="T_df3f9_row13_col2" class="data row13 col2" >★</td>
+      <td id="T_3a171_row13_col0" class="data row13 col0" >Current Yield (%)</td>
+      <td id="T_3a171_row13_col1" class="data row13 col1" >4.21</td>
+      <td id="T_3a171_row13_col2" class="data row13 col2" >★</td>
     </tr>
     <tr>
-      <td id="T_df3f9_row14_col0" class="data row14 col0" >XIRR (%, Annual)</td>
-      <td id="T_df3f9_row14_col1" class="data row14 col1" >5.94</td>
-      <td id="T_df3f9_row14_col2" class="data row14 col2" >★</td>
+      <td id="T_3a171_row14_col0" class="data row14 col0" >XIRR (%, Annual)</td>
+      <td id="T_3a171_row14_col1" class="data row14 col1" >5.94</td>
+      <td id="T_3a171_row14_col2" class="data row14 col2" >★</td>
     </tr>
   </tbody>
 </table>

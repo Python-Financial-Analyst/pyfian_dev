@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Fixed Income Instruments" href="01_fixed_income_instruments.html" />
-    <link rel="prev" title="Fixed Income" href="index.html" /> 
+    <link rel="prev" title="Fixed Income" href="../../Topics/fixed_income/index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,7 +49,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">Fixed Income</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../Topics/fixed_income/index.html">Fixed Income</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Economics of Interest Rates</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#learning-objectives">Learning Objectives</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#installation">Installation</a></li>
@@ -90,10 +90,10 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="index.html">Fixed Income</a></li>
+          <li class="breadcrumb-item"><a href="../../Topics/fixed_income/index.html">Fixed Income</a></li>
       <li class="breadcrumb-item active">Economics of Interest Rates</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/Topics/fixed_income/00_economics_of_interest_rates.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/notebooks/fixed_income/00_economics_of_interest_rates.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -163,10 +163,10 @@
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting git+https://github.com/pydata/pandas-datareader.git
-  Cloning https://github.com/pydata/pandas-datareader.git to /tmp/pip-req-build-4o7lqrsb
+  Cloning https://github.com/pydata/pandas-datareader.git to /tmp/pip-req-build-36wq56h2
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Running command git clone --filter=blob:none --quiet https://github.com/pydata/pandas-datareader.git /tmp/pip-req-build-4o7lqrsb
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Running command git clone --filter=blob:none --quiet https://github.com/pydata/pandas-datareader.git /tmp/pip-req-build-36wq56h2
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Resolved https://github.com/pydata/pandas-datareader.git to commit 4ff62149bb24f72d62874477b6688ddb0fd1f97c
@@ -189,7 +189,9 @@
 Requirement already satisfied: pandas&gt;=1.5.3 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas-datareader==0.11.0.dev76+g4ff6214) (2.3.3)
 Requirement already satisfied: requests&gt;=2.19.0 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas-datareader==0.11.0.dev76+g4ff6214) (2.33.1)
 Requirement already satisfied: numpy&gt;=1.26.0 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas&gt;=1.5.3-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2.4.4)
-Requirement already satisfied: python-dateutil&gt;=2.8.2 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas&gt;=1.5.3-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2.9.0.post0)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: python-dateutil&gt;=2.8.2 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas&gt;=1.5.3-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2.9.0.post0)
 Requirement already satisfied: pytz&gt;=2020.1 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas&gt;=1.5.3-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2026.1.post1)
 Requirement already satisfied: tzdata&gt;=2022.7 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from pandas&gt;=1.5.3-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2026.2)
 Requirement already satisfied: six&gt;=1.5 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas&gt;=1.5.3-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (1.17.0)
@@ -199,14 +201,14 @@ Requirement already satisfied: urllib3&lt;3,&gt;=1.26 in /home/runner/.cache/pyp
 Requirement already satisfied: certifi&gt;=2023.5.7 in /home/runner/.cache/pypoetry/virtualenvs/pyfian-xVEnJtcL-py3.12/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pandas-datareader==0.11.0.dev76+g4ff6214) (2026.4.22)
 Downloading lxml-6.1.0-cp312-cp312-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl (5.2 MB)
 ?25l   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">0.0/5.2 MB</span> <span class=" -Color -Color-Red">?</span> eta <span class=" -Color -Color-Cyan">-:--:--</span>
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">5.2/5.2 MB</span> <span class=" -Color -Color-Red">158.9 MB/s</span>  <span class=" -Color -Color-Yellow">0:00:00</span>
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ <span class=" -Color -Color-Green">5.2/5.2 MB</span> <span class=" -Color -Color-Red">80.1 MB/s</span>  <span class=" -Color -Color-Yellow">0:00:00</span>
 ?25hBuilding wheels for collected packages: pandas-datareader
   Building wheel for pandas-datareader (pyproject.toml): started
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Building wheel for pandas-datareader (pyproject.toml): finished with status &#39;done&#39;
-  Created wheel for pandas-datareader: filename=pandas_datareader-0.11.0.dev76+g4ff6214-py3-none-any.whl size=114769 sha256=857c0a392b58cde92eafbb3e8251cd553e37c643aa769de78dbade53554e760f
-  Stored in directory: /tmp/pip-ephem-wheel-cache-o5pxrbzv/wheels/68/09/2b/66ff2e878a27988531be41d35ba4495de3d8f800ebb5de1c07
+  Created wheel for pandas-datareader: filename=pandas_datareader-0.11.0.dev76+g4ff6214-py3-none-any.whl size=114769 sha256=82379f2f37585241b9b20573e846e77d32a319ece5769a20886090ed4993108a
+  Stored in directory: /tmp/pip-ephem-wheel-cache-o5uhoupg/wheels/68/09/2b/66ff2e878a27988531be41d35ba4495de3d8f800ebb5de1c07
 Successfully built pandas-datareader
 Installing collected packages: lxml, pandas-datareader
 ?25l
@@ -530,7 +532,7 @@ r_{\text{nom}} = r^\star + \pi + \text{Default} + \text{Liq} + \text{Mat} + \tex
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Fixed Income" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../../Topics/fixed_income/index.html" class="btn btn-neutral float-left" title="Fixed Income" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="01_fixed_income_instruments.html" class="btn btn-neutral float-right" title="Fixed Income Instruments" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
