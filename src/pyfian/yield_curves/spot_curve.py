@@ -16,8 +16,10 @@ Examples
 ... # returns spot rate for 1 year
 """
 
+from __future__ import annotations
+
+
 import pandas as pd
-from typing import Optional
 from scipy.optimize import fsolve
 
 from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
@@ -130,10 +132,10 @@ class SpotCurve(ZeroCouponCurve):
     def __init__(
         self,
         curve_date: pd.Timestamp,
-        bonds: Optional[list[FixedRateBullet] | tuple[FixedRateBullet]] = None,
-        zero_rates: Optional[dict[float, float]] = None,
+        bonds: list[FixedRateBullet] | tuple[FixedRateBullet] | None = None,
+        zero_rates: dict[float, float] | None = None,
         day_count_convention: str | DayCountBase = "actual/365",
-        yield_calculation_convention: Optional[str] = None,
+        yield_calculation_convention: str | None = None,
     ):
         if bonds is None and zero_rates is None:
             raise ValueError("Either bonds or zero_rates must be provided")

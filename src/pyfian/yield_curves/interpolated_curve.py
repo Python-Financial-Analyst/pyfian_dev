@@ -4,7 +4,9 @@ interpolated_curve.py
 Implements InterpolatedCurve using cubic spline interpolation.
 """
 
-from typing import Optional, Union
+from __future__ import annotations
+
+
 import numpy as np
 import pandas as pd
 from scipy.interpolate import interp1d
@@ -100,12 +102,12 @@ class InterpolatedCurve(ZeroCouponCurve):
 
     def __init__(
         self,
-        curve_date: Union[str, pd.Timestamp],
-        maturities: Optional[list[float]] = None,
-        zero_rates: Optional[dict[float, float]] = None,
-        bonds: Optional[list] = None,
-        day_count_convention: Optional[str | DayCountBase] = "actual/365",
-        yield_calculation_convention: Optional[str] = None,
+        curve_date: str | pd.Timestamp,
+        maturities: list[float] | None = None,
+        zero_rates: dict[float, float] | None = None,
+        bonds: list | None = None,
+        day_count_convention: str | DayCountBase | None = "actual/365",
+        yield_calculation_convention: str | None = None,
     ):
         self.curve_date = pd.to_datetime(curve_date)
 

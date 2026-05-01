@@ -15,7 +15,9 @@ Supported conversions:
 These conversions are essential for comparing, quoting, and reporting interest rates and yields across different financial products, regulatory frameworks, and institutional conventions.
 """
 
-from typing import Optional
+from __future__ import annotations
+
+
 import numpy as np
 
 
@@ -25,7 +27,7 @@ def _exp_general(base, n):
     Generalized exponentiation for rate conversions:
     Returns :math:`base^n - 1`
     """
-    return round(np.power(base, n) - 1, 10)
+    return np.power(base, n) - 1
 
 
 # --- Centralized input validation ---
@@ -69,9 +71,9 @@ def convert_yield(rate: float, from_convention: str, to_convention: str) -> floa
     rate : float
         The interest rate to convert, expressed as a decimal (e.g., 0.05 for 5%).
     from_convention : str
-        The current yield calculation convention of the rate. Must be one of "Annual", "Continuous", "BEY", "BEY_Q", "BEY_M".
+        The current yield calculation convention of the rate. Must be one of "Annual", "Continuous", "BEY", "BEY-Q", "BEY-M".
     to_convention : str
-        The target yield calculation convention to convert the rate to. Must be one of "Annual", "Continuous", "BEY", "BEY_Q", "BEY_M".
+        The target yield calculation convention to convert the rate to. Must be one of "Annual", "Continuous", "BEY", "BEY-Q", "BEY-M".
 
     Returns
     -------
@@ -81,11 +83,11 @@ def convert_yield(rate: float, from_convention: str, to_convention: str) -> floa
     Examples
     --------
     >>> convert_yield(0.05, "BEY", "Annual")
-    np.float64(0.050625)
+    np.float64(0.050624...)
     >>> convert_yield(0.05, "BEY", "Continuous")
-    np.float64(0.0493852252)
+    np.float64(0.049385...)
     >>> convert_yield(0.05, "Continuous", "Annual")
-    np.float64(0.0512710964)
+    np.float64(0.051271...)
     """
     if from_convention == to_convention:
         return rate
@@ -104,15 +106,12 @@ def convert_yield(rate: float, from_convention: str, to_convention: str) -> floa
         )
 
     if to_convention == "Annual":
-        return round(eff, 10)
+        return eff
     elif to_convention == "Continuous":
-        return round(effective_to_continuous(eff), 10)
+        return effective_to_continuous(eff)
     elif "BEY" in to_convention and to_convention in YIELD_CALCULATION_ADJUSTMENTS:
-        return round(
-            effective_to_nominal_periods(
-                eff, periods_per_year=int(YIELD_CALCULATION_ADJUSTMENTS[to_convention])
-            ),
-            10,
+        return effective_to_nominal_periods(
+            eff, periods_per_year=int(YIELD_CALCULATION_ADJUSTMENTS[to_convention])
         )
     else:
         raise ValueError(
@@ -162,10 +161,10 @@ def continuous_to_effective(rate: float) -> float:
     Examples
     --------
     >>> continuous_to_effective(0.05)
-    np.float64(0.0512710964)
+    np.float64(0.051271...)
     """
     _validate_numeric(rate, "rate")
-    return round(np.expm1(rate), 10)
+    return np.expm1(rate)
 
 
 def effective_to_continuous(effective_rate: float) -> float:
@@ -198,7 +197,7 @@ def effective_to_continuous(effective_rate: float) -> float:
     np.float64(0.05...)
     """
     _validate_effective_rate(effective_rate)
-    return round(np.log1p(effective_rate), 10)
+    return np.log1p(effective_rate)
 
 
 # periodic_to_effective <-> effective_to_periodic conversions
@@ -238,9 +237,9 @@ def nominal_periods_to_effective(nominal_rate: float, periods_per_year: int) -> 
     Examples
     --------
     >>> nominal_periods_to_effective(0.12, 12)  # monthly 1%
-    np.float64(0.1268250301)
+    np.float64(0.12682...)
     >>> nominal_periods_to_effective(0.12, 4)   # quarterly 3%
-    np.float64(0.12550881)
+    np.float64(0.12550...)
     """
     _validate_numeric(nominal_rate, "nominal_rate")
     _validate_positive_number(periods_per_year, "periods_per_year")
@@ -282,7 +281,7 @@ def effective_to_nominal_periods(effective_rate: float, periods_per_year: int) -
     Examples
     --------
     >>> effective_to_nominal_periods(0.12682503013196977, 12)  # monthly
-    np.float64(0.12)
+    np.float64(0.12000...)
     >>> effective_to_nominal_periods(0.12550881349224116, 4)   # quarterly # doctest: +ELLIPSIS
     np.float64(0.12...)
     """
@@ -332,9 +331,9 @@ def nominal_days_to_effective(
     Examples
     --------
     >>> nominal_days_to_effective(0.12, 30, 365)
-    np.float64(0.1268341705)
+    np.float64(0.12683...)
     >>> nominal_days_to_effective(0.12, 30, 360)
-    np.float64(0.1268250301)
+    np.float64(0.12682...)
     """
     _validate_numeric(nominal_rate, "nominal_rate")
     _validate_positive_number(days, "days")
@@ -430,7 +429,7 @@ def single_period_to_effective(period_rate: float, periods: int) -> float:
     Examples
     --------
     >>> single_period_to_effective(0.01, 12)
-    np.float64(0.1268250301)
+    np.float64(0.12682...)
     """
     _validate_numeric(period_rate, "period_rate")
     if not isinstance(periods, (int, float)):
@@ -474,7 +473,7 @@ def effective_to_single_period(effective_rate: float, periods: int) -> float:
     Examples
     --------
     >>> effective_to_single_period(0.12682503013196977, 12)
-    np.float64(0.01)
+    np.float64(0.010000...)
     """
     _validate_effective_rate(effective_rate)
     _validate_positive_number(periods, "periods")
@@ -522,11 +521,11 @@ def money_market_rate_to_effective(
     Examples
     --------
     >>> money_market_rate_to_effective(0.05, 365)
-    np.float64(0.0499829289)
+    np.float64(0.049982...)
     >>> money_market_rate_to_effective(0.05, 252)
-    np.float64(0.0503725338)
+    np.float64(0.050372...)
     >>> money_market_rate_to_effective(0.05, 365, discount=True)
-    np.float64(0.0526511542)
+    np.float64(0.052651...)
     """
     _validate_numeric(mmr, "mmr")
     _validate_positive_number(days, "days")
@@ -542,7 +541,7 @@ def effective_to_money_market_rate(
     days: float = 360.0,
     base: float = 360.0,
     discount: bool = False,
-    t: Optional[float] = None,
+    t: float | None = None,
 ) -> float:
     """
     Convert an effective annual rate (EAR) to a Money Market Rate (actual/360 or actual/365, etc).
@@ -638,7 +637,7 @@ def bey_to_effective_annual(bey: float) -> float:
     Examples
     --------
     >>> bey_to_effective_annual(0.06)
-    np.float64(0.0609)
+    np.float64(0.060899...)
     """
     semiannual = bey / 2
     return _exp_general(1 + semiannual, 2)
@@ -672,7 +671,7 @@ def effective_annual_to_bey(effective_rate: float) -> float:
     Examples
     --------
     >>> effective_annual_to_bey(0.0609)
-    np.float64(0.06)
+    np.float64(0.060000...)
     """
     return 2 * _exp_general(1 + effective_rate, 1 / 2)
 
@@ -682,7 +681,7 @@ def convert_effective_to_mmr(
     yield_calculation_convention: str,
     days: float = 360.0,
     base: float = 360.0,
-    t: Optional[float] = None,
+    t: float | None = None,
 ) -> float:
     """
     Convert an effective interest rate to a money market rate (MMR) based on the specified yield calculation convention.

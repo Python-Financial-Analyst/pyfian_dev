@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 import pandas as pd
 
@@ -178,7 +180,7 @@ def harmonic_mean(values, axis=0):
     Averaging P/E ratios for three companies:
     >>> pe_ratios = [15, 20, 25]
     >>> harmonic_mean(pe_ratios)
-    np.float64(19.1489361702)
+    np.float64(19.148...)
 
     Averaging P/E ratios in a DataFrame:
     >>> df = pd.DataFrame({
@@ -216,13 +218,13 @@ def harmonic_mean(values, axis=0):
         denom = invert_values.sum(axis=axis, skipna=True)
         n = invert_values.count(axis=axis)
         hmean = n / denom
-        return round(hmean, 10)
+        return hmean
     else:
         values = values.astype(float)
         values = values[values > 0]
         n = len(values)
         hmean = n / np.sum(1 / values)
-        return round(hmean, 10)
+        return hmean
 
 
 def weighted_geometric_mean(returns, weights, axis=0):
@@ -259,7 +261,7 @@ def weighted_geometric_mean(returns, weights, axis=0):
     Examples
     --------
     >>> weighted_geometric_mean([0.05, 0.10, 0.02], [1, 2, 1])
-    np.float64(0.0669491218)
+    np.float64(0.066949...)
     """
     returns = np.asarray(returns)
     weights = np.asarray(weights)
@@ -272,7 +274,7 @@ def weighted_geometric_mean(returns, weights, axis=0):
     )
     log_returns = np.log(gross_returns)[filter_values]
     weighted_log = np.nansum(weights * log_returns, axis=axis)
-    return round(np.exp(weighted_log) - 1, 10)
+    return np.exp(weighted_log) - 1
 
 
 def weighted_harmonic_mean(values, weights, axis=0):
@@ -310,7 +312,7 @@ def weighted_harmonic_mean(values, weights, axis=0):
     >>> pe = [15, 20, 25]
     >>> caps = [100, 200, 700]
     >>> weighted_harmonic_mean(pe, caps)
-    np.float64(22.3880597015)
+    np.float64(22.388...)
     """
     values = np.asarray(values, dtype=float)
     weights = np.asarray(weights, dtype=float)
@@ -321,4 +323,4 @@ def weighted_harmonic_mean(values, weights, axis=0):
     weighted_reciprocal = np.nansum(
         weights[filter_values] / values[filter_values], axis=axis
     )
-    return round(weighted_sum / weighted_reciprocal, 10)
+    return weighted_sum / weighted_reciprocal

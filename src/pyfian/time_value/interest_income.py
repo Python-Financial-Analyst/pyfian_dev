@@ -57,6 +57,9 @@ np.float64(0.05127109637602412)
 0.06
 """
 
+from __future__ import annotations
+
+
 import numpy as np
 
 

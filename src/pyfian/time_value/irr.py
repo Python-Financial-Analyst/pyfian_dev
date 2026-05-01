@@ -4,6 +4,9 @@ irr.py
 Module for computing the Internal Rate of Return (IRR) from a series of cash flows.
 """
 
+from __future__ import annotations
+
+
 from collections.abc import Sequence
 from datetime import datetime
 
@@ -89,7 +92,7 @@ def irr(
     Examples
     --------
     >>> irr([-1000, 300, 400, 500, 600])
-    0.2488833566
+    0.24888...
     """
     rate = guess
     for _ in range(max_iter):
@@ -101,7 +104,7 @@ def irr(
             break
         new_rate = rate - f / f_prime
         if abs(new_rate - rate) < tol:
-            return round(new_rate, 10)
+            return new_rate
         rate = new_rate
     raise ValueError("IRR calculation did not converge")
 

@@ -38,11 +38,13 @@ Examples
 >>> curve.discount_t(1)
 np.float64(0.9616401157)
 >>> curve.get_rate(1)
-np.float64(0.0395)
+np.float64(0.039499...)
 """
 
+from __future__ import annotations
+
+
 import pandas as pd
-from typing import Optional
 
 from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
 from pyfian.utils.day_count import DayCountBase, get_day_count_convention
@@ -140,10 +142,10 @@ class ParCurve(SpotCurve):
     def __init__(
         self,
         curve_date: pd.Timestamp,
-        par_rates: Optional[dict[float, dict]] = None,
-        zero_rates: Optional[dict[float, float]] = None,
+        par_rates: dict[float, dict] | None = None,
+        zero_rates: dict[float, float] | None = None,
         day_count_convention: str | DayCountBase = "actual/365",
-        yield_calculation_convention: Optional[str] = None,
+        yield_calculation_convention: str | None = None,
     ):
         if par_rates is None and zero_rates is None:
             raise ValueError("Either par_rates or zero_rates must be provided")

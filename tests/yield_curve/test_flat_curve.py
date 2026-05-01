@@ -260,18 +260,10 @@ class TestFlatCurveAER:
     def test_to_dataframe(self):
         df = self.curve.to_dataframe()
         assert isinstance(df, pd.DataFrame)
-        assert list(df.index) == [0.25, 0.5, 1, 2, 5, 7, 10]
+        assert list(df.index) == [0.25, 0.5, 1, 2, 3, 5, 7, 10, 20, 30]
         assert np.allclose(
             df["Rate"],
-            [
-                self.curve.get_rate(0.25),
-                self.curve.get_rate(0.5),
-                self.curve.get_rate(1),
-                self.curve.get_rate(2),
-                self.curve.get_rate(5),
-                self.curve.get_rate(7),
-                self.curve.get_rate(10),
-            ],
+            [self.curve.get_rate(m) for m in df.index],
         )
 
     def test_compare_to(self):

@@ -6,9 +6,11 @@ Module for combining yield curves. Implements:
 - CombinedCurve: Combines a benchmark yield curve and a spread curve to produce a total yield curve.
 """
 
+from __future__ import annotations
+
+
 import pandas as pd
 
-from typing import Optional, Union
 
 from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
 from pyfian.utils.day_count import DayCountBase, get_day_count_convention
@@ -135,7 +137,7 @@ class CombinedCurve(ZeroCouponCurve):
         benchmark_curve: YieldCurveBase,
         spread_curve: CreditSpreadCurveBase,
         day_count_convention: str | DayCountBase = "actual/365",
-        yield_calculation_convention: Optional[str] = None,
+        yield_calculation_convention: str | None = None,
     ):
         self.benchmark_curve = benchmark_curve
         self.spread_curve = spread_curve
@@ -185,7 +187,7 @@ class CombinedCurve(ZeroCouponCurve):
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "CombinedCurve":
+    def from_dict(cls, data: dict) -> CombinedCurve:
         benchmark_curve = data["benchmark_curve"]
         spread_curve = data["spread_curve"]
         day_count_convention = data["day_count_convention"]
@@ -201,7 +203,7 @@ class CombinedCurve(ZeroCouponCurve):
     def get_rate(
         self,
         t: float,
-        yield_calculation_convention: Optional[str] = None,
+        yield_calculation_convention: str | None = None,
         spread: float = 0,
     ) -> float:
         """
@@ -217,7 +219,7 @@ class CombinedCurve(ZeroCouponCurve):
                 Time in years to discount.
         spread : float
                 Spread to add to the discount rate.
-        yield_calculation_convention : Optional[str]
+        yield_calculation_convention : str | None
                 Yield calculation convention to use (default is None).
 
         Returns
@@ -257,8 +259,8 @@ class CombinedCurve(ZeroCouponCurve):
 
     def date_rate(
         self,
-        date: Union[str, "pd.Timestamp"],
-        yield_calculation_convention: Optional[str] = None,
+        date: str | pd.Timestamp,
+        yield_calculation_convention: str | None = None,
         spread: float = 0,
     ) -> float:
         """
@@ -270,9 +272,9 @@ class CombinedCurve(ZeroCouponCurve):
 
         Parameters
         ----------
-        date : Union[str, pd.Timestamp]
+        date : str | pd.Timestamp
                 Date to get the rate for.
-        yield_calculation_convention : Optional[str]
+        yield_calculation_convention : str | None
                 Yield calculation convention to use (default is None).
         spread : float
                 Spread to add to the rate.

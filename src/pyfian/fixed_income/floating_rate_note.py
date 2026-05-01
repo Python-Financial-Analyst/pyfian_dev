@@ -5,8 +5,10 @@ Module for fixed income floating rate note analytics, including FloatingRateNote
 valuation, and yield calculations.
 """
 
+from __future__ import annotations
+
+
 from collections import defaultdict
-from typing import Optional, Union
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
@@ -14,6 +16,10 @@ from dateutil.relativedelta import relativedelta  # type: ignore
 from scipy import optimize  # type: ignore
 
 from pyfian.fixed_income.base_fixed_income import BaseFixedIncomeInstrument
+from pyfian.fixed_income._sensitivities import (
+    convexity_numerator,
+    modified_duration_numerator,
+)
 from pyfian.time_value import rate_conversions as rc
 from pyfian.time_value.irr import xirr_base
 from pyfian.time_value.rate_conversions import get_time_adjustment
@@ -30,13 +36,13 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     Parameters
     ----------
-    issue_dt : Union[str, pd.Timestamp]
+    issue_dt : str | pd.Timestamp
         The issue date of the bond.
-    maturity : Union[str, pd.Timestamp]
+    maturity : str | pd.Timestamp
         The maturity date of the bond.
-    ref_rate_curve : Optional[YieldCurveBase]
+    ref_rate_curve : YieldCurveBase | None
         The reference rate curve used for coupon calculations.
-    current_ref_rate : Optional[float]
+    current_ref_rate : float | None
         The current reference rate used for pricing.
     quoted_margin : float
         The quoted margin over the reference rate.
@@ -48,11 +54,11 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         The T+X settlement convention (e.g., T+1, T+2).
     record_date_t_minus : int
         The T-X record date convention (e.g., T-1, T-2).
-    settlement_date : Optional[Union[str, pd.Timestamp]]
+    settlement_date : str | pd.Timestamp | None
         The settlement date of the bond.
-    discount_margin : Optional[float]
+    discount_margin : float | None
         The discount margin used for pricing.
-    price : Optional[float]
+    price : float | None
         The price of the bond.
     adjust_to_business_days : bool, optional
         Whether to adjust dates to business days. Defaults to False.
@@ -81,9 +87,9 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         The issue date of the bond.
     maturity : pd.Timestamp
         The maturity date of the bond.
-    ref_rate_curve : Optional[YieldCurveBase]
+    ref_rate_curve : YieldCurveBase | None
         The reference rate curve used for coupon calculations.
-    current_ref_rate : Optional[float]
+    current_ref_rate : float | None
         The current reference rate used for pricing.
     quoted_margin : float
         The quoted margin over the reference rate.
@@ -113,32 +119,32 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         Dictionary with amortization payment dates as keys and amortization amounts as values.
     currency : str
         Currency of the bond.
-    _settlement_date : Optional[pd.Timestamp]
+    _settlement_date : pd.Timestamp | None
         The settlement date of the bond.
-    _discount_margin : Optional[float]
+    _discount_margin : float | None
         The discount margin used for pricing.
-    _price : Optional[float]
+    _price : float | None
         The price of the bond.
-    _yield_to_maturity : Optional[float]
+    _yield_to_maturity : float | None
         The yield to maturity of the bond.
     """
 
-    _yield_to_maturity: Optional[float] = None
+    _yield_to_maturity: float | None = None
 
     def __init__(
         self,
-        issue_dt: Union[str, pd.Timestamp],
-        maturity: Union[str, pd.Timestamp],
-        ref_rate_curve: Optional[YieldCurveBase] = None,
-        current_ref_rate: Optional[float] = None,
+        issue_dt: str | pd.Timestamp,
+        maturity: str | pd.Timestamp,
+        ref_rate_curve: YieldCurveBase | None = None,
+        current_ref_rate: float | None = None,
         quoted_margin: float = 0.0,
         cpn_freq: int = 1,
         notional: float = 100,
         settlement_convention_t_plus: int = 1,
         record_date_t_minus: int = 1,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
         adjust_to_business_days: bool = False,
         day_count_convention: str | DayCountBase = "actual/actual-Bond",
         following_coupons_day_count: str | DayCountBase = "30/360",
@@ -179,7 +185,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         self.coupon_flow: dict[pd.Timestamp, float] = dict_spreads
         self.spread_flow: dict[pd.Timestamp, float] = dict_spreads
         self.amortization_flow: dict[pd.Timestamp, float] = dict_amortization
-        self._settlement_date: Optional[pd.Timestamp] = None
+        self._settlement_date: pd.Timestamp | None = None
         self._validate_price(price=price)
         if settlement_date is not None:
             self.set_settlement_date(
@@ -212,7 +218,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 current_ref_rate=current_ref_rate,
             )
         else:
-            self._discount_margin: Optional[float] = None
+            self._discount_margin: float | None = None
 
         if price is not None:
             if self._settlement_date is None:
@@ -225,7 +231,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 yield_calculation_convention=yield_calculation_convention,
             )
         elif discount_margin is None:
-            self._price: Optional[float] = None
+            self._price: float | None = None
 
         calculate, ref_rate_curve, current_ref_rate = self._should_calculate(
             settlement_date, ref_rate_curve, current_ref_rate
@@ -240,7 +246,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         else:
             self._yield_to_maturity = None
 
-    def get_yield_to_maturity(self) -> Optional[float]:
+    def get_yield_to_maturity(self) -> float | None:
         """
         Get the current yield to maturity of the bond.
 
@@ -282,7 +288,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 current_ref_rate = self.current_ref_rate
         return calculate, ref_rate_curve, current_ref_rate
 
-    def get_discount_margin(self) -> Optional[float]:
+    def get_discount_margin(self) -> float | None:
         """
         Get the current discount margin of the bond.
 
@@ -295,18 +301,18 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def set_settlement_date(
         self,
-        settlement_date: Optional[Union[str, pd.Timestamp]],
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        settlement_date: str | pd.Timestamp | None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> pd.Timestamp:
         """
         Set the default settlement date for the bond.
 
         Parameters
         ----------
-        settlement_date : Union[str, pd.Timestamp], optional
+        settlement_date : str | pd.Timestamp, optional
             The settlement date to set.
         adjust_to_business_days : bool, optional
             Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.
@@ -363,14 +369,14 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def set_discount_margin(
         self,
-        discount_margin: Optional[float],
-        settlement_date: Optional[Union[str, pd.Timestamp, None]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
-        current_ref_rate: Optional[float] = None,
+        discount_margin: float | None,
+        settlement_date: str | pd.Timestamp | None | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
+        current_ref_rate: float | None = None,
     ) -> None:
         """
         Set the default discount_margin for the bond. Updates bond price accordingly if reference rate curve is provided.
@@ -379,7 +385,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         ----------
         discount_margin : float, optional
             The discount margin to set in basis points.
-        settlement_date : Union[str, pd.Timestamp], optional
+        settlement_date : str | pd.Timestamp, optional
             The settlement date to set.
         adjust_to_business_days : bool, optional
             Whether to adjust the settlement date to the next business day.
@@ -454,14 +460,14 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def set_price(
         self,
-        price: Optional[float],
-        settlement_date: Optional[Union[str, pd.Timestamp, None]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
-        current_ref_rate: Optional[float] = None,
+        price: float | None,
+        settlement_date: str | pd.Timestamp | None | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
+        current_ref_rate: float | None = None,
     ) -> None:
         """
         Set the default discount margin for the bond. Updates bond price accordingly.
@@ -470,7 +476,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         ----------
         discount_margin : float, optional
             The discount margin to set in basis points.
-        settlement_date : Union[str, pd.Timestamp], optional
+        settlement_date : str | pd.Timestamp, optional
             The settlement date to set.
         adjust_to_business_days : bool, optional
             Whether to adjust the settlement date to the next business day.
@@ -544,13 +550,13 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
     def _price_from_discount_margin_and_clean_parameters(
         self,
         discount_margin: float,
-        settlement_date: Optional[Union[str, pd.Timestamp]],
+        settlement_date: str | pd.Timestamp | None,
         adjust_to_business_days: bool,
         following_coupons_day_count: DayCountBase,
         yield_calculation_convention: str,
         day_count_convention: DayCountBase,
         ref_rate_curve: YieldCurveBase,
-        current_ref_rate: Optional[float] = None,
+        current_ref_rate: float | None = None,
         curve_delta: float = 0.0,
     ) -> float:
         dated_payment_flow = self.make_expected_cash_flow(
@@ -701,7 +707,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         following_coupons_day_count,
         yield_calculation_convention,
         day_count_convention,
-        payment_flow: Optional[dict[pd.Timestamp, float]] = None,
+        payment_flow: dict[pd.Timestamp, float] | None = None,
     ) -> dict[float, float]:
         """Calculate the time to each payment from the settlement date."""
         if payment_flow is None:
@@ -756,15 +762,15 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def make_expected_cash_flow(
         self,
-        price: Optional[float] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        price: float | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
         curve_delta: float = 0.0,
-        #    adjust_to_business_days: Optional[bool] = None,
-        #    day_count_convention: Optional[str | DayCountBase] = None,
-        #    following_coupons_day_count: Optional[str | DayCountBase] = None,
-        #    yield_calculation_convention: Optional[str] = None,
+        #    adjust_to_business_days: bool | None = None,
+        #    day_count_convention: str | DayCountBase | None = None,
+        #    following_coupons_day_count: str | DayCountBase | None = None,
+        #    yield_calculation_convention: str | None = None,
     ) -> dict[pd.Timestamp, float]:
         """
         Generate the expected cash flow for the bond from the settlement date onwards.
@@ -900,14 +906,14 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         self,
         curve: YieldCurveBase,
         spread: float = 0,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        price: Optional[float] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        price: float | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
     ) -> tuple[float, dict[float, float]]:
         """
         Value the bond using a discount curve.
@@ -1016,16 +1022,16 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def required_margin(
         self,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
-        tol: Optional[float] = 1e-6,
-        max_iter: Optional[int] = 100,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
+        tol: float | None = 1e-6,
+        max_iter: int | None = 100,
     ):
         """
         Estimate the spread over the reference rate curve using the xirr function from pyfian.time_value.irr.
@@ -1103,16 +1109,16 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def discount_margin(
         self,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
-        tol: Optional[float] = 1e-6,
-        max_iter: Optional[int] = 100,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
+        tol: float | None = 1e-6,
+        max_iter: int | None = 100,
     ) -> float:
         """
         Estimate the spread over the reference rate curve using the xirr function from pyfian.time_value.irr.
@@ -1219,7 +1225,7 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         price: float,
         settlement_date: pd.Timestamp,
         ref_rate_curve: YieldCurveBase,
-        current_ref_rate: Optional[float] = None,
+        current_ref_rate: float | None = None,
     ):
         dated_payment_flow = self.make_expected_cash_flow(
             price=price,
@@ -1248,16 +1254,16 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def yield_to_maturity(
         self,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
-        tol: Optional[float] = 1e-6,
-        max_iter: Optional[int] = 100,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
+        tol: float | None = 1e-6,
+        max_iter: int | None = 100,
         curve_delta: float = 0.0,
     ):
         # Calculate the yield to maturity as the sum of the required margin and market rate until the next coupon
@@ -1305,16 +1311,16 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def expected_yield_to_maturity(
         self,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
-        tol: Optional[float] = 1e-6,
-        max_iter: Optional[int] = 100,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
+        tol: float | None = 1e-6,
+        max_iter: int | None = 100,
     ) -> float:
         """
         Estimate the yield to maturity (YTM) using the xirr function from pyfian.time_value.irr.
@@ -1449,8 +1455,8 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def accrued_interest(
         self,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        current_ref_rate: Optional[float] = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        current_ref_rate: float | None = None,
     ) -> float:
         """
         Calculate accrued interest since last coupon payment.
@@ -1531,8 +1537,8 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         return coupon * fraction_period_adjusted
 
     def next_coupon_date(
-        self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
-    ) -> Optional[pd.Timestamp]:
+        self, settlement_date: str | pd.Timestamp | None = None
+    ) -> pd.Timestamp | None:
         """
         Get the next coupon payment date from a given date.
 
@@ -1565,8 +1571,8 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         return min(future_dates) if future_dates else None
 
     def previous_coupon_date(
-        self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
-    ) -> Optional[pd.Timestamp]:
+        self, settlement_date: str | pd.Timestamp | None = None
+    ) -> pd.Timestamp | None:
         """
         Get the previous coupon payment date from a given date.
 
@@ -1621,15 +1627,15 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def modified_duration(
         self,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
     ) -> float:
         """
         Calculate modified duration of the bond. Modified duration for a floating rate note is very low since the cash flows are reset periodically.
@@ -1737,19 +1743,19 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             duration = t
         else:
             duration = t / (1 + ytm / time_adjustment)
-        return round(duration, 10)
+        return duration
 
     def spread_duration(
         self,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
     ) -> float:
         """
         Calculate spread duration of the bond.
@@ -1845,35 +1851,22 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         time_adjustment = get_time_adjustment(yield_calculation_convention)
 
-        if yield_calculation_convention == "Continuous":
-            duration = sum(
-                [
-                    t * cf * np.exp(-expected_ytm * t)
-                    for t, cf in times_cashflows.items()
-                ]
-            )
-        else:
-            duration = sum(
-                [
-                    t
-                    * cf
-                    / (1 + expected_ytm / time_adjustment) ** (t * time_adjustment + 1)
-                    for t, cf in times_cashflows.items()
-                ]
-            )
-        return round(duration / price if price != 0 else 0.0, 10)
+        duration = modified_duration_numerator(
+            times_cashflows, expected_ytm, time_adjustment, yield_calculation_convention
+        )
+        return duration / price if price is not None and price != 0 else 0.0
 
     def spread_convexity(
         self,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
     ) -> float:
         """
         Calculate spread convexity of the bond.
@@ -1969,37 +1962,26 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
         time_adjustment = get_time_adjustment(yield_calculation_convention)
 
-        if yield_calculation_convention == "Continuous":
-            convexity = sum(
-                [
-                    cf * t**2 * np.exp(-expected_ytm * t)
-                    for t, cf in times_cashflows.items()
-                ]
-            )
-        else:
-            convexity = sum(
-                [
-                    cf
-                    * t
-                    * time_adjustment
-                    * (t * time_adjustment + 1)
-                    / (1 + expected_ytm / time_adjustment) ** (t * time_adjustment + 2)
-                    for t, cf in times_cashflows.items()
-                ]
-            )
-        return round(convexity / price / time_adjustment**2, 10) if price != 0 else 0.0
+        convexity = convexity_numerator(
+            times_cashflows, expected_ytm, time_adjustment, yield_calculation_convention
+        )
+        return (
+            convexity / price / time_adjustment**2
+            if price is not None and price != 0
+            else 0.0
+        )
 
     def effective_duration(
         self,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
     ) -> float:
         """
         Calculate effective duration of the bond.
@@ -2123,19 +2105,19 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
         effective_duration = (
             -1 * (price_plus_epsilon - price_minus_epsilon) / (2 * epsilon * price)
         )
-        return round(effective_duration, 10)
+        return effective_duration
 
     def effective_spread_duration(
         self,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
     ) -> float:
         """
         Calculate spread effective duration of the bond.
@@ -2250,19 +2232,19 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 * (price_plus_epsilon - price_minus_epsilon)
                 / (2 * epsilon / 10000 * price)
             )
-            return round(effective_spread_duration, 10)
+            return effective_spread_duration
 
     def effective_spread_convexity(
         self,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
     ) -> float:
         """
         Calculate spread effective convexity of the bond.
@@ -2375,19 +2357,19 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             effective_spread_convexity = (
                 price_plus_epsilon + price_minus_epsilon - 2 * price
             ) / ((epsilon / 10000) ** 2 * price)
-            return round(effective_spread_convexity, 10)
+            return effective_spread_convexity
 
     def dv01(
         self,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
     ) -> float:
         """
         Calculate the DV01 (Dollar Value of a 1 basis point) for the bond. The DV01 measures the change in the bond's price for a 1 basis point (0.0001) change in yield.
@@ -2502,19 +2484,19 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 1 + (ytm - 0.0001) / time_adjustment
             ) ** (t * time_adjustment)
 
-        return round(-(price_up - price_down) / 2, 10)
+        return -(price_up - price_down) / 2
 
     def spread_dv01(
         self,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
     ) -> float:
         """
         Calculate the spread DV01 (Dollar Value of a 1 basis point) for the bond. The DV01 measures the change in the bond's price for a 1 basis point (0.0001) change in discount margin.
@@ -2615,21 +2597,21 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             )
 
             spread_dv01 = -(price_plus_epsilon - price_minus_epsilon) / 2
-            return round(spread_dv01, 10)
+            return spread_dv01
 
     def _resolve_ytm_and_price(
         self,
-        discount_margin: Optional[float],
-        price: Optional[float],
-        settlement_date: Optional[Union[str, pd.Timestamp]],
+        discount_margin: float | None,
+        price: float | None,
+        settlement_date: str | pd.Timestamp | None,
         adjust_to_business_days: bool,
         day_count_convention: DayCountBase,
         following_coupons_day_count: DayCountBase,
         yield_calculation_convention: str,
-        ref_rate_curve: Optional[YieldCurveBase],
-        current_ref_rate: Optional[float],
+        ref_rate_curve: YieldCurveBase | None,
+        current_ref_rate: float | None,
         curve_delta: float = 0.0,
-    ) -> tuple[Optional[float], Optional[float]]:
+    ) -> tuple[float | None, float | None]:
         """
         Helper to resolve yield_to_maturity and price from direct input, price, or default to notional.
         Returns a tuple (ytm, price_calc), both float or None.
@@ -2785,17 +2767,17 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def _resolve_discount_margin_and_price(
         self,
-        discount_margin: Optional[float],
-        price: Optional[float],
-        settlement_date: Optional[Union[str, pd.Timestamp]],
+        discount_margin: float | None,
+        price: float | None,
+        settlement_date: str | pd.Timestamp | None,
         adjust_to_business_days: bool,
         day_count_convention: DayCountBase,
         following_coupons_day_count: DayCountBase,
         yield_calculation_convention: str,
-        ref_rate_curve: Optional[YieldCurveBase],
-        current_ref_rate: Optional[float],
+        ref_rate_curve: YieldCurveBase | None,
+        current_ref_rate: float | None,
         curve_delta: float = 0.0,
-    ) -> tuple[Optional[float], Optional[float]]:
+    ) -> tuple[float | None, float | None]:
         """
         Helper to resolve yield_to_maturity and price from direct input, price, or default to notional.
         Returns a tuple (ytm, price_calc), both float or None.
@@ -2912,15 +2894,15 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def macaulay_duration(
         self,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
     ) -> float:
         """
         Calculate macaulay duration of the bond. Macaulay duration for a floating rate note is very low since the cash flows are reset periodically.
@@ -3027,19 +3009,19 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
             duration = t
         else:
             duration = t
-        return round(duration, 10)
+        return duration
 
     def convexity(
         self,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
     ) -> float:
         """
         Calculate the convexity of the bond. The convexity for a floating rate note is generally low since the cash flows are reset periodically.
@@ -3153,19 +3135,19 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
                 / (1 + ytm / time_adjustment) ** (t * time_adjustment + 2)
             ) / (1 / (1 + ytm / time_adjustment) ** (t * time_adjustment))
 
-        return round(convexity / time_adjustment**2, 10) if price_calc != 0 else 0.0
+        return convexity / time_adjustment**2 if price_calc != 0 else 0.0
 
     def effective_convexity(
         self,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
     ) -> float:
         """
         Calculate the effective convexity of the bond.
@@ -3293,15 +3275,15 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def plot_cash_flows(
         self,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
     ) -> None:
         """
         Visualize the cash flow schedule using matplotlib as stacked bars.
@@ -3384,15 +3366,15 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def to_dataframe(
         self,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
     ) -> pd.DataFrame:
         """
         Export the bond's cash flow schedule as a pandas DataFrame.
@@ -3528,17 +3510,17 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def z_spread(
         self,
-        price: Optional[float] = None,
-        discount_margin: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        current_ref_rate: Optional[float] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
-        tol: Optional[float] = 1e-6,
-        max_iter: Optional[int] = 100,
+        price: float | None = None,
+        discount_margin: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        current_ref_rate: float | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
+        tol: float | None = 1e-6,
+        max_iter: int | None = 100,
     ) -> float:
         """
         Estimate the spread over the reference rate curve using the xirr function from pyfian.time_value.irr.
@@ -3657,15 +3639,15 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
     def i_spread(
         self,
         benchmark_curve: YieldCurveBase,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
-        current_ref_rate: Optional[float] = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
+        current_ref_rate: float | None = None,
     ) -> float:
         """
         Calculate the I-spread of the bond relative to a benchmark yield curve.
@@ -3743,17 +3725,17 @@ class FloatingRateNote(BaseFixedIncomeInstrument):
 
     def g_spread(
         self,
-        benchmark_ytm: Optional[float] = None,
-        benchmark_curve: Optional[YieldCurveBase] = None,
-        discount_margin: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
-        ref_rate_curve: Optional[YieldCurveBase] = None,
-        current_ref_rate: Optional[float] = None,
+        benchmark_ytm: float | None = None,
+        benchmark_curve: YieldCurveBase | None = None,
+        discount_margin: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
+        ref_rate_curve: YieldCurveBase | None = None,
+        current_ref_rate: float | None = None,
     ) -> float:
         """
         Calculate the G-spread of the bond relative to a benchmark yield.

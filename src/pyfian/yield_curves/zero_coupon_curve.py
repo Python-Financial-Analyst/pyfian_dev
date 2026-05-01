@@ -9,7 +9,9 @@ Module for zero-coupon yield curve models. Implements:
 Each class provides a different convention for representing zero-coupon yield curves, useful for pricing, discounting, and rate conversions in fixed income analytics.
 """
 
-from typing import Optional, Union
+from __future__ import annotations
+
+
 import pandas as pd
 from pyfian.utils.day_count import DayCountBase, get_day_count_convention
 from pyfian.visualization.mixins import YieldCurvePlotMixin
@@ -88,9 +90,9 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
     def __init__(
         self,
         zero_rates: dict[float, float],
-        curve_date: Union[str, pd.Timestamp],
-        day_count_convention: Optional[str | DayCountBase] = "actual/365",
-        yield_calculation_convention: Optional[str] = None,
+        curve_date: str | pd.Timestamp,
+        day_count_convention: str | DayCountBase | None = "actual/365",
+        yield_calculation_convention: str | None = None,
     ):
         self.curve_date = pd.to_datetime(curve_date)
 
@@ -178,7 +180,7 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
         discount_factor: float,
         t: float,
         spread: float,
-        yield_calculation_convention: Optional[str] = None,
+        yield_calculation_convention: str | None = None,
     ) -> float:
         """
         Convert a discount factor for a period t to a rate.
@@ -215,7 +217,7 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
         rate = rc.convert_yield(rate, "Annual", yield_calculation_convention)
         return rate - spread
 
-    def discount_date(self, date: Union[str, pd.Timestamp], spread: float = 0) -> float:
+    def discount_date(self, date: str | pd.Timestamp, spread: float = 0) -> float:
         """
         Discount a cash flow to a specific date.
 
@@ -223,7 +225,7 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
 
         Parameters
         ----------
-        date : Union[str, pd.Timestamp]
+        date : str | pd.Timestamp
             Date to discount to.
         spread : float
             Spread to add to the discount rate.
@@ -242,7 +244,7 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
     def get_rate(
         self,
         t: float,
-        yield_calculation_convention: Optional[str] = None,
+        yield_calculation_convention: str | None = None,
         spread: float = 0,
     ) -> float:
         """
@@ -258,7 +260,7 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
             Time in years to discount.
         spread : float
             Spread to add to the discount rate.
-        yield_calculation_convention : Optional[str]
+        yield_calculation_convention : str | None
             Yield calculation convention to use (default is None).
 
         Returns
@@ -276,8 +278,8 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
 
     def date_rate(
         self,
-        date: Union[str, pd.Timestamp],
-        yield_calculation_convention: Optional[str] = None,
+        date: str | pd.Timestamp,
+        yield_calculation_convention: str | None = None,
         spread: float = 0,
     ) -> float:
         """
@@ -289,9 +291,9 @@ class ZeroCouponCurve(YieldCurvePlotMixin, YieldCurveBase):
 
         Parameters
         ----------
-        date : Union[str, pd.Timestamp]
+        date : str | pd.Timestamp
             Date to get the rate for.
-        yield_calculation_convention : Optional[str]
+        yield_calculation_convention : str | None
             Yield calculation convention to use (default is None).
         spread : float
             Spread to add to the rate.
@@ -343,7 +345,7 @@ class ZeroCouponCurveByDate(ZeroCouponCurve):
     ----------
     zero_rates_dates : dict[pd.Timestamp | str, float]
         Dictionary with dates as keys and zero rates as values.
-    curve_date : Union[str, pd.Timestamp]
+    curve_date : str | pd.Timestamp
         The curve settlement date.
     day_count_convention : str or DayCountBase, optional
         Day count convention to use (default is None). If None, "actual/365" will be used.
@@ -355,9 +357,9 @@ class ZeroCouponCurveByDate(ZeroCouponCurve):
     def __init__(
         self,
         zero_rates_dates: dict[pd.Timestamp | str, float],
-        curve_date: Union[str, pd.Timestamp],
-        day_count_convention: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        curve_date: str | pd.Timestamp,
+        day_count_convention: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ):
         self.curve_date = pd.to_datetime(curve_date)
 

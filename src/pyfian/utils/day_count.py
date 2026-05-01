@@ -77,6 +77,9 @@ Examples
 0.5055555555555555
 """
 
+from __future__ import annotations
+
+
 import pandas as pd
 
 

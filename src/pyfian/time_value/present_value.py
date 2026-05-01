@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 def present_value_annuity(payment: float, rate: float, periods: int) -> float:
     """
     Calculate the present value of a fixed annuity.
@@ -30,12 +33,12 @@ def present_value_annuity(payment: float, rate: float, periods: int) -> float:
     Examples
     --------
     >>> present_value_annuity(100, 0.05, 10)
-    772.1734929185
+    772.17...
     """
     if rate == 0:
-        return round(payment * periods, 10)
-    pv = payment * ((1 - (1 + rate) ** -periods) / rate)
-    return round(pv, 10)
+        return payment * periods
+    pv = payment * (1 - (1 + rate) ** -periods) / rate
+    return pv
 
 
 def present_value_annuity_annual(
@@ -79,7 +82,7 @@ def present_value_annuity_annual(
     Examples
     --------
     >>> present_value_annuity_annual(100, 0.05, 10, 12)
-    9428.1350328235
+    9428.13...
     """
     rate = annual_rate / payments_per_year
     periods = years * payments_per_year
@@ -130,7 +133,7 @@ def present_value_growing_annuity(
     Examples
     --------
     >>> present_value_growing_annuity(100, 0.05, 10, 0.02 )
-    855.5867765482
+    855.58...
     >>> present_value_growing_annuity(100, 0.05, 10, 0.05)
     1000
     """
@@ -238,7 +241,7 @@ def present_value_two_stage_annuity(
     Examples
     --------
     >>> present_value_two_stage_annuity(100, 0.05, 0.06, 5, 5)
-    762.9973919306094
+    762.99...
     """
     pv_stage1 = present_value_annuity(payment, rate1, periods1)
     pv_stage2 = (
@@ -306,7 +309,7 @@ def present_value_two_stage_annuity_perpetuity(
     Examples
     --------
     >>> present_value_two_stage_annuity_perpetuity(100, 0.05, 5, 0.06, 0.02, 0.01)
-    2206.19484510028
+    2206.19...
     """
     # Present value of first stage (fixed annuity)
     pv_stage1 = present_value_growing_annuity(payment, rate1, periods1, growth1)

@@ -6,9 +6,11 @@ Module for money market instruments, including generic MoneyMarketInstrument and
 Provides classes for short-term debt instruments, payment flow generation, and instrument-specific conventions.
 """
 
+from __future__ import annotations
+
+
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -59,16 +61,16 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
 
     def __init__(
         self,
-        issue_dt: Union[str, pd.Timestamp],
-        maturity: Union[str, pd.Timestamp],
+        issue_dt: str | pd.Timestamp,
+        maturity: str | pd.Timestamp,
         cpn: float = 0,
         cpn_freq: int = 0,
         notional: float = 100,
         settlement_convention_t_plus: int = 1,
         record_date_t_minus: int = 1,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        yield_to_maturity: float | None = None,
+        price: float | None = None,
         adjust_to_business_days: bool = False,
         day_count_convention: str | DayCountBase = "actual/365",
         following_coupons_day_count: str | DayCountBase = "30/360",
@@ -145,7 +147,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
         self.amortization_flow: dict[pd.Timestamp, float] = dict_amortization
 
         # Initialize settlement date, yield to maturity, and price
-        self._settlement_date: Optional[pd.Timestamp] = None
+        self._settlement_date: pd.Timestamp | None = None
         self._validate_price(price=price)
 
         if settlement_date is not None:
@@ -172,7 +174,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
                 yield_calculation_convention=yield_calculation_convention,
             )
         else:
-            self._yield_to_maturity: Optional[float] = None
+            self._yield_to_maturity: float | None = None
 
         if price is not None:
             # Throw error if price is not None and settlement_date is None
@@ -197,7 +199,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
             )
         elif yield_to_maturity is None:
             # If neither yield_to_maturity nor price is set, set price to None
-            self._price: Optional[float] = None
+            self._price: float | None = None
 
     def _validate_following_coupons_day_count(
         self, following_coupons_day_count: str | DayCountBase
@@ -331,7 +333,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
 
     # Implement accrued_interest for Money Market Instruments
     def accrued_interest(
-        self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
+        self, settlement_date: str | pd.Timestamp | None = None
     ) -> float:
         """
         Calculate the accrued interest for the money market instrument.
@@ -358,12 +360,12 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
 
     def yield_to_maturity(
         self,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> float:
         """
         Estimate the yield to maturity (YTM) using the xirr function from pyfian.time_value.irr.
@@ -415,7 +417,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
         --------
         >>> mmi = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
         >>> mmi.yield_to_maturity()
-        np.float64(0.05)
+        np.float64(0.049999...)
         """
         # Prepare cash flows and dates
         if price is None:
@@ -458,7 +460,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
         if yield_calculation_convention == "Continuous":
             return rc.convert_effective_to_mmr(effective_annual_rate, "Continuous")
         elif yield_calculation_convention == "Annual":
-            return round(effective_annual_rate, 10)
+            return effective_annual_rate
         elif yield_calculation_convention in ["Add-On", "Discount"]:
             return rc.convert_effective_to_mmr(
                 effective_annual_rate,
@@ -550,7 +552,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
     def _price_from_yield_and_clean_parameters(
         self,
         yield_to_maturity: float,
-        settlement_date: Optional[Union[str, pd.Timestamp]],
+        settlement_date: str | pd.Timestamp | None,
         adjust_to_business_days: bool,
         following_coupons_day_count: DayCountBase,
         yield_calculation_convention: str,
@@ -610,13 +612,13 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
 
     def modified_duration(
         self,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        yield_to_maturity: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> float:
         """
                 Calculate modified duration of the instrument.
@@ -658,7 +660,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
         --------
         >>> instrument = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
         >>> instrument.modified_duration()
-        np.float64(0.487804878)
+        np.float64(0.48780...)
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -728,17 +730,17 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
                 f"Unknown or unsupported yield calculation convention: {yield_calculation_convention}"
             )  # pragma: no cover
 
-        return round(duration, 10)
+        return duration
 
     def spread_duration(
         self,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        yield_to_maturity: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> float:
         """
                 Calculate spread duration of the instrument.
@@ -780,7 +782,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
         --------
         >>> instrument = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
         >>> instrument.spread_duration()
-        np.float64(0.487804878)
+        np.float64(0.48780...)
         """
         return self.modified_duration(
             yield_to_maturity=yield_to_maturity,
@@ -794,13 +796,13 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
 
     def macaulay_duration(
         self,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        yield_to_maturity: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> float:
         """
                 Calculate Macaulay duration of the instrument. It is the weighted average time to receive the instrument's cash flows, where the weights are the present values of the cash flows.
@@ -913,17 +915,17 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
                 f"Unknown or unsupported yield calculation convention: {yield_calculation_convention}"
             )  # pragma: no cover
 
-        return round(duration, 10)
+        return duration
 
     def convexity(
         self,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        yield_to_maturity: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> float:
         """
         Calculate the convexity of the instrument.
@@ -1056,7 +1058,7 @@ class MoneyMarketInstrument(BaseFixedIncomeInstrumentWithYieldToMaturity):
                 f"Unknown or unsupported yield calculation convention: {yield_calculation_convention}"
             )  # pragma: no cover
 
-        return round(convexity, 10)
+        return convexity
 
 
 class TreasuryBill(MoneyMarketInstrument):

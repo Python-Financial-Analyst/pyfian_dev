@@ -7,9 +7,11 @@ Coupons can be specified as explicit values or as percentages of the remaining n
 
 """
 
+from __future__ import annotations
+
+
 from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
 import pandas as pd
-from typing import Optional, Union
 
 
 class CustomFlowBond(FixedRateBullet):
@@ -54,7 +56,7 @@ class CustomFlowBond(FixedRateBullet):
         Amortization amounts by payment date.
     custom_coupons : Dict[pd.Timestamp, float]
         Coupon amounts by payment date.
-    custom_coupon_rates : Union[Dict[pd.Timestamp, float], float, None]
+    custom_coupon_rates : Dict[pd.Timestamp, float] | float | None
         Coupon rates (percent per period) by payment date, or a single float for all periods.
     payment_flow : Dict[pd.Timestamp, float]
         Total payment (coupon + amortization) by payment date.
@@ -66,12 +68,12 @@ class CustomFlowBond(FixedRateBullet):
 
     def __init__(
         self,
-        issue_dt: Union[str, pd.Timestamp],
-        maturity: Union[str, pd.Timestamp],
+        issue_dt: str | pd.Timestamp,
+        maturity: str | pd.Timestamp,
         notional: float = 100,
-        custom_amortization: Optional[dict[pd.Timestamp, float]] = None,
-        custom_coupons: Optional[dict[pd.Timestamp, float]] = None,
-        custom_coupon_rates: Optional[Union[dict[pd.Timestamp, float], float]] = None,
+        custom_amortization: dict[pd.Timestamp, float] | None = None,
+        custom_coupons: dict[pd.Timestamp, float] | None = None,
+        custom_coupon_rates: dict[pd.Timestamp, float] | float | None = None,
         **kwargs,
     ):
         """

@@ -10,8 +10,10 @@ Module for credit spread curve models. Implements:
 Each class provides a different convention for representing credit spread curves, useful for pricing, discounting, and risk management in fixed income analytics.
 """
 
+from __future__ import annotations
+
+
 from abc import abstractmethod
-from typing import Optional, Union
 import pandas as pd
 import warnings
 from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
@@ -57,7 +59,7 @@ class CreditSpreadCurveBase(YieldCurvePlotMixin, CurveBase):
 
     @abstractmethod
     def date_spread(
-        self, date: Union[str, pd.Timestamp], spread: float = 0
+        self, date: str | pd.Timestamp, spread: float = 0
     ) -> float:  # pragma: no cover
         """
         Get the spread for a given date.
@@ -178,12 +180,12 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
 
     def __init__(
         self,
-        curve_date: Union[str, pd.Timestamp],
-        benchmark_curve: Optional[YieldCurveBase] = None,
-        bonds: Optional[list[FixedRateBullet] | tuple[FixedRateBullet]] = None,
-        spreads: Optional[dict[float, float]] = None,
-        day_count_convention: Optional[str | DayCountBase] = "actual/365",
-        yield_calculation_convention: Optional[str] = None,
+        curve_date: str | pd.Timestamp,
+        benchmark_curve: YieldCurveBase | None = None,
+        bonds: list[FixedRateBullet] | tuple[FixedRateBullet] | None = None,
+        spreads: dict[float, float] | None = None,
+        day_count_convention: str | DayCountBase | None = "actual/365",
+        yield_calculation_convention: str | None = None,
     ):
         if (spreads is None or len(spreads) == 0) and (
             bonds is None or benchmark_curve is None
@@ -239,7 +241,7 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
     def get_rate(
         self,
         t: float,
-        yield_calculation_convention: Optional[str] = None,
+        yield_calculation_convention: str | None = None,
         spread: float = 0,
     ) -> float:
         """
@@ -257,7 +259,7 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
             Time in years to discount.
         spread : float
             Spread to add to the discount rate.
-        yield_calculation_convention : Optional[str]
+        yield_calculation_convention : str | None
             Yield calculation convention to use (default is None).
 
         Returns
@@ -289,8 +291,8 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
 
     def date_rate(
         self,
-        date: Union[str, pd.Timestamp],
-        yield_calculation_convention: Optional[str] = None,
+        date: str | pd.Timestamp,
+        yield_calculation_convention: str | None = None,
         spread: float = 0,
     ) -> float:
         """
@@ -304,9 +306,9 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
 
         Parameters
         ----------
-        date : Union[str, pd.Timestamp]
+        date : str | pd.Timestamp
             Date to get the rate for.
-        yield_calculation_convention : Optional[str]
+        yield_calculation_convention : str | None
             Yield calculation convention to use (default is None).
         spread : float
             Spread to add to the rate.
@@ -354,7 +356,7 @@ class CreditSpreadCurve(CreditSpreadCurveBase):
         """
         return self._get_t(t, spread=spread)
 
-    def date_spread(self, date: Union[str, pd.Timestamp], spread: float = 0) -> float:
+    def date_spread(self, date: str | pd.Timestamp, spread: float = 0) -> float:
         """ """
         t = self.day_count_convention.fraction(
             start=self.curve_date, current=pd.to_datetime(date)
@@ -585,8 +587,8 @@ class FlatCreditSpreadCurve(CreditSpreadCurveBase):
     def __init__(
         self,
         spread: float,
-        curve_date: Union[str, pd.Timestamp],
-        yield_calculation_convention: Optional[str] = None,
+        curve_date: str | pd.Timestamp,
+        yield_calculation_convention: str | None = None,
     ):
         self.spread: float = spread
         self.curve_date: pd.Timestamp = pd.to_datetime(curve_date)
@@ -627,13 +629,13 @@ class FlatCreditSpreadCurve(CreditSpreadCurveBase):
     def _get_t(self, t: float, spread: float = 0) -> float:
         return self.get_t(t, spread)
 
-    def date_spread(self, date: Union[str, pd.Timestamp], spread: float = 0) -> float:
+    def date_spread(self, date: str | pd.Timestamp, spread: float = 0) -> float:
         """
         Get the spread for a given date.
 
         Parameters
         ----------
-        date : Union[str, pd.Timestamp]
+        date : str | pd.Timestamp
             The date to get the spread for.
         spread : float, optional
             An additional spread to add (default is 0).

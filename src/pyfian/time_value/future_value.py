@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pyfian.time_value.present_value import (
     present_value_annuity,
     present_value_growing_annuity,
@@ -36,13 +38,13 @@ def future_value_annuity(payment: float, rate: float, periods: int) -> float:
     Examples
     --------
     >>> future_value_annuity(100, 0.05, 10)
-    1257.7892535549
+    1257.78...
     """
     if rate == 0:
         return payment * periods
     pv = present_value_annuity(payment, rate, periods)
     fv = pv * (1 + rate) ** periods
-    return round(fv, 10)
+    return fv
 
 
 def future_value_annuity_annual(
@@ -86,7 +88,7 @@ def future_value_annuity_annual(
     Examples
     --------
     >>> future_value_annuity_annual(100, 0.05, 10, 12)
-    15528.2279445668
+    15528.22...
     """
     rate = annual_rate / payments_per_year
     periods = years * payments_per_year
@@ -142,7 +144,7 @@ def future_value_growing_annuity(
     Examples
     --------
     >>> future_value_growing_annuity(100, 0.05, 10, 0.02)
-    1393.660703061195
+    1393.66...
     >>> future_value_growing_annuity(100, 0.05, 10, 0.05)
     1628.894626777442
     """

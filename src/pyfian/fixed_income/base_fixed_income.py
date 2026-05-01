@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 # Make base class for fixed income instruments
 from abc import ABC, abstractmethod
-from typing import Optional, Union
 
 from matplotlib import pyplot as plt
 import pandas as pd
@@ -21,7 +22,7 @@ class BaseFixedIncomeInstrument(ABC):
     yield_calculation_convention: str
     issue_dt: pd.Timestamp
     _settlement_date: pd.Timestamp
-    _price: Optional[float]
+    _price: float | None
     payment_flow: dict
     coupon_flow: dict
     amortization_flow: dict
@@ -42,10 +43,10 @@ class BaseFixedIncomeInstrument(ABC):
 
     def _resolve_valuation_parameters(
         self,
-        adjust_to_business_days: Optional[bool],
-        day_count_convention: Optional[str | DayCountBase],
-        following_coupons_day_count: Optional[str | DayCountBase],
-        yield_calculation_convention: Optional[str],
+        adjust_to_business_days: bool | None,
+        day_count_convention: str | DayCountBase | None,
+        following_coupons_day_count: str | DayCountBase | None,
+        yield_calculation_convention: str | None,
     ) -> tuple[bool, DayCountBase, DayCountBase, str]:
         if yield_calculation_convention is None:
             yield_calculation_convention = self.yield_calculation_convention
@@ -80,7 +81,7 @@ class BaseFixedIncomeInstrument(ABC):
         )
 
     def _resolve_settlement_date(
-        self, settlement_date: Optional[Union[str, pd.Timestamp]]
+        self, settlement_date: str | pd.Timestamp | None
     ) -> pd.Timestamp:
         """
         Helper to resolve the settlement date for the bond.
@@ -155,13 +156,13 @@ class BaseFixedIncomeInstrument(ABC):
 
     def filter_payment_flow(
         self,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        price: Optional[float] = None,
-        payment_flow: Optional[dict[pd.Timestamp, float]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        price: float | None = None,
+        payment_flow: dict[pd.Timestamp, float] | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> dict[pd.Timestamp, float]:
         """
         Filter the payment flow to include only payments after the settlement date.
@@ -234,12 +235,12 @@ class BaseFixedIncomeInstrument(ABC):
 
     def calculate_time_to_payments(
         self,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        price: Optional[float] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        price: float | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> dict[float, float]:
         """
         Calculate the time to each payment from the settlement date.
@@ -305,7 +306,7 @@ class BaseFixedIncomeInstrument(ABC):
             day_count_convention,
         )
 
-    def _validate_price(self, price: Optional[float]) -> None:
+    def _validate_price(self, price: float | None) -> None:
         """
         Validate the bond price.
         Raises ValueError if the bond price is negative.
@@ -313,33 +314,33 @@ class BaseFixedIncomeInstrument(ABC):
         if price is not None and price < 0:
             raise ValueError("Bond price cannot be negative.")
 
-    def get_settlement_date(self) -> Optional[pd.Timestamp]:
+    def get_settlement_date(self) -> pd.Timestamp | None:
         """
         Get the current settlement date for the bond.
         Returns
         -------
-        Optional[pd.Timestamp]
+        pd.Timestamp | None
             The current settlement date, or None if not set.
         """
         return self._settlement_date
 
-    def get_price(self) -> Optional[float]:
+    def get_price(self) -> float | None:
         """
         Get the current bond price for the bond.
         Returns
         -------
-        Optional[float]
+        float | None
             The current bond price, or None if not set.
         """
         return self._price
 
     def cash_flows(
         self,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> list[float]:
         """
         Return a list of all future cash flows (coupons + principal at maturity).
@@ -393,7 +394,7 @@ class BaseFixedIncomeInstrument(ABC):
     def clean_price(
         self,
         dirty_price: float,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        settlement_date: str | pd.Timestamp | None = None,
     ) -> float:
         """
         Convert dirty price to clean price.
@@ -429,7 +430,7 @@ class BaseFixedIncomeInstrument(ABC):
     def dirty_price(
         self,
         clean_price: float,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
+        settlement_date: str | pd.Timestamp | None = None,
     ) -> float:
         """
         Convert clean price to dirty price.
@@ -464,7 +465,7 @@ class BaseFixedIncomeInstrument(ABC):
 
     @abstractmethod
     def accrued_interest(
-        self, settlement_date: Optional[Union[str, pd.Timestamp]] = None
+        self, settlement_date: str | pd.Timestamp | None = None
     ) -> float:  # pragma: no cover
         pass
 
@@ -522,7 +523,7 @@ class BaseFixedIncomeInstrument(ABC):
 
 
 class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, ABC):
-    _yield_to_maturity: Optional[float]
+    _yield_to_maturity: float | None
 
     @abstractmethod
     def _price_from_yield(
@@ -542,7 +543,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
     def _price_from_yield_and_clean_parameters(
         self,
         yield_to_maturity: float,
-        settlement_date: Optional[Union[str, pd.Timestamp]],
+        settlement_date: str | pd.Timestamp | None,
         adjust_to_business_days: bool,
         following_coupons_day_count: DayCountBase,
         yield_calculation_convention: str,
@@ -552,9 +553,9 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
     def _get_ytm_payments_price(
         self,
-        yield_to_maturity: Optional[float],
-        price: Optional[float],
-        settlement_date: Optional[Union[str, pd.Timestamp]],
+        yield_to_maturity: float | None,
+        price: float | None,
+        settlement_date: str | pd.Timestamp | None,
         adjust_to_business_days: bool,
         day_count_convention: DayCountBase,
         following_coupons_day_count: DayCountBase,
@@ -587,14 +588,14 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
     def _resolve_ytm_and_price(
         self,
-        yield_to_maturity: Optional[float],
-        price: Optional[float],
-        settlement_date: Optional[Union[str, pd.Timestamp]],
+        yield_to_maturity: float | None,
+        price: float | None,
+        settlement_date: str | pd.Timestamp | None,
         adjust_to_business_days: bool,
         day_count_convention: DayCountBase,
         following_coupons_day_count: DayCountBase,
         yield_calculation_convention: str,
-    ) -> tuple[Optional[float], Optional[float]]:
+    ) -> tuple[float | None, float | None]:
         """
         Helper to resolve yield_to_maturity and price from direct input, price, or default to notional.
         Returns a tuple (ytm, price_calc), both float or None.
@@ -673,13 +674,13 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
     def plot_cash_flows(
         self,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        yield_to_maturity: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> None:
         """
         Visualize the cash flow schedule using matplotlib as stacked bars.
@@ -753,13 +754,13 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
     def dv01(
         self,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        yield_to_maturity: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> float:
         """
         Calculate the DV01 (Dollar Value of a 1 basis point) for the bond.
@@ -842,12 +843,12 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
     def set_settlement_date(
         self,
-        settlement_date: Optional[Union[str, pd.Timestamp]],
+        settlement_date: str | pd.Timestamp | None,
         reset_yield_to_maturity: bool = True,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> pd.Timestamp:
         """
         Set the default settlement date for the bond.
@@ -855,7 +856,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
         Parameters
         ----------
-        settlement_date : Union[str, pd.Timestamp], optional
+        settlement_date : str | pd.Timestamp, optional
             The settlement date to set.
         reset_yield_to_maturity : bool, optional
             Whether to reset the yield to maturity and bond price.
@@ -926,12 +927,12 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
     def set_yield_to_maturity(
         self,
-        yield_to_maturity: Optional[float],
-        settlement_date: Optional[Union[str, pd.Timestamp, None]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        yield_to_maturity: float | None,
+        settlement_date: str | pd.Timestamp | None | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> None:
         """
         Set the default yield to maturity for the bond. Updates bond price accordingly.
@@ -940,7 +941,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
         ----------
         yield_to_maturity : float, optional
             The yield to maturity to set.
-        settlement_date : Union[str, pd.Timestamp], optional
+        settlement_date : str | pd.Timestamp, optional
             The settlement date to set.
         adjust_to_business_days : bool, optional
             Whether to adjust the settlement date to the next business day.
@@ -1001,12 +1002,12 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
     def set_price(
         self,
-        price: Optional[float],
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        price: float | None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> None:
         """
         Set the default bond price for the bond. Updates yield to maturity accordingly.
@@ -1015,7 +1016,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
         ----------
         price : float, optional
             The bond price to set.
-        settlement_date : Union[str, pd.Timestamp], optional
+        settlement_date : str | pd.Timestamp, optional
             The settlement date to set.
         adjust_to_business_days : bool, optional
             Whether to adjust the settlement date to the next business day.
@@ -1076,25 +1077,25 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
             self._price = None
             self._yield_to_maturity = None
 
-    def get_yield_to_maturity(self) -> Optional[float]:
+    def get_yield_to_maturity(self) -> float | None:
         """
         Get the current yield to maturity for the bond.
         Returns
         -------
-        Optional[float]
+        float | None
             The current yield to maturity, or None if not set.
         """
         return self._yield_to_maturity
 
     def to_dataframe(
         self,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        yield_to_maturity: float | None = None,
+        price: float | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> pd.DataFrame:
         """
         Export the bond’s cash flow schedule as a pandas DataFrame.
@@ -1223,11 +1224,11 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
     def price_from_yield(
         self,
         yield_to_maturity: float,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> float:
         """
         Calculate the price of the bond given a yield to maturity (YTM).
@@ -1293,13 +1294,13 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
     def effective_duration(
         self,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        yield_to_maturity: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> float:
         """
         Calculate effective duration of the bond.
@@ -1343,7 +1344,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
         >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.effective_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
-        4.3760319684
+        4.3760...
         """
         settlement_date = self._resolve_settlement_date(settlement_date)
         (
@@ -1396,17 +1397,17 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
         effective_duration = (
             -1 * (price_plus_epsilon - price_minus_epsilon) / (2 * epsilon * price_calc)
         )
-        return round(effective_duration, 10)
+        return effective_duration
 
     def effective_spread_duration(
         self,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        yield_to_maturity: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> float:
         """
         Calculate spread effective duration of the bond.
@@ -1450,7 +1451,7 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
         >>> from pyfian.fixed_income.fixed_rate_bond import FixedRateBullet
         >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
         >>> bond.effective_spread_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
-        4.3760319684
+        4.3760...
         """
         return self.effective_duration(
             yield_to_maturity=yield_to_maturity,
@@ -1464,13 +1465,13 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
     def effective_convexity(
         self,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        yield_to_maturity: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> float:
         """
         Calculate the effective convexity of the bond.
@@ -1570,13 +1571,13 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
     def effective_spread_convexity(
         self,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        yield_to_maturity: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> float:
         """
         Calculate the effective spread convexity of the bond.
@@ -1634,15 +1635,15 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
 
     def g_spread(
         self,
-        benchmark_ytm: Optional[float] = None,
-        benchmark_curve: Optional[YieldCurveBase] = None,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        benchmark_ytm: float | None = None,
+        benchmark_curve: YieldCurveBase | None = None,
+        yield_to_maturity: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> float:
         """
         Calculate the G-spread of the bond relative to a benchmark yield.
@@ -1729,13 +1730,13 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
     def i_spread(
         self,
         benchmark_curve: YieldCurveBase,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        yield_to_maturity: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> float:
         """
         Calculate the I-spread of the bond relative to a benchmark yield curve.
@@ -1814,13 +1815,13 @@ class BaseFixedIncomeInstrumentWithYieldToMaturity(BaseFixedIncomeInstrument, AB
     def z_spread(
         self,
         benchmark_curve: YieldCurveBase,
-        yield_to_maturity: Optional[float] = None,
-        price: Optional[float] = None,
-        settlement_date: Optional[Union[str, pd.Timestamp]] = None,
-        adjust_to_business_days: Optional[bool] = None,
-        day_count_convention: Optional[str | DayCountBase] = None,
-        following_coupons_day_count: Optional[str | DayCountBase] = None,
-        yield_calculation_convention: Optional[str] = None,
+        yield_to_maturity: float | None = None,
+        price: float | None = None,
+        settlement_date: str | pd.Timestamp | None = None,
+        adjust_to_business_days: bool | None = None,
+        day_count_convention: str | DayCountBase | None = None,
+        following_coupons_day_count: str | DayCountBase | None = None,
+        yield_calculation_convention: str | None = None,
     ) -> float:
         """
         Calculate the Z-spread of the bond relative to a benchmark yield curve.

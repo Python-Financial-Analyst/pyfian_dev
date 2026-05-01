@@ -11,9 +11,11 @@ Implements:
 These classes define the structure and required methods for curve models used in fixed income analytics, including discounting, rate calculation, forward rates, and comparison utilities.
 """
 
+from __future__ import annotations
+
+
 from abc import ABC, abstractmethod
 from copy import deepcopy
-from typing import Optional, Union
 import pandas as pd
 
 from pyfian.utils.day_count import DayCountBase
@@ -88,7 +90,7 @@ class CurveBase(ABC):
     def get_t(self, t: float, spread: float = 0) -> float:  # pragma: no cover
         pass
 
-    def to_dataframe(self, maturities: Optional[list] = None) -> pd.DataFrame:
+    def to_dataframe(self, maturities: list | None = None) -> pd.DataFrame:
         """
         Export curve data to a pandas DataFrame.
         Uses __call__ for each maturity.
@@ -97,7 +99,7 @@ class CurveBase(ABC):
             if hasattr(self, "maturities"):
                 maturities = self.maturities
             else:
-                maturities = [0.25, 0.5, 1, 2, 5, 7, 10]
+                maturities = MATURITIES
         data = {"Maturity": maturities, "Rate": [self.get_t(m) for m in maturities]}
         return pd.DataFrame(data).set_index("Maturity").round(6)
 
@@ -109,13 +111,13 @@ class CurveBase(ABC):
         raise NotImplementedError("as_dict must be implemented in subclass.")
 
     @classmethod
-    def from_dict(cls, data: dict) -> "CurveBase":
+    def from_dict(cls, data: dict) -> CurveBase:
         """
         Instantiate a curve from a dictionary.
         """
         return cls(**data)
 
-    def clone_with_new_date(self, new_date: Union[str, pd.Timestamp]) -> "CurveBase":
+    def clone_with_new_date(self, new_date: str | pd.Timestamp) -> CurveBase:
         """
         Clone the curve with a new date.
         """
@@ -183,7 +185,7 @@ class YieldCurveBase(CurveBase):
 
     @abstractmethod
     def discount_date(
-        self, date: Union[str, pd.Timestamp], spread: float = 0
+        self, date: str | pd.Timestamp, spread: float = 0
     ) -> float:  # pragma: no cover
         """
         Discount a cash flow by a target date.
@@ -194,7 +196,7 @@ class YieldCurveBase(CurveBase):
     def get_rate(
         self,
         t: float,
-        yield_calculation_convention: Optional[str] = None,
+        yield_calculation_convention: str | None = None,
         spread: float = 0,
     ) -> float:  # pragma: no cover
         """
@@ -205,8 +207,8 @@ class YieldCurveBase(CurveBase):
     @abstractmethod
     def date_rate(
         self,
-        date: Union[str, pd.Timestamp],
-        yield_calculation_convention: Optional[str] = None,
+        date: str | pd.Timestamp,
+        yield_calculation_convention: str | None = None,
         spread: float = 0,
     ) -> float:  # pragma: no cover
         """
@@ -314,7 +316,7 @@ class YieldCurveBase(CurveBase):
 
     def forward_dt(
         self,
-        date: Union[str, pd.Timestamp],
+        date: str | pd.Timestamp,
         dt: float,
         spread_start: float = 0,
         spread_end: float = 0,
@@ -330,7 +332,7 @@ class YieldCurveBase(CurveBase):
 
         Parameters
         ----------
-        date : Union[str, pd.Timestamp]
+        date : str | pd.Timestamp
             Start date for the forward rate calculation.
         dt : float
             Time increment in years.
@@ -359,8 +361,8 @@ class YieldCurveBase(CurveBase):
 
     def forward_dates(
         self,
-        start_date: Union[str, pd.Timestamp],
-        end_date: Union[str, pd.Timestamp],
+        start_date: str | pd.Timestamp,
+        end_date: str | pd.Timestamp,
         spread_start: float = 0,
         spread_end: float = 0,
         spread_forward: float = 0,
@@ -375,9 +377,9 @@ class YieldCurveBase(CurveBase):
 
         Parameters
         ----------
-        start_date : Union[str, pd.Timestamp]
+        start_date : str | pd.Timestamp
             Start date for the forward rate calculation.
-        end_date : Union[str, pd.Timestamp]
+        end_date : str | pd.Timestamp
             End date for the forward rate calculation.
         spread_start : float, optional
             Spread to apply at the start date (default is 0).
@@ -401,7 +403,7 @@ class YieldCurveBase(CurveBase):
         return self.forward_dt(start_date, dt, spread_start, spread_end, spread_forward)
 
     def compare_to(
-        self, other: "YieldCurveBase", maturities: Optional[list] = None
+        self, other: YieldCurveBase, maturities: list | None = None
     ) -> pd.DataFrame:
         """
         Compare this curve to another curve (e.g., difference in rates, spreads).
