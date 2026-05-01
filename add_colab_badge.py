@@ -22,7 +22,6 @@ BRANCH = "main"
 
 TARGET_DIRS = [
     "notebooks",
-    "docs/source/Topics/",
 ]
 
 

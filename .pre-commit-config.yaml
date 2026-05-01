@@ -24,10 +24,25 @@ repos:
       - id: detect-secrets
         exclude: ".*\\.ipynb$"
 
-  # - repo: local
-  #   hooks:
-  #     - id: add-colab-badges
-  #       name: Add Colab Badges to Notebooks
-  #       entry: poetry run python add_colab_badge.py
-  #       language: system
-  #       files: ^(notebooks|tutorials|examples)/.*\.ipynb$
+  - repo: local
+    hooks:
+      - id: add-colab-badges
+        name: Add Colab Badges to Notebooks
+        entry: poetry run python add_colab_badge.py
+        language: system
+        pass_filenames: false
+        files: ^notebooks/.*\.ipynb$
+
+      - id: doctest
+        name: Run doctests (modules)
+        entry: poetry run pytest --doctest-modules src/pyfian
+        language: system
+        pass_filenames: false
+        types: [python]
+
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.6.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert]
