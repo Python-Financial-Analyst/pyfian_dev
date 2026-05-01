@@ -7,8 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyfian.time_value.irr &mdash; Python Financial Analyst 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -82,6 +82,9 @@
 <span class="sd">Module for computing the Internal Rate of Return (IRR) from a series of cash flows.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 
@@ -91,7 +94,7 @@
 
 
 <div class="viewcode-block" id="npv">
-<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/irr/index.html#pyfian.time_value.irr.npv">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/irr/index.html#pyfian.time_value.npv">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">npv</span><span class="p">(</span><span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">cash_flows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the Net Present Value (NPV) for a series of cash flows.</span>
@@ -130,7 +133,7 @@
 
 
 <div class="viewcode-block" id="irr">
-<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/irr/index.html#pyfian.time_value.irr.irr">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/irr/index.html#pyfian.time_value.irr">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">irr</span><span class="p">(</span>
     <span class="n">cash_flows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">guess</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -172,7 +175,7 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; irr([-1000, 300, 400, 500, 600])</span>
-<span class="sd">    0.2488833566</span>
+<span class="sd">    0.24888...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">rate</span> <span class="o">=</span> <span class="n">guess</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iter</span><span class="p">):</span>
@@ -184,14 +187,14 @@
             <span class="k">break</span>
         <span class="n">new_rate</span> <span class="o">=</span> <span class="n">rate</span> <span class="o">-</span> <span class="n">f</span> <span class="o">/</span> <span class="n">f_prime</span>
         <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">new_rate</span> <span class="o">-</span> <span class="n">rate</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">new_rate</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">new_rate</span>
         <span class="n">rate</span> <span class="o">=</span> <span class="n">new_rate</span>
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;IRR calculation did not converge&quot;</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="np_irr">
-<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/irr/index.html#pyfian.time_value.irr.np_irr">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/irr/index.html#pyfian.time_value.np_irr">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">np_irr</span><span class="p">(</span><span class="n">cash_flows</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the Internal Rate of Return using numpy-financial&#39;s IRR function.</span>
@@ -231,7 +234,7 @@
 
 
 <div class="viewcode-block" id="xirr_base">
-<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/irr/index.html#pyfian.time_value.irr.xirr_base">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/irr/index.html#pyfian.time_value.xirr_base">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">xirr_base</span><span class="p">(</span>
     <span class="n">cash_flows</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">times</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
@@ -299,7 +302,7 @@
 
 
 <div class="viewcode-block" id="xirr_dates">
-<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/irr/index.html#pyfian.time_value.irr.xirr_dates">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/irr/index.html#pyfian.time_value.xirr_dates">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">xirr_dates</span><span class="p">(</span>
     <span class="n">cash_flows</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">dates</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">datetime</span><span class="p">],</span>
@@ -382,7 +385,7 @@
 
 
 <div class="viewcode-block" id="xirr">
-<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/irr/index.html#pyfian.time_value.irr.xirr">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/irr/index.html#pyfian.time_value.xirr">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">xirr</span><span class="p">(</span>
     <span class="n">cash_flows</span><span class="p">,</span> <span class="n">dates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">guess</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>

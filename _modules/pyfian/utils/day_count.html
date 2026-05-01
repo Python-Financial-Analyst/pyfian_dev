@@ -7,8 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyfian.utils.day_count &mdash; Python Financial Analyst 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -155,11 +155,14 @@
 <span class="sd">0.5055555555555555</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 
 <div class="viewcode-block" id="is_leap_year">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.is_leap_year">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.is_leap_year">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_leap_year</span><span class="p">(</span><span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if a year is a leap year.</span>
@@ -169,7 +172,7 @@
 
 
 <div class="viewcode-block" id="DayCountBase">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountBase">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountBase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DayCountBase</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for day count conventions.</span>
@@ -189,13 +192,13 @@
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Base&quot;</span>
 
 <div class="viewcode-block" id="DayCountBase.__repr__">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountBase.__repr__">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountBase.__repr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
 
 
 <div class="viewcode-block" id="DayCountBase.numerator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountBase.numerator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountBase.numerator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">numerator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -221,7 +224,7 @@
 
 
 <div class="viewcode-block" id="DayCountBase.denominator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountBase.denominator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountBase.denominator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">denominator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -246,7 +249,7 @@
 
 
 <div class="viewcode-block" id="DayCountBase.fraction">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountBase.fraction">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountBase.fraction">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fraction</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -288,7 +291,7 @@
 
 
 <div class="viewcode-block" id="DayCountBase.fraction_period_adjusted">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountBase.fraction_period_adjusted">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountBase.fraction_period_adjusted">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fraction_period_adjusted</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
@@ -335,7 +338,7 @@
 
 
 <div class="viewcode-block" id="DayCount30360">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30360">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCount30360">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DayCount30360</span><span class="p">(</span><span class="n">DayCountBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    30/360 day count convention.</span>
@@ -358,13 +361,13 @@
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;30/360&quot;</span>
 
 <div class="viewcode-block" id="DayCount30360.__repr__">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30360.__repr__">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCount30360.__repr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
 
 
 <div class="viewcode-block" id="DayCount30360.numerator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30360.numerator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCount30360.numerator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">numerator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -396,7 +399,7 @@
 
 
 <div class="viewcode-block" id="DayCount30360.denominator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30360.denominator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCount30360.denominator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">denominator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -423,7 +426,7 @@
 
 
 <div class="viewcode-block" id="DayCount30E360">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30E360">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCount30E360">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DayCount30E360</span><span class="p">(</span><span class="n">DayCountBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    30E/360 (Eurobond) day count convention.</span>
@@ -447,13 +450,13 @@
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;30E/360&quot;</span>
 
 <div class="viewcode-block" id="DayCount30E360.__repr__">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30E360.__repr__">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCount30E360.__repr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
 
 
 <div class="viewcode-block" id="DayCount30E360.numerator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30E360.numerator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCount30E360.numerator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">numerator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -485,7 +488,7 @@
 
 
 <div class="viewcode-block" id="DayCount30E360.denominator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30E360.denominator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCount30E360.denominator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">denominator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -512,7 +515,7 @@
 
 
 <div class="viewcode-block" id="DayCountActualActualISDA">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualISDA">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActualActualISDA">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DayCountActualActualISDA</span><span class="p">(</span><span class="n">DayCountBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Actual/Actual ISDA day count convention.</span>
@@ -536,13 +539,13 @@
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;actual/actual-ISDA&quot;</span>
 
 <div class="viewcode-block" id="DayCountActualActualISDA.__repr__">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualISDA.__repr__">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActualActualISDA.__repr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
 
 
 <div class="viewcode-block" id="DayCountActualActualISDA.numerator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualISDA.numerator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActualActualISDA.numerator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">numerator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -567,7 +570,7 @@
 
 
 <div class="viewcode-block" id="DayCountActualActualISDA.denominator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualISDA.denominator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActualActualISDA.denominator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">denominator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -594,7 +597,7 @@
 
 
 <div class="viewcode-block" id="DayCountActualActualISDA.fraction">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualISDA.fraction">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActualActualISDA.fraction">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fraction</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -633,7 +636,7 @@
 
 
 <div class="viewcode-block" id="DayCountActualActualISDA.fraction_period_adjusted">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualISDA.fraction_period_adjusted">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActualActualISDA.fraction_period_adjusted">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fraction_period_adjusted</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
@@ -674,7 +677,7 @@
 
 
 <div class="viewcode-block" id="DayCountActualActualBond">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualBond">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActualActualBond">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DayCountActualActualBond</span><span class="p">(</span><span class="n">DayCountBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Actual/Actual (Bond) day count convention.</span>
@@ -696,13 +699,13 @@
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;actual/actual-Bond&quot;</span>
 
 <div class="viewcode-block" id="DayCountActualActualBond.__repr__">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualBond.__repr__">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActualActualBond.__repr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
 
 
 <div class="viewcode-block" id="DayCountActualActualBond.numerator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualBond.numerator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActualActualBond.numerator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">numerator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -727,7 +730,7 @@
 
 
 <div class="viewcode-block" id="DayCountActualActualBond.denominator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualBond.denominator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActualActualBond.denominator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">denominator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -754,7 +757,7 @@
 
 
 <div class="viewcode-block" id="DayCountActualActualBond.fraction">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualBond.fraction">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActualActualBond.fraction">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fraction</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -783,7 +786,7 @@
 
 
 <div class="viewcode-block" id="DayCountActualActualBond.fraction_period_adjusted">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActualActualBond.fraction_period_adjusted">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActualActualBond.fraction_period_adjusted">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fraction_period_adjusted</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
@@ -816,7 +819,7 @@
 
 
 <div class="viewcode-block" id="DayCountActual360">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActual360">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActual360">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DayCountActual360</span><span class="p">(</span><span class="n">DayCountBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Actual/360 day count convention.</span>
@@ -837,13 +840,13 @@
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;actual/360&quot;</span>
 
 <div class="viewcode-block" id="DayCountActual360.__repr__">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActual360.__repr__">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActual360.__repr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
 
 
 <div class="viewcode-block" id="DayCountActual360.numerator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActual360.numerator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActual360.numerator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">numerator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -868,7 +871,7 @@
 
 
 <div class="viewcode-block" id="DayCountActual360.denominator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActual360.denominator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActual360.denominator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">denominator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -895,7 +898,7 @@
 
 
 <div class="viewcode-block" id="DayCountActual365">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActual365">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActual365">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DayCountActual365</span><span class="p">(</span><span class="n">DayCountBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Actual/365 day count convention.</span>
@@ -916,13 +919,13 @@
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;actual/365&quot;</span>
 
 <div class="viewcode-block" id="DayCountActual365.__repr__">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActual365.__repr__">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActual365.__repr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
 
 
 <div class="viewcode-block" id="DayCountActual365.numerator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActual365.numerator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActual365.numerator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">numerator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -947,7 +950,7 @@
 
 
 <div class="viewcode-block" id="DayCountActual365.denominator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCountActual365.denominator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCountActual365.denominator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">denominator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -974,7 +977,7 @@
 
 
 <div class="viewcode-block" id="DayCount30365">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30365">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCount30365">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DayCount30365</span><span class="p">(</span><span class="n">DayCountBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    30/365 day count convention.</span>
@@ -997,13 +1000,13 @@
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;30/365&quot;</span>
 
 <div class="viewcode-block" id="DayCount30365.__repr__">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30365.__repr__">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCount30365.__repr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">()&quot;</span></div>
 
 
 <div class="viewcode-block" id="DayCount30365.numerator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30365.numerator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCount30365.numerator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">numerator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1035,7 +1038,7 @@
 
 
 <div class="viewcode-block" id="DayCount30365.denominator">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.DayCount30365.denominator">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.DayCount30365.denominator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">denominator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">current</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1062,7 +1065,7 @@
 
 
 <div class="viewcode-block" id="get_day_count_fraction">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.get_day_count_fraction">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.get_day_count_fraction">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_day_count_fraction</span><span class="p">(</span>
     <span class="n">convention</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">start</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
@@ -1110,7 +1113,7 @@
 
 
 <div class="viewcode-block" id="get_day_count_convention">
-<a class="viewcode-back" href="../../../autoapi/pyfian/utils/day_count/index.html#pyfian.utils.day_count.get_day_count_convention">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/utils/index.html#pyfian.utils.day_count.get_day_count_convention">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_day_count_convention</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DayCountBase</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the day count convention class instance by name.</span>

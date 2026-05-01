@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyfian &mdash; Python Financial Analyst 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -107,6 +107,28 @@
   <section id="module-pyfian">
 <span id="pyfian"></span><h1>pyfian<a class="headerlink" href="#module-pyfian" title="Link to this heading"></a></h1>
 <p>pyfian: Tools for financial analysis and data processing.</p>
+<p>The public API is organised into the following sub-packages:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="time_value/index.html#module-pyfian.time_value" title="pyfian.time_value"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyfian.time_value</span></code></a> - present/future value, IRR, rate conversions,
+means and amortization schedules.</p></li>
+<li><p><a class="reference internal" href="fixed_income/index.html#module-pyfian.fixed_income" title="pyfian.fixed_income"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyfian.fixed_income</span></code></a> - fixed-rate bonds, floating-rate notes,
+custom-flow bonds and money-market instruments.</p></li>
+<li><p><a class="reference internal" href="yield_curves/index.html#module-pyfian.yield_curves" title="pyfian.yield_curves"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyfian.yield_curves</span></code></a> - flat, interpolated, par and spot curves,
+combined curves and credit-spread curves.</p></li>
+<li><p><a class="reference internal" href="statistics/index.html#module-pyfian.statistics" title="pyfian.statistics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyfian.statistics</span></code></a> - distributions, simulation, regression,
+descriptive statistics, hypothesis tests and risk measures.</p></li>
+<li><p><a class="reference internal" href="utils/index.html#module-pyfian.utils" title="pyfian.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyfian.utils</span></code></a> - day-count conventions and shared utilities.</p></li>
+<li><p><a class="reference internal" href="data/index.html#module-pyfian.data" title="pyfian.data"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyfian.data</span></code></a> - clients for FRED, ECB, World Bank, Yahoo Finance
+and SEC EDGAR.</p></li>
+<li><p><a class="reference internal" href="visualization/index.html#module-pyfian.visualization" title="pyfian.visualization"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyfian.visualization</span></code></a> - mix-in plotting helpers.</p></li>
+</ul>
+<p>Sub-packages are not imported eagerly to keep <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">pyfian</span></code> cheap.
+Import what you need, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.yield_curves</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlatCurveAER</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.time_value</span><span class="w"> </span><span class="kn">import</span> <span class="n">irr</span><span class="p">,</span> <span class="n">present_value_annuity</span>
+</pre></div>
+</div>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">

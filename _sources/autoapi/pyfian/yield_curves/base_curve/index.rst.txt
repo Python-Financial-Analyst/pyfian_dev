@@ -119,7 +119,7 @@ Module Contents
 
 
 
-   .. py:method:: to_dataframe(maturities: Optional[list] = None) -> pandas.DataFrame
+   .. py:method:: to_dataframe(maturities: list | None = None) -> pandas.DataFrame
 
       Export curve data to a pandas DataFrame.
       Uses __call__ for each maturity.
@@ -142,7 +142,7 @@ Module Contents
 
 
 
-   .. py:method:: clone_with_new_date(new_date: Union[str, pandas.Timestamp]) -> CurveBase
+   .. py:method:: clone_with_new_date(new_date: str | pandas.Timestamp) -> CurveBase
 
       Clone the curve with a new date.
 
@@ -242,7 +242,7 @@ Module Contents
 
 
 
-   .. py:method:: discount_date(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
+   .. py:method:: discount_date(date: str | pandas.Timestamp, spread: float = 0) -> float
       :abstractmethod:
 
 
@@ -250,7 +250,7 @@ Module Contents
 
 
 
-   .. py:method:: get_rate(t: float, yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+   .. py:method:: get_rate(t: float, yield_calculation_convention: str | None = None, spread: float = 0) -> float
       :abstractmethod:
 
 
@@ -258,7 +258,7 @@ Module Contents
 
 
 
-   .. py:method:: date_rate(date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+   .. py:method:: date_rate(date: str | pandas.Timestamp, yield_calculation_convention: str | None = None, spread: float = 0) -> float
       :abstractmethod:
 
 
@@ -333,7 +333,7 @@ Module Contents
 
 
 
-   .. py:method:: forward_dt(date: Union[str, pandas.Timestamp], dt: float, spread_start: float = 0, spread_end: float = 0, spread_forward: float = 0) -> float
+   .. py:method:: forward_dt(date: str | pandas.Timestamp, dt: float, spread_start: float = 0, spread_end: float = 0, spread_forward: float = 0) -> float
 
       Calculate the forward rate from a given date and time increment.
 
@@ -343,7 +343,7 @@ Module Contents
       the `spread_forward` parameter that subtracts from the forward rate.
 
       :param date: Start date for the forward rate calculation.
-      :type date: Union[str, pd.Timestamp]
+      :type date: str | pd.Timestamp
       :param dt: Time increment in years.
       :type dt: float
       :param spread_start: Spread to apply at the start date (default is 0).
@@ -362,7 +362,7 @@ Module Contents
 
 
 
-   .. py:method:: forward_dates(start_date: Union[str, pandas.Timestamp], end_date: Union[str, pandas.Timestamp], spread_start: float = 0, spread_end: float = 0, spread_forward: float = 0) -> float
+   .. py:method:: forward_dates(start_date: str | pandas.Timestamp, end_date: str | pandas.Timestamp, spread_start: float = 0, spread_end: float = 0, spread_forward: float = 0) -> float
 
       Calculate the forward rate between two dates.
 
@@ -372,9 +372,9 @@ Module Contents
       the `spread_forward` parameter that subtracts from the forward rate.
 
       :param start_date: Start date for the forward rate calculation.
-      :type start_date: Union[str, pd.Timestamp]
+      :type start_date: str | pd.Timestamp
       :param end_date: End date for the forward rate calculation.
-      :type end_date: Union[str, pd.Timestamp]
+      :type end_date: str | pd.Timestamp
       :param spread_start: Spread to apply at the start date (default is 0).
       :type spread_start: float, optional
       :param spread_end: Spread to apply at the end date (default is 0).
@@ -391,7 +391,7 @@ Module Contents
 
 
 
-   .. py:method:: compare_to(other: YieldCurveBase, maturities: Optional[list] = None) -> pandas.DataFrame
+   .. py:method:: compare_to(other: YieldCurveBase, maturities: list | None = None) -> pandas.DataFrame
 
       Compare this curve to another curve (e.g., difference in rates, spreads).
       Returns a DataFrame with columns: Current Curve, Compared Curve, Spread.

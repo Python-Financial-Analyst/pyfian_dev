@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyfian.time_value.rate_conversions &mdash; Python Financial Analyst 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -241,9 +241,9 @@ Returns <span class="math notranslate nohighlight">\(base^n - 1\)</span></p>
 <dl class="simple">
 <dt>rate<span class="classifier">float</span></dt><dd><p>The interest rate to convert, expressed as a decimal (e.g., 0.05 for 5%).</p>
 </dd>
-<dt>from_convention<span class="classifier">str</span></dt><dd><p>The current yield calculation convention of the rate. Must be one of “Annual”, “Continuous”, “BEY”, “BEY_Q”, “BEY_M”.</p>
+<dt>from_convention<span class="classifier">str</span></dt><dd><p>The current yield calculation convention of the rate. Must be one of “Annual”, “Continuous”, “BEY”, “BEY-Q”, “BEY-M”.</p>
 </dd>
-<dt>to_convention<span class="classifier">str</span></dt><dd><p>The target yield calculation convention to convert the rate to. Must be one of “Annual”, “Continuous”, “BEY”, “BEY_Q”, “BEY_M”.</p>
+<dt>to_convention<span class="classifier">str</span></dt><dd><p>The target yield calculation convention to convert the rate to. Must be one of “Annual”, “Continuous”, “BEY”, “BEY-Q”, “BEY-M”.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -256,11 +256,11 @@ Returns <span class="math notranslate nohighlight">\(base^n - 1\)</span></p>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">convert_yield</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;BEY&quot;</span><span class="p">,</span> <span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.050625)</span>
+<span class="go">np.float64(0.050624...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">convert_yield</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;BEY&quot;</span><span class="p">,</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.0493852252)</span>
+<span class="go">np.float64(0.049385...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">convert_yield</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="s2">&quot;Continuous&quot;</span><span class="p">,</span> <span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.0512710964)</span>
+<span class="go">np.float64(0.051271...)</span>
 </pre></div>
 </div>
 </section>
@@ -301,7 +301,7 @@ added to the principal constantly, creating a smooth growth curve.</p>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">continuous_to_effective</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
-<span class="go">np.float64(0.0512710964)</span>
+<span class="go">np.float64(0.051271...)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -373,9 +373,9 @@ added to the principal constantly, creating a smooth growth curve.</p>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nominal_periods_to_effective</span><span class="p">(</span><span class="mf">0.12</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>  <span class="c1"># monthly 1%</span>
-<span class="go">np.float64(0.1268250301)</span>
+<span class="go">np.float64(0.12682...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nominal_periods_to_effective</span><span class="p">(</span><span class="mf">0.12</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>   <span class="c1"># quarterly 3%</span>
-<span class="go">np.float64(0.12550881)</span>
+<span class="go">np.float64(0.12550...)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -415,7 +415,7 @@ added to the principal constantly, creating a smooth growth curve.</p>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">effective_to_nominal_periods</span><span class="p">(</span><span class="mf">0.12682503013196977</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>  <span class="c1"># monthly</span>
-<span class="go">np.float64(0.12)</span>
+<span class="go">np.float64(0.12000...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">effective_to_nominal_periods</span><span class="p">(</span><span class="mf">0.12550881349224116</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>   <span class="c1"># quarterly</span>
 <span class="go">np.float64(0.12...)</span>
 </pre></div>
@@ -459,9 +459,9 @@ or maturities.</p></li>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nominal_days_to_effective</span><span class="p">(</span><span class="mf">0.12</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">365</span><span class="p">)</span>
-<span class="go">np.float64(0.1268341705)</span>
+<span class="go">np.float64(0.12683...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nominal_days_to_effective</span><span class="p">(</span><span class="mf">0.12</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">360</span><span class="p">)</span>
-<span class="go">np.float64(0.1268250301)</span>
+<span class="go">np.float64(0.12682...)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -543,7 +543,7 @@ for comparing different investment opportunities with varying compounding freque
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">single_period_to_effective</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
-<span class="go">np.float64(0.1268250301)</span>
+<span class="go">np.float64(0.12682...)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -582,7 +582,7 @@ mortgages, and deposits.</p></li>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">effective_to_single_period</span><span class="p">(</span><span class="mf">0.12682503013196977</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
-<span class="go">np.float64(0.01)</span>
+<span class="go">np.float64(0.010000...)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -622,11 +622,11 @@ mortgages, and deposits.</p></li>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">money_market_rate_to_effective</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">365</span><span class="p">)</span>
-<span class="go">np.float64(0.0499829289)</span>
+<span class="go">np.float64(0.049982...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">money_market_rate_to_effective</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">252</span><span class="p">)</span>
-<span class="go">np.float64(0.0503725338)</span>
+<span class="go">np.float64(0.050372...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">money_market_rate_to_effective</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">365</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">np.float64(0.0526511542)</span>
+<span class="go">np.float64(0.052651...)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -702,7 +702,7 @@ mortgages, and deposits.</p></li>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bey_to_effective_annual</span><span class="p">(</span><span class="mf">0.06</span><span class="p">)</span>
-<span class="go">np.float64(0.0609)</span>
+<span class="go">np.float64(0.060899...)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -734,7 +734,7 @@ mortgages, and deposits.</p></li>
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">effective_annual_to_bey</span><span class="p">(</span><span class="mf">0.0609</span><span class="p">)</span>
-<span class="go">np.float64(0.06)</span>
+<span class="go">np.float64(0.060000...)</span>
 </pre></div>
 </div>
 </dd></dl>

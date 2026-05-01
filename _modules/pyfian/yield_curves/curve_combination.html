@@ -7,8 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyfian.yield_curves.curve_combination &mdash; Python Financial Analyst 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -84,9 +84,11 @@
 <span class="sd">- CombinedCurve: Combines a benchmark yield curve and a spread curve to produce a total yield curve.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.utils.day_count</span><span class="w"> </span><span class="kn">import</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="n">get_day_count_convention</span>
@@ -215,7 +217,7 @@
         <span class="n">benchmark_curve</span><span class="p">:</span> <span class="n">YieldCurveBase</span><span class="p">,</span>
         <span class="n">spread_curve</span><span class="p">:</span> <span class="n">CreditSpreadCurveBase</span><span class="p">,</span>
         <span class="n">day_count_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span> <span class="o">=</span> <span class="s2">&quot;actual/365&quot;</span><span class="p">,</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">benchmark_curve</span> <span class="o">=</span> <span class="n">benchmark_curve</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spread_curve</span> <span class="o">=</span> <span class="n">spread_curve</span>
@@ -270,7 +272,7 @@
 <div class="viewcode-block" id="CombinedCurve.from_dict">
 <a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/curve_combination/index.html#pyfian.yield_curves.curve_combination.CombinedCurve.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;CombinedCurve&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CombinedCurve</span><span class="p">:</span>
         <span class="n">benchmark_curve</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;benchmark_curve&quot;</span><span class="p">]</span>
         <span class="n">spread_curve</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;spread_curve&quot;</span><span class="p">]</span>
         <span class="n">day_count_convention</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;day_count_convention&quot;</span><span class="p">]</span>
@@ -289,7 +291,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -305,7 +307,7 @@
 <span class="sd">                Time in years to discount.</span>
 <span class="sd">        spread : float</span>
 <span class="sd">                Spread to add to the discount rate.</span>
-<span class="sd">        yield_calculation_convention : Optional[str]</span>
+<span class="sd">        yield_calculation_convention : str | None</span>
 <span class="sd">                Yield calculation convention to use (default is None).</span>
 
 <span class="sd">        Returns</span>
@@ -354,8 +356,8 @@
 <a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/curve_combination/index.html#pyfian.yield_curves.curve_combination.CombinedCurve.date_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">date_rate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;pd.Timestamp&quot;</span><span class="p">],</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -367,9 +369,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        date : Union[str, pd.Timestamp]</span>
+<span class="sd">        date : str | pd.Timestamp</span>
 <span class="sd">                Date to get the rate for.</span>
-<span class="sd">        yield_calculation_convention : Optional[str]</span>
+<span class="sd">        yield_calculation_convention : str | None</span>
 <span class="sd">                Yield calculation convention to use (default is None).</span>
 <span class="sd">        spread : float</span>
 <span class="sd">                Spread to add to the rate.</span>

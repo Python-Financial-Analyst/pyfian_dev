@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyfian.visualization &mdash; Python Financial Analyst 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -104,6 +104,7 @@
              
   <section id="module-pyfian.visualization">
 <span id="pyfian-visualization"></span><h1>pyfian.visualization<a class="headerlink" href="#module-pyfian.visualization" title="Link to this heading"></a></h1>
+<p>Visualization helpers: plotting mix-ins for curves and instruments.</p>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
@@ -111,6 +112,40 @@
 <li class="toctree-l1"><a class="reference internal" href="mixins/index.html">pyfian.visualization.mixins</a></li>
 </ul>
 </div>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.visualization.YieldCurvePlotMixin" title="pyfian.visualization.YieldCurvePlotMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">YieldCurvePlotMixin</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.visualization.YieldCurvePlotMixin">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.visualization.</span></span><span class="sig-name descname"><span class="pre">YieldCurvePlotMixin</span></span><a class="reference internal" href="../../../_modules/pyfian/visualization/mixins.html#YieldCurvePlotMixin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.visualization.YieldCurvePlotMixin" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="pyfian.visualization.YieldCurvePlotMixin.plot_curve">
+<span class="sig-name descname"><span class="pre">plot_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyfian/visualization/mixins.html#YieldCurvePlotMixin.plot_curve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.visualization.YieldCurvePlotMixin.plot_curve" title="Link to this definition"></a></dt>
+<dd><p>Plot the yield curve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t_max</strong> (<em>float</em>) – Maximum time horizon in years.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Number of points.</p></li>
+<li><p><strong>kind</strong> (<em>str</em>) – “rate” to plot rates, “discount” to plot discount factors, “spread” to plot spreads.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Additional arguments passed to plt.plot.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 

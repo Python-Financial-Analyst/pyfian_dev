@@ -24,7 +24,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: CustomFlowBond(issue_dt: Union[str, pandas.Timestamp], maturity: Union[str, pandas.Timestamp], notional: float = 100, custom_amortization: Optional[dict[pandas.Timestamp, float]] = None, custom_coupons: Optional[dict[pandas.Timestamp, float]] = None, custom_coupon_rates: Optional[Union[dict[pandas.Timestamp, float], float]] = None, **kwargs)
+.. py:class:: CustomFlowBond(issue_dt: str | pandas.Timestamp, maturity: str | pandas.Timestamp, notional: float = 100, custom_amortization: dict[pandas.Timestamp, float] | None = None, custom_coupons: dict[pandas.Timestamp, float] | None = None, custom_coupon_rates: dict[pandas.Timestamp, float] | float | None = None, **kwargs)
 
    Bases: :py:obj:`pyfian.fixed_income.fixed_rate_bond.FixedRateBullet`
 
@@ -79,7 +79,7 @@ Module Contents
 
       Coupon rates (percent per period) by payment date, or a single float for all periods.
 
-      :type: Union[Dict[pd.Timestamp, float], float, None]
+      :type: Dict[pd.Timestamp, float] | float | None
 
    .. attribute:: payment_flow
 

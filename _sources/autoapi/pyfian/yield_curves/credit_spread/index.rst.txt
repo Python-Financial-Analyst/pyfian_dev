@@ -123,7 +123,7 @@ Module Contents
          Plot the yield curve.
 
 
-   .. py:method:: date_spread(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
+   .. py:method:: date_spread(date: str | pandas.Timestamp, spread: float = 0) -> float
       :abstractmethod:
 
 
@@ -154,7 +154,7 @@ Module Contents
 
 
 
-.. py:class:: CreditSpreadCurve(curve_date: Union[str, pandas.Timestamp], benchmark_curve: Optional[pyfian.yield_curves.base_curve.YieldCurveBase] = None, bonds: Optional[list[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet] | tuple[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet]] = None, spreads: Optional[dict[float, float]] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = 'actual/365', yield_calculation_convention: Optional[str] = None)
+.. py:class:: CreditSpreadCurve(curve_date: str | pandas.Timestamp, benchmark_curve: pyfian.yield_curves.base_curve.YieldCurveBase | None = None, bonds: list[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet] | tuple[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet] | None = None, spreads: dict[float, float] | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = 'actual/365', yield_calculation_convention: str | None = None)
 
    Bases: :py:obj:`CreditSpreadCurveBase`
 
@@ -340,7 +340,7 @@ Module Contents
 
 
 
-   .. py:method:: get_rate(t: float, yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+   .. py:method:: get_rate(t: float, yield_calculation_convention: str | None = None, spread: float = 0) -> float
 
       Get the rate for a cash flow by time t (in years) if there is a benchmark curve.
 
@@ -355,14 +355,14 @@ Module Contents
       :param spread: Spread to add to the discount rate.
       :type spread: float
       :param yield_calculation_convention: Yield calculation convention to use (default is None).
-      :type yield_calculation_convention: Optional[str]
+      :type yield_calculation_convention: str | None
 
       :returns: Rate for the cash flow.
       :rtype: float
 
 
 
-   .. py:method:: date_rate(date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+   .. py:method:: date_rate(date: str | pandas.Timestamp, yield_calculation_convention: str | None = None, spread: float = 0) -> float
 
       Get the rate for a cash flow by time t (in years) if there is a benchmark curve.
 
@@ -373,9 +373,9 @@ Module Contents
       yield_calculation_convention can be used to transform the yield to different conventions.
 
       :param date: Date to get the rate for.
-      :type date: Union[str, pd.Timestamp]
+      :type date: str | pd.Timestamp
       :param yield_calculation_convention: Yield calculation convention to use (default is None).
-      :type yield_calculation_convention: Optional[str]
+      :type yield_calculation_convention: str | None
       :param spread: Spread to add to the rate.
       :type spread: float
 
@@ -400,7 +400,7 @@ Module Contents
 
 
 
-   .. py:method:: date_spread(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
+   .. py:method:: date_spread(date: str | pandas.Timestamp, spread: float = 0) -> float
 
       Get the spread for a given date.
 
@@ -442,7 +442,7 @@ Module Contents
    .. py:method:: __repr__()
 
 
-.. py:class:: FlatCreditSpreadCurve(spread: float, curve_date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None)
+.. py:class:: FlatCreditSpreadCurve(spread: float, curve_date: str | pandas.Timestamp, yield_calculation_convention: str | None = None)
 
    Bases: :py:obj:`CreditSpreadCurveBase`
 
@@ -571,12 +571,12 @@ Module Contents
 
 
 
-   .. py:method:: date_spread(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
+   .. py:method:: date_spread(date: str | pandas.Timestamp, spread: float = 0) -> float
 
       Get the spread for a given date.
 
       :param date: The date to get the spread for.
-      :type date: Union[str, pd.Timestamp]
+      :type date: str | pd.Timestamp
       :param spread: An additional spread to add (default is 0).
       :type spread: float, optional
 

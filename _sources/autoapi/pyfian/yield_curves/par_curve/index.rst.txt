@@ -44,7 +44,7 @@ pyfian.yield_curves.par_curve
    >>> curve.discount_t(1)
    np.float64(0.9616401157)
    >>> curve.get_rate(1)
-   np.float64(0.0395)
+   np.float64(0.039499...)
 
 
 
@@ -67,7 +67,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: ParCurve(curve_date: pandas.Timestamp, par_rates: Optional[dict[float, dict]] = None, zero_rates: Optional[dict[float, float]] = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/365', yield_calculation_convention: Optional[str] = None)
+.. py:class:: ParCurve(curve_date: pandas.Timestamp, par_rates: dict[float, dict] | None = None, zero_rates: dict[float, float] | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/365', yield_calculation_convention: str | None = None)
 
    Bases: :py:obj:`pyfian.yield_curves.spot_curve.SpotCurve`
 

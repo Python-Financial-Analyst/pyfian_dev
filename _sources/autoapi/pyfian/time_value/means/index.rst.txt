@@ -147,7 +147,7 @@ Module Contents
    Averaging P/E ratios for three companies:
    >>> pe_ratios = [15, 20, 25]
    >>> harmonic_mean(pe_ratios)
-   np.float64(19.1489361702)
+   np.float64(19.148...)
 
    Averaging P/E ratios in a DataFrame:
    >>> df = pd.DataFrame({
@@ -198,7 +198,7 @@ Module Contents
    .. rubric:: Examples
 
    >>> weighted_geometric_mean([0.05, 0.10, 0.02], [1, 2, 1])
-   np.float64(0.0669491218)
+   np.float64(0.066949...)
 
 
 .. py:function:: weighted_harmonic_mean(values, weights, axis=0)
@@ -232,6 +232,6 @@ Module Contents
    >>> pe = [15, 20, 25]
    >>> caps = [100, 200, 700]
    >>> weighted_harmonic_mean(pe, caps)
-   np.float64(22.3880597015)
+   np.float64(22.388...)
 
 

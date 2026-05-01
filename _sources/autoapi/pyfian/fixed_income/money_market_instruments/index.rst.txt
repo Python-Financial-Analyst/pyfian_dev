@@ -28,7 +28,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: MoneyMarketInstrument(issue_dt: Union[str, pandas.Timestamp], maturity: Union[str, pandas.Timestamp], cpn: float = 0, cpn_freq: int = 0, notional: float = 100, settlement_convention_t_plus: int = 1, record_date_t_minus: int = 1, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, yield_to_maturity: Optional[float] = None, price: Optional[float] = None, adjust_to_business_days: bool = False, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/365', following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase = '30/360', yield_calculation_convention: str = 'Add-On')
+.. py:class:: MoneyMarketInstrument(issue_dt: str | pandas.Timestamp, maturity: str | pandas.Timestamp, cpn: float = 0, cpn_freq: int = 0, notional: float = 100, settlement_convention_t_plus: int = 1, record_date_t_minus: int = 1, settlement_date: str | pandas.Timestamp | None = None, yield_to_maturity: float | None = None, price: float | None = None, adjust_to_business_days: bool = False, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/365', following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase = '30/360', yield_calculation_convention: str = 'Add-On', currency: str = 'USD')
 
    Bases: :py:obj:`pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrumentWithYieldToMaturity`
 
@@ -48,6 +48,8 @@ Module Contents
    :type notional: float, optional
    :param day_count_convention: Day count convention for the instrument. Defaults to 'actual/360'.
    :type day_count_convention: str, optional
+   :param currency: Currency of the instrument. Defaults to 'USD'.
+   :type currency: str, optional
    :param kwargs: Additional keyword arguments for BaseFixedIncomeInstrumentWithYieldToMaturity.
    :type kwargs: dict, optional
 
@@ -68,6 +70,18 @@ Module Contents
       Dictionary of amortization payment dates and amounts.
 
       :type: dict
+
+   .. attribute:: maturity
+
+      Maturity date of the instrument.
+
+      :type: pd.Timestamp
+
+   .. attribute:: currency
+
+      Currency of the instrument.
+
+      :type: str
 
 
    .. py:attribute:: issue_dt
@@ -112,6 +126,12 @@ Module Contents
 
 
 
+   .. py:attribute:: currency
+      :type:  str
+      :value: 'USD'
+
+
+
    .. py:attribute:: day_count_convention
       :type:  pyfian.utils.day_count.DayCountBase
 
@@ -143,7 +163,7 @@ Module Contents
 
 
    .. py:attribute:: _settlement_date
-      :type:  Optional[pandas.Timestamp]
+      :type:  pandas.Timestamp | None
       :value: None
 
 
@@ -199,7 +219,7 @@ Module Contents
 
 
 
-   .. py:method:: accrued_interest(settlement_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
+   .. py:method:: accrued_interest(settlement_date: str | pandas.Timestamp | None = None) -> float
 
       Calculate the accrued interest for the money market instrument.
 
@@ -211,7 +231,7 @@ Module Contents
 
 
 
-   .. py:method:: yield_to_maturity(price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
+   .. py:method:: yield_to_maturity(price: float | None = None, settlement_date: str | pandas.Timestamp | None = None, adjust_to_business_days: bool | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = None, following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase | None = None, yield_calculation_convention: str | None = None) -> float
 
       Estimate the yield to maturity (YTM) using the xirr function from pyfian.time_value.irr.
 
@@ -255,7 +275,7 @@ Module Contents
 
       >>> mmi = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
       >>> mmi.yield_to_maturity()
-      np.float64(0.05)
+      np.float64(0.049999...)
 
 
 
@@ -281,7 +301,7 @@ Module Contents
 
 
 
-   .. py:method:: _price_from_yield_and_clean_parameters(yield_to_maturity: float, settlement_date: Optional[Union[str, pandas.Timestamp]], adjust_to_business_days: bool, following_coupons_day_count: pyfian.utils.day_count.DayCountBase, yield_calculation_convention: str, day_count_convention: pyfian.utils.day_count.DayCountBase) -> float
+   .. py:method:: _price_from_yield_and_clean_parameters(yield_to_maturity: float, settlement_date: str | pandas.Timestamp | None, adjust_to_business_days: bool, following_coupons_day_count: pyfian.utils.day_count.DayCountBase, yield_calculation_convention: str, day_count_convention: pyfian.utils.day_count.DayCountBase) -> float
 
 
    .. py:method:: _calculate_time_to_payments(settlement_date, price, adjust_to_business_days, following_coupons_day_count, yield_calculation_convention, day_count_convention) -> dict[tuple[float, float], float]
@@ -290,7 +310,7 @@ Module Contents
 
 
 
-   .. py:method:: modified_duration(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
+   .. py:method:: modified_duration(yield_to_maturity: float | None = None, price: float | None = None, settlement_date: str | pandas.Timestamp | None = None, adjust_to_business_days: bool | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = None, following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase | None = None, yield_calculation_convention: str | None = None) -> float
 
               Calculate modified duration of the instrument.
 
@@ -327,11 +347,11 @@ Module Contents
 
       >>> instrument = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
       >>> instrument.modified_duration()
-      np.float64(0.487804878)
+      np.float64(0.48780...)
 
 
 
-   .. py:method:: spread_duration(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
+   .. py:method:: spread_duration(yield_to_maturity: float | None = None, price: float | None = None, settlement_date: str | pandas.Timestamp | None = None, adjust_to_business_days: bool | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = None, following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase | None = None, yield_calculation_convention: str | None = None) -> float
 
               Calculate spread duration of the instrument.
 
@@ -368,11 +388,11 @@ Module Contents
 
       >>> instrument = MoneyMarketInstrument('2020-01-01', '2020-07-01', 5, 1, price=100, settlement_date='2020-01-01', day_count_convention='30/360', yield_calculation_convention='Add-On')
       >>> instrument.spread_duration()
-      np.float64(0.487804878)
+      np.float64(0.48780...)
 
 
 
-   .. py:method:: macaulay_duration(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
+   .. py:method:: macaulay_duration(yield_to_maturity: float | None = None, price: float | None = None, settlement_date: str | pandas.Timestamp | None = None, adjust_to_business_days: bool | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = None, following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase | None = None, yield_calculation_convention: str | None = None) -> float
 
               Calculate Macaulay duration of the instrument. It is the weighted average time to receive the instrument's cash flows, where the weights are the present values of the cash flows.
 
@@ -414,7 +434,7 @@ Module Contents
 
 
 
-   .. py:method:: convexity(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
+   .. py:method:: convexity(yield_to_maturity: float | None = None, price: float | None = None, settlement_date: str | pandas.Timestamp | None = None, adjust_to_business_days: bool | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = None, following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase | None = None, yield_calculation_convention: str | None = None) -> float
 
       Calculate the convexity of the instrument.
 

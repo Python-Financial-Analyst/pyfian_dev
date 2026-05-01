@@ -7,8 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyfian.yield_curves.credit_spread &mdash; Python Financial Analyst 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -88,8 +88,10 @@
 <span class="sd">Each class provides a different convention for representing credit spread curves, useful for pricing, discounting, and risk management in fixed income analytics.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
@@ -139,7 +141,7 @@
 <a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/credit_spread/index.html#pyfian.yield_curves.credit_spread.CreditSpreadCurveBase.date_spread">[docs]</a>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">date_spread</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the spread for a given date.</span>
@@ -270,12 +272,12 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">curve_date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
-        <span class="n">benchmark_curve</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">YieldCurveBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">bonds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">FixedRateBullet</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FixedRateBullet</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">spreads</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;actual/365&quot;</span><span class="p">,</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">curve_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
+        <span class="n">benchmark_curve</span><span class="p">:</span> <span class="n">YieldCurveBase</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bonds</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FixedRateBullet</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FixedRateBullet</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">spreads</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;actual/365&quot;</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">spreads</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">spreads</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
             <span class="n">bonds</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">benchmark_curve</span> <span class="ow">is</span> <span class="kc">None</span>
@@ -339,7 +341,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -357,7 +359,7 @@
 <span class="sd">            Time in years to discount.</span>
 <span class="sd">        spread : float</span>
 <span class="sd">            Spread to add to the discount rate.</span>
-<span class="sd">        yield_calculation_convention : Optional[str]</span>
+<span class="sd">        yield_calculation_convention : str | None</span>
 <span class="sd">            Yield calculation convention to use (default is None).</span>
 
 <span class="sd">        Returns</span>
@@ -392,8 +394,8 @@
 <a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/credit_spread/index.html#pyfian.yield_curves.credit_spread.CreditSpreadCurve.date_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">date_rate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -407,9 +409,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        date : Union[str, pd.Timestamp]</span>
+<span class="sd">        date : str | pd.Timestamp</span>
 <span class="sd">            Date to get the rate for.</span>
-<span class="sd">        yield_calculation_convention : Optional[str]</span>
+<span class="sd">        yield_calculation_convention : str | None</span>
 <span class="sd">            Yield calculation convention to use (default is None).</span>
 <span class="sd">        spread : float</span>
 <span class="sd">            Spread to add to the rate.</span>
@@ -463,7 +465,7 @@
 
 <div class="viewcode-block" id="CreditSpreadCurve.date_spread">
 <a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/credit_spread/index.html#pyfian.yield_curves.credit_spread.CreditSpreadCurve.date_spread">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">date_spread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">date_spread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
         <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">day_count_convention</span><span class="o">.</span><span class="n">fraction</span><span class="p">(</span>
             <span class="n">start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
@@ -716,8 +718,8 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">curve_date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">curve_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">spread</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">curve_date</span><span class="p">)</span>
@@ -769,13 +771,13 @@
 
 <div class="viewcode-block" id="FlatCreditSpreadCurve.date_spread">
 <a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/credit_spread/index.html#pyfian.yield_curves.credit_spread.FlatCreditSpreadCurve.date_spread">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">date_spread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">date_spread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the spread for a given date.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        date : Union[str, pd.Timestamp]</span>
+<span class="sd">        date : str | pd.Timestamp</span>
 <span class="sd">            The date to get the spread for.</span>
 <span class="sd">        spread : float, optional</span>
 <span class="sd">            An additional spread to add (default is 0).</span>

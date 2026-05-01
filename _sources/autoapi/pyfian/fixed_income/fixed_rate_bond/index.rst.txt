@@ -23,7 +23,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: FixedRateBullet(issue_dt: Union[str, pandas.Timestamp], maturity: Union[str, pandas.Timestamp], cpn: float, cpn_freq: int, notional: float = 100, settlement_convention_t_plus: int = 1, record_date_t_minus: int = 1, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, yield_to_maturity: Optional[float] = None, price: Optional[float] = None, adjust_to_business_days: bool = False, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/actual-Bond', following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase = '30/360', yield_calculation_convention: str = 'BEY')
+.. py:class:: FixedRateBullet(issue_dt: str | pandas.Timestamp, maturity: str | pandas.Timestamp, cpn: float, cpn_freq: int, notional: float = 100, settlement_convention_t_plus: int = 1, record_date_t_minus: int = 1, settlement_date: str | pandas.Timestamp | None = None, yield_to_maturity: float | None = None, price: float | None = None, adjust_to_business_days: bool = False, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/actual-Bond', following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase = '30/360', yield_calculation_convention: str = 'BEY', currency: str = 'USD')
 
    Bases: :py:obj:`pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrumentWithYieldToMaturity`
 
@@ -67,6 +67,8 @@ Module Contents
    :param yield_calculation_convention: Yield convention for the bond yield calculation. By default, it is "BEY" (Bond Equivalent Yield).
                                         Other options are "Annual", "Continuous", "BEY-Q", "BEY-M", "BEY-S".
    :type yield_calculation_convention: str, optional
+   :param currency: Currency of the bond. Defaults to 'USD'.
+   :type currency: str, optional
 
    :raises ValueError: If any of the input parameters are invalid.
 
@@ -175,6 +177,12 @@ Module Contents
 
       :type: str
 
+   .. attribute:: currency
+
+      Currency of the bond.
+
+      :type: str
+
    .. rubric:: Examples
 
    >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 1, notional=1000)
@@ -220,6 +228,12 @@ Module Contents
 
 
 
+   .. py:attribute:: currency
+      :type:  str
+      :value: 'USD'
+
+
+
    .. py:attribute:: day_count_convention
       :type:  pyfian.utils.day_count.DayCountBase
 
@@ -251,7 +265,7 @@ Module Contents
 
 
    .. py:attribute:: _settlement_date
-      :type:  Optional[pandas.Timestamp]
+      :type:  pandas.Timestamp | None
       :value: None
 
 
@@ -299,7 +313,7 @@ Module Contents
 
 
 
-   .. py:method:: value_with_curve(curve: pyfian.yield_curves.base_curve.YieldCurveBase, spread: float = 0, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, price: Optional[float] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> tuple[float, dict[float, float]]
+   .. py:method:: value_with_curve(curve: pyfian.yield_curves.base_curve.YieldCurveBase, spread: float = 0, settlement_date: str | pandas.Timestamp | None = None, price: float | None = None, adjust_to_business_days: bool | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = None, following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase | None = None, yield_calculation_convention: str | None = None) -> tuple[float, dict[float, float]]
 
       Value the bond using a discount curve.
 
@@ -370,7 +384,7 @@ Module Contents
 
 
 
-   .. py:method:: yield_to_maturity(price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None, tol: Optional[float] = 1e-06, max_iter: Optional[int] = 100) -> float
+   .. py:method:: yield_to_maturity(price: float | None = None, settlement_date: str | pandas.Timestamp | None = None, adjust_to_business_days: bool | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = None, following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase | None = None, yield_calculation_convention: str | None = None, tol: float | None = 1e-06, max_iter: int | None = 100) -> float
 
       Estimate the yield to maturity (YTM) using the xirr function from pyfian.time_value.irr.
 
@@ -422,7 +436,7 @@ Module Contents
 
 
 
-   .. py:method:: modified_duration(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
+   .. py:method:: modified_duration(yield_to_maturity: float | None = None, price: float | None = None, settlement_date: str | pandas.Timestamp | None = None, adjust_to_business_days: bool | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = None, following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase | None = None, yield_calculation_convention: str | None = None) -> float
 
       Calculate modified duration of the bond.
 
@@ -460,11 +474,11 @@ Module Contents
 
       >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
       >>> bond.modified_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
-      4.3760319655
+      4.3760...
 
 
 
-   .. py:method:: spread_duration(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
+   .. py:method:: spread_duration(yield_to_maturity: float | None = None, price: float | None = None, settlement_date: str | pandas.Timestamp | None = None, adjust_to_business_days: bool | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = None, following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase | None = None, yield_calculation_convention: str | None = None) -> float
 
       Calculate spread duration of the bond. In the case of a fixed income bond without embedded options, this is equivalent to modified duration.
 
@@ -501,11 +515,11 @@ Module Contents
 
       >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
       >>> bond.spread_duration(yield_to_maturity=0.05, settlement_date='2020-01-01')
-      4.3760319655
+      4.3760...
 
 
 
-   .. py:method:: macaulay_duration(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
+   .. py:method:: macaulay_duration(yield_to_maturity: float | None = None, price: float | None = None, settlement_date: str | pandas.Timestamp | None = None, adjust_to_business_days: bool | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = None, following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase | None = None, yield_calculation_convention: str | None = None) -> float
 
       Calculate macaulay duration of the bond.
 
@@ -543,11 +557,11 @@ Module Contents
 
       >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
       >>> bond.macaulay_duration(yield_to_maturity=0.05)
-      4.4854327646
+      4.4854...
 
 
 
-   .. py:method:: convexity(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
+   .. py:method:: convexity(yield_to_maturity: float | None = None, price: float | None = None, settlement_date: str | pandas.Timestamp | None = None, adjust_to_business_days: bool | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = None, following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase | None = None, yield_calculation_convention: str | None = None) -> float
 
       Calculate the convexity of the bond.
 
@@ -586,11 +600,11 @@ Module Contents
 
       >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
       >>> bond.convexity(yield_to_maturity=0.05)
-      22.6123221851
+      22.612...
 
 
 
-   .. py:method:: spread_convexity(yield_to_maturity: Optional[float] = None, price: Optional[float] = None, settlement_date: Optional[Union[str, pandas.Timestamp]] = None, adjust_to_business_days: Optional[bool] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = None, following_coupons_day_count: Optional[str | pyfian.utils.day_count.DayCountBase] = None, yield_calculation_convention: Optional[str] = None) -> float
+   .. py:method:: spread_convexity(yield_to_maturity: float | None = None, price: float | None = None, settlement_date: str | pandas.Timestamp | None = None, adjust_to_business_days: bool | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = None, following_coupons_day_count: str | pyfian.utils.day_count.DayCountBase | None = None, yield_calculation_convention: str | None = None) -> float
 
       Calculate the convexity of the bond.
 
@@ -629,11 +643,11 @@ Module Contents
 
       >>> bond = FixedRateBullet('2020-01-01', '2025-01-01', 5, 2)
       >>> bond.spread_convexity(yield_to_maturity=0.05)
-      22.6123221851
+      22.612...
 
 
 
-   .. py:method:: accrued_interest(settlement_date: Optional[Union[str, pandas.Timestamp]] = None) -> float
+   .. py:method:: accrued_interest(settlement_date: str | pandas.Timestamp | None = None) -> float
 
       Calculate accrued interest since last coupon payment.
       This is the interest that has accumulated on the bond since the last coupon payment date
@@ -668,7 +682,7 @@ Module Contents
 
 
 
-   .. py:method:: next_coupon_date(settlement_date: Optional[Union[str, pandas.Timestamp]] = None) -> Optional[pandas.Timestamp]
+   .. py:method:: next_coupon_date(settlement_date: str | pandas.Timestamp | None = None) -> pandas.Timestamp | None
 
       Get the next coupon payment date from a given date.
 
@@ -689,7 +703,7 @@ Module Contents
 
 
 
-   .. py:method:: previous_coupon_date(settlement_date: Optional[Union[str, pandas.Timestamp]] = None) -> Optional[pandas.Timestamp]
+   .. py:method:: previous_coupon_date(settlement_date: str | pandas.Timestamp | None = None) -> pandas.Timestamp | None
 
       Get the previous coupon payment date from a given date.
 
@@ -740,6 +754,6 @@ Module Contents
 
 
 
-   .. py:method:: _price_from_yield_and_clean_parameters(yield_to_maturity: float, settlement_date: Optional[Union[str, pandas.Timestamp]], adjust_to_business_days: bool, following_coupons_day_count: pyfian.utils.day_count.DayCountBase, yield_calculation_convention: str, day_count_convention: pyfian.utils.day_count.DayCountBase) -> float
+   .. py:method:: _price_from_yield_and_clean_parameters(yield_to_maturity: float, settlement_date: str | pandas.Timestamp | None, adjust_to_business_days: bool, following_coupons_day_count: pyfian.utils.day_count.DayCountBase, yield_calculation_convention: str, day_count_convention: pyfian.utils.day_count.DayCountBase) -> float
 
 

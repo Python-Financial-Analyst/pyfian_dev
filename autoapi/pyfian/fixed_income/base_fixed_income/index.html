@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyfian.fixed_income.base_fixed_income &mdash; Python Financial Analyst 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="next" title="pyfian.fixed_income.custom_flow_bond" href="../custom_flow_bond/index.html" />
-    <link rel="prev" title="pyfian.fixed_income" href="../index.html" /> 
+    <link rel="prev" title="pyfian.fixed_income._sensitivities" href="../_sensitivities/index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -184,6 +184,11 @@ inheritance.</p>
 <span class="sig-name descname"><span class="pre">maturity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.Timestamp</span></em><a class="headerlink" href="#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument.maturity" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument.currency">
+<span class="sig-name descname"><span class="pre">currency</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument.currency" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument._validate_following_coupons_day_count">
 <em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_validate_following_coupons_day_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">following_coupons_day_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><span class="pre">pyfian.utils.day_count.DayCountBase</span></a></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/base_fixed_income.html#BaseFixedIncomeInstrument._validate_following_coupons_day_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument._validate_following_coupons_day_count" title="Link to this definition"></a></dt>
@@ -308,7 +313,7 @@ Raises ValueError if the bond price is negative.</p>
 <span class="sig-name descname"><span class="pre">get_settlement_date</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.Timestamp</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/base_fixed_income.html#BaseFixedIncomeInstrument.get_settlement_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument.get_settlement_date" title="Link to this definition"></a></dt>
 <dd><p>Get the current settlement date for the bond.
 :returns: The current settlement date, or None if not set.
-:rtype: Optional[pd.Timestamp]</p>
+:rtype: pd.Timestamp | None</p>
 </dd></dl>
 
 <dl class="py method">
@@ -316,7 +321,7 @@ Raises ValueError if the bond price is negative.</p>
 <span class="sig-name descname"><span class="pre">get_price</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/base_fixed_income.html#BaseFixedIncomeInstrument.get_price"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrument.get_price" title="Link to this definition"></a></dt>
 <dd><p>Get the current bond price for the bond.
 :returns: The current bond price, or None if not set.
-:rtype: Optional[float]</p>
+:rtype: float | None</p>
 </dd></dl>
 
 <dl class="py method">
@@ -590,7 +595,7 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>settlement_date</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pd.Timestamp</em><em>]</em><em>, </em><em>optional</em>) – The settlement date to set.</p></li>
+<li><p><strong>settlement_date</strong> (<em>str</em><em> | </em><em>pd.Timestamp</em><em>, </em><em>optional</em>) – The settlement date to set.</p></li>
 <li><p><strong>reset_yield_to_maturity</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to reset the yield to maturity and bond price.</p></li>
 <li><p><strong>adjust_to_business_days</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to adjust payment dates to business days. Defaults to value of self.adjust_to_business_days.</p></li>
 <li><p><strong>day_count_convention</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention. Defaults to value of self.day_count_convention.</p></li>
@@ -621,7 +626,7 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>yield_to_maturity</strong> (<em>float</em><em>, </em><em>optional</em>) – The yield to maturity to set.</p></li>
-<li><p><strong>settlement_date</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pd.Timestamp</em><em>]</em><em>, </em><em>optional</em>) – The settlement date to set.</p></li>
+<li><p><strong>settlement_date</strong> (<em>str</em><em> | </em><em>pd.Timestamp</em><em>, </em><em>optional</em>) – The settlement date to set.</p></li>
 <li><p><strong>adjust_to_business_days</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to adjust the settlement date to the next business day.</p></li>
 <li><p><strong>day_count_convention</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – The day count convention to use.</p></li>
 <li><p><strong>following_coupons_day_count</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – The following coupons day count convention to use.</p></li>
@@ -645,7 +650,7 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>price</strong> (<em>float</em><em>, </em><em>optional</em>) – The bond price to set.</p></li>
-<li><p><strong>settlement_date</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pd.Timestamp</em><em>]</em><em>, </em><em>optional</em>) – The settlement date to set.</p></li>
+<li><p><strong>settlement_date</strong> (<em>str</em><em> | </em><em>pd.Timestamp</em><em>, </em><em>optional</em>) – The settlement date to set.</p></li>
 <li><p><strong>adjust_to_business_days</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to adjust the settlement date to the next business day.</p></li>
 <li><p><strong>day_count_convention</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – The day count convention to use.</p></li>
 <li><p><strong>following_coupons_day_count</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – The following coupons day count convention to use.</p></li>
@@ -666,7 +671,7 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 <span class="sig-name descname"><span class="pre">get_yield_to_maturity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../../_modules/pyfian/fixed_income/base_fixed_income.html#BaseFixedIncomeInstrumentWithYieldToMaturity.get_yield_to_maturity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.fixed_income.base_fixed_income.BaseFixedIncomeInstrumentWithYieldToMaturity.get_yield_to_maturity" title="Link to this definition"></a></dt>
 <dd><p>Get the current yield to maturity for the bond.
 :returns: The current yield to maturity, or None if not set.
-:rtype: Optional[float]</p>
+:rtype: float | None</p>
 </dd></dl>
 
 <dl class="py method">
@@ -794,7 +799,7 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">effective_duration</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">settlement_date</span><span class="o">=</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">)</span>
-<span class="go">4.3760319684</span>
+<span class="go">4.3760...</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -836,7 +841,7 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.fixed_income.fixed_rate_bond</span><span class="w"> </span><span class="kn">import</span> <span class="n">FixedRateBullet</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span> <span class="o">=</span> <span class="n">FixedRateBullet</span><span class="p">(</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2025-01-01&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bond</span><span class="o">.</span><span class="n">effective_spread_duration</span><span class="p">(</span><span class="n">yield_to_maturity</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">settlement_date</span><span class="o">=</span><span class="s1">&#39;2020-01-01&#39;</span><span class="p">)</span>
-<span class="go">4.3760319684</span>
+<span class="go">4.3760...</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -1065,7 +1070,7 @@ If reset_yield_to_maturity is True, resets the yield to maturity and bond price.
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../index.html" class="btn btn-neutral float-left" title="pyfian.fixed_income" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../_sensitivities/index.html" class="btn btn-neutral float-left" title="pyfian.fixed_income._sensitivities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="../custom_flow_bond/index.html" class="btn btn-neutral float-right" title="pyfian.fixed_income.custom_flow_bond" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

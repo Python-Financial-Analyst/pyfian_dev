@@ -89,7 +89,7 @@ Module Contents
    .. rubric:: Examples
 
    >>> irr([-1000, 300, 400, 500, 600])
-   0.2488833566
+   0.24888...
 
 
 .. py:function:: np_irr(cash_flows: list[float]) -> float

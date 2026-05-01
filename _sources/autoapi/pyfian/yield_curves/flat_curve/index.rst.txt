@@ -26,9 +26,9 @@ pyfian.yield_curves.flat_curve
    >>> curve_log.get_rate(1)
    0.05
    >>> curve_log.get_rate(1, yield_calculation_convention="Annual")
-   np.float64(0.0512710964)
+   np.float64(0.051271...)
    >>> curve_log.get_rate(1, yield_calculation_convention="BEY")
-   np.float64(0.050630241)
+   np.float64(0.050630...)
    >>> curve_log.get_rate(1, yield_calculation_convention="Continuous")
    0.05
    >>> curve_log.get_rate(1, yield_calculation_convention="Unknown")
@@ -44,9 +44,9 @@ pyfian.yield_curves.flat_curve
    >>> curve_aer.get_rate(1)
    0.05
    >>> curve_aer.get_rate(1, yield_calculation_convention="BEY")
-   np.float64(0.0493901532)
+   np.float64(0.049390...)
    >>> curve_aer.get_rate(1, yield_calculation_convention="Continuous")
-   np.float64(0.0487901642)
+   np.float64(0.048790...)
    >>> curve_aer.get_rate(1, yield_calculation_convention="Unknown")
    Traceback (most recent call last):
        ...
@@ -58,11 +58,11 @@ pyfian.yield_curves.flat_curve
    >>> curve_bey.discount_date("2021-01-01")
    0.9518143961927424
    >>> curve_bey.get_rate(1, yield_calculation_convention="Annual")
-   np.float64(0.050625)
+   np.float64(0.050624...)
    >>> curve_bey.get_rate(1, yield_calculation_convention="BEY")
    0.05
    >>> curve_bey.get_rate(1, yield_calculation_convention="Continuous")
-   np.float64(0.0493852252)
+   np.float64(0.049385...)
    >>> curve_bey.get_rate(1, yield_calculation_convention="Unknown")
    Traceback (most recent call last):
        ...
@@ -83,7 +83,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: FlatCurveLog(log_rate: float, curve_date: Union[str, pandas.Timestamp], day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = 'actual/365')
+.. py:class:: FlatCurveLog(log_rate: float, curve_date: str | pandas.Timestamp, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = 'actual/365')
 
    Bases: :py:obj:`pyfian.visualization.mixins.YieldCurvePlotMixin`, :py:obj:`pyfian.yield_curves.base_curve.YieldCurveBase`
 
@@ -195,7 +195,7 @@ Module Contents
 
 
 
-   .. py:method:: discount_date(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
+   .. py:method:: discount_date(date: str | pandas.Timestamp, spread: float = 0) -> float
 
       Discount a cash flow by a target date using log rate.
 
@@ -217,7 +217,7 @@ Module Contents
 
 
 
-   .. py:method:: get_rate(t: float, yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+   .. py:method:: get_rate(t: float, yield_calculation_convention: str | None = None, spread: float = 0) -> float
 
       Return the log rate at time horizon t (in years).
 
@@ -241,9 +241,9 @@ Module Contents
       >>> curve.get_rate(1)
       0.05
       >>> curve.get_rate(1, yield_calculation_convention="Annual")
-      np.float64(0.0512710964)
+      np.float64(0.051271...)
       >>> curve.get_rate(1, yield_calculation_convention="BEY")
-      np.float64(0.050630241)
+      np.float64(0.050630...)
       >>> curve.get_rate(1, yield_calculation_convention="Continuous")
       0.05
       >>> curve.get_rate(1, yield_calculation_convention="Unknown")
@@ -272,7 +272,7 @@ Module Contents
 
 
 
-   .. py:method:: date_rate(date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+   .. py:method:: date_rate(date: str | pandas.Timestamp, yield_calculation_convention: str | None = None, spread: float = 0) -> float
 
       Return the log rate at a specified date.
 
@@ -296,9 +296,9 @@ Module Contents
       >>> curve.date_rate("2022-01-01")
       0.05
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="Annual")
-      np.float64(0.0512710964)
+      np.float64(0.051271...)
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="BEY")
-      np.float64(0.050630241)
+      np.float64(0.050630...)
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="Continuous")
       0.05
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
@@ -311,7 +311,7 @@ Module Contents
    .. py:method:: __repr__() -> str
 
 
-.. py:class:: FlatCurveAER(aer: float, curve_date: Union[str, pandas.Timestamp], day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = 'actual/365')
+.. py:class:: FlatCurveAER(aer: float, curve_date: str | pandas.Timestamp, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = 'actual/365')
 
    Bases: :py:obj:`pyfian.visualization.mixins.YieldCurvePlotMixin`, :py:obj:`pyfian.yield_curves.base_curve.YieldCurveBase`
 
@@ -422,7 +422,7 @@ Module Contents
 
 
 
-   .. py:method:: discount_date(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
+   .. py:method:: discount_date(date: str | pandas.Timestamp, spread: float = 0) -> float
 
       Discount a cash flow by a target date using annual effective rate.
 
@@ -444,7 +444,7 @@ Module Contents
 
 
 
-   .. py:method:: get_rate(t: float, yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+   .. py:method:: get_rate(t: float, yield_calculation_convention: str | None = None, spread: float = 0) -> float
 
       Return the annual effective rate at time horizon t (in years).
 
@@ -468,9 +468,9 @@ Module Contents
       >>> curve.get_rate(1)
       0.05
       >>> curve.get_rate(1, yield_calculation_convention="BEY")
-      np.float64(0.0493901532)
+      np.float64(0.049390...)
       >>> curve.get_rate(1, yield_calculation_convention="Continuous")
-      np.float64(0.0487901642)
+      np.float64(0.048790...)
       >>> curve.get_rate(1, yield_calculation_convention="Unknown")
       Traceback (most recent call last):
           ...
@@ -497,7 +497,7 @@ Module Contents
 
 
 
-   .. py:method:: date_rate(date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+   .. py:method:: date_rate(date: str | pandas.Timestamp, yield_calculation_convention: str | None = None, spread: float = 0) -> float
 
       Return the annual effective rate at a specified date.
 
@@ -521,9 +521,9 @@ Module Contents
       >>> curve.date_rate("2022-01-01")
       0.05
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="BEY")
-      np.float64(0.0493901532)
+      np.float64(0.049390...)
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="Continuous")
-      np.float64(0.0487901642)
+      np.float64(0.048790...)
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
       Traceback (most recent call last):
           ...
@@ -534,7 +534,7 @@ Module Contents
    .. py:method:: __repr__() -> str
 
 
-.. py:class:: FlatCurveBEY(bey: float, curve_date: Union[str, pandas.Timestamp], day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = '30/360')
+.. py:class:: FlatCurveBEY(bey: float, curve_date: str | pandas.Timestamp, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = '30/360')
 
    Bases: :py:obj:`pyfian.visualization.mixins.YieldCurvePlotMixin`, :py:obj:`pyfian.yield_curves.base_curve.YieldCurveBase`
 
@@ -645,7 +645,7 @@ Module Contents
 
 
 
-   .. py:method:: discount_date(date: Union[str, pandas.Timestamp], spread: float = 0) -> float
+   .. py:method:: discount_date(date: str | pandas.Timestamp, spread: float = 0) -> float
 
       Discount a cash flow by a target date using annual effective rate.
 
@@ -667,7 +667,7 @@ Module Contents
 
 
 
-   .. py:method:: get_rate(t: float, yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+   .. py:method:: get_rate(t: float, yield_calculation_convention: str | None = None, spread: float = 0) -> float
 
       Return the annual effective rate at time horizon t (in years).
 
@@ -691,11 +691,11 @@ Module Contents
       >>> curve.get_rate(1)
       0.05
       >>> curve.get_rate(1, yield_calculation_convention="Annual")
-      np.float64(0.050625)
+      np.float64(0.050624...)
       >>> curve.get_rate(1, yield_calculation_convention="BEY")
       0.05
       >>> curve.get_rate(1, yield_calculation_convention="Continuous")
-      np.float64(0.0493852252)
+      np.float64(0.049385...)
       >>> curve.get_rate(1, yield_calculation_convention="Unknown")
       Traceback (most recent call last):
           ...
@@ -722,7 +722,7 @@ Module Contents
 
 
 
-   .. py:method:: date_rate(date: Union[str, pandas.Timestamp], yield_calculation_convention: Optional[str] = None, spread: float = 0) -> float
+   .. py:method:: date_rate(date: str | pandas.Timestamp, yield_calculation_convention: str | None = None, spread: float = 0) -> float
 
       Return the annual effective rate at a specified date.
 
@@ -744,11 +744,11 @@ Module Contents
       >>> curve.date_rate("2022-01-01")
       0.05
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="Annual")
-      np.float64(0.050625)
+      np.float64(0.050624...)
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="BEY")
       0.05
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="Continuous")
-      np.float64(0.0493852252)
+      np.float64(0.049385...)
       >>> curve.date_rate("2022-01-01", yield_calculation_convention="Unknown")
       Traceback (most recent call last):
           ...

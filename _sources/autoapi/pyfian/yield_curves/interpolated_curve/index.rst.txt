@@ -30,7 +30,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: InterpolatedCurve(curve_date: Union[str, pandas.Timestamp], maturities: Optional[list[float]] = None, zero_rates: Optional[dict[float, float]] = None, bonds: Optional[list] = None, day_count_convention: Optional[str | pyfian.utils.day_count.DayCountBase] = 'actual/365', yield_calculation_convention: Optional[str] = None)
+.. py:class:: InterpolatedCurve(curve_date: str | pandas.Timestamp, maturities: list[float] | None = None, zero_rates: dict[float, float] | None = None, bonds: list | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase | None = 'actual/365', yield_calculation_convention: str | None = None)
 
    Bases: :py:obj:`pyfian.yield_curves.zero_coupon_curve.ZeroCouponCurve`
 

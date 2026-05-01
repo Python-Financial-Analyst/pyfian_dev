@@ -42,7 +42,7 @@ Classes
 Module Contents
 ---------------
 
-.. py:class:: SpotCurve(curve_date: pandas.Timestamp, bonds: Optional[list[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet] | tuple[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet]] = None, zero_rates: Optional[dict[float, float]] = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/365', yield_calculation_convention: Optional[str] = None)
+.. py:class:: SpotCurve(curve_date: pandas.Timestamp, bonds: list[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet] | tuple[pyfian.fixed_income.fixed_rate_bond.FixedRateBullet] | None = None, zero_rates: dict[float, float] | None = None, day_count_convention: str | pyfian.utils.day_count.DayCountBase = 'actual/365', yield_calculation_convention: str | None = None)
 
    Bases: :py:obj:`pyfian.yield_curves.zero_coupon_curve.ZeroCouponCurve`
 

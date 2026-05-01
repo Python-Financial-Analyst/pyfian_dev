@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyfian.yield_curves.flat_curve &mdash; Python Financial Analyst 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -126,9 +126,9 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_log</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0.05</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_log</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.0512710964)</span>
+<span class="go">np.float64(0.051271...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_log</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.050630241)</span>
+<span class="go">np.float64(0.050630...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_log</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
 <span class="go">0.05</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_log</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
@@ -145,9 +145,9 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_aer</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0.05</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_aer</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.0493901532)</span>
+<span class="go">np.float64(0.049390...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_aer</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.0487901642)</span>
+<span class="go">np.float64(0.048790...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_aer</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
@@ -160,11 +160,11 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_bey</span><span class="o">.</span><span class="n">discount_date</span><span class="p">(</span><span class="s2">&quot;2021-01-01&quot;</span><span class="p">)</span>
 <span class="go">0.9518143961927424</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_bey</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.050625)</span>
+<span class="go">np.float64(0.050624...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_bey</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
 <span class="go">0.05</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_bey</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.0493852252)</span>
+<span class="go">np.float64(0.049385...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve_bey</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
@@ -354,9 +354,9 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0.05</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.0512710964)</span>
+<span class="go">np.float64(0.051271...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.050630241)</span>
+<span class="go">np.float64(0.050630...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
 <span class="go">0.05</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
@@ -419,9 +419,9 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">)</span>
 <span class="go">0.05</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.0512710964)</span>
+<span class="go">np.float64(0.051271...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.050630241)</span>
+<span class="go">np.float64(0.050630...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
 <span class="go">0.05</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
@@ -603,9 +603,9 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0.05</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.0493901532)</span>
+<span class="go">np.float64(0.049390...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.0487901642)</span>
+<span class="go">np.float64(0.048790...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
@@ -666,9 +666,9 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">)</span>
 <span class="go">0.05</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.0493901532)</span>
+<span class="go">np.float64(0.049390...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.0487901642)</span>
+<span class="go">np.float64(0.048790...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
@@ -848,11 +848,11 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">0.05</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.050625)</span>
+<span class="go">np.float64(0.050624...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
 <span class="go">0.05</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.0493852252)</span>
+<span class="go">np.float64(0.049385...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>
@@ -912,11 +912,11 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">)</span>
 <span class="go">0.05</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Annual&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.050625)</span>
+<span class="go">np.float64(0.050624...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;BEY&quot;</span><span class="p">)</span>
 <span class="go">0.05</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Continuous&quot;</span><span class="p">)</span>
-<span class="go">np.float64(0.0493852252)</span>
+<span class="go">np.float64(0.049385...)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span><span class="o">.</span><span class="n">date_rate</span><span class="p">(</span><span class="s2">&quot;2022-01-01&quot;</span><span class="p">,</span> <span class="n">yield_calculation_convention</span><span class="o">=</span><span class="s2">&quot;Unknown&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="w">    </span><span class="o">...</span>

@@ -44,7 +44,7 @@ Module Contents
    .. rubric:: Examples
 
    >>> fisher_real_rate(0.05, 0.02)
-   0.03
+   0.030000...
 
 
 .. py:function:: fisher_exact_real_rate(nominal_rate: float, inflation_rate: float) -> float

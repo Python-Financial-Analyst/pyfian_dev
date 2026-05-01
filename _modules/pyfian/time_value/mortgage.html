@@ -7,8 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyfian.time_value.mortgage &mdash; Python Financial Analyst 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -76,11 +76,13 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pyfian.time_value.mortgage</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 
 <div class="viewcode-block" id="calculate_payment">
-<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/mortgage/index.html#pyfian.time_value.mortgage.calculate_payment">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/mortgage/index.html#pyfian.time_value.calculate_payment">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">calculate_payment</span><span class="p">(</span>
     <span class="n">principal</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">annual_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -158,7 +160,7 @@
 
 
 <div class="viewcode-block" id="generate_amortization_schedule">
-<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/mortgage/index.html#pyfian.time_value.mortgage.generate_amortization_schedule">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/mortgage/index.html#pyfian.time_value.generate_amortization_schedule">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">generate_amortization_schedule</span><span class="p">(</span>
     <span class="n">principal</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">annual_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -223,7 +225,7 @@
 
 
 <div class="viewcode-block" id="mortgage_cash_flows">
-<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/mortgage/index.html#pyfian.time_value.mortgage.mortgage_cash_flows">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/time_value/mortgage/index.html#pyfian.time_value.mortgage_cash_flows">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mortgage_cash_flows</span><span class="p">(</span>
     <span class="n">principal</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">annual_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>

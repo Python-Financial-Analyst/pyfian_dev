@@ -7,8 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyfian.yield_curves.zero_coupon_curve &mdash; Python Financial Analyst 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -87,7 +87,9 @@
 <span class="sd">Each class provides a different convention for representing zero-coupon yield curves, useful for pricing, discounting, and rate conversions in fixed income analytics.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.utils.day_count</span><span class="w"> </span><span class="kn">import</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="n">get_day_count_convention</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.visualization.mixins</span><span class="w"> </span><span class="kn">import</span> <span class="n">YieldCurvePlotMixin</span>
@@ -168,9 +170,9 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">zero_rates</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-        <span class="n">curve_date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;actual/365&quot;</span><span class="p">,</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">curve_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;actual/365&quot;</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">curve_date</span><span class="p">)</span>
 
@@ -272,7 +274,7 @@
         <span class="n">discount_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert a discount factor for a period t to a rate.</span>
@@ -312,7 +314,7 @@
 
 <div class="viewcode-block" id="ZeroCouponCurve.discount_date">
 <a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/zero_coupon_curve/index.html#pyfian.yield_curves.zero_coupon_curve.ZeroCouponCurve.discount_date">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">discount_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">discount_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Discount a cash flow to a specific date.</span>
 
@@ -320,7 +322,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        date : Union[str, pd.Timestamp]</span>
+<span class="sd">        date : str | pd.Timestamp</span>
 <span class="sd">            Date to discount to.</span>
 <span class="sd">        spread : float</span>
 <span class="sd">            Spread to add to the discount rate.</span>
@@ -342,7 +344,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -358,7 +360,7 @@
 <span class="sd">            Time in years to discount.</span>
 <span class="sd">        spread : float</span>
 <span class="sd">            Spread to add to the discount rate.</span>
-<span class="sd">        yield_calculation_convention : Optional[str]</span>
+<span class="sd">        yield_calculation_convention : str | None</span>
 <span class="sd">            Yield calculation convention to use (default is None).</span>
 
 <span class="sd">        Returns</span>
@@ -379,8 +381,8 @@
 <a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/zero_coupon_curve/index.html#pyfian.yield_curves.zero_coupon_curve.ZeroCouponCurve.date_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">date_rate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -392,9 +394,9 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        date : Union[str, pd.Timestamp]</span>
+<span class="sd">        date : str | pd.Timestamp</span>
 <span class="sd">            Date to get the rate for.</span>
-<span class="sd">        yield_calculation_convention : Optional[str]</span>
+<span class="sd">        yield_calculation_convention : str | None</span>
 <span class="sd">            Yield calculation convention to use (default is None).</span>
 <span class="sd">        spread : float</span>
 <span class="sd">            Spread to add to the rate.</span>
@@ -459,7 +461,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    zero_rates_dates : dict[pd.Timestamp | str, float]</span>
 <span class="sd">        Dictionary with dates as keys and zero rates as values.</span>
-<span class="sd">    curve_date : Union[str, pd.Timestamp]</span>
+<span class="sd">    curve_date : str | pd.Timestamp</span>
 <span class="sd">        The curve settlement date.</span>
 <span class="sd">    day_count_convention : str or DayCountBase, optional</span>
 <span class="sd">        Day count convention to use (default is None). If None, &quot;actual/365&quot; will be used.</span>
@@ -471,9 +473,9 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">zero_rates_dates</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-        <span class="n">curve_date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">curve_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">curve_date</span><span class="p">)</span>
 

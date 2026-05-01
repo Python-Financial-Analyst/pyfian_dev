@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyfian.yield_curves.base_curve &mdash; Python Financial Analyst 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -493,7 +493,7 @@ the <cite>spread_forward</cite> parameter that subtracts from the forward rate.<
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>date</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pd.Timestamp</em><em>]</em>) – Start date for the forward rate calculation.</p></li>
+<li><p><strong>date</strong> (<em>str</em><em> | </em><em>pd.Timestamp</em>) – Start date for the forward rate calculation.</p></li>
 <li><p><strong>dt</strong> (<em>float</em>) – Time increment in years.</p></li>
 <li><p><strong>spread_start</strong> (<em>float</em><em>, </em><em>optional</em>) – Spread to apply at the start date (default is 0).</p></li>
 <li><p><strong>spread_end</strong> (<em>float</em><em>, </em><em>optional</em>) – Spread to apply at the end date (default is 0).</p></li>
@@ -522,8 +522,8 @@ the <cite>spread_forward</cite> parameter that subtracts from the forward rate.<
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>start_date</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pd.Timestamp</em><em>]</em>) – Start date for the forward rate calculation.</p></li>
-<li><p><strong>end_date</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pd.Timestamp</em><em>]</em>) – End date for the forward rate calculation.</p></li>
+<li><p><strong>start_date</strong> (<em>str</em><em> | </em><em>pd.Timestamp</em>) – Start date for the forward rate calculation.</p></li>
+<li><p><strong>end_date</strong> (<em>str</em><em> | </em><em>pd.Timestamp</em>) – End date for the forward rate calculation.</p></li>
 <li><p><strong>spread_start</strong> (<em>float</em><em>, </em><em>optional</em>) – Spread to apply at the start date (default is 0).</p></li>
 <li><p><strong>spread_end</strong> (<em>float</em><em>, </em><em>optional</em>) – Spread to apply at the end date (default is 0).</p></li>
 <li><p><strong>spread_forward</strong> (<em>float</em><em>, </em><em>optional</em>) – Spread to subtract from the forward rate (default is 0).</p></li>

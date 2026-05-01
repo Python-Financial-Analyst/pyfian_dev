@@ -7,8 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyfian.yield_curves.flat_curve &mdash; Python Financial Analyst 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -98,9 +98,9 @@
 <span class="sd">&gt;&gt;&gt; curve_log.get_rate(1)</span>
 <span class="sd">0.05</span>
 <span class="sd">&gt;&gt;&gt; curve_log.get_rate(1, yield_calculation_convention=&quot;Annual&quot;)</span>
-<span class="sd">np.float64(0.0512710964)</span>
+<span class="sd">np.float64(0.051271...)</span>
 <span class="sd">&gt;&gt;&gt; curve_log.get_rate(1, yield_calculation_convention=&quot;BEY&quot;)</span>
-<span class="sd">np.float64(0.050630241)</span>
+<span class="sd">np.float64(0.050630...)</span>
 <span class="sd">&gt;&gt;&gt; curve_log.get_rate(1, yield_calculation_convention=&quot;Continuous&quot;)</span>
 <span class="sd">0.05</span>
 <span class="sd">&gt;&gt;&gt; curve_log.get_rate(1, yield_calculation_convention=&quot;Unknown&quot;)</span>
@@ -116,9 +116,9 @@
 <span class="sd">&gt;&gt;&gt; curve_aer.get_rate(1)</span>
 <span class="sd">0.05</span>
 <span class="sd">&gt;&gt;&gt; curve_aer.get_rate(1, yield_calculation_convention=&quot;BEY&quot;)</span>
-<span class="sd">np.float64(0.0493901532)</span>
+<span class="sd">np.float64(0.049390...)</span>
 <span class="sd">&gt;&gt;&gt; curve_aer.get_rate(1, yield_calculation_convention=&quot;Continuous&quot;)</span>
-<span class="sd">np.float64(0.0487901642)</span>
+<span class="sd">np.float64(0.048790...)</span>
 <span class="sd">&gt;&gt;&gt; curve_aer.get_rate(1, yield_calculation_convention=&quot;Unknown&quot;)</span>
 <span class="sd">Traceback (most recent call last):</span>
 <span class="sd">    ...</span>
@@ -130,18 +130,20 @@
 <span class="sd">&gt;&gt;&gt; curve_bey.discount_date(&quot;2021-01-01&quot;)</span>
 <span class="sd">0.9518143961927424</span>
 <span class="sd">&gt;&gt;&gt; curve_bey.get_rate(1, yield_calculation_convention=&quot;Annual&quot;)</span>
-<span class="sd">np.float64(0.050625)</span>
+<span class="sd">np.float64(0.050624...)</span>
 <span class="sd">&gt;&gt;&gt; curve_bey.get_rate(1, yield_calculation_convention=&quot;BEY&quot;)</span>
 <span class="sd">0.05</span>
 <span class="sd">&gt;&gt;&gt; curve_bey.get_rate(1, yield_calculation_convention=&quot;Continuous&quot;)</span>
-<span class="sd">np.float64(0.0493852252)</span>
+<span class="sd">np.float64(0.049385...)</span>
 <span class="sd">&gt;&gt;&gt; curve_bey.get_rate(1, yield_calculation_convention=&quot;Unknown&quot;)</span>
 <span class="sd">Traceback (most recent call last):</span>
 <span class="sd">    ...</span>
 <span class="sd">ValueError: Unknown or unsupported yield calculation convention: Unknown</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyfian.utils.day_count</span><span class="w"> </span><span class="kn">import</span> <span class="n">DayCountBase</span><span class="p">,</span> <span class="n">get_day_count_convention</span>
@@ -151,7 +153,7 @@
 
 
 <div class="viewcode-block" id="FlatCurveLog">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FlatCurveLog</span><span class="p">(</span><span class="n">YieldCurvePlotMixin</span><span class="p">,</span> <span class="n">YieldCurveBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    FlatCurveLog represents a flat curve with continuously compounded (log) rates.</span>
@@ -171,8 +173,8 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">log_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">curve_date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;actual/365&quot;</span><span class="p">,</span>
+        <span class="n">curve_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;actual/365&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">log_rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">curve_date</span><span class="p">)</span>
@@ -189,7 +191,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="FlatCurveLog.as_dict">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.as_dict">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.as_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return curve parameters and metadata as a dictionary.</span>
@@ -201,7 +203,7 @@
 
 
 <div class="viewcode-block" id="FlatCurveLog.discount_t">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.discount_t">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.discount_t">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">discount_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Discount a cash flow by time t (in years) using log rate.</span>
@@ -242,7 +244,7 @@
 
 
 <div class="viewcode-block" id="FlatCurveLog.discount_to_rate">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.discount_to_rate">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.discount_to_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">discount_to_rate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">discount_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -294,8 +296,8 @@
 
 
 <div class="viewcode-block" id="FlatCurveLog.discount_date">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.discount_date">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">discount_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.discount_date">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">discount_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Discount a cash flow by a target date using log rate.</span>
 
@@ -326,11 +328,11 @@
 
 
 <div class="viewcode-block" id="FlatCurveLog.get_rate">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.get_rate">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.get_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -360,9 +362,9 @@
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1)</span>
 <span class="sd">        0.05</span>
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1, yield_calculation_convention=&quot;Annual&quot;)</span>
-<span class="sd">        np.float64(0.0512710964)</span>
+<span class="sd">        np.float64(0.051271...)</span>
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1, yield_calculation_convention=&quot;BEY&quot;)</span>
-<span class="sd">        np.float64(0.050630241)</span>
+<span class="sd">        np.float64(0.050630...)</span>
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1, yield_calculation_convention=&quot;Continuous&quot;)</span>
 <span class="sd">        0.05</span>
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1, yield_calculation_convention=&quot;Unknown&quot;)</span>
@@ -380,23 +382,23 @@
 
 
 <div class="viewcode-block" id="FlatCurveLog.get_t">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.get_t">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.get_t">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_rate</span> <span class="o">+</span> <span class="n">spread</span></div>
 
 
 <div class="viewcode-block" id="FlatCurveLog._get_t">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog._get_t">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog._get_t">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_rate</span> <span class="o">+</span> <span class="n">spread</span></div>
 
 
 <div class="viewcode-block" id="FlatCurveLog.date_rate">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.date_rate">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.date_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">date_rate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -426,9 +428,9 @@
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;)</span>
 <span class="sd">        0.05</span>
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;, yield_calculation_convention=&quot;Annual&quot;)</span>
-<span class="sd">        np.float64(0.0512710964)</span>
+<span class="sd">        np.float64(0.051271...)</span>
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;, yield_calculation_convention=&quot;BEY&quot;)</span>
-<span class="sd">        np.float64(0.050630241)</span>
+<span class="sd">        np.float64(0.050630...)</span>
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;, yield_calculation_convention=&quot;Continuous&quot;)</span>
 <span class="sd">        0.05</span>
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;, yield_calculation_convention=&quot;Unknown&quot;)</span>
@@ -445,7 +447,7 @@
 
 
 <div class="viewcode-block" id="FlatCurveLog.__repr__">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.__repr__">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveLog.__repr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;FlatCurveLog(log_rate=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">log_rate</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, &quot;</span>
@@ -456,7 +458,7 @@
 
 
 <div class="viewcode-block" id="FlatCurveAER">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FlatCurveAER</span><span class="p">(</span><span class="n">YieldCurvePlotMixin</span><span class="p">,</span> <span class="n">YieldCurveBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    FlatCurveAER represents a flat curve with annual effective rates (AER).</span>
@@ -476,8 +478,8 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">aer</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">curve_date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;actual/365&quot;</span><span class="p">,</span>
+        <span class="n">curve_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;actual/365&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">aer</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">aer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">curve_date</span><span class="p">)</span>
@@ -494,7 +496,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="FlatCurveAER.as_dict">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.as_dict">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.as_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return curve parameters and metadata as a dictionary.</span>
@@ -506,7 +508,7 @@
 
 
 <div class="viewcode-block" id="FlatCurveAER.discount_t">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.discount_t">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.discount_t">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">discount_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Discount a cash flow by time t (in years) using annual effective rate.</span>
@@ -546,7 +548,7 @@
 
 
 <div class="viewcode-block" id="FlatCurveAER.discount_to_rate">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.discount_to_rate">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.discount_to_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">discount_to_rate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">discount_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -598,8 +600,8 @@
 
 
 <div class="viewcode-block" id="FlatCurveAER.discount_date">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.discount_date">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">discount_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.discount_date">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">discount_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Discount a cash flow by a target date using annual effective rate.</span>
 
@@ -630,11 +632,11 @@
 
 
 <div class="viewcode-block" id="FlatCurveAER.get_rate">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.get_rate">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.get_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -664,9 +666,9 @@
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1)</span>
 <span class="sd">        0.05</span>
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1, yield_calculation_convention=&quot;BEY&quot;)</span>
-<span class="sd">        np.float64(0.0493901532)</span>
+<span class="sd">        np.float64(0.049390...)</span>
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1, yield_calculation_convention=&quot;Continuous&quot;)</span>
-<span class="sd">        np.float64(0.0487901642)</span>
+<span class="sd">        np.float64(0.048790...)</span>
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1, yield_calculation_convention=&quot;Unknown&quot;)</span>
 <span class="sd">        Traceback (most recent call last):</span>
 <span class="sd">            ...</span>
@@ -681,23 +683,23 @@
 
 
 <div class="viewcode-block" id="FlatCurveAER.get_t">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.get_t">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.get_t">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">aer</span> <span class="o">+</span> <span class="n">spread</span></div>
 
 
 <div class="viewcode-block" id="FlatCurveAER._get_t">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER._get_t">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER._get_t">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">aer</span> <span class="o">+</span> <span class="n">spread</span></div>
 
 
 <div class="viewcode-block" id="FlatCurveAER.date_rate">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.date_rate">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.date_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">date_rate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -727,9 +729,9 @@
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;)</span>
 <span class="sd">        0.05</span>
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;, yield_calculation_convention=&quot;BEY&quot;)</span>
-<span class="sd">        np.float64(0.0493901532)</span>
+<span class="sd">        np.float64(0.049390...)</span>
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;, yield_calculation_convention=&quot;Continuous&quot;)</span>
-<span class="sd">        np.float64(0.0487901642)</span>
+<span class="sd">        np.float64(0.048790...)</span>
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;, yield_calculation_convention=&quot;Unknown&quot;)</span>
 <span class="sd">        Traceback (most recent call last):</span>
 <span class="sd">            ...</span>
@@ -744,7 +746,7 @@
 
 
 <div class="viewcode-block" id="FlatCurveAER.__repr__">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.__repr__">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveAER.__repr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;FlatCurveAER(aer=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aer</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, &quot;</span>
@@ -755,7 +757,7 @@
 
 
 <div class="viewcode-block" id="FlatCurveBEY">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FlatCurveBEY</span><span class="p">(</span><span class="n">YieldCurvePlotMixin</span><span class="p">,</span> <span class="n">YieldCurveBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    FlatCurveBEY represents a flat curve with bond equivalent yields (BEY).</span>
@@ -775,8 +777,8 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">bey</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">curve_date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
-        <span class="n">day_count_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;30/360&quot;</span><span class="p">,</span>
+        <span class="n">curve_date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
+        <span class="n">day_count_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">DayCountBase</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;30/360&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bey</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">bey</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">curve_date</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">curve_date</span><span class="p">)</span>
@@ -793,7 +795,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="FlatCurveBEY.as_dict">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.as_dict">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.as_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return curve parameters and metadata as a dictionary.</span>
@@ -805,7 +807,7 @@
 
 
 <div class="viewcode-block" id="FlatCurveBEY.discount_t">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.discount_t">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.discount_t">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">discount_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Discount a cash flow by time t (in years) using annual effective rate.</span>
@@ -845,7 +847,7 @@
 
 
 <div class="viewcode-block" id="FlatCurveBEY.discount_to_rate">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.discount_to_rate">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.discount_to_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">discount_to_rate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">discount_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -897,8 +899,8 @@
 
 
 <div class="viewcode-block" id="FlatCurveBEY.discount_date">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.discount_date">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">discount_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.discount_date">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">discount_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Discount a cash flow by a target date using annual effective rate.</span>
 
@@ -929,11 +931,11 @@
 
 
 <div class="viewcode-block" id="FlatCurveBEY.get_rate">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.get_rate">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.get_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -963,11 +965,11 @@
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1)</span>
 <span class="sd">        0.05</span>
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1, yield_calculation_convention=&quot;Annual&quot;)</span>
-<span class="sd">        np.float64(0.050625)</span>
+<span class="sd">        np.float64(0.050624...)</span>
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1, yield_calculation_convention=&quot;BEY&quot;)</span>
 <span class="sd">        0.05</span>
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1, yield_calculation_convention=&quot;Continuous&quot;)</span>
-<span class="sd">        np.float64(0.0493852252)</span>
+<span class="sd">        np.float64(0.049385...)</span>
 <span class="sd">        &gt;&gt;&gt; curve.get_rate(1, yield_calculation_convention=&quot;Unknown&quot;)</span>
 <span class="sd">        Traceback (most recent call last):</span>
 <span class="sd">            ...</span>
@@ -980,23 +982,23 @@
 
 
 <div class="viewcode-block" id="FlatCurveBEY.get_t">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.get_t">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.get_t">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bey</span> <span class="o">+</span> <span class="n">spread</span></div>
 
 
 <div class="viewcode-block" id="FlatCurveBEY._get_t">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY._get_t">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY._get_t">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">spread</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bey</span> <span class="o">+</span> <span class="n">spread</span></div>
 
 
 <div class="viewcode-block" id="FlatCurveBEY.date_rate">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.date_rate">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.date_rate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">date_rate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
-        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">date</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">,</span>
+        <span class="n">yield_calculation_convention</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">spread</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1024,11 +1026,11 @@
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;)</span>
 <span class="sd">        0.05</span>
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;, yield_calculation_convention=&quot;Annual&quot;)</span>
-<span class="sd">        np.float64(0.050625)</span>
+<span class="sd">        np.float64(0.050624...)</span>
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;, yield_calculation_convention=&quot;BEY&quot;)</span>
 <span class="sd">        0.05</span>
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;, yield_calculation_convention=&quot;Continuous&quot;)</span>
-<span class="sd">        np.float64(0.0493852252)</span>
+<span class="sd">        np.float64(0.049385...)</span>
 <span class="sd">        &gt;&gt;&gt; curve.date_rate(&quot;2022-01-01&quot;, yield_calculation_convention=&quot;Unknown&quot;)</span>
 <span class="sd">        Traceback (most recent call last):</span>
 <span class="sd">            ...</span>
@@ -1041,7 +1043,7 @@
 
 
 <div class="viewcode-block" id="FlatCurveBEY.__repr__">
-<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/flat_curve/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.__repr__">[docs]</a>
+<a class="viewcode-back" href="../../../autoapi/pyfian/yield_curves/index.html#pyfian.yield_curves.flat_curve.FlatCurveBEY.__repr__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;FlatCurveBEY(bey=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bey</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, &quot;</span>

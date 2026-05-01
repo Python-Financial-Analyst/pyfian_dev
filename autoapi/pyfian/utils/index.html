@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyfian.utils &mdash; Python Financial Analyst 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -18,6 +18,9 @@
       <script src="../../../_static/documentation_options.js?v=01f34227"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "displayMath": [["$$", "$$"], ["\\[", "\\]"]], "processEscapes": true}})</script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
@@ -104,6 +107,7 @@
              
   <section id="module-pyfian.utils">
 <span id="pyfian-utils"></span><h1>pyfian.utils<a class="headerlink" href="#module-pyfian.utils" title="Link to this heading"></a></h1>
+<p>Shared utilities: day-count conventions, helpers.</p>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
@@ -111,6 +115,861 @@
 <li class="toctree-l1"><a class="reference internal" href="day_count/index.html">pyfian.utils.day_count</a></li>
 </ul>
 </div>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.utils.DayCount30360" title="pyfian.utils.DayCount30360"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DayCount30360</span></code></a></p></td>
+<td><p>30/360 day count convention.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.utils.DayCount30365" title="pyfian.utils.DayCount30365"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DayCount30365</span></code></a></p></td>
+<td><p>30/365 day count convention.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.utils.DayCount30E360" title="pyfian.utils.DayCount30E360"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DayCount30E360</span></code></a></p></td>
+<td><p>30E/360 (Eurobond) day count convention.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.utils.DayCountActual360" title="pyfian.utils.DayCountActual360"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DayCountActual360</span></code></a></p></td>
+<td><p>Actual/360 day count convention.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.utils.DayCountActual365" title="pyfian.utils.DayCountActual365"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DayCountActual365</span></code></a></p></td>
+<td><p>Actual/365 day count convention.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.utils.DayCountActualActualBond" title="pyfian.utils.DayCountActualActualBond"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DayCountActualActualBond</span></code></a></p></td>
+<td><p>Actual/Actual (Bond) day count convention.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.utils.DayCountActualActualISDA" title="pyfian.utils.DayCountActualActualISDA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DayCountActualActualISDA</span></code></a></p></td>
+<td><p>Actual/Actual ISDA day count convention.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.utils.DayCountBase" title="pyfian.utils.DayCountBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DayCountBase</span></code></a></p></td>
+<td><p>Base class for day count conventions.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.utils.get_day_count_convention" title="pyfian.utils.get_day_count_convention"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_day_count_convention</span></code></a>(→ DayCountBase)</p></td>
+<td><p>Get the day count convention class instance by name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyfian.utils.get_day_count_fraction" title="pyfian.utils.get_day_count_fraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_day_count_fraction</span></code></a>(→ float)</p></td>
+<td><p>Unified interface to get day count fraction for any convention.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyfian.utils.is_leap_year" title="pyfian.utils.is_leap_year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_leap_year</span></code></a>(→ bool)</p></td>
+<td><p>Check if a year is a leap year.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.utils.DayCount30360">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.utils.</span></span><span class="sig-name descname"><span class="pre">DayCount30360</span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCount30360"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCount30360" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyfian.utils.DayCountBase" title="pyfian.utils.DayCountBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DayCountBase</span></code></a></p>
+<p>30/360 day count convention.</p>
+<dl>
+<dt>Calculation:</dt><dd><p>The fraction is calculated as:</p>
+<p><span class="math notranslate nohighlight">\(\frac{360(y_2 - y_1) + 30(m_2 - m_1) + (d_2 - d_1)}{360}\)</span></p>
+<p>where dates are adjusted so that if the day is 31, it is set to 30.</p>
+<p>The numerator is calculated as the difference in days if each month has 30 days, and the denominator is always 360.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span> <span class="o">=</span> <span class="n">DayCount30360</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span><span class="o">.</span><span class="n">fraction</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-01-31&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-02-28&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-02-28&#39;</span><span class="p">))</span>
+<span class="go">0.07777777777777778</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.utils.DayCount30360.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'30/360'</span></em><a class="headerlink" href="#pyfian.utils.DayCount30360.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCount30360.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCount30360.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCount30360.__repr__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCount30360.numerator">
+<span class="sig-name descname"><span class="pre">numerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCount30360.numerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCount30360.numerator" title="Link to this definition"></a></dt>
+<dd><p>Numerator for 30/360 convention: calculates days as if each month has 30 days.
+Calculates the days between the date of calculation (<cite>current</cite>) and the start of the period (<cite>start</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (not used).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Numerator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCount30360.denominator">
+<span class="sig-name descname"><span class="pre">denominator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCount30360.denominator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCount30360.denominator" title="Link to this definition"></a></dt>
+<dd><p>Denominator for 30/360 convention (always 360).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (not used).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Denominator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.utils.DayCount30365">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.utils.</span></span><span class="sig-name descname"><span class="pre">DayCount30365</span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCount30365"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCount30365" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyfian.utils.DayCountBase" title="pyfian.utils.DayCountBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DayCountBase</span></code></a></p>
+<p>30/365 day count convention.</p>
+<dl>
+<dt>Calculation:</dt><dd><p>The fraction is calculated as:</p>
+<p><span class="math notranslate nohighlight">\(\frac{360(y_2 - y_1) + 30(m_2 - m_1) + (d_2 - d_1)}{365}\)</span></p>
+<p>where dates are adjusted so that if the day is 31, it is set to 30.</p>
+<p>The numerator is calculated as the difference in days if each month has 30 days, and the denominator is always 365.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span> <span class="o">=</span> <span class="n">DayCount30365</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span><span class="o">.</span><span class="n">fraction</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-01-31&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-02-28&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-02-28&#39;</span><span class="p">))</span>
+<span class="go">0.07671232876712329</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.utils.DayCount30365.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'30/365'</span></em><a class="headerlink" href="#pyfian.utils.DayCount30365.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCount30365.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCount30365.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCount30365.__repr__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCount30365.numerator">
+<span class="sig-name descname"><span class="pre">numerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCount30365.numerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCount30365.numerator" title="Link to this definition"></a></dt>
+<dd><p>Numerator for 30/365 convention: calculates days as if each month has 30 days.
+Calculates the days between the date of calculation (<cite>current</cite>) and the start of the period (<cite>start</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (not used).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Numerator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCount30365.denominator">
+<span class="sig-name descname"><span class="pre">denominator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCount30365.denominator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCount30365.denominator" title="Link to this definition"></a></dt>
+<dd><p>Denominator for 30/365 convention (always 365).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (not used).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Denominator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.utils.DayCount30E360">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.utils.</span></span><span class="sig-name descname"><span class="pre">DayCount30E360</span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCount30E360"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCount30E360" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyfian.utils.DayCountBase" title="pyfian.utils.DayCountBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DayCountBase</span></code></a></p>
+<p>30E/360 (Eurobond) day count convention.</p>
+<dl>
+<dt>Calculation:</dt><dd><p>The fraction is calculated as:</p>
+<p><span class="math notranslate nohighlight">\(\frac{360(y_2 - y_1) + 30(m_2 - m_1) + (d_2 - d_1)}{360}\)</span></p>
+<p>where all days greater than 30 are set to 30.</p>
+<p>The numerator is calculated as the difference in days between the previous coupon date and the settlement date if each month has 30 days, and the denominator is always 360.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span> <span class="o">=</span> <span class="n">DayCount30E360</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span><span class="o">.</span><span class="n">fraction</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-01-31&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-02-28&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-02-28&#39;</span><span class="p">))</span>
+<span class="go">0.07777777777777778</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.utils.DayCount30E360.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'30E/360'</span></em><a class="headerlink" href="#pyfian.utils.DayCount30E360.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCount30E360.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCount30E360.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCount30E360.__repr__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCount30E360.numerator">
+<span class="sig-name descname"><span class="pre">numerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCount30E360.numerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCount30E360.numerator" title="Link to this definition"></a></dt>
+<dd><p>Numerator for 30E/360 convention: treats all end-of-month dates as the 30th.
+Calculates the days between the date of calculation (<cite>current</cite>) and the start of the period (<cite>start</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (not used).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Numerator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCount30E360.denominator">
+<span class="sig-name descname"><span class="pre">denominator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCount30E360.denominator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCount30E360.denominator" title="Link to this definition"></a></dt>
+<dd><p>Denominator for 30E/360 convention (always 360).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (not used).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Denominator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActual360">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.utils.</span></span><span class="sig-name descname"><span class="pre">DayCountActual360</span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActual360"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActual360" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyfian.utils.DayCountBase" title="pyfian.utils.DayCountBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DayCountBase</span></code></a></p>
+<p>Actual/360 day count convention.</p>
+<dl>
+<dt>Calculation:</dt><dd><p>The fraction is calculated as:</p>
+<p><span class="math notranslate nohighlight">\(\frac{\text{actual days}}{360}\)</span></p>
+<p>where actual days are the number of days between the previous coupon date and the settlement date.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span> <span class="o">=</span> <span class="n">DayCountActual360</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span><span class="o">.</span><span class="n">fraction</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-01-01&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-07-01&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-07-01&#39;</span><span class="p">))</span>
+<span class="go">0.5055555555555555</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActual360.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'actual/360'</span></em><a class="headerlink" href="#pyfian.utils.DayCountActual360.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActual360.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActual360.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActual360.__repr__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActual360.numerator">
+<span class="sig-name descname"><span class="pre">numerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActual360.numerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActual360.numerator" title="Link to this definition"></a></dt>
+<dd><p>Numerator for Actual/360: actual days between the date of calculation (<cite>current</cite>) and the start of the period (<cite>start</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (not used).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Numerator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActual360.denominator">
+<span class="sig-name descname"><span class="pre">denominator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActual360.denominator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActual360.denominator" title="Link to this definition"></a></dt>
+<dd><p>Denominator for Actual/360 (always 360).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (not used).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Denominator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActual365">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.utils.</span></span><span class="sig-name descname"><span class="pre">DayCountActual365</span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActual365"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActual365" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyfian.utils.DayCountBase" title="pyfian.utils.DayCountBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DayCountBase</span></code></a></p>
+<p>Actual/365 day count convention.</p>
+<dl>
+<dt>Calculation:</dt><dd><p>The fraction is calculated as:</p>
+<p><span class="math notranslate nohighlight">\(\frac{\text{actual days}}{365}\)</span></p>
+<p>where actual days are the number of days between the previous coupon date and the settlement date.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span> <span class="o">=</span> <span class="n">DayCountActual365</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span><span class="o">.</span><span class="n">fraction</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-01-01&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-07-01&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-07-01&#39;</span><span class="p">))</span>
+<span class="go">0.4986301369863014</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActual365.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'actual/365'</span></em><a class="headerlink" href="#pyfian.utils.DayCountActual365.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActual365.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActual365.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActual365.__repr__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActual365.numerator">
+<span class="sig-name descname"><span class="pre">numerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActual365.numerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActual365.numerator" title="Link to this definition"></a></dt>
+<dd><p>Numerator for Actual/365: actual days between the date of calculation (<cite>current</cite>) and the start of the period (<cite>start</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (not used).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Numerator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActual365.denominator">
+<span class="sig-name descname"><span class="pre">denominator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActual365.denominator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActual365.denominator" title="Link to this definition"></a></dt>
+<dd><p>Denominator for Actual/365 (always 365).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (not used).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Denominator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActualActualBond">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.utils.</span></span><span class="sig-name descname"><span class="pre">DayCountActualActualBond</span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActualActualBond"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActualActualBond" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyfian.utils.DayCountBase" title="pyfian.utils.DayCountBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DayCountBase</span></code></a></p>
+<p>Actual/Actual (Bond) day count convention.</p>
+<dl>
+<dt>Calculation:</dt><dd><p>The fraction is calculated as:</p>
+<p><span class="math notranslate nohighlight">\(\frac{\text{actual days}}{\text{days in coupon period}}\)</span></p>
+<p>where actual days are the number of days between the previous coupon date and the settlement date,
+and days in coupon period is the number of days between the previous and next coupon dates.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span> <span class="o">=</span> <span class="n">DayCountActualActualBond</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span><span class="o">.</span><span class="n">fraction</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-01-01&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-07-01&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-07-01&#39;</span><span class="p">))</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActualActualBond.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'actual/actual-Bond'</span></em><a class="headerlink" href="#pyfian.utils.DayCountActualActualBond.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActualActualBond.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActualActualBond.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActualActualBond.__repr__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActualActualBond.numerator">
+<span class="sig-name descname"><span class="pre">numerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActualActualBond.numerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActualActualBond.numerator" title="Link to this definition"></a></dt>
+<dd><p>Numerator for Actual/Actual (Bond): actual days between the date of calculation (<cite>current</cite>) and the start of the period (<cite>start</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (not used).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Numerator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActualActualBond.denominator">
+<span class="sig-name descname"><span class="pre">denominator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActualActualBond.denominator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActualActualBond.denominator" title="Link to this definition"></a></dt>
+<dd><p>Denominator for Actual/Actual (Bond): days in the period (from start to end).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>required</em>) – End of the period (required for Actual denominator conventions, e.g., next coupon of a bond).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Denominator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActualActualBond.fraction">
+<span class="sig-name descname"><span class="pre">fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActualActualBond.fraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActualActualBond.fraction" title="Link to this definition"></a></dt>
+<dd><p>Returns the day count fraction for Actual/Actual (Bond) convention.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>required</em>) – End of the period (required for Actual denominator conventions, e.g., next coupon of a bond).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Day count fraction for the convention.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActualActualBond.fraction_period_adjusted">
+<span class="sig-name descname"><span class="pre">fraction_period_adjusted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periods_per_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActualActualBond.fraction_period_adjusted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActualActualBond.fraction_period_adjusted" title="Link to this definition"></a></dt>
+<dd><p>Returns the day count fraction for a custom period for Actual/Actual (Bond).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>periods_per_year</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of periods per year (e.g., 2 for semiannual). Default is 1.</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>required</em>) – End of the period (required for Actual denominator conventions, e.g., next coupon of a bond).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Day count fraction for the custom period.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActualActualISDA">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.utils.</span></span><span class="sig-name descname"><span class="pre">DayCountActualActualISDA</span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActualActualISDA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActualActualISDA" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyfian.utils.DayCountBase" title="pyfian.utils.DayCountBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DayCountBase</span></code></a></p>
+<p>Actual/Actual ISDA day count convention.</p>
+<dl>
+<dt>Calculation:</dt><dd><p>The fraction (used for accrued interest in derivatives) is calculated as:</p>
+<p><span class="math notranslate nohighlight">\(\sum_{i} \frac{\text{days}_i}{\text{days_between}_i}\)</span></p>
+<p>where each year in the period is considered separately. The <cite>days_i</cite> are the actual days between the dates, and <cite>days_between_i</cite> is the total number of days between the two dates.</p>
+<p>The fraction_period_adjusted method can be used for custom periods (e.g., semiannual).
+This is useful for calculating time to next coupon (for YTM).</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span> <span class="o">=</span> <span class="n">DayCountActualActualISDA</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span><span class="o">.</span><span class="n">fraction</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-12-31&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2025-01-01&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2025-01-01&#39;</span><span class="p">))</span>
+<span class="go">0.00273224043715847</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActualActualISDA.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'actual/actual-ISDA'</span></em><a class="headerlink" href="#pyfian.utils.DayCountActualActualISDA.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActualActualISDA.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActualActualISDA.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActualActualISDA.__repr__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActualActualISDA.numerator">
+<span class="sig-name descname"><span class="pre">numerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActualActualISDA.numerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActualActualISDA.numerator" title="Link to this definition"></a></dt>
+<dd><p>Numerator for Actual/Actual ISDA: actual days between the date of calculation (<cite>current</cite>) and the start of the period (<cite>start</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (not used).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Numerator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActualActualISDA.denominator">
+<span class="sig-name descname"><span class="pre">denominator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActualActualISDA.denominator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActualActualISDA.denominator" title="Link to this definition"></a></dt>
+<dd><p>Denominator for Actual/Actual ISDA: actual days in the period (from start to end).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (required for Actual denominator conventions, e.g., next coupon of a bond).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Denominator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActualActualISDA.fraction">
+<span class="sig-name descname"><span class="pre">fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActualActualISDA.fraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActualActualISDA.fraction" title="Link to this definition"></a></dt>
+<dd><p>Returns the day count fraction for Actual/Actual ISDA convention, summing days/year_length for each year in the period.</p>
+<p>The start of the period is <cite>start</cite> (could be previous coupon date, issue date, or investment date).
+The date of calculation is <cite>current</cite> (could be the current date, the maturity date for the full period, or the settlement date of an operation).
+The end of the period is <cite>end</cite> (required for Actual denominator conventions, e.g., next coupon of a bond).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>required</em>) – End of the period (required for Actual denominator conventions, e.g., next coupon of a bond).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Day count fraction for the convention.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountActualActualISDA.fraction_period_adjusted">
+<span class="sig-name descname"><span class="pre">fraction_period_adjusted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periods_per_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountActualActualISDA.fraction_period_adjusted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountActualActualISDA.fraction_period_adjusted" title="Link to this definition"></a></dt>
+<dd><p>Returns the day count fraction for a custom period for Actual/Actual ISDA.</p>
+<p>The start of the period is <cite>start</cite> (could be previous coupon date, issue date, or investment date).
+The date of calculation is <cite>current</cite> (could be the current date, the maturity date for the full period, or the settlement date of an operation).
+The end of the period is <cite>end</cite> (required for Actual denominator conventions, e.g., next coupon of a bond).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>periods_per_year</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of periods per year (e.g., 2 for semiannual). Default is 1.</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>required</em>) – End of the period (required for Actual denominator conventions, e.g., next coupon of a bond).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Day count fraction for the custom period.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyfian.utils.</span></span><span class="sig-name descname"><span class="pre">DayCountBase</span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountBase" title="Link to this definition"></a></dt>
+<dd><p>Base class for day count conventions.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountBase.numerator">
+<span class="sig-name descname"><span class="pre">numerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountBase.numerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountBase.numerator" title="Link to this definition"></a></dt>
+<dd><p>Returns the numerator for the day count fraction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountBase.denominator">
+<span class="sig-name descname"><span class="pre">denominator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountBase.denominator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountBase.denominator" title="Link to this definition"></a></dt>
+<dd><p>Returns the denominator for the day count fraction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountBase.fraction">
+<span class="sig-name descname"><span class="pre">fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountBase.fraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountBase.fraction" title="Link to this definition"></a></dt>
+<dd><p>Returns the day count fraction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountBase.fraction_period_adjusted">
+<span class="sig-name descname"><span class="pre">fraction_period_adjusted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">...</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountBase.fraction_period_adjusted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountBase.fraction_period_adjusted" title="Link to this definition"></a></dt>
+<dd><p>For custom periods (e.g., semiannual).</p>
+</dd></dl>
+
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span> <span class="o">=</span> <span class="n">DayCount30360</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span><span class="o">.</span><span class="n">fraction</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-01-31&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-02-28&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-02-28&#39;</span><span class="p">))</span>
+<span class="go">0.07777777777777778</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountBase.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Base'</span></em><a class="headerlink" href="#pyfian.utils.DayCountBase.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyfian.utils.DayCountBase.__repr__">
+<span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountBase.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.DayCountBase.__repr__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">numerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountBase.numerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd><p>Returns the numerator for the day count fraction according to the convention.
+Calculates the number of days between the date of calculation (<cite>current</cite>) and the start of the period (<cite>start</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (relevant only for Actual denominator conventions, e.g., next coupon of a bond).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Numerator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">denominator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountBase.denominator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd><p>Returns the denominator for the day count fraction according to the convention (typically year length).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (relevant only for Actual denominator conventions, e.g., next coupon of a bond).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Denominator for the day count fraction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountBase.fraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd><p>Returns the day count fraction for the convention.</p>
+<p>Represents the fraction of the year between two dates.</p>
+<p>The start of the period is <cite>start</cite> (could be previous coupon date, issue date, or investment date).
+The date of calculation is <cite>current</cite> (could be the current date, the maturity date for the full period, or the settlement date of an operation).
+The end of the period is <cite>end</cite> (could be the next coupon date or maturity date, relevant only for Actual denominator conventions).</p>
+<p>This method calculates the fraction of a year between two dates according to the selected day count convention.
+It is typically used to determine the proportion of a coupon period that has elapsed or will elapse, for interest accruals, bond pricing, and yield calculations.</p>
+<p>The formula for the fraction is:
+<span class="math notranslate nohighlight">\(\frac{\text{numerator}}{\text{denominator}}\)</span>
+where numerator and denominator are defined by the convention.</p>
+<p>For example, in the 30/360 convention, the numerator is the number of days calculated as if each month has 30 days, and the denominator is 360.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (relevant only for Actual denominator conventions, e.g., next coupon of a bond).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Day count fraction for the convention (proportion of a year).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">fraction_period_adjusted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">periods_per_year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#DayCountBase.fraction_period_adjusted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd><p>Returns the day count fraction for a custom period (e.g., semiannual, quarterly).</p>
+<p>This method is used when the year is divided into multiple periods (such as semiannual or quarterly coupons), and you want the fraction relative to one of those periods rather than the whole year.
+It adjusts the denominator to represent the length of a single period, so the result is the fraction of a period that has elapsed or will elapse.</p>
+<p>The start of the period is <cite>start</cite> (could be previous coupon date, issue date, or investment date).
+The date of calculation is <cite>current</cite> (could be the current date, the maturity date for the full period, or the settlement date of an operation).
+The end of the period is <cite>end</cite> (could be the next coupon date or maturity date, relevant only for Actual denominator conventions).</p>
+<p>The formula for the fraction is:
+<span class="math notranslate nohighlight">\(\frac{\text{numerator}}{\frac{\text{denominator}}{\text{periods_per_year}}}\)</span></p>
+<p>where numerator and denominator are defined by the convention, and periods_per_year is the number of periods in a year.</p>
+<p>For example, for a bond with semiannual coupons (periods_per_year=2), this method gives the fraction of a half-year period.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>periods_per_year</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of periods per year (e.g., 2 for semiannual, 4 for quarterly). Default is 1.</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (relevant only for Actual denominator conventions, e.g., next coupon of a bond).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Day count fraction for the custom period (proportion of a period).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.utils.get_day_count_convention">
+<span class="sig-prename descclassname"><span class="pre">pyfian.utils.</span></span><span class="sig-name descname"><span class="pre">get_day_count_convention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pyfian.utils.DayCountBase" title="pyfian.utils.DayCountBase"><span class="pre">DayCountBase</span></a></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#get_day_count_convention"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.get_day_count_convention" title="Link to this definition"></a></dt>
+<dd><p>Get the day count convention class instance by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name of the day count convention (case-insensitive).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Instance of the corresponding day count convention class.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pyfian.utils.DayCountBase" title="pyfian.utils.DayCountBase">DayCountBase</a></p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span> <span class="o">=</span> <span class="n">get_day_count_convention</span><span class="p">(</span><span class="s1">&#39;30/360&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">dc</span><span class="p">,</span> <span class="n">DayCount30360</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.utils.get_day_count_fraction">
+<span class="sig-prename descclassname"><span class="pre">pyfian.utils.</span></span><span class="sig-name descname"><span class="pre">get_day_count_fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">convention</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Timestamp</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#get_day_count_fraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.get_day_count_fraction" title="Link to this definition"></a></dt>
+<dd><p>Unified interface to get day count fraction for any convention.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>convention</strong> (<em>str</em>) – Name of the day count convention (e.g., ‘30/360’, ‘actual/360’).</p></li>
+<li><p><strong>start</strong> (<em>pd.Timestamp</em>) – Start of the period.</p></li>
+<li><p><strong>current</strong> (<em>pd.Timestamp</em>) – Date of calculation (could be the current date, the maturity date for the full period, or the settlement date of an operation).</p></li>
+<li><p><strong>end</strong> (<em>pd.Timestamp</em><em>, </em><em>optional</em>) – End of the period (relevant only for Actual denominator conventions, e.g., next coupon of a bond).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Day count fraction for the specified convention.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_day_count_fraction</span><span class="p">(</span><span class="s1">&#39;30/360&#39;</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-01-31&#39;</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="s1">&#39;2024-02-28&#39;</span><span class="p">))</span>
+<span class="go">0.07777777777777778</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyfian.utils.is_leap_year">
+<span class="sig-prename descclassname"><span class="pre">pyfian.utils.</span></span><span class="sig-name descname"><span class="pre">is_leap_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../../_modules/pyfian/utils/day_count.html#is_leap_year"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyfian.utils.is_leap_year" title="Link to this definition"></a></dt>
+<dd><p>Check if a year is a leap year.</p>
+</dd></dl>
+
 </section>
 </section>
 

@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>pyfian.yield_curves.zero_coupon_curve &mdash; Python Financial Analyst 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
 
   
@@ -369,7 +369,7 @@ Supported conventions: “Annual”, “BEY”, “Continuous”. If None, “An
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>date</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pd.Timestamp</em><em>]</em>) – Date to discount to.</p></li>
+<li><p><strong>date</strong> (<em>str</em><em> | </em><em>pd.Timestamp</em>) – Date to discount to.</p></li>
 <li><p><strong>spread</strong> (<em>float</em>) – Spread to add to the discount rate.</p></li>
 </ul>
 </dd>
@@ -393,7 +393,7 @@ Supported conventions: “Annual”, “BEY”, “Continuous”. If None, “An
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>t</strong> (<em>float</em>) – Time in years to discount.</p></li>
 <li><p><strong>spread</strong> (<em>float</em>) – Spread to add to the discount rate.</p></li>
-<li><p><strong>yield_calculation_convention</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Yield calculation convention to use (default is None).</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em> | </em><em>None</em>) – Yield calculation convention to use (default is None).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -414,8 +414,8 @@ Supported conventions: “Annual”, “BEY”, “Continuous”. If None, “An
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>date</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pd.Timestamp</em><em>]</em>) – Date to get the rate for.</p></li>
-<li><p><strong>yield_calculation_convention</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Yield calculation convention to use (default is None).</p></li>
+<li><p><strong>date</strong> (<em>str</em><em> | </em><em>pd.Timestamp</em>) – Date to get the rate for.</p></li>
+<li><p><strong>yield_calculation_convention</strong> (<em>str</em><em> | </em><em>None</em>) – Yield calculation convention to use (default is None).</p></li>
 <li><p><strong>spread</strong> (<em>float</em>) – Spread to add to the rate.</p></li>
 </ul>
 </dd>
@@ -470,7 +470,7 @@ Supported conventions: “Annual”, “BEY”, “Continuous”. If None, “An
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>zero_rates_dates</strong> (<em>dict</em><em>[</em><em>pd.Timestamp</em><em> | </em><em>str</em><em>, </em><em>float</em><em>]</em>) – Dictionary with dates as keys and zero rates as values.</p></li>
-<li><p><strong>curve_date</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pd.Timestamp</em><em>]</em>) – The curve settlement date.</p></li>
+<li><p><strong>curve_date</strong> (<em>str</em><em> | </em><em>pd.Timestamp</em>) – The curve settlement date.</p></li>
 <li><p><strong>day_count_convention</strong> (<em>str</em><em> or </em><a class="reference internal" href="../../utils/day_count/index.html#pyfian.utils.day_count.DayCountBase" title="pyfian.utils.day_count.DayCountBase"><em>DayCountBase</em></a><em>, </em><em>optional</em>) – Day count convention to use (default is None). If None, “actual/365” will be used.</p></li>
 <li><p><strong>yield_calculation_convention</strong> (<em>str</em><em>, </em><em>optional</em>) – Yield calculation convention to use (default is None).
 Supported conventions: “Annual”, “BEY”, “Continuous”. If None, “Annual” will be used.</p></li>
